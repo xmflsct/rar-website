@@ -1,8 +1,9 @@
 module.exports = {
-  name: 'Zhiyuan',
-  shortName: 'Zhiyuan',
-  description: 'Passionate experience designer, currently based in Stockholm.',
-  url: 'https://xmflsct.com',
-  prefix: '/',
-  author: 'Zhiyuan Zheng',
-}
+  name: "Round&Round Rotterdam",
+  shortName: "Round&Round",
+  description:
+    "Round&Round, Handmade Cakes&Crafts. Leading a cross-cultural lifestyle that relaxes you with an adult sense of cuteness. 跨文化＋治愈系可爱感＋手作蛋糕&杂货＝R&R生活美学",
+  url: "https://roundandround.nl",
+  prefix: "/",
+  author: "Zhiyuan Zheng"
+};

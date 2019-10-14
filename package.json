@@ -1,7 +1,7 @@
 {
   "name": "gatsby-london",
   "private": true,
-  "description": "A fork from https://github.com/ImedAdel/gatsby-london",
+  "description": "A fork from https://github.com/xmflsct/xmflsct.github.io",
   "version": "1.0.0",
   "author": "Zhiyuan Zheng <me@xmflsct.com>",
   "dependencies": {
@@ -23,6 +23,7 @@
     "gatsby-remark-smartypants": "^2.1.11",
     "gatsby-remark-external-links": "^0.0.4",
     "gatsby-source-filesystem": "^2.1.29",
+    "gatsby-source-instagram": "^0.5.1",
     "gatsby-transformer-remark": "^2.6.27",
     "gatsby-transformer-sharp": "^2.2.20",
     "prismjs": "^1.17.1",
@@ -30,13 +31,11 @@
     "react-dom": "^16.10.2",
     "react-helmet": "^5.2.1",
     "react-icons": "^3.7.0",
-    "typeface-alegreya": "^0.0.69",
-    "typeface-merriweather": "0.0.72",
-    "typeface-montserrat": "0.0.54",
-    "typeface-nunito": "^0.0.72",
+    "react-bootstrap": "^1.0.0-beta.14",
+    "typeface-quicksand": "^0.0.71",
     "url-join": "^4.0.1",
-    "gatsby-plugin-use-dark-mode": "^1.1.2",
-    "use-dark-mode": "^2.3.1"
+    "google-map-react": "^1.1.5",
+    "smooth-scroll": "^16.1.0"
   },
   "devDependencies": {
     "autoprefixer": "^9.6.4",
@@ -49,7 +48,7 @@
     "last 2 version",
     "> 2%"
   ],
-  "homepage": "https://xmflsct.github.io",
+  "homepage": "https://roundandround.github.io",
   "keywords": [
     "gatsby",
     "ghost",
@@ -61,13 +60,13 @@
   "main": "n/a",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xmflsct/xmflsct.github.io.git"
+    "url": "git+https://github.com/xmflsct/roundandround.github.io.git"
   },
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
     "start": "npm run develop",
     "serve": "gatsby serve",
-    "deploy": "gatsby build && yarn run gh-pages -d public -b master -u 'Zhiyuan Zheng <me@xmflsct.com>' -r https://${githubPAT}@github.com/xmflsct/xmflsct.github.io.git"
+    "deploy": "gatsby build && yarn run gh-pages -d public -b master -u 'Zhiyuan Zheng <me@xmflsct.com>' -r https://${githubPAT}@github.com/xmflsct/roundandround.github.io.git"
   }
 }

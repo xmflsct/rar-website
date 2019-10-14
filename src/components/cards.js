@@ -17,7 +17,6 @@ const Cards = ({ filter }) => {
             }
             frontmatter {
               title
-              category
               thumbnail {
                 childImageSharp {
                   fluid(maxWidth: 1280) {

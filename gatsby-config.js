@@ -12,15 +12,8 @@ module.exports = {
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: `${__dirname}/content/pages`,
-        name: `pages`,
-      },
-    },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        path: `${__dirname}/content/projects`,
-        name: `projects`,
+        path: `${__dirname}/content/events`,
+        name: `events`,
       },
     },
     {
@@ -31,33 +24,25 @@ module.exports = {
       },
     },
     {
+      resolve: `gatsby-source-instagram`,
+      options: {
+        username: `roundandround_rotterdam`,
+        // access_token: "2103340291.M2E4MWE5Zg==.NmY0MDVlZjQ2NTM4.NGM4MmJjMzM4Yjc3NDI5YzNhNWM=",
+        // instagram_id: "2103340291",
+      },
+    },
+    {
       resolve: `gatsby-transformer-remark`,
       options: {
         plugins: [
           {
             resolve: `gatsby-remark-images`,
             options: {
-              maxWidth: 1280,
+              maxWidth: 920,
               linkImagesToOriginal: false,
-              wrapperStyle: `margin: 7vw 0;`,
               quality: 80,
               withWebp: true,
             },
-          },
-          {
-            resolve: "gatsby-remark-embed-video",
-            options: {
-              width: 1280,
-              ratio: 1.77,
-              related: false,
-              noIframeBorder: true,
-              urlOverrides: [
-                {
-                  id: 'youtube',
-                  embedURL: (videoId) => `https://www.youtube-nocookie.com/embed/${videoId}`,
-                }
-              ]
-            }
           },
           {
             resolve: `gatsby-remark-responsive-iframe`,
@@ -110,14 +95,14 @@ module.exports = {
       resolve: `gatsby-plugin-purgecss`,
       options: {
         printRejected: true,
-        develop: true,
+        // develop: true,
         whitelistPatternsChildren: [/(kg)/, /(dark)/],
       },
     },
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
-        trackingId: `UA-49185184-1`,
+        // trackingId: `UA-49185184-1`,
         head: `true`,
       },
     },
@@ -131,15 +116,6 @@ module.exports = {
         theme_color: `#ffffff`,
         display: `minimal-ui`,
         icon: `static/favicon.png`,
-      },
-    },
-    {
-      resolve: 'gatsby-plugin-use-dark-mode',
-      options: {
-        classNameDark: 'dark-mode',
-        classNameLight: 'light-mode',
-        storageKey: null,
-        minify: true,
       },
     },
     `gatsby-plugin-offline`,

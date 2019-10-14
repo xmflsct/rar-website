@@ -4,27 +4,14 @@ const { createFilePath } = require(`gatsby-source-filesystem`)
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions
 
-  const pageTemplate = path.resolve(`./src/templates/page.js`)
-  const projectTemplate = path.resolve(`./src/templates/project.js`)
-  const categoryTemplate = path.resolve(`./src/templates/category.js`)
+  const eventTemplate = path.resolve(`./src/templates/event.js`)
 
   return graphql(
     `
       {
-        allPages: allMarkdownRemark(
-          filter: { fileAbsolutePath: { regex: "/pages/" } }
-        ) {
-          edges {
-            node {
-              fields {
-                slug
-              }
-            }
-          }
-        }
-        allProjects: allMarkdownRemark(
+        events: allMarkdownRemark(
           sort: { fields: [frontmatter___date], order: DESC }
-          filter: { fileAbsolutePath: { regex: "/projects/" } }
+          filter: { fileAbsolutePath: { regex: "/(events)/" } }
         ) {
           edges {
             node {
@@ -32,13 +19,6 @@ exports.createPages = ({ graphql, actions }) => {
                 slug
               }
             }
-          }
-        }
-        allCategories: allMarkdownRemark(
-          filter: { fileAbsolutePath: { regex: "/(projects)/" } }
-        ) {
-          group(field: frontmatter___category) {
-            fieldValue
           }
         }
       }
@@ -48,44 +28,14 @@ exports.createPages = ({ graphql, actions }) => {
       throw result.errors
     }
 
-    const pages = result.data.allPages.edges
-    const projects = result.data.allProjects.edges
-    const categories = result.data.allCategories.group
+    const events = result.data.events.edges
 
-    pages.forEach((page, index) => {
+    events.forEach((event, index) => {
       createPage({
-        path: page.node.fields.slug,
-        component: pageTemplate,
+        path: event.node.fields.slug,
+        component: eventTemplate,
         context: {
-          slug: page.node.fields.slug,
-        },
-      })
-    })
-
-    projects.forEach((project, index) => {
-      createPage({
-        path: project.node.fields.slug,
-        component: projectTemplate,
-        context: {
-          slug: project.node.fields.slug,
-        },
-      })
-    })
-
-    createPage({
-      path: "/",
-      component: categoryTemplate,
-      context: {
-        category: "*",
-      },
-    })
-
-    categories.forEach((category, index) => {
-      createPage({
-        path: category.fieldValue.replace(/\s+/g, "-").toLowerCase(),
-        component: categoryTemplate,
-        context: {
-          category: category.fieldValue,
+          slug: event.node.fields.slug,
         },
       })
     })
