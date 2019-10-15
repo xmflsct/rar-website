@@ -89,6 +89,7 @@ a:active {
 
 .sidebar .sub-nav {
     font-size: 0.9em;
+    padding-inline-start: 35px;
 }
 
 /* Page - Index
@@ -108,6 +109,17 @@ a:active {
 
 .site-wrapper.index .store-info p {
     font-size: 1em;
+}
+
+/* Page - Cake & Hightea
+/* ---------------------------------------------------------- */
+
+.cake-hightea .price {
+    font-size: .9em;
+}
+
+.cake-hightea .description {
+    font-size: .9em;
 }
 
 /* Page - Workshop & Event

@@ -1,4 +1,3 @@
-const urljoin = require("url-join")
 const siteConfig = require("./siteConfig")
 
 module.exports = {
@@ -6,14 +5,14 @@ module.exports = {
     title: siteConfig.name,
     author: siteConfig.author,
     description: siteConfig.description,
-    siteUrl: urljoin(siteConfig.url, siteConfig.prefix),
+    siteUrl: siteConfig.url,
   },
   plugins: [
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: `${__dirname}/content/events`,
-        name: `events`,
+        path: `${__dirname}/content/posts`,
+        name: `posts`,
       },
     },
     {
@@ -27,8 +26,6 @@ module.exports = {
       resolve: `gatsby-source-instagram`,
       options: {
         username: `roundandround_rotterdam`,
-        // access_token: "2103340291.M2E4MWE5Zg==.NmY0MDVlZjQ2NTM4.NGM4MmJjMzM4Yjc3NDI5YzNhNWM=",
-        // instagram_id: "2103340291",
       },
     },
     {
@@ -45,36 +42,12 @@ module.exports = {
             },
           },
           {
-            resolve: `gatsby-remark-responsive-iframe`,
-            options: {
-              wrapperStyle: `margin-bottom: 1.0725rem`,
-            },
-          },
-          {
-            resolve: "gatsby-remark-custom-blocks",
-            options: {
-              blocks: {
-                kgWidthAvatar: {
-                  classes: "kg-card kg-width-avatar"
-                },
-                kgWidthWide: {
-                  classes: "kg-card kg-image-card kg-width-wide",
-                },
-                kgWidthFull: {
-                  classes: "kg-card kg-image-card kg-width-full",
-                },
-              },
-            },
-          },
-          {
             resolve: "gatsby-remark-external-links",
             options: {
               target: "_blank",
               rel: "noopener noreferrer"
             }
           },
-          `gatsby-remark-prismjs`,
-          `gatsby-remark-copy-linked-files`,
           `gatsby-remark-smartypants`,
         ],
       },
@@ -96,7 +69,7 @@ module.exports = {
       options: {
         printRejected: true,
         // develop: true,
-        whitelistPatternsChildren: [/(kg)/, /(dark)/],
+        // whitelistPatternsChildren: [/(kg)/, /(dark)/],
       },
     },
     {

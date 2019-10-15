@@ -4,14 +4,14 @@ const { createFilePath } = require(`gatsby-source-filesystem`)
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions
 
-  const eventTemplate = path.resolve(`./src/templates/event.js`)
+  const workshopEventTemplate = path.resolve(`./src/templates/workshop-event.js`)
 
   return graphql(
     `
       {
         events: allMarkdownRemark(
           sort: { fields: [frontmatter___date], order: DESC }
-          filter: { fileAbsolutePath: { regex: "/(events)/" } }
+          filter: { fileAbsolutePath: { regex: "/(workshop-event)/" } }
         ) {
           edges {
             node {
@@ -28,14 +28,14 @@ exports.createPages = ({ graphql, actions }) => {
       throw result.errors
     }
 
-    const events = result.data.events.edges
+    const allWorkshopEvent = result.data.events.edges
 
-    events.forEach((event, index) => {
+    allWorkshopEvent.forEach((workshopEvent, index) => {
       createPage({
-        path: event.node.fields.slug,
-        component: eventTemplate,
+        path: workshopEvent.node.fields.slug,
+        component: workshopEventTemplate,
         context: {
-          slug: event.node.fields.slug,
+          slug: workshopEvent.node.fields.slug,
         },
       })
     })
@@ -49,6 +49,7 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
 
   if (node.internal.type === `MarkdownRemark`) {
     const value = createFilePath({ node, getNode })
+
     createNodeField({
       name: `slug`,
       node,

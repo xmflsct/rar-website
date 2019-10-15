@@ -62,9 +62,43 @@ const Sidebar = ({ location }) => {
           src={data.cakeHightea.publicURL}
           alt={"Link to " + data.cakeHightea.name + "page"}
         />
-        <Link to={`/`} activeClassName="active">
+        <Link to={`/cake-hightea/signature-cake-roll`} activeClassName="active" partiallyActive={true}>
           Cake & Hightea
         </Link>
+        {location.pathname.indexOf("cake-hightea") > -1 && (
+          <ul className="sub-nav" role="menu">
+            <li>
+              <Link to={`/cake-hightea/signature-cake-roll`} activeClassName="active">
+                Signature Cake Roll
+              </Link>
+            </li>
+            <li>
+              <Link to={`/cake-hightea/round-cake`} activeClassName="active">
+                Round Cake
+              </Link>
+            </li>
+            <li>
+              <Link to={`/cake-hightea/birthday-cake`} activeClassName="active">
+                Birthday Cake
+              </Link>
+            </li>
+            <li>
+              <Link to={`/cake-hightea/forest-hightea`} activeClassName="active">
+                Forest Hightea
+              </Link>
+            </li>
+            <li>
+              <Link to={`/cake-hightea/party-wedding-tower`} activeClassName="active">
+                Party/Wedding Tower
+              </Link>
+            </li>
+            <li>
+              <Link to={`/cake-hightea/other-sweets`} activeClassName="active">
+                Other Sweets
+              </Link>
+            </li>
+          </ul>
+        )}
       </li>
       <li className="top-nav" role="menuitem">
         <img
@@ -74,7 +108,7 @@ const Sidebar = ({ location }) => {
         <Link to={`/matcha`} activeClassName="active">
           Matcha
         </Link>
-        {location.pathname === "/matcha" && (
+        {location.pathname.indexOf("matcha") > -1 && (
           <ul className="sub-nav" role="menu">
             <li>
               <a href="#what-is-matcha">What is Matcha?</a>
@@ -105,7 +139,7 @@ const Sidebar = ({ location }) => {
           src={data.workshopEvent.publicURL}
           alt={"Link to " + data.workshopEvent.name + "page"}
         />
-        <Link to={`/workshop-event`} activeClassName="active">
+        <Link to={`/workshop-event`} activeClassName="active" partiallyActive={true}>
           Workshop & Event
         </Link>
       </li>
@@ -126,7 +160,7 @@ const Sidebar = ({ location }) => {
         <Link to={`/shop-info`} activeClassName="active">
           Shop Info
         </Link>
-        {location.pathname === "/shop-info" && (
+        {location.pathname.indexOf("shop-info") > -1 && (
           <ul className="sub-nav" role="menu">
             <li>
               <a href="#menu">Menu</a>

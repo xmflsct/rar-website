@@ -40,7 +40,7 @@ const WorkshopEvent = ({ location }) => {
         name
       }
     }
-  `);
+  `)
   return (
     <div className="site-wrapper workshop-event">
       <Header />
@@ -78,10 +78,10 @@ const WorkshopEvent = ({ location }) => {
                   <div className="row event-header">
                     <div className="col-2 date" style={{ background: "url("+data.date.publicURL+") no-repeat", backgroundSize: "contain" }}>
                       <div className="month">
-                        {new Date(node.frontmatter.date).toLocaleString('en-UK', { month: 'short' })}
+                        {new Date(node.frontmatter.date).toLocaleDateString('en-UK', { month: 'short' })}
                       </div>
                       <div className="day">
-                        {new Date(node.frontmatter.date).toLocaleString('en-UK', { day: '2-digit' })}
+                        {new Date(node.frontmatter.date).toLocaleDateString('en-UK', { day: '2-digit' })}
                       </div>
                     </div>
                     <div className="col-10">
@@ -100,7 +100,7 @@ const WorkshopEvent = ({ location }) => {
               </div>
             ))}
 
-            <h3 className="mb-3" id="matcha-lovers">
+            <h3 className="mt-5 mb-3" id="matcha-lovers">
               Past
             </h3>
             {data.allEvents.edges
