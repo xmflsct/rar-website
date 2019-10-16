@@ -23,9 +23,9 @@ const OurStory = ({ location }) => {
         }
       }
     }
-  `)
+  `);
   return (
-    <div className="site-wrapper shop-info">
+    <div className="site-wrapper craft">
       <Header />
       <main id="site-main" className="site-main transition-fade">
         <div className="row">
@@ -33,7 +33,7 @@ const OurStory = ({ location }) => {
             <Sidebar location={location} />
           </div>
           <div className="col-9">
-            <h3 className="mb-3" id="selected">
+            <h3 className="sub-heading mb-3" id="selected">
               Selected by Round&Round
             </h3>
             <div className="row">

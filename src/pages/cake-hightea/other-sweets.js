@@ -4,7 +4,7 @@ import { useStaticQuery, graphql } from "gatsby";
 import Header from "../../components/header";
 import Sidebar from "../../components/sidebar";
 import Footer from "../../components/footer";
-import CakeList from "../../components/cake-list";
+import CakeList from "../../components/cake-hightea/cake-list";
 
 const PartyWeddingTower = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -40,7 +40,7 @@ const PartyWeddingTower = ({ location }) => {
     }
   `);
   return (
-    <div className="site-wrapper cake-hightea">
+    <div className="site-wrapper cake-hightea other-sweets">
       <Header />
       <main id="site-main" className="site-main transition-fade">
         <div className="row">
@@ -48,7 +48,7 @@ const PartyWeddingTower = ({ location }) => {
             <Sidebar location={location} />
           </div>
           <div className="col-9">
-            <h3 className="mb-3">Other Sweets</h3>
+            <h3 className="sub-heading mb-3">Other Sweets</h3>
 
             <div className="row">
               {data.allMarkdownRemark.edges.map(({ node }) => (

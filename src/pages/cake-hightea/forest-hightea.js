@@ -28,7 +28,7 @@ const ForestHightea = ({ location }) => {
     }
   `);
   return (
-    <div className="site-wrapper shop-info">
+    <div className="site-wrapper cake-hightea forest-hightea">
       <Header />
       <main id="site-main" className="site-main transition-fade">
         <div className="row">
@@ -36,7 +36,7 @@ const ForestHightea = ({ location }) => {
             <Sidebar location={location} />
           </div>
           <div className="col-9">
-            <h3 className="mb-3" id="press">
+            <h3 className="sub-heading mb-3" id="press">
               Forest Hightea (reservation required)
             </h3>
             <p>

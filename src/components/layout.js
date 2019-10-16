@@ -1,17 +1,16 @@
-import React from "react"
+import React from "react";
 
-import Header from "../components/header"
-import Footer from "../components/footer"
+import Header from "../components/header";
+import Footer from "../components/footer";
 
-import "../utils/css/screen.css"
+import "../utils/css/screen.css";
 
 const Layout = props => {
-
-  const { children } = props
+  const { children } = props;
 
   return (
     <div className="site-wrapper">
-      <Header/>
+      <Header />
       <main id="site-main" className="site-main">
         <div id="swup" className="transition-fade">
           {children}
@@ -19,7 +18,7 @@ const Layout = props => {
       </main>
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;

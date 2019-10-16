@@ -8,6 +8,13 @@ module.exports = {
     siteUrl: siteConfig.url,
   },
   plugins: [
+    `gatsby-transformer-json`,
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/content/data`,
+      },
+    },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
@@ -67,9 +74,17 @@ module.exports = {
     {
       resolve: `gatsby-plugin-purgecss`,
       options: {
-        printRejected: true,
-        // develop: true,
-        // whitelistPatternsChildren: [/(kg)/, /(dark)/],
+        // printRejected: true,
+        develop: true,
+        whitelistPatternsChildren: [/(accordion)/, /(collapse)/],
+      },
+    },
+    {
+      resolve: `gatsby-plugin-google-fonts`,
+      options: {
+        fonts: [
+          `Quicksand\:300,400`
+        ],
       },
     },
     {

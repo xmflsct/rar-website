@@ -49,7 +49,7 @@ const ShopInfo = ({ location }) => {
         name
       }
     }
-  `)
+  `);
   return (
     <div className="site-wrapper shop-info">
       <Header />
@@ -61,7 +61,7 @@ const ShopInfo = ({ location }) => {
           <div className="col-9">
             <Img fluid={data.main.childImageSharp.fluid} />
 
-            <h3 className="mt-5 mb-3" id="menu">
+            <h3 className="sub-heading mt-4 mb-3" id="menu">
               Menu
             </h3>
             <p>
@@ -85,7 +85,7 @@ const ShopInfo = ({ location }) => {
               </a>
             </p>
 
-            <h3 className="mt-5 mb-3" id="opening-hours">
+            <h3 className="sub-heading mt-4 mb-3" id="opening-hours">
               Opening Hours
             </h3>
             <p>
@@ -96,7 +96,7 @@ const ShopInfo = ({ location }) => {
               <b>Sunday:</b> 12:00 - 17:00 (last order 16:45)
             </p>
 
-            <h3 className="mt-5 mb-3" id="contact">
+            <h3 className="sub-heading mt-4 mb-3" id="contact">
               Contact
             </h3>
             <iframe
@@ -159,7 +159,7 @@ const ShopInfo = ({ location }) => {
               </a>
             </p>
 
-            <h3 className="mt-5 mb-3" id="q-a">
+            <h3 className="sub-heading mt-4 mb-3" id="q-a">
               Q&A
             </h3>
             <Accordion defaultActiveKey="0">

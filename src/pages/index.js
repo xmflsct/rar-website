@@ -69,14 +69,14 @@ const Index = ({ location }) => {
         }
       }
     }
-  `)
+  `);
   return (
     <div className="site-wrapper index">
       <Header />
       <main id="site-main" className="site-main transition-fade">
         <div className="row">
           <div className="col-3">
-            <Sidebar location={location}/>
+            <Sidebar location={location} />
           </div>
           <div className="col-9">
             <Img fluid={data.main.childImageSharp.fluid} />
@@ -134,11 +134,14 @@ const Index = ({ location }) => {
           <div className="col-6">
             <h3>We’re on Instagram!</h3>
             <div className="row">
-                {data.allInstaNode.edges.map(({ node }) => {
-                  return (
-                      <Img fixed={node.localFile.childImageSharp.fixed} className="col-4"/>
-                  );
-                })}
+              {data.allInstaNode.edges.map(({ node }) => {
+                return (
+                  <Img
+                    fixed={node.localFile.childImageSharp.fixed}
+                    className="col-4"
+                  />
+                );
+              })}
             </div>
           </div>
         </div>

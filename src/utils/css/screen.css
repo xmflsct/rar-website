@@ -60,19 +60,24 @@ a:active {
 /* Components - Sidebar
 /* ---------------------------------------------------------- */
 
-.sidebar {
+.sidebar > ul {
     list-style: none;
-    padding-left: 15px;
+    padding-left: 10px;
+}
+
+.site-wrapper:not(.index) .sidebar {
+    position: sticky;
+    top: 1.5vw;
 }
 
 .sidebar li {
     padding: 5px 0;
 }
 
-.sidebar .top-nav img {
+.sidebar img {
     width: 30px;
     height: 30px;
-    margin-right: 5px;
+    margin-right: 10px;
 }
 
 .sidebar a {
@@ -89,7 +94,44 @@ a:active {
 
 .sidebar .sub-nav {
     font-size: 0.9em;
-    padding-inline-start: 35px;
+    padding-inline-start: 40px;
+}
+
+.sidebar .opening-hours {
+    padding-top: 25px;
+}
+
+.sidebar .opening-hours img {
+    float: left;
+}
+
+.sidebar .opening-hours .opening-hours-details {
+    padding-left: 40px;
+}
+
+.sidebar .opening-hours .opening-hours-details span.shop-badge {
+    padding: 8px 12px;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+    font-weight: 400;
+}
+
+.sidebar .opening-hours .opening-hours-details span.shop-open {
+    background: rgb(var(--color-matcha))
+}
+
+.sidebar .opening-hours .opening-hours-details span.shop-close {
+    background: rgb(var(--color-shop-close))
+}
+
+.sidebar .opening-hours .opening-hours-details span.shop-open-soon,
+.sidebar .opening-hours .opening-hours-details span.shop-last-order {
+    background: rgb(var(--color-shop-soon))
+}
+
+.sidebar .opening-hours .opening-hours-details p {
+    margin-top: .8em;
 }
 
 /* Page - Index
@@ -109,6 +151,17 @@ a:active {
 
 .site-wrapper.index .store-info p {
     font-size: 1em;
+}
+
+/* Page - All pages except index
+/* ---------------------------------------------------------- */
+
+.site-main .sub-heading {
+    background: rgb(var(--color-bg-light));
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 /* Page - Cake & Hightea

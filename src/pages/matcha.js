@@ -2,8 +2,8 @@ import React from "react";
 import { useStaticQuery, graphql } from "gatsby";
 import Img from "gatsby-image";
 import { Link } from "gatsby";
-import { FaCircle } from 'react-icons/fa';
-import { FaRegCircle } from 'react-icons/fa';
+import { FaCircle } from "react-icons/fa";
+import { FaRegCircle } from "react-icons/fa";
 
 import Header from "../components/header";
 import Sidebar from "../components/sidebar";
@@ -26,9 +26,9 @@ const Matcha = ({ location }) => {
         }
       }
     }
-  `)
+  `);
   return (
-    <div className="site-wrapper shop-info">
+    <div className="site-wrapper matcha">
       <Header />
       <main id="site-main" className="site-main transition-fade">
         <div className="row">
@@ -36,7 +36,7 @@ const Matcha = ({ location }) => {
             <Sidebar location={location} />
           </div>
           <div className="col-9">
-            <h3 className="mb-3" id="matcha-lovers">
+            <h3 className="sub-heading mb-3" id="matcha-lovers">
               We are Matcha Lovers
             </h3>
             <p style={{ color: "rgb(80, 175, 19)" }}>
@@ -69,7 +69,7 @@ const Matcha = ({ location }) => {
               className="mb-5"
             />
 
-            <h3 className="mb-3" id="what-is-matcha">
+            <h3 className="sub-heading mb-3" id="what-is-matcha">
               What is Matcha?
             </h3>
             <Img
@@ -83,12 +83,12 @@ const Matcha = ({ location }) => {
               ensure that it retains its high nutritional value.
             </p>
 
-            <h3 className="mt-5 mb-3" id="how-is-matcha-made">
+            <h3 className="sub-heading mt-4 mb-3" id="how-is-matcha-made">
               How is Matcha made?
             </h3>
             <Img fluid={data.matcha.nodes[4].childImageSharp.fluid} />
 
-            <h3 className="mt-5 mb-3" id="our-matcha-powder">
+            <h3 className="sub-heading mt-4 mb-3" id="our-matcha-powder">
               Our Matcha Powder
             </h3>
             <p>In 2017, we launched our own matcha powder.</p>
@@ -121,23 +121,43 @@ const Matcha = ({ location }) => {
               <tbody>
                 <tr>
                   <th scope="row">Colour Brightness:</th>
-                  <td><FaCircle /><FaCircle /><FaCircle /></td>
+                  <td>
+                    <FaCircle />
+                    <FaCircle />
+                    <FaCircle />
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">Colour Saturation:</th>
-                  <td><FaCircle /><FaCircle /><FaCircle /></td>
+                  <td>
+                    <FaCircle />
+                    <FaCircle />
+                    <FaCircle />
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">Sweetness:</th>
-                  <td><FaCircle /><FaCircle /><FaCircle /></td>
+                  <td>
+                    <FaCircle />
+                    <FaCircle />
+                    <FaCircle />
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">Grassiness:</th>
-                  <td><FaCircle /><FaRegCircle /><FaRegCircle /></td>
+                  <td>
+                    <FaCircle />
+                    <FaRegCircle />
+                    <FaRegCircle />
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">Strength:</th>
-                  <td><FaCircle /><FaCircle /><FaRegCircle /></td>
+                  <td>
+                    <FaCircle />
+                    <FaCircle />
+                    <FaRegCircle />
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -157,28 +177,48 @@ const Matcha = ({ location }) => {
               <tbody>
                 <tr>
                   <th scope="row">Colour Brightness:</th>
-                  <td><FaCircle /><FaCircle /><FaRegCircle /></td>
+                  <td>
+                    <FaCircle />
+                    <FaCircle />
+                    <FaRegCircle />
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">Colour Saturation:</th>
-                  <td><FaCircle /><FaCircle /><FaRegCircle /></td>
+                  <td>
+                    <FaCircle />
+                    <FaCircle />
+                    <FaRegCircle />
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">Sweetness:</th>
-                  <td><FaCircle /><FaRegCircle /><FaRegCircle /></td>
+                  <td>
+                    <FaCircle />
+                    <FaRegCircle />
+                    <FaRegCircle />
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">Grassiness:</th>
-                  <td><FaCircle /><FaCircle /><FaRegCircle /></td>
+                  <td>
+                    <FaCircle />
+                    <FaCircle />
+                    <FaRegCircle />
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">Strength:</th>
-                  <td><FaCircle /><FaCircle /><FaRegCircle /></td>
+                  <td>
+                    <FaCircle />
+                    <FaCircle />
+                    <FaRegCircle />
+                  </td>
                 </tr>
               </tbody>
             </table>
 
-            <h3 className="mt-5 mb-3" id="matcha-workshop">
+            <h3 className="sub-heading mt-4 mb-3" id="matcha-workshop">
               Our Matcha Ceremony Workshop
             </h3>
             <p>

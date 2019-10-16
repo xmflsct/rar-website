@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 
 import Img from "gatsby-image";
 
@@ -17,23 +17,15 @@ const CakeList = ({ node }) => {
         }}
       />
       <div className="row mt-2 no-gutters">
-        <h6 className="col">
-          {node.frontmatter.cake_hightea.name}
-        </h6>
+        <h6 className="col">{node.frontmatter.cake_hightea.name}</h6>
         <span className="col-auto price">
           {node.frontmatter.cake_hightea.price
             ? node.frontmatter.cake_hightea.price.piece
               ? node.frontmatter.cake_hightea.price.whole
-                ? currency(
-                    node.frontmatter.cake_hightea.price.piece
-                  ) +
+                ? currency(node.frontmatter.cake_hightea.price.piece) +
                   "/" +
-                  currency(
-                    node.frontmatter.cake_hightea.price.whole
-                  )
-                : currency(
-                    node.frontmatter.cake_hightea.price.piece
-                  )
+                  currency(node.frontmatter.cake_hightea.price.whole)
+                : currency(node.frontmatter.cake_hightea.price.piece)
               : node.frontmatter.cake_hightea.price.whole
               ? currency(node.frontmatter.cake_hightea.price.whole)
               : ""
@@ -53,7 +45,7 @@ const CakeList = ({ node }) => {
         ""
       )}
     </div>
-  )
-}
+  );
+};
 
-export default CakeList
+export default CakeList;

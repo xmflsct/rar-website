@@ -4,7 +4,7 @@ import { useStaticQuery, graphql } from "gatsby";
 import Header from "../../components/header";
 import Sidebar from "../../components/sidebar";
 import Footer from "../../components/footer";
-import CakeList from "../../components/cake-list";
+import CakeList from "../../components/cake-hightea/cake-list";
 
 const BirthdayCake = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -167,7 +167,7 @@ const BirthdayCake = ({ location }) => {
     }
   `);
   return (
-    <div className="site-wrapper cake-hightea">
+    <div className="site-wrapper cake-hightea birthday-cake">
       <Header />
       <main id="site-main" className="site-main transition-fade">
         <div className="row">
@@ -175,7 +175,7 @@ const BirthdayCake = ({ location }) => {
             <Sidebar location={location} />
           </div>
           <div className="col-9">
-            <h3 className="mb-3">Birthday Cake</h3>
+            <h3 className="sub-heading mb-3">Birthday Cake</h3>
 
             <p>
               Our birthday cake is made with soft chiffon cake with fresh cream,
@@ -193,7 +193,9 @@ const BirthdayCake = ({ location }) => {
               message short).
             </p>
 
-            <h4 className="mt-5">A. 6” Cakes (for 2-4 people) € 19,-</h4>
+            <h4 className="sub-heading mt-4">
+              A. 6” Cakes (for 2-4 people) € 19,-
+            </h4>
             <p>Vanilla Chiffon base. (Cacao/Matcha Base + € 2,-)</p>
             <div className="row">
               {data.cakeA.edges.map(({ node }) => (
@@ -201,7 +203,9 @@ const BirthdayCake = ({ location }) => {
               ))}
             </div>
 
-            <h4 className="mt-5">B. 8” Cakes (for 6-8 people) € 26,-</h4>
+            <h4 className="sub-heading mt-4">
+              B. 8” Cakes (for 6-8 people) € 26,-
+            </h4>
             <p>Vanilla Chiffon base. (Cacao/Matcha Base + € 2,-)</p>
             <div className="row">
               {data.cakeB.edges.map(({ node }) => (
@@ -209,7 +213,9 @@ const BirthdayCake = ({ location }) => {
               ))}
             </div>
 
-            <h4 className="mt-5">C. 10” Cakes (for 10-12 people) € 33,-</h4>
+            <h4 className="sub-heading mt-4">
+              C. 10” Cakes (for 10-12 people) € 33,-
+            </h4>
             <p>Vanilla Chiffon base. (Cacao/Matcha Base + € 2,-)</p>
             <div className="row">
               {data.cakeC.edges.map(({ node }) => (
@@ -217,7 +223,7 @@ const BirthdayCake = ({ location }) => {
               ))}
             </div>
 
-            <h4 className="mt-5">
+            <h4 className="sub-heading mt-4">
               D. Flower Deco High Cakes (for a small party) € 45,-
             </h4>
             <p>
@@ -239,7 +245,7 @@ const BirthdayCake = ({ location }) => {
               ))}
             </div>
 
-            <h4 className="mt-5">E. Celebration Cakes</h4>
+            <h4 className="sub-heading mt-4">E. Celebration Cakes</h4>
             <div className="row">
               {data.cakeE.edges.map(({ node }) => (
                 <CakeList node={node} />

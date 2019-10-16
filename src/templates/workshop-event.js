@@ -9,7 +9,10 @@ import Sidebar from "../components/sidebar";
 class ProjectTemplate extends React.Component {
   render() {
     const post = this.props.data.markdownRemark;
-    const localDate = new Date(post.frontmatter.date).toLocaleDateString('en-UK', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })
+    const localDate = new Date(post.frontmatter.date).toLocaleDateString(
+      "en-UK",
+      { weekday: "long", year: "numeric", month: "short", day: "numeric" }
+    );
 
     return (
       <Layout

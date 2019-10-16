@@ -6,7 +6,7 @@ import { Link } from "gatsby";
 import Header from "../../components/header";
 import Sidebar from "../../components/sidebar";
 import Footer from "../../components/footer";
-import CakeList from "../../components/cake-list";
+import CakeList from "../../components/cake-hightea/cake-list";
 
 const SignatureCakeRoll = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -53,7 +53,7 @@ const SignatureCakeRoll = ({ location }) => {
     }
   `);
   return (
-    <div className="site-wrapper cake-hightea">
+    <div className="site-wrapper cake-hightea signature-cake-roll">
       <Header />
       <main id="site-main" className="site-main transition-fade">
         <div className="row">
@@ -63,7 +63,7 @@ const SignatureCakeRoll = ({ location }) => {
           <div className="col-9">
             <Img fluid={data.image1.childImageSharp.fluid} />
 
-            <h3 className="mb-3">Signature Cake Rolls</h3>
+            <h3 className="sub-heading mb-3">Signature Cake Rolls</h3>
 
             <p>
               Our cake rolls are fluffy and light with low sugar. We use natural
