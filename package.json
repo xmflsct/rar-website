@@ -9,7 +9,6 @@
     "gatsby-image": "^2.2.24",
     "gatsby-plugin-google-analytics": "^2.1.20",
     "gatsby-plugin-manifest": "^2.2.20",
-    "gatsby-plugin-offline": "^3.0.11",
     "gatsby-plugin-postcss": "^2.1.10",
     "gatsby-plugin-purgecss": "^4.0.1",
     "gatsby-plugin-react-helmet": "^3.1.10",
@@ -29,7 +28,6 @@
     "react-helmet": "^5.2.1",
     "react-icons": "^3.7.0",
     "react-bootstrap": "^1.0.0-beta.14",
-    "typeface-quicksand": "^0.0.71",
     "smooth-scroll": "^16.1.0"
   },
   "devDependencies": {
@@ -44,13 +42,6 @@
     "> 2%"
   ],
   "homepage": "https://roundandround.github.io",
-  "keywords": [
-    "gatsby",
-    "ghost",
-    "gallery",
-    "blog",
-    "starter"
-  ],
   "license": "MIT",
   "main": "n/a",
   "repository": {
@@ -60,8 +51,6 @@
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
-    "start": "npm run develop",
-    "serve": "gatsby serve",
     "deploy": "gatsby build && yarn run gh-pages -d public -b master -u 'Zhiyuan Zheng <me@xmflsct.com>' -r https://${githubPAT}@github.com/xmflsct/roundandround.github.io.git"
   }
 }

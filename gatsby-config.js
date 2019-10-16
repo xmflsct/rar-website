@@ -75,15 +75,15 @@ module.exports = {
       resolve: `gatsby-plugin-purgecss`,
       options: {
         // printRejected: true,
-        develop: true,
-        whitelistPatternsChildren: [/(accordion)/, /(collapse)/],
+        // develop: true,
+        whitelistPatternsChildren: [/(accordion)/, /(collapse)/, /(show)/],
       },
     },
     {
       resolve: `gatsby-plugin-google-fonts`,
       options: {
         fonts: [
-          `Quicksand\:300,400`
+          `Quicksand\:300,400,500`
         ],
       },
     },
@@ -106,7 +106,6 @@ module.exports = {
         icon: `static/favicon.png`,
       },
     },
-    `gatsby-plugin-offline`,
     `gatsby-plugin-react-helmet`,
   ],
 }

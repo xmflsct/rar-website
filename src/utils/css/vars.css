@@ -13,10 +13,10 @@
     /* Fonts */
     --font-sans-serif: 'Quicksand', sans-serif;
     --font-serif: Georgia, Times, serif;
-    --font-light: 100;
+    --font-light: 300;
     --font-normal: 400;
-    --font-bold: 700;
-    --font-heavy: 800;
+    --font-medium: 500;
+    --font-heavy: 700;
 
     /* Breakpoints */
     --xlarge: 1680px;
@@ -24,9 +24,4 @@
     --medium: 980px;
     --small: 740px;
     --xsmall: 480px;
-
-    /* Sizes */
-    --height: 4rem;
-    --margin: 2rem;
-    --radius: 0.5rem;
 }
