@@ -1,9 +1,7 @@
 import React from "react";
 import { useStaticQuery, graphql } from "gatsby";
 
-import Header from "../../components/header";
-import Sidebar from "../../components/sidebar";
-import Footer from "../../components/footer";
+import Layout from "../../components/layout";
 import CakeList from "../../components/cake-hightea/cake-list";
 
 const PartyWeddingTower = ({ location }) => {
@@ -40,26 +38,15 @@ const PartyWeddingTower = ({ location }) => {
     }
   `);
   return (
-    <div className="site-wrapper cake-hightea other-sweets">
-      <Header />
-      <main id="site-main" className="site-main transition-fade">
-        <div className="row">
-          <div className="col-3">
-            <Sidebar location={location} />
-          </div>
-          <div className="col-9">
-            <h3 className="sub-heading mb-3">Other Sweets</h3>
+    <Layout location={location} name="other-sweets">
+      <h3 className="sub-heading mb-3">Other Sweets</h3>
 
-            <div className="row">
-              {data.allMarkdownRemark.edges.map(({ node }) => (
-                <CakeList node={node} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
+      <div className="row">
+        {data.allMarkdownRemark.edges.map(({ node }) => (
+          <CakeList node={node} />
+        ))}
+      </div>
+    </Layout>
   );
 };
 

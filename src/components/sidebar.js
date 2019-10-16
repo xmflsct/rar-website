@@ -80,7 +80,7 @@ const Sidebar = ({ location }) => {
           >
             Cake & Hightea
           </Link>
-          {location.pathname.indexOf("cake-hightea") > -1 && (
+          {location.pathname.indexOf("/cake-hightea") > -1 && (
             <ul className="sub-nav" role="menu">
               <li>
                 <Link
@@ -138,7 +138,7 @@ const Sidebar = ({ location }) => {
           <Link to={`/matcha`} activeClassName="active">
             Matcha
           </Link>
-          {location.pathname.indexOf("matcha") > -1 && (
+          {location.pathname.indexOf("/matcha") > -1 && (
             <ul className="sub-nav" role="menu">
               <li>
                 <a href="#what-is-matcha">What is Matcha?</a>
@@ -194,7 +194,7 @@ const Sidebar = ({ location }) => {
           <Link to={`/shop-info`} activeClassName="active">
             Shop Info
           </Link>
-          {location.pathname.indexOf("shop-info") > -1 && (
+          {location.pathname.indexOf("/shop-info") > -1 && (
             <ul className="sub-nav" role="menu">
               <li>
                 <a href="#menu">Menu</a>

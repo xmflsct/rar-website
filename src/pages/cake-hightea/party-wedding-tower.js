@@ -2,9 +2,7 @@ import React from "react";
 import { useStaticQuery, graphql } from "gatsby";
 import { Link } from "gatsby";
 
-import Header from "../../components/header";
-import Sidebar from "../../components/sidebar";
-import Footer from "../../components/footer";
+import Layout from "../../components/layout";
 import CakeList from "../../components/cake-hightea/cake-list";
 
 const PartyWeddingTower = ({ location }) => {
@@ -43,33 +41,22 @@ const PartyWeddingTower = ({ location }) => {
     }
   `);
   return (
-    <div className="site-wrapper cake-hightea party-wedding-tower">
-      <Header />
-      <main id="site-main" className="site-main transition-fade">
-        <div className="row">
-          <div className="col-3">
-            <Sidebar location={location} />
-          </div>
-          <div className="col-9">
-            <h3 className="sub-heading mb-3">Party/Wedding Tower</h3>
+    <Layout location={location} name="party-wedding-tower">
+      <h3 className="sub-heading mb-3">Party/Wedding Tower</h3>
 
-            <p>
-              How to order a cake roll tower for your wedding or party?
-              <br />
-              Please <Link to="/shop-info#contact">contact us</Link> for
-              possibilities.
-            </p>
+      <p>
+        How to order a cake roll tower for your wedding or party?
+        <br />
+        Please <Link to="/shop-info#contact">contact us</Link> for
+        possibilities.
+      </p>
 
-            <div className="row">
-              {data.allMarkdownRemark.edges.map(({ node }) => (
-                <CakeList node={node} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
+      <div className="row">
+        {data.allMarkdownRemark.edges.map(({ node }) => (
+          <CakeList node={node} />
+        ))}
+      </div>
+    </Layout>
   );
 };
 
