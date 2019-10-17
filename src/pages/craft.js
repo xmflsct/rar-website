@@ -14,7 +14,7 @@ const OurStory = ({ location }) => {
       ) {
         nodes {
           childImageSharp {
-            fluid {
+            fluid(maxWidth: 250) {
               ...GatsbyImageSharpFluid_withWebp
             }
           }

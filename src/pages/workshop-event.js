@@ -25,7 +25,7 @@ const WorkshopEvent = ({ location }) => {
               description
               thumbnail {
                 childImageSharp {
-                  fluid {
+                  fluid(maxWidth: 300) {
                     ...GatsbyImageSharpFluid_withWebp
                   }
                 }

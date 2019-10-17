@@ -10,7 +10,7 @@ const Header = () => {
     {
       file(relativePath: { regex: "/(header/logo.png)/" }) {
         childImageSharp {
-          fluid {
+          fluid(maxWidth: 800) {
             ...GatsbyImageSharpFluid_withWebp_noBase64
           }
         }

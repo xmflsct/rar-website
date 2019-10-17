@@ -12,7 +12,7 @@ const ShopInfo = ({ location }) => {
     {
       main: file(relativePath: { regex: "/(shop-info/main.jpg)/" }) {
         childImageSharp {
-          fluid {
+          fluid(maxWidth: 700) {
             ...GatsbyImageSharpFluid_withWebp_noBase64
           }
         }

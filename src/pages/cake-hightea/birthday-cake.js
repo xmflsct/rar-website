@@ -30,7 +30,7 @@ const BirthdayCake = ({ location }) => {
               }
               thumbnail {
                 childImageSharp {
-                  fluid {
+                  fluid(maxWidth: 250) {
                     ...GatsbyImageSharpFluid_withWebp
                   }
                 }
@@ -61,7 +61,7 @@ const BirthdayCake = ({ location }) => {
               }
               thumbnail {
                 childImageSharp {
-                  fluid {
+                  fluid(maxWidth: 250) {
                     ...GatsbyImageSharpFluid_withWebp
                   }
                 }
@@ -92,7 +92,7 @@ const BirthdayCake = ({ location }) => {
               }
               thumbnail {
                 childImageSharp {
-                  fluid {
+                  fluid(maxWidth: 250) {
                     ...GatsbyImageSharpFluid_withWebp
                   }
                 }
@@ -123,7 +123,7 @@ const BirthdayCake = ({ location }) => {
               }
               thumbnail {
                 childImageSharp {
-                  fluid {
+                  fluid(maxWidth: 250) {
                     ...GatsbyImageSharpFluid_withWebp
                   }
                 }
@@ -154,7 +154,7 @@ const BirthdayCake = ({ location }) => {
               }
               thumbnail {
                 childImageSharp {
-                  fluid {
+                  fluid(maxWidth: 250) {
                     ...GatsbyImageSharpFluid_withWebp
                   }
                 }

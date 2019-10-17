@@ -13,7 +13,7 @@ const Index = ({ location }) => {
     {
       main: file(relativePath: { regex: "/(index/main.png)/" }) {
         childImageSharp {
-          fluid {
+          fluid(maxWidth: 700) {
             ...GatsbyImageSharpFluid_withWebp_noBase64
           }
         }
@@ -40,7 +40,7 @@ const Index = ({ location }) => {
         edges {
           node {
             childImageSharp {
-              fluid {
+              fluid(maxWidth: 920) {
                 ...GatsbyImageSharpFluid_withWebp
               }
             }
@@ -49,7 +49,7 @@ const Index = ({ location }) => {
       }
       story: file(relativePath: { regex: "/(index/story.jpg)/" }) {
         childImageSharp {
-          fluid {
+          fluid(maxWidth: 450) {
             ...GatsbyImageSharpFluid_withWebp_noBase64
           }
         }

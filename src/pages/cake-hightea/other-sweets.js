@@ -27,7 +27,7 @@ const PartyWeddingTower = ({ location }) => {
               }
               thumbnail {
                 childImageSharp {
-                  fluid {
+                  fluid(maxWidth: 250) {
                     ...GatsbyImageSharpFluid_withWebp
                   }
                 }

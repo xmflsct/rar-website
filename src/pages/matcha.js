@@ -17,7 +17,7 @@ const Matcha = ({ location }) => {
       ) {
         nodes {
           childImageSharp {
-            fluid {
+            fluid(maxWidth: 700) {
               ...GatsbyImageSharpFluid_withWebp
             }
           }

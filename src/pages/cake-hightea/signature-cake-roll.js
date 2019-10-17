@@ -14,7 +14,7 @@ const SignatureCakeRoll = ({ location }) => {
         relativePath: { regex: "/(cake-hightea/signature-cake-roll/01.jpg)/" }
       ) {
         childImageSharp {
-          fluid {
+          fluid(maxWidth: 700) {
             ...GatsbyImageSharpFluid_withWebp
           }
         }
@@ -40,7 +40,7 @@ const SignatureCakeRoll = ({ location }) => {
               }
               thumbnail {
                 childImageSharp {
-                  fluid {
+                  fluid(maxWidth: 250) {
                     ...GatsbyImageSharpFluid_withWebp
                   }
                 }

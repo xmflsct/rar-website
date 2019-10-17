@@ -36,7 +36,7 @@ export const pageQuery = graphql`
   query {
     image: file(relativePath: { regex: "/(404.jpg)/" }) {
       childImageSharp {
-        fluid(maxWidth: 1280) {
+        fluid(maxWidth: 920) {
           ...GatsbyImageSharpFluid_withWebp
         }
       }
