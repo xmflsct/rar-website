@@ -107,7 +107,7 @@ const Index = ({ location }) => {
           </div>
         </div>
 
-        <h3 className="text-center mt-4 mb-4">
+        <h3 className="text-center mt-4 mt-lg-0 mb-4">
           We are Matcha specialists, Cake roll lovers & Culture explorers.
         </h3>
 
