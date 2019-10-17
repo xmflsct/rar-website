@@ -4,8 +4,6 @@ import Header from "../components/header";
 import Sidebar from "../components/sidebar";
 import Footer from "../components/footer";
 
-import "../utils/css/screen.css";
-
 const Layout = props => {
   const [toggleNav, setToggleNav] = React.useState(false)
 
