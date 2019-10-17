@@ -45,8 +45,8 @@ const PartyWeddingTower = ({ location }) => {
       <h3 className="sub-heading mb-3">Other Sweets</h3>
 
       <div className="row">
-        {data.allMarkdownRemark.edges.map(({ node }) => (
-          <CakeList node={node} />
+        {data.allMarkdownRemark.edges.map(({ node }, index) => (
+          <CakeList node={node} key={index} />
         ))}
       </div>
     </Layout>

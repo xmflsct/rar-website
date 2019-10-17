@@ -55,8 +55,8 @@ const WorkshopEvent = ({ location }) => {
             return false;
           }
         })
-        .map(({ node }) => (
-          <div className="row mb-4">
+        .map(({ node }, index) => (
+          <div className="row mb-4" key={index}>
             <div className="col-5">
               <Img
                 fluid={node.frontmatter.thumbnail.childImageSharp.fluid}
@@ -113,8 +113,8 @@ const WorkshopEvent = ({ location }) => {
             return false;
           }
         })
-        .map(({ node }) => (
-          <div className="row mb-4">
+        .map(({ node }, index) => (
+          <div className="row mb-4" key={index}>
             <div className="col-5">
               <Img
                 fluid={node.frontmatter.thumbnail.childImageSharp.fluid}

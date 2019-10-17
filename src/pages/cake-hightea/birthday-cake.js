@@ -189,16 +189,16 @@ const BirthdayCake = ({ location }) => {
       <h4 className="sub-heading mt-4">A. 6” Cakes (for 2-4 people) € 19,-</h4>
       <p>Vanilla Chiffon base. (Cacao/Matcha Base + € 2,-)</p>
       <div className="row">
-        {data.cakeA.edges.map(({ node }) => (
-          <CakeList node={node} />
+        {data.cakeA.edges.map(({ node }, index) => (
+          <CakeList node={node} key={index} />
         ))}
       </div>
 
       <h4 className="sub-heading mt-4">B. 8” Cakes (for 6-8 people) € 26,-</h4>
       <p>Vanilla Chiffon base. (Cacao/Matcha Base + € 2,-)</p>
       <div className="row">
-        {data.cakeB.edges.map(({ node }) => (
-          <CakeList node={node} />
+        {data.cakeB.edges.map(({ node }, index) => (
+          <CakeList node={node} key={index} />
         ))}
       </div>
 
@@ -207,8 +207,8 @@ const BirthdayCake = ({ location }) => {
       </h4>
       <p>Vanilla Chiffon base. (Cacao/Matcha Base + € 2,-)</p>
       <div className="row">
-        {data.cakeC.edges.map(({ node }) => (
-          <CakeList node={node} />
+        {data.cakeC.edges.map(({ node }, index) => (
+          <CakeList node={node} key={index} />
         ))}
       </div>
 
@@ -229,15 +229,15 @@ const BirthdayCake = ({ location }) => {
         </i>
       </p>
       <div className="row">
-        {data.cakeD.edges.map(({ node }) => (
-          <CakeList node={node} />
+        {data.cakeD.edges.map(({ node }, index) => (
+          <CakeList node={node} key={index} />
         ))}
       </div>
 
       <h4 className="sub-heading mt-4">E. Celebration Cakes</h4>
       <div className="row">
-        {data.cakeE.edges.map(({ node }) => (
-          <CakeList node={node} />
+        {data.cakeE.edges.map(({ node }, index) => (
+          <CakeList node={node} key={index} />
         ))}
       </div>
     </Layout>
