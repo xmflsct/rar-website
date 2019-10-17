@@ -1,1 +1,1 @@
-import "../utils/css/screen.css";
+import "./src/css/screen.css";
