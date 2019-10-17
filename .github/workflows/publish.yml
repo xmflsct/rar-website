@@ -14,6 +14,8 @@ jobs:
         with:
           node-version: '12.x'
           registry-url: 'https://registry.npmjs.org'
+      - run: npm install -g gatsby-cli
+      - run: gatsby telemetry --disable
       - run: yarn
       - run: gatsby build
       - run: yarn run gh-pages -d public -b master -u 'Zhiyuan Zheng <me@xmflsct.com>' -r https://${{ secrets.PAT }}@github.com/xmflsct/roundandround.github.io.git -m 'Build of ${{ github.sha }}'
