@@ -71,7 +71,7 @@ const WorkshopEvent = ({ location }) => {
             <div className="col-8 col-md-7">
               <div className="row event-header">
                 <div
-                  className="col-2 date"
+                  className="col-md-2 date-desktop"
                   style={{
                     background: "url(" + data.date.publicURL + ") no-repeat",
                     backgroundSize: "contain"
@@ -90,14 +90,20 @@ const WorkshopEvent = ({ location }) => {
                     )}
                   </div>
                 </div>
-                <div className="col-10">
+                <div className="col-md-10">
                   <h4 style={{ lineHeight: "inherit" }}>
                     <Link to={node.fields.slug}>{node.frontmatter.title}</Link>
                   </h4>
+                  <div className="date-mobile">
+                    {new Date(node.frontmatter.date).toLocaleDateString(
+                      "en-UK",
+                      { month: "long", day: "2-digit" }
+                    )}
+                  </div>
                   {node.frontmatter.time}
                 </div>
               </div>
-              <p>{node.frontmatter.description}</p>
+              <p className="excerpt">{node.frontmatter.description}</p>
             </div>
           </div>
         ))}
@@ -115,7 +121,7 @@ const WorkshopEvent = ({ location }) => {
         })
         .map(({ node }, index) => (
           <div className="row mb-4" key={index}>
-            <div className="col-5">
+            <div className="col-4 col-md-5">
               <Img
                 fluid={node.frontmatter.thumbnail.childImageSharp.fluid}
                 style={{
@@ -126,10 +132,10 @@ const WorkshopEvent = ({ location }) => {
                 }}
               />
             </div>
-            <div className="col-7">
+            <div className="col-8 col-md-7">
               <div className="row event-header">
                 <div
-                  className="col-2 date"
+                  className="col-md-2 date-desktop"
                   style={{
                     background: "url(" + data.date.publicURL + ") no-repeat",
                     backgroundSize: "contain"
@@ -146,14 +152,20 @@ const WorkshopEvent = ({ location }) => {
                     })}
                   </div>
                 </div>
-                <div className="col-10">
+                <div className="col-md-10">
                   <h4 style={{ lineHeight: "inherit" }}>
                     <Link to={node.fields.slug}>{node.frontmatter.title}</Link>
                   </h4>
+                  <div className="date-mobile">
+                    {new Date(node.frontmatter.date).toLocaleDateString(
+                      "en-UK",
+                      { month: "long", day: "2-digit" }
+                    )}
+                  </div>
                   {node.frontmatter.time}
                 </div>
               </div>
-              <p>{node.frontmatter.description}</p>
+              <p className="excerpt">{node.frontmatter.description}</p>
             </div>
           </div>
         ))}
