@@ -9,8 +9,10 @@ import Sidebar from "../components/sidebar";
 import Footer from "../components/footer";
 import SEO from "../components/seo";
 
+import { ReactComponent as Socials } from "../../content/assets/pages/index/social.svg";
+
 const Index = ({ location }) => {
-  const [toggleNav, setToggleNav] = React.useState(false)
+  const [toggleNav, setToggleNav] = React.useState(false);
 
   const data = useStaticQuery(graphql`
     {
@@ -39,6 +41,7 @@ const Index = ({ location }) => {
       }
       carousel: allFile(
         filter: { relativeDirectory: { regex: "/(index/carousel)/" } }
+        sort: { order: ASC, fields: name }
       ) {
         edges {
           node {
@@ -75,7 +78,6 @@ const Index = ({ location }) => {
     }
   `);
   return (
-
     <div className={`site-wrapper index ${toggleNav ? `site-head-open` : ``}`}>
       <SEO title="Welcome" keywords={[`Round&Round`, `Rotterdam`, `matcha`]} />
 
@@ -127,16 +129,12 @@ const Index = ({ location }) => {
             <p>010 785 6545</p>
           </div>
           <div className="col-lg-4">
-            <img
-              src={data.social.publicURL}
-              alt={data.social.name}
-              className="social"
-            />
+            <Socials />
           </div>
         </div>
 
         <div className="row mt-4 mb-4">
-          <Carousel className="col-12 carousel">
+          <Carousel className="col-12 carousel" controls={false} fade={true}>
             {data.carousel.edges.map(({ node }, index) => (
               <Carousel.Item key={index}>
                 <Img fluid={node.childImageSharp.fluid} />
@@ -151,7 +149,8 @@ const Index = ({ location }) => {
             <p>
               Japanese Matcha tea is a finely ground powder of shade-grown green
               tea. Matcha is rich in antioxidants and vitamins. What we do here
-              in Round & Round...<br />
+              in Round & Round...
+              <br />
               <Link to="/our-story">Read more</Link>
             </p>
             <Img fluid={data.story.childImageSharp.fluid} />
@@ -162,10 +161,15 @@ const Index = ({ location }) => {
               {data.allInstaNode.edges.map(({ node }, index) => {
                 return (
                   <div className="col-4 px-1 px-lg-2 mb-3">
-                    <a href={"https://instagram.com/p/"+node.id} alt="Instagram post" target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={"https://instagram.com/p/" + node.id}
+                      alt="Instagram post"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Img
                         fluid={node.localFile.childImageSharp.fluid}
-                        style={{width: "100%", height: "100%"}}
+                        style={{ width: "100%", height: "100%" }}
                         key={index}
                       />
                     </a>

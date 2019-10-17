@@ -16,7 +16,7 @@ if (typeof window !== "undefined") {
 const Sidebar = () => {
   const data = useStaticQuery(graphql`
     {
-      home: file(relativePath: { regex: "/(sidebar/home.svg)/" }) {
+      index: file(relativePath: { regex: "/(sidebar/index.svg)/" }) {
         publicURL
         name
       }
@@ -61,8 +61,8 @@ const Sidebar = () => {
       <ul role="menu">
         <li className="top-nav" role="menuitem">
           <img
-            src={data.home.publicURL}
-            alt={"Link to " + data.home.name + "page"}
+            src={data.index.publicURL}
+            alt={"Link to " + data.index.name + "page"}
           />
           <Link to={`/`} activeClassName="active">
             Home
