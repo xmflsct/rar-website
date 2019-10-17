@@ -2,7 +2,7 @@ import React from "react";
 import { useStaticQuery, graphql } from "gatsby";
 import { Link } from "gatsby";
 
-import OpeningHours from "./sidebar/opening-hours.js";
+import OpeningHours from "./sidebar/opening-hours";
 
 if (typeof window !== "undefined") {
   // eslint-disable-next-line global-require
@@ -13,7 +13,7 @@ if (typeof window !== "undefined") {
   });
 }
 
-const Sidebar = ({ location }) => {
+const Sidebar = () => {
   const data = useStaticQuery(graphql`
     {
       home: file(relativePath: { regex: "/(sidebar/home.svg)/" }) {
@@ -80,55 +80,53 @@ const Sidebar = ({ location }) => {
           >
             Cake & Hightea
           </Link>
-          {location.pathname.indexOf("/cake-hightea") > -1 && (
-            <ul className="sub-nav" role="menu">
-              <li>
-                <Link
-                  to={`/cake-hightea/signature-cake-roll`}
-                  activeClassName="active"
-                >
-                  Signature Cake Roll
-                </Link>
-              </li>
-              <li>
-                <Link to={`/cake-hightea/round-cake`} activeClassName="active">
-                  Round Cake
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to={`/cake-hightea/birthday-cake`}
-                  activeClassName="active"
-                >
-                  Birthday Cake
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to={`/cake-hightea/forest-hightea`}
-                  activeClassName="active"
-                >
-                  Forest Hightea
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to={`/cake-hightea/party-wedding-tower`}
-                  activeClassName="active"
-                >
-                  Party/Wedding Tower
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to={`/cake-hightea/other-sweets`}
-                  activeClassName="active"
-                >
-                  Other Sweets
-                </Link>
-              </li>
-            </ul>
-          )}
+          <ul className="sub-nav cake-hightea" role="menu">
+            <li>
+              <Link
+                to={`/cake-hightea/signature-cake-roll`}
+                activeClassName="active"
+              >
+                Signature Cake Roll
+              </Link>
+            </li>
+            <li>
+              <Link to={`/cake-hightea/round-cake`} activeClassName="active">
+                Round Cake
+              </Link>
+            </li>
+            <li>
+              <Link
+                to={`/cake-hightea/birthday-cake`}
+                activeClassName="active"
+              >
+                Birthday Cake
+              </Link>
+            </li>
+            <li>
+              <Link
+                to={`/cake-hightea/forest-hightea`}
+                activeClassName="active"
+              >
+                Forest Hightea
+              </Link>
+            </li>
+            <li>
+              <Link
+                to={`/cake-hightea/party-wedding-tower`}
+                activeClassName="active"
+              >
+                Party/Wedding Tower
+              </Link>
+            </li>
+            <li>
+              <Link
+                to={`/cake-hightea/other-sweets`}
+                activeClassName="active"
+              >
+                Other Sweets
+              </Link>
+            </li>
+          </ul>
         </li>
         <li className="top-nav" role="menuitem">
           <img
@@ -138,22 +136,20 @@ const Sidebar = ({ location }) => {
           <Link to={`/matcha`} activeClassName="active">
             Matcha
           </Link>
-          {location.pathname.indexOf("/matcha") > -1 && (
-            <ul className="sub-nav" role="menu">
-              <li>
-                <a href="#what-is-matcha">What is Matcha?</a>
-              </li>
-              <li>
-                <a href="#how-is-matcha-made">How is Matcha made?</a>
-              </li>
-              <li>
-                <a href="#our-matcha-powder">Our Matcha Powder</a>
-              </li>
-              <li>
-                <a href="#matcha-workshop">Matcha Workshop</a>
-              </li>
-            </ul>
-          )}
+          <ul className="sub-nav matcha" role="menu">
+            <li>
+              <a href="#what-is-matcha">What is Matcha?</a>
+            </li>
+            <li>
+              <a href="#how-is-matcha-made">How is Matcha made?</a>
+            </li>
+            <li>
+              <a href="#our-matcha-powder">Our Matcha Powder</a>
+            </li>
+            <li>
+              <a href="#matcha-workshop">Matcha Workshop</a>
+            </li>
+          </ul>
         </li>
         <li className="top-nav" role="menuitem">
           <img
@@ -194,22 +190,20 @@ const Sidebar = ({ location }) => {
           <Link to={`/shop-info`} activeClassName="active">
             Shop Info
           </Link>
-          {location.pathname.indexOf("/shop-info") > -1 && (
-            <ul className="sub-nav" role="menu">
-              <li>
-                <a href="#menu">Menu</a>
-              </li>
-              <li>
-                <a href="#opening-hours">Opening Hours</a>
-              </li>
-              <li>
-                <a href="#contact">Contact</a>
-              </li>
-              <li>
-                <a href="#q-a">Q&A</a>
-              </li>
-            </ul>
-          )}
+          <ul className="sub-nav shop-info" role="menu">
+            <li>
+              <a href="#menu">Menu</a>
+            </li>
+            <li>
+              <a href="#opening-hours">Opening Hours</a>
+            </li>
+            <li>
+              <a href="#contact">Contact</a>
+            </li>
+            <li>
+              <a href="#q-a">Q&A</a>
+            </li>
+          </ul>
         </li>
         <li className="opening-hours" role="menuitem">
           <img

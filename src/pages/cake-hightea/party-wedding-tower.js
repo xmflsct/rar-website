@@ -42,7 +42,7 @@ const PartyWeddingTower = ({ location }) => {
     }
   `);
   return (
-    <Layout location={location} name="party-wedding-tower">
+    <Layout location={location} name="cake-hightea party-wedding-tower">
       <SEO title="Party/Wedding Tower" keywords={[`Round&Round`, `Rotterdam`]} />
 
       <h3 className="sub-heading mb-3">Party/Wedding Tower</h3>

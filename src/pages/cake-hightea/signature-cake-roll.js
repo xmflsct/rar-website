@@ -52,7 +52,7 @@ const SignatureCakeRoll = ({ location }) => {
     }
   `);
   return (
-    <Layout location={location} name="signature-cake-roll">
+    <Layout location={location} name="cake-hightea signature-cake-roll">
       <SEO title="Signature Cake Roll" keywords={[`Round&Round`, `Rotterdam`]} />
 
       <Img fluid={data.image1.childImageSharp.fluid} />

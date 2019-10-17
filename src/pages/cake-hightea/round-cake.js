@@ -40,7 +40,7 @@ const RoundCake = ({ location }) => {
     }
   `);
   return (
-    <Layout location={location} name="round-cake">
+    <Layout location={location} name="cake-hightea round-cake">
       <SEO title="Round Cake" keywords={[`Round&Round`, `Rotterdam`]} />
 
       <h3 className="sub-heading mb-3">Round Cake</h3>

@@ -3,14 +3,14 @@ import { useStaticQuery, graphql } from "gatsby";
 import { Link } from "gatsby";
 import Img from "gatsby-image";
 
-import "../utils/css/screen.css";
+import OpeningHours from "./sidebar/opening-hours";
 
 const Header = () => {
   const data = useStaticQuery(graphql`
     {
       file(relativePath: { regex: "/(header/logo.png)/" }) {
         childImageSharp {
-          fluid(maxWidth: 800) {
+          fluid(maxWidth: 300) {
             ...GatsbyImageSharpFluid_withWebp_noBase64
           }
         }
@@ -23,6 +23,9 @@ const Header = () => {
         <Link to={`/`}>
           <Img className="m-3" fluid={data.file.childImageSharp.fluid} />
         </Link>
+        <div className="opening-hours-details">
+          <OpeningHours />
+        </div>
       </div>
       <div className="header-center col-9">
         <p>A Little</p>

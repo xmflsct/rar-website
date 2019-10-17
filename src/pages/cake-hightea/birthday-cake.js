@@ -166,7 +166,7 @@ const BirthdayCake = ({ location }) => {
     }
   `);
   return (
-    <Layout location={location} name="birthday-cake">
+    <Layout location={location} name="cake-hightea birthday-cake">
       <SEO title="Birthday Cake" keywords={[`Round&Round`, `Rotterdam`]} />
 
       <h3 className="sub-heading mb-3">Birthday Cake</h3>

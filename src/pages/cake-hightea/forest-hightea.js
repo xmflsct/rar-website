@@ -27,7 +27,7 @@ const ForestHightea = ({ location }) => {
     }
   `);
   return (
-    <Layout location={location} name="forest-hightea">
+    <Layout location={location} name="cake-hightea forest-hightea">
       <SEO title="Forest Hightea" keywords={[`Round&Round`, `Rotterdam`]} />
 
       <h3 className="sub-heading mb-3" id="press">

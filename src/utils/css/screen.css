@@ -62,8 +62,37 @@ a:active {
     }
 }
 
+.opening-hours-details span.shop-badge {
+    padding: 8px 12px;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+    font-weight: var(--font-normal);
+}
+
+.opening-hours-details span.shop-open {
+    background: rgb(var(--color-matcha))
+}
+
+.opening-hours-details span.shop-close {
+    background: rgb(var(--color-shop-close))
+}
+
+.opening-hours-details span.shop-open-soon,
+.opening-hours-details span.shop-last-order {
+    background: rgb(var(--color-shop-soon))
+}
+
+.opening-hours-details p {
+    margin-top: .8em;
+}
+
 /* Components - Header
 /* ---------------------------------------------------------- */
+
+.header-left .opening-hours-details {
+    display: none;
+}
 
 .header-center {
     margin-top: 110px;
@@ -84,6 +113,14 @@ a:active {
         margin-left: auto;
         margin-right: auto;
     }
+
+    .header-left .opening-hours-details {
+        display: block;
+        text-align: center;
+        margin-top: -.5rem;
+        margin-bottom: 1rem;
+    }
+
     .header-center{
         display: none;
     }
@@ -107,7 +144,7 @@ a:active {
 
 .sidebar {
     background: white;
-    z-index: 9999;
+    z-index: 8888;
 }
 
 .sidebar > ul {
@@ -145,6 +182,24 @@ a:active {
 .sidebar .sub-nav {
     font-size: 0.9em;
     padding-inline-start: 40px;
+    display: none;
+}
+
+.site-wrapper.cake-hightea .sidebar .sub-nav.cake-hightea,
+.site-wrapper.matcha .sidebar .sub-nav.matcha,
+.site-wrapper.shop-info .sidebar .sub-nav.shop-info {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .sidebar .sub-nav.cake-hightea {
+        display: block;
+    }
+
+    .sidebar .sub-nav.matcha,
+    .sidebar .sub-nav.shop-info {
+        display: none!important;
+    }
 }
 
 .sidebar .opening-hours {
@@ -159,40 +214,15 @@ a:active {
     padding-left: 40px;
 }
 
-.sidebar .opening-hours .opening-hours-details span.shop-badge {
-    padding: 8px 12px;
-    text-align: center;
-    border-radius: 5px;
-    color: white;
-    font-weight: var(--font-normal);
-}
-
-.sidebar .opening-hours .opening-hours-details span.shop-open {
-    background: rgb(var(--color-matcha))
-}
-
-.sidebar .opening-hours .opening-hours-details span.shop-close {
-    background: rgb(var(--color-shop-close))
-}
-
-.sidebar .opening-hours .opening-hours-details span.shop-open-soon,
-.sidebar .opening-hours .opening-hours-details span.shop-last-order {
-    background: rgb(var(--color-shop-soon))
-}
-
-.sidebar .opening-hours .opening-hours-details p {
-    margin-top: .8em;
-}
-
 @media (max-width: 768px) {
     .sidebar {
         left: calc(-100vw - 15px);
         position: absolute!important;
         width: calc(100% + 6vw);
         height: 100vh;
-        top: -10px!important;
         padding: 0 6vw;
         transition: left 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        overflow: auto;
     }
 
     .site-wrapper.site-head-open .sidebar {
@@ -300,78 +330,9 @@ a:active {
     padding: 6vw;
 }
 
-@media (max-width: 850px) {
-    .site-head {
-        padding: 0;
-    }
+@media (max-width: 768px) {
     .nav-burger {
         display: block;
-    }
-    .site-head-container {
-        flex-direction: column;
-        justify-content: flex-start;
-        height: 40px;
-        background: rgb(var(--color-bg-light));
-        z-index: -1;
-        transition: all 0.4s ease-out;
-        overflow: hidden;
-    }
-    .site-head-left,
-    .site-head-right {
-        position: relative;
-        z-index: -1;
-        height: auto;
-        transition: height 0.2s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        transition-delay: 1s;
-    }
-    .site-head-left a,
-    .site-head-right a {
-        margin: 10px 0;
-        padding: 1px 0;
-        font-size: 2.6rem;
-        line-height: 1.15em;
-        font-weight: var(--font-light);
-        opacity: 0;
-        transition: transform 0.3s cubic-bezier(0.4, 0.01, 0.165, 0.99),
-        opacity 0.2s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        transform: scale(1.1) translateY(-25px);
-    }
-    .site-head-right a {
-        padding: 5px 0;
-        margin: 1px 0;
-        font-size: 2rem;
-    }
-    .nav {
-        width: 100%;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-start;
-        margin: 3.3vw 0 0 0;
-    }
-    .site-head li > ul {
-        position: relative;
-        padding: 10px 10px 0;
-    }
-    .site-head-left {
-        order: 2;
-        margin: 0;
-        width: 100%;
-    }
-    .site-head-center {
-        order: 1;
-        position: static;
-        z-index: auto;
-        display: flex;
-        justify-content: center;
-    }
-    .site-head-right {
-        order: 3;
-        width: 100%;
-        margin-top: 3vw;
-    }
-    .social-links {
-        flex-direction: column;
-        align-items: flex-start;
     }
 
     .site-head-open {
@@ -381,39 +342,4 @@ a:active {
         overflow: hidden;
         height: 100vh;
     }
-
-    .site-head-open .site-head-container {
-        height: 100vh;
-        transition: height 0.2s ease-in;
-    }
-
-    .site-head-open .site-head-left,
-    .site-head-open .site-head-right {
-        z-index: 9999;
-        height: auto;
-        transition: height 0.2s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-    }
-
-    .site-head-open .site-head-left a,
-    .site-head-open .site-head-right a {
-        opacity: 1;
-        transition: transform 0.6s cubic-bezier(0.4, 0.01, 0.165, 0.99),
-        opacity 0.9s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        transform: scale(1) translateY(0px);
-    }
-    .site-head-open .nav-current a {
-        border-bottom: rgb(var(--color-primary-light)) 2px solid;
-    }
-    .site-head-open .site-head-right a {
-        opacity: 0.5;
-    }
-    .site-head-open .site-foot {
-        display: block;
-        position: fixed;
-        z-index: 9999;
-        bottom: 0;
-        transition: transform 0.3s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        transform: translateY(-4vw);
-    }
-
 }
