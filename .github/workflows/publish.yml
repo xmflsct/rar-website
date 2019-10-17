@@ -1,9 +1,4 @@
 name: Publish roundandround.nl
-author: Zhiyuan Zheng
-
-branding:
-  icon: 'cpu'
-  color: 'gray-dark'
 
 on:
   push:
