@@ -1,6 +1,7 @@
 import React from "react";
 import { useStaticQuery, graphql } from "gatsby";
 import Img from "gatsby-image";
+import { Link } from "gatsby";
 import Carousel from "react-bootstrap/Carousel";
 
 import Header from "../components/header";
@@ -61,8 +62,8 @@ const Index = ({ location }) => {
           node {
             localFile {
               childImageSharp {
-                fixed(width: 150, height: 150) {
-                  ...GatsbyImageSharpFixed
+                fluid(maxWidth: 150) {
+                  ...GatsbyImageSharpFluid_withWebp
                 }
               }
             }
@@ -111,7 +112,7 @@ const Index = ({ location }) => {
         </h3>
 
         <div className="row store-info">
-          <div className="col-4">
+          <div className="col-lg-4">
             <img src={data.address.publicURL} alt={data.address.name} />
             <p>
               Hoogstraat 55A
@@ -119,13 +120,13 @@ const Index = ({ location }) => {
               3011PG Rotterdam
             </p>
           </div>
-          <div className="col-4">
+          <div className="col-lg-4">
             <img src={data.email.publicURL} alt={data.email.name} />
             <p>info@roundandround.nl</p>
             <img src={data.phone.publicURL} alt={data.phone.name} />
             <p>010 785 6545</p>
           </div>
-          <div className="col-4">
+          <div className="col-lg-4">
             <img
               src={data.social.publicURL}
               alt={data.social.name}
@@ -145,25 +146,30 @@ const Index = ({ location }) => {
         </div>
 
         <div className="row">
-          <div className="col-6">
+          <div className="col-lg-6 mb-3">
             <h3>We’re Matcha Lovers!</h3>
             <p>
               Japanese Matcha tea is a finely ground powder of shade-grown green
               tea. Matcha is rich in antioxidants and vitamins. What we do here
-              in Round & Round...
+              in Round & Round...<br />
+              <Link to="/our-story">Read more</Link>
             </p>
             <Img fluid={data.story.childImageSharp.fluid} />
           </div>
-          <div className="col-6">
+          <div className="col-lg-6">
             <h3>We’re on Instagram!</h3>
-            <div className="row">
+            <div className="row px-lg-2">
               {data.allInstaNode.edges.map(({ node }, index) => {
                 return (
-                  <Img
-                    fixed={node.localFile.childImageSharp.fixed}
-                    className="col-4"
-                    key={index}
-                  />
+                  <div className="col-4 px-1 px-lg-2 mb-3">
+                    <a href={"https://instagram.com/p/"+node.id} alt="Instagram post" target="_blank" rel="noopener noreferrer">
+                      <Img
+                        fluid={node.localFile.childImageSharp.fluid}
+                        style={{width: "100%", height: "100%"}}
+                        key={index}
+                      />
+                    </a>
+                  </div>
                 );
               })}
             </div>
