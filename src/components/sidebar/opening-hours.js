@@ -1,39 +1,7 @@
 import React from "react";
 import { useStaticQuery, graphql } from "gatsby";
 
-const OpeningHours = () => {
-  const data = useStaticQuery(graphql`
-    {
-      openingHours: allOpeningHoursJson(sort: { order: ASC, fields: day }) {
-        nodes {
-          day
-          open
-          hours {
-            almost_open {
-              hour
-              minute
-            }
-            open {
-              hour
-              minute
-            }
-            close {
-              hour
-              minute
-            }
-            last_order {
-              hour
-              minute
-            }
-          }
-        }
-      }
-      closedDates: dataJson {
-        start
-        end
-      }
-    }
-  `);
+function checkStatus(data) {
   if (
     Date.now() >= Date.parse(data.closedDates.start) &&
     Date.now() <= Date.parse(data.closedDates.end)
@@ -79,6 +47,44 @@ const OpeningHours = () => {
       return <span className="shop-badge shop-close">Closed for today</span>;
     }
   }
+}
+
+const OpeningHours = () => {
+  const data = useStaticQuery(graphql`
+    {
+      openingHours: allOpeningHoursJson(sort: { order: ASC, fields: day }) {
+        nodes {
+          day
+          open
+          hours {
+            almost_open {
+              hour
+              minute
+            }
+            open {
+              hour
+              minute
+            }
+            close {
+              hour
+              minute
+            }
+            last_order {
+              hour
+              minute
+            }
+          }
+        }
+      }
+      closedDates: dataJson {
+        start
+        end
+      }
+    }
+  `);
+  return (
+    <div>{checkStatus(data)}</div>
+  )
 };
 
 export default OpeningHours;
