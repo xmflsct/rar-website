@@ -3,6 +3,7 @@ import { useStaticQuery, graphql } from "gatsby";
 import Img from "gatsby-image";
 
 import Layout from "../components/layout";
+import SEO from "../components/seo";
 
 const OurStory = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -24,6 +25,8 @@ const OurStory = ({ location }) => {
   `);
   return (
     <Layout location={location} name="craft">
+      <SEO title="Craft" keywords={[`Round&Round`, `Rotterdam`, `craft`]} />
+
       <h3 className="sub-heading mb-3" id="selected">
         Selected by Round&Round
       </h3>

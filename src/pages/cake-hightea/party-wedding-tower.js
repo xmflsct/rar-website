@@ -3,6 +3,7 @@ import { useStaticQuery, graphql } from "gatsby";
 import { Link } from "gatsby";
 
 import Layout from "../../components/layout";
+import SEO from "../../components/seo";
 import CakeList from "../../components/cake-hightea/cake-list";
 
 const PartyWeddingTower = ({ location }) => {
@@ -42,6 +43,8 @@ const PartyWeddingTower = ({ location }) => {
   `);
   return (
     <Layout location={location} name="party-wedding-tower">
+      <SEO title="Party/Wedding Tower" keywords={[`Round&Round`, `Rotterdam`]} />
+
       <h3 className="sub-heading mb-3">Party/Wedding Tower</h3>
 
       <p>

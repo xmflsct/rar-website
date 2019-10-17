@@ -4,6 +4,7 @@ import Img from "gatsby-image";
 import { Link } from "gatsby";
 
 import Layout from "../../components/layout";
+import SEO from "../../components/seo";
 
 const ForestHightea = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -27,6 +28,8 @@ const ForestHightea = ({ location }) => {
   `);
   return (
     <Layout location={location} name="forest-hightea">
+      <SEO title="Forest Hightea" keywords={[`Round&Round`, `Rotterdam`]} />
+
       <h3 className="sub-heading mb-3" id="press">
         Forest Hightea (reservation required)
       </h3>

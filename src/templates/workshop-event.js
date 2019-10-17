@@ -3,6 +3,7 @@ import { graphql } from "gatsby";
 import Img from "gatsby-image";
 
 import Layout from "../components/layout";
+import SEO from "../components/seo";
 
 class ProjectTemplate extends React.Component {
   render() {
@@ -14,6 +15,8 @@ class ProjectTemplate extends React.Component {
 
     return (
       <Layout location={this.props.location} name={post.frontmatter.title}>
+        <SEO title={post.frontmatter.title} keywords={[`Round&Round`, `Workshop`, `Rotterdam`]} />
+
         <h3 className="mb-4">{post.frontmatter.title}</h3>
 
         <div className="row mb-4">

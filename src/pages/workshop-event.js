@@ -4,6 +4,7 @@ import Img from "gatsby-image";
 import { Link } from "gatsby";
 
 import Layout from "../components/layout";
+import SEO from "../components/seo";
 
 const WorkshopEvent = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -41,6 +42,8 @@ const WorkshopEvent = ({ location }) => {
   `);
   return (
     <Layout location={location} name="workshop-event">
+      <SEO title="Workshop & Event" keywords={[`Round&Round`, `Workshop`, `Rotterdam`]} />
+
       <h3 className="sub-heading mb-3" id="matcha-lovers">
         Upcoming
       </h3>

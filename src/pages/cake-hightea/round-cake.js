@@ -3,6 +3,7 @@ import { useStaticQuery, graphql } from "gatsby";
 import { Link } from "gatsby";
 
 import Layout from "../../components/layout";
+import SEO from "../../components/seo";
 import CakeList from "../../components/cake-hightea/cake-list";
 
 const RoundCake = ({ location }) => {
@@ -40,6 +41,8 @@ const RoundCake = ({ location }) => {
   `);
   return (
     <Layout location={location} name="round-cake">
+      <SEO title="Round Cake" keywords={[`Round&Round`, `Rotterdam`]} />
+
       <h3 className="sub-heading mb-3">Round Cake</h3>
 
       <p>

@@ -5,6 +5,7 @@ import { Link } from "gatsby";
 
 import Header from "../components/header";
 import Footer from "../components/footer";
+import SEO from "../components/seo";
 
 class PageNotFound extends React.Component {
   render() {
@@ -13,6 +14,7 @@ class PageNotFound extends React.Component {
     return (
       <div className="site-wrapper craft">
         <Header />
+        <SEO title="404: where is the cake" keywords={[`Round&Round`, `Rotterdam`, `404`]} />
         <main id="site-main" className="site-main transition-fade">
           <div className="row text-center">
             <h3 className="col-12">404: where is the cake</h3>

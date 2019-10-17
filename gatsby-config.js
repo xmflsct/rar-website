@@ -2,10 +2,9 @@ const siteConfig = require("./siteConfig")
 
 module.exports = {
   siteMetadata: {
-    title: siteConfig.name,
-    author: siteConfig.author,
+    title: siteConfig.title,
     description: siteConfig.description,
-    siteUrl: siteConfig.url,
+    url: siteConfig.url,
   },
   plugins: [
     `gatsby-transformer-json`,
@@ -75,8 +74,8 @@ module.exports = {
       resolve: `gatsby-plugin-purgecss`,
       options: {
         // printRejected: true,
-        // develop: true,
-        whitelistPatternsChildren: [/(accordion)/, /(collapse)/, /(show)/],
+        develop: true,
+        whitelistPatternsChildren: [/(accordion)/, /(collapse)/, /(collapsing)/, /(show)/, /(carousel)/],
       },
     },
     {

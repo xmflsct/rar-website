@@ -6,6 +6,7 @@ import { FaCircle } from "react-icons/fa";
 import { FaRegCircle } from "react-icons/fa";
 
 import Layout from "../components/layout";
+import SEO from "../components/seo";
 
 const Matcha = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -27,6 +28,8 @@ const Matcha = ({ location }) => {
   `);
   return (
     <Layout location={location} name="matcha">
+      <SEO title="Matcha" keywords={[`Round&Round`, `Rotterdam`, `matcha`]} />
+
       <h3 className="sub-heading mb-3" id="matcha-lovers">
         We are Matcha Lovers
       </h3>

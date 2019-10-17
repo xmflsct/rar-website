@@ -5,6 +5,7 @@ import Accordion from "react-bootstrap/Accordion";
 import Card from "react-bootstrap/Card";
 
 import Layout from "../components/layout";
+import SEO from "../components/seo";
 
 const ShopInfo = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -50,6 +51,8 @@ const ShopInfo = ({ location }) => {
   `);
   return (
     <Layout location={location} name="shop-info">
+      <SEO title="Shop Info" keywords={[`Round&Round`, `Rotterdam`]} />
+
       <Img fluid={data.main.childImageSharp.fluid} />
 
       <h3 className="sub-heading mt-4 mb-3" id="menu">

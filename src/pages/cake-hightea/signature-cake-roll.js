@@ -4,6 +4,7 @@ import Img from "gatsby-image";
 import { Link } from "gatsby";
 
 import Layout from "../../components/layout";
+import SEO from "../../components/seo";
 import CakeList from "../../components/cake-hightea/cake-list";
 
 const SignatureCakeRoll = ({ location }) => {
@@ -52,6 +53,8 @@ const SignatureCakeRoll = ({ location }) => {
   `);
   return (
     <Layout location={location} name="signature-cake-roll">
+      <SEO title="Signature Cake Roll" keywords={[`Round&Round`, `Rotterdam`]} />
+
       <Img fluid={data.image1.childImageSharp.fluid} />
 
       <h3 className="sub-heading mb-3">Signature Cake Rolls</h3>

@@ -6,6 +6,7 @@ import Carousel from "react-bootstrap/Carousel";
 import Header from "../components/header";
 import Sidebar from "../components/sidebar";
 import Footer from "../components/footer";
+import SEO from "../components/seo";
 
 const Index = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -71,7 +72,9 @@ const Index = ({ location }) => {
     }
   `);
   return (
+
     <div className="site-wrapper index">
+      <SEO title="Welcome" keywords={[`Round&Round`, `Rotterdam`, `matcha`]} />
       <Header />
       <main id="site-main" className="site-main transition-fade">
         <div className="row">
@@ -113,8 +116,8 @@ const Index = ({ location }) => {
 
         <div className="row mt-4 mb-4">
           <Carousel className="col-12 carousel">
-            {data.carousel.edges.map(({ node }) => (
-              <Carousel.Item>
+            {data.carousel.edges.map(({ node }, index) => (
+              <Carousel.Item key={index}>
                 <Img fluid={node.childImageSharp.fluid} />
               </Carousel.Item>
             ))}
@@ -134,11 +137,12 @@ const Index = ({ location }) => {
           <div className="col-6">
             <h3>We’re on Instagram!</h3>
             <div className="row">
-              {data.allInstaNode.edges.map(({ node }) => {
+              {data.allInstaNode.edges.map(({ node }, index) => {
                 return (
                   <Img
                     fixed={node.localFile.childImageSharp.fixed}
                     className="col-4"
+                    key={index}
                   />
                 );
               })}
