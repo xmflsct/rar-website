@@ -1,5 +1,5 @@
 {
-  "name": "Round&Round Rotterdam",
+  "name": "RoundRoundRotterdam",
   "private": true,
   "description": "A fork from https://github.com/xmflsct/xmflsct.github.io",
   "version": "1.0.0",
@@ -45,6 +45,9 @@
   "homepage": "https://roundandround.github.io",
   "license": "MIT",
   "main": "n/a",
+  "keywords": [
+    "Rotterdam"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xmflsct/roundandround.github.io.git"
