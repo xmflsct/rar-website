@@ -6,7 +6,7 @@ import { currency } from "./currency";
 
 const CakeList = ({ node }) => {
   return (
-    <div className="col-4">
+    <div className="col-12 col-md-4">
       <Img
         fluid={node.frontmatter.thumbnail.childImageSharp.fluid}
         style={{

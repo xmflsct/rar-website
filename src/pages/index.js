@@ -9,6 +9,8 @@ import Footer from "../components/footer";
 import SEO from "../components/seo";
 
 const Index = ({ location }) => {
+  const [toggleNav, setToggleNav] = React.useState(false)
+
   const data = useStaticQuery(graphql`
     {
       main: file(relativePath: { regex: "/(index/main.png)/" }) {
@@ -73,15 +75,33 @@ const Index = ({ location }) => {
   `);
   return (
 
-    <div className="site-wrapper index">
+    <div className={`site-wrapper index ${toggleNav ? `site-head-open` : ``}`}>
       <SEO title="Welcome" keywords={[`Round&Round`, `Rotterdam`, `matcha`]} />
+
+      <button
+        className="nav-burger"
+        href={`#`}
+        onClick={() => setToggleNav(!toggleNav)}
+      >
+        <div
+          className="hamburger hamburger--collapse"
+          aria-label="Menu"
+          role="button"
+          aria-controls="navigation"
+        >
+          <div className="hamburger-box">
+            <div className="hamburger-inner" />
+          </div>
+        </div>
+      </button>
+
       <Header />
       <main id="site-main" className="site-main transition-fade">
         <div className="row">
-          <div className="col-3">
+          <div className="col-lg-3">
             <Sidebar location={location} />
           </div>
-          <div className="col-9">
+          <div className="main-content col-lg-9 col-md-12">
             <Img fluid={data.main.childImageSharp.fluid} />
           </div>
         </div>

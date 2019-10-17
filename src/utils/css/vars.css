@@ -19,9 +19,8 @@
     --font-heavy: 700;
 
     /* Breakpoints */
-    --xlarge: 1680px;
-    --large: 1280px;
-    --medium: 980px;
-    --small: 740px;
-    --xsmall: 480px;
+    --xlarge: 1200px;
+    --large: 992px;
+    --medium: 768px;
+    --small: 576px;
 }

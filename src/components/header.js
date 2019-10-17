@@ -19,7 +19,7 @@ const Header = () => {
   `);
   return (
     <header className="header row">
-      <div className="header-left col-3">
+      <div className="header-left col-lg-3 col-md-12">
         <Link to={`/`}>
           <Img className="m-3" fluid={data.file.childImageSharp.fluid} />
         </Link>

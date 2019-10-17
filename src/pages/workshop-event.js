@@ -57,7 +57,7 @@ const WorkshopEvent = ({ location }) => {
         })
         .map(({ node }, index) => (
           <div className="row mb-4" key={index}>
-            <div className="col-5">
+            <div className="col-4 col-md-5">
               <Img
                 fluid={node.frontmatter.thumbnail.childImageSharp.fluid}
                 style={{
@@ -68,7 +68,7 @@ const WorkshopEvent = ({ location }) => {
                 }}
               />
             </div>
-            <div className="col-7">
+            <div className="col-8 col-md-7">
               <div className="row event-header">
                 <div
                   className="col-2 date"
