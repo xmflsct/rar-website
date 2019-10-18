@@ -1,4 +1,4 @@
-name: Publish roundandround.nl
+name: 'Publish roundandround.nl'
 
 on:
   push:
@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: xmflsct/action-publish-gatsby@v0.6
+      - uses: xmflsct/action-publish-gatsby@v1
         with:
-          publishBranch: "master"
+          publishBranch: 'master'
           token: ${{ secrets.PAT }}
-          name: "Zhiyuan Zheng"
-          email: "me@xmflsct.com"
+          name: 'Zhiyuan Zheng'
+          email: 'me@xmflsct.com'
