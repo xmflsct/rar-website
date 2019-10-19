@@ -64,6 +64,10 @@ a:active {
     border-radius: 100%;
 }
 
+button {
+    -webkit-appearance: none;
+}
+
 .site-wrapper {
     max-width: 920px;
     margin-left: auto;
