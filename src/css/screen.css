@@ -206,6 +206,7 @@ button {
 
 .site-wrapper.cake-hightea .sidebar .sub-nav.cake-hightea,
 .site-wrapper.matcha .sidebar .sub-nav.matcha,
+.site-wrapper.our-story .sidebar .sub-nav.our-story,
 .site-wrapper.shop-info .sidebar .sub-nav.shop-info {
     display: block;
 }
@@ -216,6 +217,7 @@ button {
     }
 
     .sidebar .sub-nav.matcha,
+    .sidebar .sub-nav.our-story,
     .sidebar .sub-nav.shop-info {
         display: none!important;
     }

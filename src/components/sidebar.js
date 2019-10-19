@@ -181,6 +181,14 @@ const Sidebar = () => {
           <Link to={`/our-story`} activeClassName="active">
             Our Story
           </Link>
+          <ul className="sub-nav our-story" role="menu">
+            <li>
+              <a href="#press">Press</a>
+            </li>
+            <li>
+              <a href="#story-of-our-journey">Story of our Journey</a>
+            </li>
+          </ul>
         </li>
         <li className="top-nav" role="menuitem">
           <img
