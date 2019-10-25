@@ -8,6 +8,7 @@ import Header from "../components/header";
 import Sidebar from "../components/sidebar";
 import Footer from "../components/footer";
 import SEO from "../components/seo";
+import Instagram from "../components/instagram";
 
 import { ReactComponent as Socials } from "../../content/assets/pages/index/social.svg";
 
@@ -57,21 +58,6 @@ const Index = ({ location }) => {
         childImageSharp {
           fluid(maxWidth: 450) {
             ...GatsbyImageSharpFluid_withWebp_noBase64
-          }
-        }
-      }
-      allInstaNode(limit: 9, sort: { order: DESC, fields: timestamp }) {
-        edges {
-          node {
-            localFile {
-              childImageSharp {
-                fluid(maxWidth: 150) {
-                  ...GatsbyImageSharpFluid_withWebp
-                }
-              }
-            }
-            likes
-            id
           }
         }
       }
@@ -157,26 +143,7 @@ const Index = ({ location }) => {
           </div>
           <div className="col-lg-6">
             <h3>We’re on Instagram!</h3>
-            <div className="row px-lg-2">
-              {data.allInstaNode.edges.map(({ node }, index) => {
-                return (
-                  <div className="col-4 px-1 px-lg-2 mb-3">
-                    <a
-                      href={"https://instagram.com/p/" + node.id}
-                      alt="Instagram post"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Img
-                        fluid={node.localFile.childImageSharp.fluid}
-                        style={{ width: "100%", height: "100%" }}
-                        key={index}
-                      />
-                    </a>
-                  </div>
-                );
-              })}
-            </div>
+            <Instagram />
           </div>
         </div>
       </main>

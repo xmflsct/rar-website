@@ -280,6 +280,10 @@ button {
     font-size: 1em;
 }
 
+.site-wrapper.index .instagram img {
+    width: 100%;
+}
+
 /* Page - All pages except index
 /* ---------------------------------------------------------- */
 
