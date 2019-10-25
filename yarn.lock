@@ -5671,7 +5671,7 @@ gatsby-remark-smartypants@^2.1.11:
     retext-smartypants "^3.0.3"
     unist-util-visit "^1.4.1"
 
-gatsby-source-filesystem@^2.0.27, gatsby-source-filesystem@^2.1.29:
+gatsby-source-filesystem@^2.1.29:
   version "2.1.33"
   resolved "https://registry.yarnpkg.com/gatsby-source-filesystem/-/gatsby-source-filesystem-2.1.33.tgz#6a6e4a075be7af5db603acb695b9eabdc885985e"
   integrity sha512-QhhHM8lalThJs5OsNgL6ILxIA36rRYsC+9ynUSEBku88+qBajycURxPjg+gn4NfWYfGAUXigxQzomQagHOLvlQ==
@@ -5691,17 +5691,6 @@ gatsby-source-filesystem@^2.0.27, gatsby-source-filesystem@^2.1.29:
     read-chunk "^3.2.0"
     valid-url "^1.0.9"
     xstate "^4.6.7"
-
-gatsby-source-instagram@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/gatsby-source-instagram/-/gatsby-source-instagram-0.5.1.tgz#fbec84c5c2816522808d6c792d48f80149267dd7"
-  integrity sha512-/TPaPsUagdTBa8LDtAsuffnbCr+QbZxT1BIgCzOUfRvZFfu1iywle86ugiT2NkKDZNa6hz5LnUyF8mDqjQyMTQ==
-  dependencies:
-    "@babel/preset-env" "^7.4.5"
-    "@babel/runtime" "^7.4.5"
-    axios "^0.19.0"
-    cheerio "^1.0.0-rc.3"
-    gatsby-source-filesystem "^2.0.27"
 
 gatsby-telemetry@^1.1.33:
   version "1.1.33"
