@@ -83,16 +83,15 @@ module.exports = {
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
-        // trackingId: `UA-49185184-1`,
+        trackingId: `UA-65906912-2`,
         head: `true`,
       },
     },
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: siteConfig.name,
-        short_name: siteConfig.shortName,
-        start_url: siteConfig.prefix,
+        name: siteConfig.title,
+        short_name: siteConfig.shortTitle,
         background_color: `#ffffff`,
         theme_color: `#ffffff`,
         display: `minimal-ui`,
