@@ -4,7 +4,7 @@ module.exports = {
   siteMetadata: {
     title: siteConfig.title,
     description: siteConfig.description,
-    url: siteConfig.url,
+    siteUrl: siteConfig.url,
   },
   plugins: [
     `gatsby-transformer-json`,
