@@ -7,5 +7,5 @@ cake-hightea:
   description: |
       - Matcha Cream
       - Strawberry Filling
-thumbnail: ./main.png
+thumbnail: ./main.jpg
 ---

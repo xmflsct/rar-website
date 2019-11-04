@@ -7,8 +7,8 @@ cake-hightea:
     piece: 3.8
     whole: 21.3
   description: |
-      - Matcha cake
-      - Matcha cream
-      - Fresh strawberries
+      - Matcha Cake
+      - Matcha Cream
+      - Fresh Strawberries
 thumbnail: ./main.jpg
 ---

@@ -7,8 +7,8 @@ cake-hightea:
     piece: 3.5
     whole: 19.6
   description: |
-      - Matcha cake
-      - Honey cream
-      - Kiwi, mango and strawberry
+      - Matcha Cake
+      - Honey Cream
+      - Kiwi, Mango and Strawberry
 thumbnail: ./main.jpg
 ---

@@ -2,13 +2,13 @@
 cake-hightea:
   name: "Mango Tango"
   category: "Signature Cake Roll"
-  order: 9
+  order: 8
   price:
     piece: 3.2
     whole: 17.9
   description: |
-      - Blackberry cake
-      - Yuzu cream
+      - Blackberry Cake
+      - Yuzu Cream
       - Mango
 thumbnail: ./main.jpg
 ---

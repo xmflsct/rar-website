@@ -7,8 +7,8 @@ cake-hightea:
     piece: 3.5
     whole: 19.6
   description: |
-      - Matcha cake
-      - Matcha cream
-      - Red beans
+      - Matcha Cake
+      - Matcha Cream
+      - Red Beans
 thumbnail: ./main.jpg
 ---

@@ -1,10 +1,10 @@
 ---
 cake-hightea:
-  name: "Swirl Cake"
+  name: "Green Rose"
   category: "Round Cake"
-  order: 1
+  order: 5
   price:
-    whole: 25.8
+    whole: 30
   description: |
       (8 inch)
 thumbnail: ./main.jpg

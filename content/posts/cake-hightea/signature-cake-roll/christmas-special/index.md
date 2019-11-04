@@ -7,8 +7,8 @@ cake-hightea:
     whole: 22
   description: |
       <b>Sold out!</b>
-      - Cacao cake
-      - Matcha cream
-      - Fresh strawberries
+      - Cacao Cake
+      - Matcha Cream
+      - Fresh Strawberries
 thumbnail: ./main.jpg
 ---

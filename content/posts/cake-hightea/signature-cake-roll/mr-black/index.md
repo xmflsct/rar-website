@@ -7,7 +7,7 @@ cake-hightea:
     piece: 3.5
     whole: 19.6
   description: |
-      - Bamboo charcoal cake
-      - Matcha cream
+      - Bamboo Charcoal Cake
+      - Matcha Cream
 thumbnail: ./main.jpg
 ---

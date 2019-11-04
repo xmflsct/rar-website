@@ -1,11 +1,11 @@
 ---
 cake-hightea:
-  name: "Swirl Cake"
+  name: "Cotton Cheese Cake"
   category: "Round Cake"
-  order: 1
+  order: 3
   price:
-    whole: 25.8
+    whole: 15.4
   description: |
-      (8 inch)
+      (6 inch)
 thumbnail: ./main.jpg
 ---

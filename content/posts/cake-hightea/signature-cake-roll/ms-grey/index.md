@@ -1,14 +1,14 @@
 ---
 cake-hightea:
-  name: "Miss Rood"
+  name: "Ms.Grey"
   category: "Signature Cake Roll"
-  order: 6
+  order: 13
   price:
     piece: 3.5
     whole: 19.6
   description: |
-      - Natural Coloured Red Cake
-      - Raspberry Cream
-      - Fresh Strawberries
+      - Blackberry Cake
+      - Earl Grey Cream
+      - Rose Topping
 thumbnail: ./main.jpg
 ---

@@ -2,13 +2,13 @@
 cake-hightea:
   name: "Giraffe"
   category: "Signature Cake Roll"
-  order: 8
+  order: 7
   price:
     piece: 3.2
     whole: 17.9
   description: |
-      - Cacao cake
-      - Chocolate cream
-      - Fresh banana
+      - Cacao Cake
+      - Chocolate Cream
+      - Fresh Banana
 thumbnail: ./main.jpg
 ---

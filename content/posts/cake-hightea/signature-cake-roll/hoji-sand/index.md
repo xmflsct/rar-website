@@ -1,14 +1,13 @@
 ---
 cake-hightea:
-  name: "Miss Rood"
+  name: "Hoji Sand"
   category: "Signature Cake Roll"
-  order: 6
+  order: 10
   price:
     piece: 3.5
     whole: 19.6
   description: |
-      - Natural Coloured Red Cake
-      - Raspberry Cream
-      - Fresh Strawberries
+      - Hojicha Cake
+      - Seasalt-Oreo Cream
 thumbnail: ./main.jpg
 ---

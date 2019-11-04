@@ -7,7 +7,7 @@ cake-hightea:
     piece: 3.5
     whole: 19.6
   description: |
-      - Matcha cake
-      - Japanese lemon cream
+      - Matcha Cake
+      - Japanese Lemon Cream
 thumbnail: ./main.jpg
 ---

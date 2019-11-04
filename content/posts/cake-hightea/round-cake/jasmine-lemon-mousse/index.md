@@ -2,7 +2,7 @@
 cake-hightea:
   name: "Jasmine Lemon Mousse"
   category: "Round Cake"
-  order: 5
+  order: 4
   price:
     whole: 30
   description: |
