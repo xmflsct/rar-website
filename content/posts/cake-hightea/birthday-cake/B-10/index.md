@@ -5,7 +5,7 @@ cake-hightea:
   order: 10
   group: "B"
   price:
-    whole: 30
+    whole: 32
   description: |
       - Cacao Cake Base
       - Seasalt-Oreo Cream

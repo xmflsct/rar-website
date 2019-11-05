@@ -5,7 +5,7 @@ cake-hightea:
   order: 12
   group: "B"
   price:
-    whole: 30
+    whole: 32
   description: |
       - Vanilla Cake Base
       - Blackberry Cream

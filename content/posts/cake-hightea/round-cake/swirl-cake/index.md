@@ -4,7 +4,7 @@ cake-hightea:
   category: "Round Cake"
   order: 1
   price:
-    whole: 25.8
+    whole: 25
   description: |
       (8 inch)
 thumbnail: ./main.jpg

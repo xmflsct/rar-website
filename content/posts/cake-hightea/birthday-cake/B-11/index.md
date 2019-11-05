@@ -5,7 +5,7 @@ cake-hightea:
   order: 11
   group: "B"
   price:
-    whole: 30
+    whole: 32
   description: |
       - Matcha Cake Base
       - Hojicha & Matcha Cream
