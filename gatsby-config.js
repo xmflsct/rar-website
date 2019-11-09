@@ -68,8 +68,8 @@ module.exports = {
       resolve: `gatsby-plugin-purgecss`,
       options: {
         // printRejected: true,
-        // develop: true,
-        whitelistPatternsChildren: [/(accordion)/, /(collapse)/, /(collapsing)/, /(show)/, /(carousel)/],
+        develop: true,
+        whitelistPatternsChildren: [/(accordion)/, /(collapse)/, /(collapsing)/, /(show)/, /(carousel)/, /(wf-)/],
       },
     },
     {

@@ -81,6 +81,25 @@ button {
     }
 }
 
+.site-wrapper > header,
+.site-wrapper > main,
+.site-wrapper > footer {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 250ms ease-out,
+        visibility 250ms ease-out;
+}
+
+
+.wf-active .site-wrapper > header,
+.wf-active .site-wrapper > main,
+.wf-active .site-wrapper > footer {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 250ms ease-out,
+        visibility 250ms ease-out;
+}
+
 .opening-hours-details span.shop-badge {
     padding: 8px 12px;
     text-align: center;
