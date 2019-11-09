@@ -1,6 +1,6 @@
 ---
 cake-hightea:
-  name: "Autumn Forest"
+  name: "Flower Mousse Cake"
   category: "Round Cake"
   order: 5
   price:
