@@ -11,12 +11,12 @@
     --color-shop-soon: 242, 204, 36;
 
     /* Fonts */
-    --font-sans-serif: 'Quicksand', sans-serif;
-    --font-serif: Georgia, Times, serif;
-    --font-light: 300;
+    --font-sans-serif: fot-tsukuardgothic-std, sans-serif;
+    /* --font-serif: Georgia, Times, serif; */
+    /* --font-light: 300; */
     --font-normal: 400;
-    --font-medium: 500;
-    --font-heavy: 700;
+    /* --font-medium: 600; */
+    --font-bold: 700;
 
     /* Breakpoints */
     --xlarge: 1200px;

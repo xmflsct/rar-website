@@ -11,7 +11,7 @@
 
 body {
     font-family: var(--font-sans-serif);
-    font-weight: var(--font-light);
+    font-weight: var(--font-normal);
     color: rgb(var(--color-primary-light));
     transition: background 0.3s ease-out;
     transition-delay: 0.25;
@@ -23,7 +23,7 @@ h2,
 h3,
 h4,
 h5 {
-    font-weight: var(--font-light);
+    font-weight: var(--font-normal);
 }
 
 @media (max-width: 768px) {
@@ -45,7 +45,7 @@ a {
 }
 
 b {
-    font-weight: var(--font-medium);
+    font-weight: var(--font-bold);
 }
 
 a:hover,
@@ -149,12 +149,12 @@ button {
 /* ---------------------------------------------------------- */
 
 .footer {
-    color: color(rgb(var(--color-primary-light)) l(+30%));
+    color: rgb(var(--color-primary-light));
     border-top: 1px dashed rgb(var(--color-primary-light));
 }
 
 .footer a {
-    color: color(rgb(var(--color-primary-light)) l(+30%));
+    color: rgb(var(--color-primary-light));
     border: none;
 }
 
@@ -194,8 +194,7 @@ button {
 .sidebar a:hover,
 .sidebar a:active,
 .sidebar a.active {
-    text-decoration: overline;
-    font-weight: var(--font-medium);
+    font-weight: var(--font-bold);
 }
 
 .sidebar .sub-nav {
@@ -233,6 +232,10 @@ button {
 
 .sidebar .opening-hours .opening-hours-details {
     padding-left: 40px;
+}
+
+.sidebar .opening-hours .opening-hours-details p {
+    font-size: .85em;
 }
 
 @media (max-width: 768px) {
@@ -300,6 +303,7 @@ button {
 
 .cake-hightea .price {
     font-size: .9em;
+    top: -1px;
 }
 
 .cake-hightea .description {
