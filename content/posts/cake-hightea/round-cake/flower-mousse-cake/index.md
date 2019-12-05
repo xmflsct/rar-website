@@ -6,7 +6,7 @@ cake-hightea:
   price:
     whole: 30
   description: |
-      Earl Grey Cheese Cake, Matcha Baravois, Oreo and Chestnut
+      Sponge Cake Base, Yoghurt cheese cake & Floral Jelly, Flavours varies each season
       (8 inch)
 thumbnail: ./main.jpg
 ---
