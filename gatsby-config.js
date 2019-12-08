@@ -1,32 +1,32 @@
-const siteConfig = require("./siteConfig")
+const siteConfig = require("./siteConfig");
 
 module.exports = {
   siteMetadata: {
     title: siteConfig.title,
     description: siteConfig.description,
-    siteUrl: siteConfig.url,
+    siteUrl: siteConfig.url
   },
   plugins: [
     `gatsby-transformer-json`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: `${__dirname}/content/data`,
-      },
+        path: `${__dirname}/content/data`
+      }
     },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
         path: `${__dirname}/content/posts`,
-        name: `posts`,
-      },
+        name: `posts`
+      }
     },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
         path: `${__dirname}/content/assets`,
-        name: `assets`,
-      },
+        name: `assets`
+      }
     },
     {
       resolve: `gatsby-transformer-remark`,
@@ -38,8 +38,8 @@ module.exports = {
               maxWidth: 920,
               linkImagesToOriginal: false,
               quality: 80,
-              withWebp: true,
-            },
+              withWebp: true
+            }
           },
           {
             resolve: "gatsby-remark-external-links",
@@ -48,9 +48,9 @@ module.exports = {
               rel: "noopener noreferrer"
             }
           },
-          `gatsby-remark-smartypants`,
-        ],
-      },
+          `gatsby-remark-smartypants`
+        ]
+      }
     },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
@@ -61,23 +61,32 @@ module.exports = {
           require("postcss-easy-import")(),
           require("postcss-custom-properties")({ preserve: false }),
           require("postcss-color-function")()
-        ],
-      },
+        ]
+      }
     },
     {
       resolve: `gatsby-plugin-purgecss`,
       options: {
         // printRejected: true,
         develop: true,
-        whitelistPatternsChildren: [/(accordion)/, /(collapse)/, /(collapsing)/, /(show)/, /(carousel)/, /(wf-)/],
-      },
+        whitelistPatternsChildren: [
+          /(accordion)/,
+          /(collapse)/,
+          /(collapsing)/,
+          /(show)/,
+          /(carousel)/,
+          /(wf-)/,
+          /(form)/,
+          /(btn)/
+        ]
+      }
     },
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
         trackingId: `UA-65906912-2`,
-        head: `true`,
-      },
+        head: `true`
+      }
     },
     {
       resolve: `gatsby-plugin-manifest`,
@@ -87,16 +96,24 @@ module.exports = {
         background_color: `#ffffff`,
         theme_color: `#ffffff`,
         display: `minimal-ui`,
-        icon: `static/favicon.png`,
-      },
+        icon: `static/favicon.png`
+      }
     },
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-sitemap`,
     {
       resolve: `gatsby-plugin-svgr`,
       options: {
-        svgo: `true`,
-      },
+        svgo: `true`
+      }
     },
-  ],
-}
+    {
+      resolve: `gatsby-plugin-recaptcha`,
+      options: {
+        async: true,
+        defer: true,
+        args: `?onload=onloadCallback&render=explicit`
+      }
+    }
+  ]
+};

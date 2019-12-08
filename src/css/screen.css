@@ -288,6 +288,16 @@ button {
     }
 }
 
+/* Components - Form
+/* ---------------------------------------------------------- */
+
+form {
+    border-top: 1px dashed rgb(var(--color-primary-light));
+    padding-top: 1rem;
+    border-bottom: 1px dashed rgb(var(--color-primary-light));
+    padding-bottom: 1rem;
+}
+
 /* Page - Index
 /* ---------------------------------------------------------- */
 
