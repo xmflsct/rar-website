@@ -29,7 +29,7 @@ export async function order_request(
     date = date + "T12:00:00.000Z";
   }
 
-  await fetch("https:/api.roundandround.nl/order/request", {
+  await fetch("https://api.roundandround.nl/order/request", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
