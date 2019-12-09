@@ -8,16 +8,48 @@ export default class Form2019Christmas extends React.Component {
     timeStatus1: true, // 11:00-12:00
     timeStatus2: true, // 16:30-17:00
     timeStatus3: true, // 17:00-18:00
-    isCaptchaValid: false,
     isFormValidated: false,
+    isFormSubmitted: false,
     name: "",
     phone: "",
     email: "",
     option1: "0",
     option2: "0",
-    date: "",
+    date: "2019-12-31",
     time: "",
     notes: ""
+  };
+  executeCaptcha = function() {
+    this.recaptchaInstance.execute();
+  };
+  onCaptchaVerify = response => {
+    this.setState({ buttonStatus: 1 });
+
+    var desc =
+      "**1 [Party of Ginger Man]:** " +
+      this.state.option1 +
+      "\n\n**2 [Snowy Forest]:** " +
+      this.state.option2 +
+      "\n\n**Notes:** " +
+      this.state.notes;
+    order_request(
+      response,
+      "Order from " + this.state.name,
+      desc,
+      "5dec120bdf7aed20e7d4dfd6,5ded572289d3de80a7ddb5e3",
+      this.state.name,
+      this.state.phone,
+      this.state.email,
+      this.state.date,
+      this.state.time
+    )
+      .then(() => {
+        this.setState({ buttonStatus: 2 });
+        this.setState({ isFormSubmitted: true });
+      })
+      .catch(() => {
+        this.setState({ buttonStatus: 3 });
+      });
   };
   handleInputChange = event => {
     const target = event.target;
@@ -26,24 +58,26 @@ export default class Form2019Christmas extends React.Component {
 
     // Date time validation
     if (name === "date") {
-      if (value === "2019-12-18" || value === "2019-12-19" || value === "2019-12-20" || value === "2019-12-21") {
-        this.setState({timeStatus1: true})
-        this.setState({timeStatus2: true})
-        this.setState({timeStatus3: true})
-      }
-      else if (value === "2019-12-22") {
-        this.setState({timeStatus1: false})
-        this.setState({timeStatus3: false})
-        this.setState({time: ""})
-      }
-      else if (value === "2019-12-23") {
-        this.setState({[name]: ""});
-        return
-      }
-      else if (value === "2019-12-24") {
-        this.setState({timeStatus2: false})
-        this.setState({timeStatus3: false})
-        this.setState({time: ""})
+      if (
+        value === "2019-12-18" ||
+        value === "2019-12-19" ||
+        value === "2019-12-20" ||
+        value === "2019-12-21"
+      ) {
+        this.setState({ timeStatus1: true });
+        this.setState({ timeStatus2: true });
+        this.setState({ timeStatus3: true });
+      } else if (value === "2019-12-22") {
+        this.setState({ timeStatus1: false });
+        this.setState({ timeStatus3: false });
+        this.setState({ time: "" });
+      } else if (value === "2019-12-23") {
+        this.setState({ [name]: "" });
+        return;
+      } else if (value === "2019-12-24") {
+        this.setState({ timeStatus2: false });
+        this.setState({ timeStatus3: false });
+        this.setState({ time: "" });
       }
     }
 
@@ -56,34 +90,7 @@ export default class Form2019Christmas extends React.Component {
   };
   handleSubmit = event => {
     event.preventDefault();
-
-    if (this.state.isCaptchaValid) {
-      this.setState({ buttonStatus: 1 });
-
-      var desc =
-        "**1 [Party of Ginger Man]:** " +
-        this.state.option1 +
-        "\n\n**2 [Snowy Forest]:** " +
-        this.state.option2 +
-        "\n\n**Notes:** " +
-        this.state.notes;
-      order_request(
-        "Order from " + this.state.name,
-        desc,
-        "5dec120bdf7aed20e7d4dfd6,5ded572289d3de80a7ddb5e3",
-        this.state.name,
-        this.state.phone,
-        this.state.email,
-        this.state.date,
-        this.state.time
-      )
-        .then(() => {
-          this.setState({ buttonStatus: 2 });
-        })
-        .catch(() => {
-          this.setState({ buttonStatus: 3 });
-        });
-    }
+    this.executeCaptcha();
   };
   render() {
     return (
@@ -103,6 +110,7 @@ export default class Form2019Christmas extends React.Component {
               onChange={this.handleInputChange}
               required
               placeholder="Round Round"
+              disabled={this.state.isFormSubmitted ? "disabled" : ""}
             />
           </div>
         </div>
@@ -118,6 +126,7 @@ export default class Form2019Christmas extends React.Component {
               required
               placeholder="06********"
               pattern="[0-9]{10}"
+              disabled={this.state.isFormSubmitted ? "disabled" : ""}
             />
           </div>
         </div>
@@ -132,6 +141,7 @@ export default class Form2019Christmas extends React.Component {
               onChange={this.handleInputChange}
               required
               placeholder="email@example.com"
+              disabled={this.state.isFormSubmitted ? "disabled" : ""}
             />
           </div>
         </div>
@@ -145,6 +155,7 @@ export default class Form2019Christmas extends React.Component {
                 value={this.state.option1}
                 onChange={this.handleInputChange}
                 required
+                disabled={this.state.isFormSubmitted ? "disabled" : ""}
               >
                 <option value="0">0 roll</option>
                 <option value="1">1 roll</option>
@@ -170,6 +181,7 @@ export default class Form2019Christmas extends React.Component {
                 value={this.state.option2}
                 onChange={this.handleInputChange}
                 required
+                disabled={this.state.isFormSubmitted ? "disabled" : ""}
               >
                 <option value="0">0 roll</option>
                 <option value="1">1 roll</option>
@@ -199,6 +211,7 @@ export default class Form2019Christmas extends React.Component {
               required
               min="2019-12-18"
               max="2019-12-24"
+              disabled={this.state.isFormSubmitted ? "disabled" : ""}
             />
             <small className="form-text text-muted">
               From 18th till 21st, between 11:00 and 18:00
@@ -215,10 +228,21 @@ export default class Form2019Christmas extends React.Component {
               value={this.state.time}
               onChange={this.handleInputChange}
               required
+              disabled={this.state.isFormSubmitted ? "disabled" : ""}
             >
               <option value=""></option>
-              <option value="11:00" disabled={this.state.timeStatus1 ? "" : "disabled"}>11:00</option>
-              <option value="11:30" disabled={this.state.timeStatus1 ? "" : "disabled"}>11:30</option>
+              <option
+                value="11:00"
+                disabled={this.state.timeStatus1 ? "" : "disabled"}
+              >
+                11:00
+              </option>
+              <option
+                value="11:30"
+                disabled={this.state.timeStatus1 ? "" : "disabled"}
+              >
+                11:30
+              </option>
               <option value="12:00">12:00</option>
               <option value="12:30">12:30</option>
               <option value="13:00">13:00</option>
@@ -228,9 +252,24 @@ export default class Form2019Christmas extends React.Component {
               <option value="15:00">15:00</option>
               <option value="15:30">15:30</option>
               <option value="16:00">16:00</option>
-              <option value="16:30" disabled={this.state.timeStatus2 ? "" : "disabled"}>16:30</option>
-              <option value="17:00" disabled={this.state.timeStatus3 ? "" : "disabled"}>17:00</option>
-              <option value="17:30" disabled={this.state.timeStatus3 ? "" : "disabled"}>17:30</option>
+              <option
+                value="16:30"
+                disabled={this.state.timeStatus2 ? "" : "disabled"}
+              >
+                16:30
+              </option>
+              <option
+                value="17:00"
+                disabled={this.state.timeStatus3 ? "" : "disabled"}
+              >
+                17:00
+              </option>
+              <option
+                value="17:30"
+                disabled={this.state.timeStatus3 ? "" : "disabled"}
+              >
+                17:30
+              </option>
             </select>
           </div>
         </div>
@@ -242,17 +281,25 @@ export default class Form2019Christmas extends React.Component {
               name="notes"
               value={this.state.notes}
               onChange={this.handleInputChange}
+              disabled={this.state.isFormSubmitted ? "disabled" : ""}
             />
           </div>
         </div>
-        <div id="g-recaptcha" className="mb-3"></div>
-        <Recaptcha
-          sitekey="6LdQssYUAAAAAPVCoB_xP-40kXtXcgDne-AJa6FA"
-          render="explicit"
-          onloadCallback={() => console.log("loaded")}
-          verifyCallback={() => this.setState({ isCaptchaValid: true })}
-          expiredCallback={() => this.setState({ isCaptchaValid: false })}
-        />
+        <div className="row mb-3">
+          <label className="col-form-label col-md-3">GDPR:</label>
+          <div className="form-check col-md-9">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              required
+              disabled={this.state.isFormSubmitted ? "disabled" : ""}
+            />
+            <label className="form-check-label">
+              I understand above data provided is solely for the purpose of
+              processing my order request.
+            </label>
+          </div>
+        </div>
         {(() => {
           switch (this.state.buttonStatus) {
             default:
@@ -263,7 +310,6 @@ export default class Form2019Christmas extends React.Component {
                   type="submit"
                   className="btn btn-outline-primary"
                   onClick={this.handleValication}
-                  disabled={this.state.isCaptchaValid ? "" : "disabled"}
                 >
                   Submit order request
                 </button>
@@ -294,13 +340,20 @@ export default class Form2019Christmas extends React.Component {
                   type="submit"
                   className="btn btn-outline-danger"
                   onClick={this.handleValication}
-                  disabled={this.state.isCaptchaValid ? "" : "disabled"}
                 >
                   Retry submit
                 </button>
               );
           }
         })()}
+        <div id="g-recaptcha" className="mt-3"></div>
+        <Recaptcha
+          ref={e => (this.recaptchaInstance = e)}
+          sitekey="6Le85MYUAAAAAFIN9CKLxzyqnep4zJjeFxr4RpxU"
+          size="invisible"
+          badge="inline"
+          verifyCallback={this.onCaptchaVerify}
+        />
       </form>
     );
   }
