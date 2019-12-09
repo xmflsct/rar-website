@@ -113,7 +113,7 @@ module.exports = {
       options: {
         async: true,
         defer: true,
-        args: `?onload=onloadCallback&render=explicit`
+        args: `?onload=onloadCallback`
       }
     }
   ]

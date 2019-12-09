@@ -352,6 +352,9 @@ export default class Form2019Christmas extends React.Component {
           sitekey="6Le85MYUAAAAAFIN9CKLxzyqnep4zJjeFxr4RpxU"
           size="invisible"
           badge="inline"
+          onloadCallback={() => {
+            console.log("reCaptcha loaded");
+          }}
           verifyCallback={this.onCaptchaVerify}
         />
       </form>
