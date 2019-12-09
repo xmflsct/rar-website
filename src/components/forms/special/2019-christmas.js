@@ -1,10 +1,11 @@
 import React from "react";
-import Recaptcha from "react-recaptcha";
+import Reaptcha from 'reaptcha';
 import { order_request } from "../../api/order";
 
 export default class Form2019Christmas extends React.Component {
-  componentDidMount() {
-    this.recaptchaInstance.reset();
+  constructor(props) {
+    super(props);
+    this.captcha = null;
   }
   state = {
     buttonStatus: 0, // 0 active; 1 sending; 2 success; 3 fail
@@ -22,10 +23,7 @@ export default class Form2019Christmas extends React.Component {
     time: "",
     notes: ""
   };
-  executeCaptcha = function() {
-    this.recaptchaInstance.execute();
-  };
-  onCaptchaVerify = response => {
+  onVerify = recaptchaResponse => {
     this.setState({ buttonStatus: 1 });
 
     var desc =
@@ -36,7 +34,7 @@ export default class Form2019Christmas extends React.Component {
       "\n\n**Notes:** " +
       this.state.notes;
     order_request(
-      response,
+      recaptchaResponse,
       "Order from " + this.state.name,
       desc,
       "5dec120bdf7aed20e7d4dfd6,5ded572289d3de80a7ddb5e3",
@@ -93,7 +91,7 @@ export default class Form2019Christmas extends React.Component {
   };
   handleSubmit = event => {
     event.preventDefault();
-    this.executeCaptcha();
+    this.captcha.execute();
   };
   render() {
     return (
@@ -349,16 +347,13 @@ export default class Form2019Christmas extends React.Component {
               );
           }
         })()}
-        <div id="g-recaptcha" className="mt-3"></div>
-        <Recaptcha
-          ref={e => (this.recaptchaInstance = e)}
+        <div className="g-recaptcha mt-3"></div>
+        <Reaptcha
+          ref={e => (this.captcha = e)}
           sitekey="6Le85MYUAAAAAFIN9CKLxzyqnep4zJjeFxr4RpxU"
+          onVerify={this.onVerify}
           size="invisible"
           badge="inline"
-          onloadCallback={() => {
-            console.log("reCaptcha loaded");
-          }}
-          verifyCallback={this.onCaptchaVerify}
         />
       </form>
     );

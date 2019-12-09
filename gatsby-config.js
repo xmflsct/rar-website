@@ -107,14 +107,6 @@ module.exports = {
       options: {
         svgo: `true`
       }
-    },
-    {
-      resolve: `gatsby-plugin-recaptcha`,
-      options: {
-        async: true,
-        defer: true,
-        args: `?onload=onloadCallback`
-      }
     }
   ]
 };
