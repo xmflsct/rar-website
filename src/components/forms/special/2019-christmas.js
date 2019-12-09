@@ -3,6 +3,9 @@ import Recaptcha from "react-recaptcha";
 import { order_request } from "../../api/order";
 
 export default class Form2019Christmas extends React.Component {
+  componentDidMount() {
+    this.recaptchaInstance.reset();
+  }
   state = {
     buttonStatus: 0, // 0 active; 1 sending; 2 success; 3 fail
     timeStatus1: true, // 11:00-12:00
