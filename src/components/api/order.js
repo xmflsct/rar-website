@@ -29,7 +29,7 @@ export async function order_request(
     date = date + "T12:00:00.000Z";
   }
 
-  await fetch("https://api.roundandround.nl/order/request", {
+  await fetch("https://europe-west1-rar-api.cloudfunctions.net/order", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -44,7 +44,7 @@ export async function order_request(
       date: date
     })
   }).then(response => {
-    if (response.ok) {
+    if (response.status === 200) {
       return Promise.resolve();
     } else {
       return Promise.reject();

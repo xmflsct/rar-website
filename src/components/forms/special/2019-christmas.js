@@ -4,8 +4,12 @@ import { order_request } from "../../api/order";
 
 export default class Form2019Christmas extends React.Component {
   state = {
-    status: null, // 0 first visit; 1 sending; 2 success; 3 fail
+    buttonStatus: 0, // 0 active; 1 sending; 2 success; 3 fail
+    timeStatus1: true, // 11:00-12:00
+    timeStatus2: true, // 16:30-17:00
+    timeStatus3: true, // 17:00-18:00
     isCaptchaValid: false,
+    isFormValidated: false,
     name: "",
     phone: "",
     email: "",
@@ -15,26 +19,46 @@ export default class Form2019Christmas extends React.Component {
     time: "",
     notes: ""
   };
-  onCaptchaVerify = response => {
-    this.setState({
-      isCaptchaValid: true,
-      status: 0
-    });
-  };
   handleInputChange = event => {
     const target = event.target;
     const value = target.value;
     const name = target.name;
 
+    // Date time validation
+    if (name === "date") {
+      if (value === "2019-12-18" || value === "2019-12-19" || value === "2019-12-20" || value === "2019-12-21") {
+        this.setState({timeStatus1: true})
+        this.setState({timeStatus2: true})
+        this.setState({timeStatus3: true})
+      }
+      else if (value === "2019-12-22") {
+        this.setState({timeStatus1: false})
+        this.setState({timeStatus3: false})
+        this.setState({time: ""})
+      }
+      else if (value === "2019-12-23") {
+        this.setState({[name]: ""});
+        return
+      }
+      else if (value === "2019-12-24") {
+        this.setState({timeStatus2: false})
+        this.setState({timeStatus3: false})
+        this.setState({time: ""})
+      }
+    }
+
     this.setState({
       [name]: value
     });
+  };
+  handleValication = event => {
+    this.setState({ isFormValidated: true });
   };
   handleSubmit = event => {
     event.preventDefault();
 
     if (this.state.isCaptchaValid) {
-      this.setState({ status: 1 });
+      this.setState({ buttonStatus: 1 });
 
       var desc =
         "**1 [Party of Ginger Man]:** " +
@@ -54,16 +78,20 @@ export default class Form2019Christmas extends React.Component {
         this.state.time
       )
         .then(() => {
-          this.setState({ status: 2 });
+          this.setState({ buttonStatus: 2 });
         })
         .catch(() => {
-          this.setState({ status: 3 });
+          this.setState({ buttonStatus: 3 });
         });
     }
   };
   render() {
     return (
-      <form id="theForm" onSubmit={this.handleSubmit}>
+      <form
+        id="theForm"
+        className={this.state.isFormValidated ? "was-validated" : ""}
+        onSubmit={this.handleSubmit}
+      >
         <div className="form-group row">
           <label className="col-form-label col-md-3">Your name:</label>
           <div className="col-md-9">
@@ -74,7 +102,7 @@ export default class Form2019Christmas extends React.Component {
               value={this.state.name}
               onChange={this.handleInputChange}
               required
-              placeholder="Julia Jansen"
+              placeholder="Round Round"
             />
           </div>
         </div>
@@ -160,8 +188,8 @@ export default class Form2019Christmas extends React.Component {
           </div>
         </div>
         <div className="form-group row">
-          <label className="col-form-label col-md-3">Pick-up date:</label>
-          <div className="col-md-9">
+          <label className="col-form-label col-md-3">Pick-up date&time:</label>
+          <div className="col-md-6">
             <input
               type="date"
               className="form-control"
@@ -172,19 +200,6 @@ export default class Form2019Christmas extends React.Component {
               min="2019-12-18"
               max="2019-12-24"
             />
-          </div>
-        </div>
-        <div className="form-group row">
-          <label className="col-form-label col-md-3">Pick-up time:</label>
-          <div className="col-md-9">
-            <input
-              type="time"
-              className="form-control"
-              name="time"
-              value={this.state.time}
-              onChange={this.handleInputChange}
-              required
-            />
             <small className="form-text text-muted">
               From 18th till 21st, between 11:00 and 18:00
               <br />
@@ -192,6 +207,31 @@ export default class Form2019Christmas extends React.Component {
               <br />
               On 24th, between 11:00 and 16:30
             </small>
+          </div>
+          <div className="col-md-3">
+            <select
+              className="form-control"
+              name="time"
+              value={this.state.time}
+              onChange={this.handleInputChange}
+              required
+            >
+              <option value=""></option>
+              <option value="11:00" disabled={this.state.timeStatus1 ? "" : "disabled"}>11:00</option>
+              <option value="11:30" disabled={this.state.timeStatus1 ? "" : "disabled"}>11:30</option>
+              <option value="12:00">12:00</option>
+              <option value="12:30">12:30</option>
+              <option value="13:00">13:00</option>
+              <option value="13:30">13:30</option>
+              <option value="14:00">14:00</option>
+              <option value="14:30">14:30</option>
+              <option value="15:00">15:00</option>
+              <option value="15:30">15:30</option>
+              <option value="16:00">16:00</option>
+              <option value="16:30" disabled={this.state.timeStatus2 ? "" : "disabled"}>16:30</option>
+              <option value="17:00" disabled={this.state.timeStatus3 ? "" : "disabled"}>17:00</option>
+              <option value="17:30" disabled={this.state.timeStatus3 ? "" : "disabled"}>17:30</option>
+            </select>
           </div>
         </div>
         <div className="form-group row">
@@ -205,17 +245,26 @@ export default class Form2019Christmas extends React.Component {
             />
           </div>
         </div>
+        <div id="g-recaptcha" className="mb-3"></div>
+        <Recaptcha
+          sitekey="6LdQssYUAAAAAPVCoB_xP-40kXtXcgDne-AJa6FA"
+          render="explicit"
+          onloadCallback={() => console.log("loaded")}
+          verifyCallback={() => this.setState({ isCaptchaValid: true })}
+          expiredCallback={() => this.setState({ isCaptchaValid: false })}
+        />
         {(() => {
-          switch (this.state.status) {
+          switch (this.state.buttonStatus) {
             default:
-              return (
-                <button type="submit" className="btn btn-outline-primary mb-3" disabled>
-                  Submit order request
-                </button>
-              );
+              return;
             case 0:
               return (
-                <button type="submit" className="btn btn-outline-primary mb-3">
+                <button
+                  type="submit"
+                  className="btn btn-outline-primary"
+                  onClick={this.handleValication}
+                  disabled={this.state.isCaptchaValid ? "" : "disabled"}
+                >
                   Submit order request
                 </button>
               );
@@ -223,7 +272,7 @@ export default class Form2019Christmas extends React.Component {
               return (
                 <button
                   type="button"
-                  className="btn btn-outline-secondary mb-3"
+                  className="btn btn-outline-secondary"
                   disabled
                 >
                   Submitting
@@ -233,7 +282,7 @@ export default class Form2019Christmas extends React.Component {
               return (
                 <button
                   type="button"
-                  className="btn btn-outline-success mb-3"
+                  className="btn btn-outline-success"
                   disabled
                 >
                   Submit successful
@@ -241,18 +290,17 @@ export default class Form2019Christmas extends React.Component {
               );
             case 3:
               return (
-                <button type="submit" className="btn btn-outline-danger mb-3">
+                <button
+                  type="submit"
+                  className="btn btn-outline-danger"
+                  onClick={this.handleValication}
+                  disabled={this.state.isCaptchaValid ? "" : "disabled"}
+                >
                   Retry submit
                 </button>
               );
           }
         })()}
-        <Recaptcha
-          sitekey="6LdQssYUAAAAAPVCoB_xP-40kXtXcgDne-AJa6FA"
-          render="explicit"
-          onloadCallback={() => console.log('loaded')}
-          verifyCallback={this.onCaptchaVerify}
-        />
       </form>
     );
   }

@@ -77,6 +77,7 @@ module.exports = {
           /(carousel)/,
           /(wf-)/,
           /(form)/,
+          /(was)/,
           /(btn)/
         ]
       }
