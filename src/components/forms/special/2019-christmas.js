@@ -27,11 +27,11 @@ export default class Form2019Christmas extends React.Component {
     this.setState({ buttonStatus: 1 });
 
     var desc =
-      "**1 [Party of Ginger Man]:** " +
+      "1 [Party of Ginger Man]: " +
       this.state.option1 +
-      "\n\n**2 [Snowy Forest]:** " +
+      ". 2 [Snowy Forest]: " +
       this.state.option2 +
-      "\n\n**Notes:** " +
+      ". Notes: " +
       this.state.notes;
     order_request(
       recaptchaResponse,

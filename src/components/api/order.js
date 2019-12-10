@@ -22,12 +22,12 @@ export async function order_request(
 
     var today = new Date();
     if (today.isDstObserved()) {
-      date = date + "T" + time + ":00.000+02:00";
+      date = date + " " + time + "time";
     } else {
-      date = date + "T" + time + ":00.000+01:00";
+      date = date + " " + time + "time";
     }
   } else {
-    date = date + "T12:00:00.000Z";
+    date = date + " ";
   }
 
   await fetch("https://europe-west1-rar-api.cloudfunctions.net/order", {
