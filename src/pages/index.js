@@ -120,13 +120,24 @@ const Index = ({ location }) => {
         </div>
 
         <div className="row mt-4 mb-4">
-          <Carousel className="col-12 carousel" controls={false} fade={true}>
-            {data.carousel.edges.map(({ node }, index) => (
-              <Carousel.Item key={index}>
-                <Img fluid={node.childImageSharp.fluid} />
-              </Carousel.Item>
-            ))}
-          </Carousel>
+          <a
+            href="/special/2019-christmas"
+            className="col-12"
+            rel="noopener noreferrer"
+          >
+            <Carousel
+              className="carousel"
+              controls={false}
+              fade={true}
+              interval={5000}
+            >
+              {data.carousel.edges.map(({ node }, index) => (
+                <Carousel.Item key={index}>
+                  <Img fluid={node.childImageSharp.fluid} />
+                </Carousel.Item>
+              ))}
+            </Carousel>
+          </a>
         </div>
 
         <div className="row">

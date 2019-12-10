@@ -27,9 +27,9 @@ export default class Form2019Christmas extends React.Component {
     this.setState({ buttonStatus: 1 });
 
     var desc =
-      "1 [Party of Ginger Man]: " +
+      "[Party of Ginger Man]: " +
       this.state.option1 +
-      ". 2 [Snowy Forest]: " +
+      ". [Snowy Forest]: " +
       this.state.option2 +
       ". Notes: " +
       this.state.notes;
