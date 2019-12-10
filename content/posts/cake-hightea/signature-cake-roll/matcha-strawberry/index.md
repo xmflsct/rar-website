@@ -2,7 +2,7 @@
 cake-hightea:
   name: "Matcha Strawberry"
   category: "Signature Cake Roll"
-  order: 4
+  order: 6
   price:
     piece: 3.8
     whole: 21.3

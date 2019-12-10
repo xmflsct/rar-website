@@ -2,7 +2,7 @@
 cake-hightea:
   name: "Lemon Vanilla"
   category: "Signature Cake Roll"
-  order: 9
+  order: 11
   price:
     piece: 3.2
     whole: 17.9
