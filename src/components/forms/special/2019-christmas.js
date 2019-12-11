@@ -1,6 +1,7 @@
 import React from "react";
 import Reaptcha from 'reaptcha';
-import { order_request } from "../../api/order";
+// import { order_request_trello } from "../../api/order-request-trello";
+import { order_request_sendgrid } from "../../api/order-request-sendgrid";
 
 export default class Form2019Christmas extends React.Component {
   constructor(props) {
@@ -23,26 +24,23 @@ export default class Form2019Christmas extends React.Component {
     time: "",
     notes: ""
   };
-  onVerify = recaptchaResponse => {
-    this.setState({ buttonStatus: 1 });
-
-    var desc =
+  onVerify = token => {
+    var content =
       "[Party of Ginger Man]: " +
       this.state.option1 +
-      ". [Snowy Forest]: " +
+      ".<br /> [Snowy Forest]: " +
       this.state.option2 +
-      ". Notes: " +
+      ".<br /> Notes: " +
       this.state.notes;
-    order_request(
-      recaptchaResponse,
+    var datetime = this.state.date + " at " + this.state.time
+    order_request_sendgrid(
+      token,
+      this.state.email,
       "Order from " + this.state.name,
-      desc,
-      "5dec120bdf7aed20e7d4dfd6,5ded572289d3de80a7ddb5e3",
+      content,
       this.state.name,
       this.state.phone,
-      this.state.email,
-      this.state.date,
-      this.state.time
+      datetime,
     )
       .then(() => {
         this.setState({ buttonStatus: 2 });
@@ -91,6 +89,7 @@ export default class Form2019Christmas extends React.Component {
   };
   handleSubmit = event => {
     event.preventDefault();
+    this.setState({ buttonStatus: 1 });
     this.captcha.execute();
   };
   render() {
