@@ -7,7 +7,7 @@ export async function order_request_sendgrid(
   phone,
   datetime,
 ) {
-  await fetch("https://us-central1-rar-api.cloudfunctions.net/order_request_sendgrid", {
+  await fetch("https://api.roundandround.nl/order/request/sendgrid", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
