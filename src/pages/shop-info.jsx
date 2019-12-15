@@ -1,11 +1,11 @@
-import React from "react";
-import { useStaticQuery, graphql } from "gatsby";
-import Img from "gatsby-image";
-import Accordion from "react-bootstrap/Accordion";
-import Card from "react-bootstrap/Card";
+import React from 'react';
+import { useStaticQuery, graphql } from 'gatsby';
+import Img from 'gatsby-image';
+import Accordion from 'react-bootstrap/Accordion';
+import Card from 'react-bootstrap/Card';
 
-import Layout from "../components/layout";
-import SEO from "../components/seo";
+import Layout from '../components/layout';
+import SEO from '../components/seo';
 
 const ShopInfo = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -51,7 +51,7 @@ const ShopInfo = ({ location }) => {
   `);
   return (
     <Layout location={location} name="shop-info">
-      <SEO title="Shop Info" keywords={[`Round&Round`, `Rotterdam`]} />
+      <SEO title="Shop Info" keywords={['Round&Round', 'Rotterdam']} />
 
       <Img fluid={data.main.childImageSharp.fluid} />
 
@@ -75,7 +75,10 @@ const ShopInfo = ({ location }) => {
           rel="noopener noreferrer"
           alt="Download seasonal menu"
         >
-          Check out our <b>seasonal menu</b>!
+          Check out our
+          {' '}
+          <b>seasonal menu</b>
+!
         </a>
       </p>
 
@@ -83,11 +86,17 @@ const ShopInfo = ({ location }) => {
         Opening Hours
       </h3>
       <p>
-        <b>Monday:</b> Closed
+        <b>Monday:</b>
+        {' '}
+Closed
         <br />
-        <b>Tuesday - Saturday:</b> 11:00 - 18:00 (last order 17:45)
+        <b>Tuesday - Saturday:</b>
+        {' '}
+11:00 - 18:00 (last order 17:45)
         <br />
-        <b>Sunday:</b> 12:00 - 17:00 (last order 16:45)
+        <b>Sunday:</b>
+        {' '}
+12:00 - 17:00 (last order 16:45)
       </p>
 
       <h3 className="sub-heading mt-4 mb-3" id="contact">
@@ -101,7 +110,7 @@ const ShopInfo = ({ location }) => {
         frameBorder="0"
         style={{ border: 0 }}
         allowFullScreen={false}
-      ></iframe>
+      />
       <p className="mt-3">
         <img
           className="contact-icon"
@@ -263,7 +272,7 @@ const ShopInfo = ({ location }) => {
         </Accordion.Collapse>
 
         <Accordion.Toggle as={Card.Title} eventKey="6">
-          Q: I'm interested in booking a large order of cakes. How do I go about
+          Q: I&apos;m interested in booking a large order of cakes. How do I go about
           it?
         </Accordion.Toggle>
         <Accordion.Collapse eventKey="6">
@@ -278,7 +287,7 @@ const ShopInfo = ({ location }) => {
         </Accordion.Collapse>
 
         <Accordion.Toggle as={Card.Title} eventKey="7">
-          Q: I'd like to have your cakes for a wedding or a party. How do I book
+          Q: I&apos;d like to have your cakes for a wedding or a party. How do I book
           my order?
         </Accordion.Toggle>
         <Accordion.Collapse eventKey="7">

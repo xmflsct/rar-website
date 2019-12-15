@@ -1,9 +1,9 @@
-import React from "react";
-import { useStaticQuery, graphql } from "gatsby";
-import { Link } from "gatsby";
-import Img from "gatsby-image";
+import React from 'react';
+import { useStaticQuery, graphql, Link } from 'gatsby';
 
-import OpeningHours from "./sidebar/opening-hours";
+import Img from 'gatsby-image';
+
+import OpeningHours from './sidebar/opening-hours';
 
 const Header = () => {
   const data = useStaticQuery(graphql`
@@ -20,7 +20,7 @@ const Header = () => {
   return (
     <header className="header row">
       <div className="header-left col-lg-3 col-md-12">
-        <Link to={`/`}>
+        <Link to="/">
           <Img className="m-3" fluid={data.file.childImageSharp.fluid} />
         </Link>
         <div className="opening-hours-details">
@@ -30,7 +30,9 @@ const Header = () => {
       <div className="header-center col-9">
         <p>A Little</p>
         <p>
-          <b>Matcha</b> Forest
+          <b>Matcha</b>
+          {' '}
+Forest
         </p>
         <p>in Rotterdam.</p>
       </div>

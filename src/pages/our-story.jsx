@@ -1,9 +1,9 @@
-import React from "react";
-import { useStaticQuery, graphql } from "gatsby";
-import Img from "gatsby-image";
+import React from 'react';
+import { useStaticQuery, graphql } from 'gatsby';
+import Img from 'gatsby-image';
 
-import Layout from "../components/layout";
-import SEO from "../components/seo";
+import Layout from '../components/layout';
+import SEO from '../components/seo';
 
 const OurStory = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -40,7 +40,7 @@ const OurStory = ({ location }) => {
   `);
   return (
     <Layout location={location} name="our-story">
-      <SEO title="Our Story" keywords={[`Round&Round`, `Rotterdam`]} />
+      <SEO title="Our Story" keywords={['Round&Round', 'Rotterdam']} />
 
       <h3 className="sub-heading mb-3" id="press">
         Press
@@ -150,7 +150,7 @@ const OurStory = ({ location }) => {
               rel="noopener noreferrer"
               alt="Liyen's food moments"
             >
-              Liyen's food moments
+              Liyen&apos;s food moments
             </a>
           </p>
         </div>

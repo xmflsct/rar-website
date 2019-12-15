@@ -1,21 +1,29 @@
-import React from "react";
-import { graphql } from "gatsby";
-import Img from "gatsby-image";
+import React from 'react';
+import { graphql } from 'gatsby';
+import Img from 'gatsby-image';
 
-import Layout from "../components/layout";
-import SEO from "../components/seo";
+import Layout from '../components/layout';
+import SEO from '../components/seo';
 
 class ProjectTemplate extends React.Component {
   render() {
     const post = this.props.data.markdownRemark;
     const localDate = new Date(post.frontmatter.date).toLocaleDateString(
-      "en-UK",
-      { weekday: "long", year: "numeric", month: "short", day: "numeric" }
+      'en-UK',
+      {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      }
     );
 
     return (
       <Layout location={this.props.location} name={post.frontmatter.title}>
-        <SEO title={post.frontmatter.title} keywords={[`Round&Round`, `Workshop`, `Rotterdam`]} />
+        <SEO
+          title={post.frontmatter.title}
+          keywords={['Round&Round', 'Workshop', 'Rotterdam']}
+        />
 
         <h3 className="mb-4">{post.frontmatter.title}</h3>
 
@@ -47,7 +55,7 @@ class ProjectTemplate extends React.Component {
               frameBorder="0"
               style={{ border: 0 }}
               allowFullScreen={false}
-            ></iframe>
+            />
           </div>
         </div>
 

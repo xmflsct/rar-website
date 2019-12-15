@@ -1,10 +1,10 @@
-import React from "react";
-import { useStaticQuery, graphql } from "gatsby";
-import { Link } from "gatsby";
+import React from 'react';
+import { useStaticQuery, graphql, Link } from 'gatsby';
 
-import Layout from "../../components/layout";
-import SEO from "../../components/seo";
-import CakeList from "../../components/cake-hightea/cake-list";
+
+import Layout from '../../components/layout';
+import SEO from '../../components/seo';
+import CakeList from '../../components/cake-hightea/cake-list';
 
 const PartyWeddingTower = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -43,20 +43,27 @@ const PartyWeddingTower = ({ location }) => {
   `);
   return (
     <Layout location={location} name="cake-hightea party-wedding-tower">
-      <SEO title="Party/Wedding Tower" keywords={[`Round&Round`, `Rotterdam`]} />
+      <SEO
+        title="Party/Wedding Tower"
+        keywords={['Round&Round', 'Rotterdam']}
+      />
 
       <h3 className="sub-heading mb-3">Party/Wedding Tower</h3>
 
       <p>
         How to order a cake roll tower for your wedding or party?
         <br />
-        Please <Link to="/shop-info#contact">contact us</Link> for
+        Please
+        {' '}
+        <Link to="/shop-info#contact">contact us</Link>
+        {' '}
+for
         possibilities.
       </p>
 
       <div className="row">
-        {data.allMarkdownRemark.edges.map(({ node }, index) => (
-          <CakeList node={node} key={index} />
+        {data.allMarkdownRemark.edges.map(({ node }) => (
+          <CakeList node={node} key={node.index} />
         ))}
       </div>
     </Layout>

@@ -1,19 +1,22 @@
-import React from "react";
+import React from 'react';
 
-import Header from "../components/header";
-import Sidebar from "../components/sidebar";
-import Footer from "../components/footer";
+import Header from './header';
+import Sidebar from './sidebar';
+import Footer from './footer';
 
-const Layout = props => {
-  const [toggleNav, setToggleNav] = React.useState(false)
+const Layout = (props) => {
+  const [toggleNav, setToggleNav] = React.useState(false);
 
   const { children, location, name } = props;
 
   return (
-    <div className={`site-wrapper ${name} ${toggleNav ? `site-head-open` : ``}`}>
+    <div
+      className={`site-wrapper ${name} ${toggleNav ? 'site-head-open' : ''}`}
+    >
       <button
         className="nav-burger"
-        href={`#`}
+        href="#"
+        type="button"
         onClick={() => setToggleNav(!toggleNav)}
       >
         <div
@@ -34,9 +37,7 @@ const Layout = props => {
             <div className="col-lg-3">
               <Sidebar location={location} />
             </div>
-            <div className="main-content col-lg-9 col-md-12">
-              {children}
-            </div>
+            <div className="main-content col-lg-9 col-md-12">{children}</div>
           </div>
         </div>
       </main>

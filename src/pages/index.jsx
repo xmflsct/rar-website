@@ -1,16 +1,16 @@
-import React from "react";
-import { useStaticQuery, graphql } from "gatsby";
-import Img from "gatsby-image";
-import { Link } from "gatsby";
-import Carousel from "react-bootstrap/Carousel";
+import React from 'react';
+import { useStaticQuery, graphql, Link } from 'gatsby';
+import Img from 'gatsby-image';
 
-import Header from "../components/header";
-import Sidebar from "../components/sidebar";
-import Footer from "../components/footer";
-import SEO from "../components/seo";
-import Instagram from "../components/instagram";
+import Carousel from 'react-bootstrap/Carousel';
 
-import { ReactComponent as Socials } from "../../content/assets/pages/index/social.svg";
+import Header from '../components/header';
+import Sidebar from '../components/sidebar';
+import Footer from '../components/footer';
+import SEO from '../components/seo';
+import Instagram from '../components/instagram';
+
+import { ReactComponent as Socials } from '../../content/assets/pages/index/social.svg';
 
 const Index = ({ location }) => {
   const [toggleNav, setToggleNav] = React.useState(false);
@@ -64,12 +64,13 @@ const Index = ({ location }) => {
     }
   `);
   return (
-    <div className={`site-wrapper index ${toggleNav ? `site-head-open` : ``}`}>
-      <SEO title="Welcome" keywords={[`Round&Round`, `Rotterdam`, `matcha`]} />
+    <div className={`site-wrapper index ${toggleNav ? 'site-head-open' : ''}`}>
+      <SEO title="Welcome" keywords={['Round&Round', 'Rotterdam', 'matcha']} />
 
       <button
         className="nav-burger"
-        href={`#`}
+        href="#"
+        type="button"
         onClick={() => setToggleNav(!toggleNav)}
       >
         <div
@@ -128,11 +129,11 @@ const Index = ({ location }) => {
             <Carousel
               className="carousel"
               controls={false}
-              fade={true}
+              fade
               interval={5000}
             >
-              {data.carousel.edges.map(({ node }, index) => (
-                <Carousel.Item key={index}>
+              {data.carousel.edges.map(({ node }) => (
+                <Carousel.Item key={node.index}>
                   <Img fluid={node.childImageSharp.fluid} />
                 </Carousel.Item>
               ))}

@@ -1,11 +1,10 @@
-import React from "react";
-import { useStaticQuery, graphql } from "gatsby";
-import Img from "gatsby-image";
-import { Link } from "gatsby";
+import React from 'react';
+import { useStaticQuery, graphql, Link } from 'gatsby';
+import Img from 'gatsby-image';
 
-import Layout from "../../components/layout";
-import SEO from "../../components/seo";
-import CakeList from "../../components/cake-hightea/cake-list";
+import Layout from '../../components/layout';
+import SEO from '../../components/seo';
+import CakeList from '../../components/cake-hightea/cake-list';
 
 const SignatureCakeRoll = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -53,7 +52,10 @@ const SignatureCakeRoll = ({ location }) => {
   `);
   return (
     <Layout location={location} name="cake-hightea signature-cake-roll">
-      <SEO title="Signature Cake Roll" keywords={[`Round&Round`, `Rotterdam`]} />
+      <SEO
+        title="Signature Cake Roll"
+        keywords={['Round&Round', 'Rotterdam']}
+      />
 
       <Img fluid={data.image1.childImageSharp.fluid} />
 
@@ -63,9 +65,15 @@ const SignatureCakeRoll = ({ location }) => {
         Our cake rolls are fluffy and light with low sugar. We use natural
         colourings, homemade sauce and seasonal ingredients. We love to do
         experiment with new combinations. That is why we often have some new
-        cake roll flavours. The entire cake rolls below can be pre-ordered by{" "}
-        <a href="mailto:info@roundandround.nl">sending us an email</a>,{" "}
-        <a href="tel:0031107856545">calling us</a> or{" "}
+        cake roll flavours. The entire cake rolls below can be pre-ordered by
+        {' '}
+        <a href="mailto:info@roundandround.nl">sending us an email</a>
+,
+        {' '}
+        <a href="tel:0031107856545">calling us</a>
+        {' '}
+or
+        {' '}
         <a
           href="https://www.facebook.com/roundandround.nl/"
           target="_blank"
@@ -76,9 +84,14 @@ const SignatureCakeRoll = ({ location }) => {
         .
       </p>
       <p>
-        If you have any questions, feel free to{" "}
-        <Link to="/shop-info#contact">contact us</Link> or read our{" "}
-        <Link to="/shop-info#q-a">Q&A</Link>.
+        If you have any questions, feel free to
+        {' '}
+        <Link to="/shop-info#contact">contact us</Link>
+        {' '}
+or read our
+        {' '}
+        <Link to="/shop-info#q-a">Q&A</Link>
+        .
         <br />
         <i>
           * Price below is per slice/roll. Sliced cakes are only available in
@@ -87,8 +100,8 @@ const SignatureCakeRoll = ({ location }) => {
       </p>
 
       <div className="row">
-        {data.allMarkdownRemark.edges.map(({ node }, index) => (
-          <CakeList node={node} key={index} />
+        {data.allMarkdownRemark.edges.map(({ node }) => (
+          <CakeList node={node} key={node.index} />
         ))}
       </div>
     </Layout>

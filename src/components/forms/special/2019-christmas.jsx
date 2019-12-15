@@ -1,5 +1,5 @@
 import React from "react";
-import Reaptcha from 'reaptcha';
+import Reaptcha from "reaptcha";
 // import { order_request_trello } from "../../api/order-request-trello";
 import { order_request_sendgrid } from "../../api/order-request-sendgrid";
 
@@ -32,7 +32,7 @@ export default class Form2019Christmas extends React.Component {
       this.state.option2 +
       ".<br /> Notes: " +
       this.state.notes;
-    var datetime = this.state.date + " at " + this.state.time
+    var datetime = this.state.date + " at " + this.state.time;
     order_request_sendgrid(
       token,
       this.state.email,
@@ -40,7 +40,7 @@ export default class Form2019Christmas extends React.Component {
       content,
       this.state.name,
       this.state.phone,
-      datetime,
+      datetime
     )
       .then(() => {
         this.setState({ buttonStatus: 2 });
@@ -100,7 +100,7 @@ export default class Form2019Christmas extends React.Component {
         onSubmit={this.handleSubmit}
       >
         <div className="form-group row">
-          <label className="col-form-label col-md-3">Your name:</label>
+          <label className="col-form-label col-md-3" htmlFor="name">Your name:</label>
           <div className="col-md-9">
             <input
               type="text"
@@ -115,7 +115,7 @@ export default class Form2019Christmas extends React.Component {
           </div>
         </div>
         <div className="form-group row">
-          <label className="col-form-label col-md-3">Your phone:</label>
+          <label className="col-form-label col-md-3" htmlFor="phone">Your phone:</label>
           <div className="col-md-9">
             <input
               type="tel"
@@ -131,7 +131,7 @@ export default class Form2019Christmas extends React.Component {
           </div>
         </div>
         <div className="form-group row">
-          <label className="col-form-label col-md-3">Your email:</label>
+          <label className="col-form-label col-md-3" htmlFor="email">Your email:</label>
           <div className="col-md-9">
             <input
               type="email"
@@ -148,7 +148,7 @@ export default class Form2019Christmas extends React.Component {
         <div className="row">
           <div className="col-md-6">
             <div className="form-group">
-              <label className="col-form-label">1 [Party of Ginger Man]:</label>
+              <label className="col-form-label" htmlFor="option1">1 [Party of Ginger Man]:</label>
               <select
                 className="form-control"
                 name="option1"
@@ -174,7 +174,7 @@ export default class Form2019Christmas extends React.Component {
           </div>
           <div className="col-md-6">
             <div className="form-group">
-              <label className="col-form-label">2 [Snowy Forest]:</label>
+              <label className="col-form-label" htmlFor="option2">2 [Snowy Forest]:</label>
               <select
                 className="form-control"
                 name="option2"
@@ -200,7 +200,7 @@ export default class Form2019Christmas extends React.Component {
           </div>
         </div>
         <div className="form-group row">
-          <label className="col-form-label col-md-3">Pick-up date&time:</label>
+          <label className="col-form-label col-md-3" htmlFor="date">Pick-up date&amp;time:</label>
           <div className="col-md-6">
             <input
               type="date"
@@ -274,7 +274,7 @@ export default class Form2019Christmas extends React.Component {
           </div>
         </div>
         <div className="form-group row">
-          <label className="col-form-label col-md-3">Notes to us:</label>
+          <label className="col-form-label col-md-3" htmlFor="notes">Notes to us:</label>
           <div className="col-md-9">
             <textarea
               className="form-control"
@@ -286,15 +286,16 @@ export default class Form2019Christmas extends React.Component {
           </div>
         </div>
         <div className="row mb-3">
-          <label className="col-form-label col-md-3">GDPR:</label>
+          <label className="col-form-label col-md-3" htmlFor="gdpr">GDPR:</label>
           <div className="form-check col-md-9">
             <input
               type="checkbox"
               className="form-check-input"
+              name="gdpr"
               required
               disabled={this.state.isFormSubmitted ? "disabled" : ""}
             />
-            <label className="form-check-label">
+            <label className="form-check-label" htmlFor="consent">
               I understand above data provided is solely for the purpose of
               processing my order request.
             </label>

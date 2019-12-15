@@ -1,12 +1,11 @@
-import React from "react";
-import { useStaticQuery, graphql } from "gatsby";
-import Img from "gatsby-image";
-import { Link } from "gatsby";
-import { FaCircle } from "react-icons/fa";
-import { FaRegCircle } from "react-icons/fa";
+import React from 'react';
+import { useStaticQuery, graphql, Link } from 'gatsby';
+import Img from 'gatsby-image';
 
-import Layout from "../components/layout";
-import SEO from "../components/seo";
+import { FaCircle, FaRegCircle } from 'react-icons/fa';
+
+import Layout from '../components/layout';
+import SEO from '../components/seo';
 
 const Matcha = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -28,12 +27,12 @@ const Matcha = ({ location }) => {
   `);
   return (
     <Layout location={location} name="matcha">
-      <SEO title="Matcha" keywords={[`Round&Round`, `Rotterdam`, `matcha`]} />
+      <SEO title="Matcha" keywords={['Round&Round', 'Rotterdam', 'matcha']} />
 
       <h3 className="sub-heading mb-3" id="matcha-lovers">
         We are Matcha Lovers
       </h3>
-      <p style={{ color: "rgb(80, 175, 19)" }}>
+      <p style={{ color: 'rgb(80, 175, 19)' }}>
         We love Matcha.
         <br />
         We use premium Matcha from Japan.
@@ -97,18 +96,26 @@ const Matcha = ({ location }) => {
         </div>
       </div>
       <p>
-        <b>NO.101 Mt. Fuji:</b> The tea leaves of this selected matcha is
+        <b>NO.101 Mt. Fuji:</b>
+        {' '}
+The tea leaves of this selected matcha is
         cultivated at the foot of Mt. Fuji.
         <br />
         The dried leaves are carefully ground by the stone mill to prevent
         heating by friction so as to make high quality powdered green tea.
       </p>
       <p>
-        <b>Region:</b> Shizuoka, Japan
+        <b>Region:</b>
+        {' '}
+Shizuoka, Japan
         <br />
-        <b>Recommended direction:</b> Drinking, Premium Baking
+        <b>Recommended direction:</b>
+        {' '}
+Drinking, Premium Baking
         <br />
-        <b>Price:</b> € 19.90 / 50g
+        <b>Price:</b>
+        {' '}
+€ 19.90 / 50g
       </p>
       <table className="table table-borderless">
         <tbody>
@@ -155,16 +162,24 @@ const Matcha = ({ location }) => {
         </tbody>
       </table>
       <p>
-        <b>NO.201 Premium Baking:</b> Our selected premium baking matcha will
+        <b>NO.201 Premium Baking:</b>
+        {' '}
+Our selected premium baking matcha will
         add a rich flavour and vivid colour to your baking. Of course you can
         also make drinks with it.
       </p>
       <p>
-        <b>Region:</b> Mie, Japan
+        <b>Region:</b>
+        {' '}
+Mie, Japan
         <br />
-        <b>Recommended direction:</b> Premium Baking
+        <b>Recommended direction:</b>
+        {' '}
+Premium Baking
         <br />
-        <b>Price:</b> € 13.50 / 50g
+        <b>Price:</b>
+        {' '}
+€ 13.50 / 50g
       </p>
       <table className="table table-borderless">
         <tbody>
@@ -217,8 +232,11 @@ const Matcha = ({ location }) => {
       <p>
         We host matcha/tea ceremony and other workshops regularly.
         <br />
-        Please check out our{" "}
-        <Link to={`/workshop-event`}>Workshop & Event</Link> page or facebook
+        Please check out our
+        {' '}
+        <Link to="/workshop-event">Workshop & Event</Link>
+        {' '}
+page or facebook
         page for more info.
       </p>
     </Layout>
