@@ -60,7 +60,6 @@ module.exports = {
         precision: 6
       }
     },
-
     {
       resolve: "gatsby-plugin-google-analytics",
       options: {
