@@ -10,7 +10,7 @@ const Header = () => {
     {
       file(relativePath: { regex: "/(header/logo.png)/" }) {
         childImageSharp {
-          fluid(maxWidth: 300) {
+          fluid(maxWidth: 400) {
             ...GatsbyImageSharpFluid_withWebp_noBase64
           }
         }
@@ -18,25 +18,23 @@ const Header = () => {
     }
   `);
   return (
-    <Container as="header">
-      <Row>
-        <Col lg={3} md={12} className="header-left">
-          <Link to="/">
-            <Img className="m-3" fluid={data.file.childImageSharp.fluid} />
-          </Link>
-          <Container className="opening-hours-details">
-            <OpeningHours />
-          </Container>
-        </Col>
-        <Col lg={9} className="header-center">
-          <Container as="p">A Little</Container>
-          <Container as="p">
-            <b>Matcha</b> Forest
-          </Container>
-          <Container as="p">in Rotterdam.</Container>
-        </Col>
-      </Row>
-    </Container>
+    <Row as="header">
+      <Col lg={3} md={12} className="header-left">
+        <Link to="/">
+          <Img className="m-3" fluid={data.file.childImageSharp.fluid} />
+        </Link>
+        <Container className="opening-hours-details">
+          <OpeningHours />
+        </Container>
+      </Col>
+      <Col lg={9} className="header-center">
+        <p>A Little</p>
+        <p>
+          <b>Matcha</b> Forest
+        </p>
+        <p>in Rotterdam.</p>
+      </Col>
+    </Row>
   );
 };
 

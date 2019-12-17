@@ -1,6 +1,6 @@
 import React from "react";
 import { useStaticQuery, graphql, Link } from "gatsby";
-import { Col, Container, Row } from "react-bootstrap";
+import { Figure, Nav } from "react-bootstrap";
 
 import OpeningHours from "./sidebar/opening-hours";
 
@@ -57,172 +57,189 @@ const Sidebar = () => {
     }
   `);
   return (
-    <Container className="sidebar">
-      <ul role="menu">
-        <li className="top-nav" role="menuitem">
-          <img
+    <Nav className="flex-column ml-3">
+      <Nav.Item>
+        <Figure>
+          <Figure.Image
             src={data.index.publicURL}
             alt={`Link to ${data.index.name}page`}
           />
-          <Link to="/" activeClassName="active">
-            Home
-          </Link>
-        </li>
-        <li className="top-nav" role="menuitem">
-          <img
+        </Figure>
+        <Link to="/" activeClassName="active">
+          Home
+        </Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Figure>
+          <Figure.Image
             src={data.cakeHightea.publicURL}
             alt={`Link to ${data.cakeHightea.name}page`}
           />
-          <Link
-            to="/cake-hightea/signature-cake-roll"
-            activeClassName="active"
-            partiallyActive
-          >
-            Cake & Hightea
-          </Link>
-          <ul className="sub-nav cake-hightea" role="menu">
-            <li>
-              <Link
-                to="/cake-hightea/signature-cake-roll"
-                activeClassName="active"
-              >
-                Signature Cake Roll
-              </Link>
-            </li>
-            <li>
-              <Link to="/cake-hightea/round-cake" activeClassName="active">
-                Round Cake
-              </Link>
-            </li>
-            <li>
-              <Link to="/cake-hightea/birthday-cake" activeClassName="active">
-                Birthday Cake
-              </Link>
-            </li>
-            <li>
-              <Link to="/cake-hightea/forest-hightea" activeClassName="active">
-                Forest Hightea
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/cake-hightea/party-wedding-tower"
-                activeClassName="active"
-              >
-                Party/Wedding Tower
-              </Link>
-            </li>
-            <li>
-              <Link to="/cake-hightea/other-sweets" activeClassName="active">
-                Other Sweets
-              </Link>
-            </li>
-          </ul>
-        </li>
-        <li className="top-nav" role="menuitem">
-          <img
+        </Figure>
+        <Link
+          to="/cake-hightea/signature-cake-roll"
+          activeClassName="active"
+          partiallyActive
+        >
+          Cake &amp; Hightea
+        </Link>
+        <Nav className="flex-column sub-nav cake-hightea">
+          <Nav.Item>
+            <Link to="/cake-hightea/signature-cake-roll" activeClassName="active">
+              Signature Cake Roll
+            </Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Link to="/cake-hightea/round-cake" activeClassName="active">
+              Round Cake
+            </Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Link to="/cake-hightea/birthday-cake" activeClassName="active">
+              Birthday Cake
+            </Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Link to="/cake-hightea/forest-hightea" activeClassName="active">
+              Forest Hightea
+            </Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Link to="/cake-hightea/party-wedding-tower" activeClassName="active">
+              Party/Wedding Tower
+            </Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Link to="/cake-hightea/other-sweets" activeClassName="active">
+              Other Sweets
+            </Link>
+          </Nav.Item>
+        </Nav>
+      </Nav.Item>
+      <Nav.Item>
+        <Figure>
+          <Figure.Image
             src={data.matcha.publicURL}
             alt={`Link to ${data.matcha.name}page`}
           />
-          <Link to="/matcha" activeClassName="active">
-            Matcha
-          </Link>
-          <ul className="sub-nav matcha" role="menu">
-            <li>
-              <a href="#what-is-matcha">What is Matcha?</a>
-            </li>
-            <li>
-              <a href="#how-is-matcha-made">How is Matcha made?</a>
-            </li>
-            <li>
-              <a href="#our-matcha-powder">Our Matcha Powder</a>
-            </li>
-            <li>
-              <a href="#matcha-workshop">Matcha Workshop</a>
-            </li>
-          </ul>
-        </li>
-        <li className="top-nav" role="menuitem">
-          <img
+        </Figure>
+        <Link
+          to="/matcha"
+          activeClassName="active"
+        >
+          Matcha
+        </Link>
+        <Nav className="flex-column sub-nav matcha">
+          <Nav.Item>
+            <a href="/matcha#what-is-matcha">What is Matcha?</a>
+          </Nav.Item>
+          <Nav.Item>
+            <a href="/matcha#how-is-matcha-made">How is Matcha made?</a>
+          </Nav.Item>
+          <Nav.Item>
+            <a href="/matcha#our-matcha-powder">Our Matcha Powder</a>
+          </Nav.Item>
+          <Nav.Item>
+            <a href="/matcha#matcha-workshop">Matcha Workshop</a>
+          </Nav.Item>
+        </Nav>
+      </Nav.Item>
+      <Nav.Item>
+        <Figure>
+          <Figure.Image
             src={data.craft.publicURL}
             alt={`Link to ${data.craft.name}page`}
           />
-          <Link to="/craft" activeClassName="active">
-            Craft
-          </Link>
-        </li>
-        <li className="top-nav" role="menuitem">
-          <img
+        </Figure>
+        <Link to="/craft" activeClassName="active">
+          Craft
+        </Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Figure>
+          <Figure.Image
             src={data.workshopEvent.publicURL}
             alt={`Link to ${data.workshopEvent.name}page`}
           />
-          <Link to="/workshop-event" activeClassName="active" partiallyActive>
-            Workshop & Event
-          </Link>
-        </li>
-        <li className="top-nav" role="menuitem">
-          <img
+        </Figure>
+        <Link to="/workshop-event" activeClassName="active">
+          Workshop &amp; Event
+        </Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Figure>
+          <Figure.Image
             src={data.ourStory.publicURL}
             alt={`Link to ${data.ourStory.name}page`}
           />
-          <Link to="/our-story" activeClassName="active">
-            Our Story
-          </Link>
-          <ul className="sub-nav our-story" role="menu">
-            <li>
-              <a href="#press">Press</a>
-            </li>
-            <li>
-              <a href="#story-of-our-journey">Story of our Journey</a>
-            </li>
-          </ul>
-        </li>
-        <li className="top-nav" role="menuitem">
-          <img
+        </Figure>
+        <Link
+          to="/our-story"
+          activeClassName="active"
+        >
+          Our Story
+        </Link>
+        <Nav className="flex-column sub-nav our-story">
+          <Nav.Item>
+            <a href="/our-story#press">Press</a>
+          </Nav.Item>
+          <Nav.Item>
+            <a href="/our-story#story-of-our-journey">Story of our Journey</a>
+          </Nav.Item>
+        </Nav>
+      </Nav.Item>
+      <Nav.Item>
+        <Figure>
+          <Figure.Image
             src={data.shopInfo.publicURL}
             alt={`Link to ${data.shopInfo.name}page`}
           />
-          <Link to="/shop-info" activeClassName="active">
-            Shop Info
-          </Link>
-          <ul className="sub-nav shop-info" role="menu">
-            <li>
-              <a href="#menu">Menu</a>
-            </li>
-            <li>
-              <a href="#opening-hours">Opening Hours</a>
-            </li>
-            <li>
-              <a href="#contact">Contact</a>
-            </li>
-            <li>
-              <a href="#q-a">Q&A</a>
-            </li>
-          </ul>
-        </li>
-        <li className="opening-hours" role="menuitem">
-          <img
+        </Figure>
+        <Link
+          to="/shop-info"
+          activeClassName="active"
+        >
+          Shop Info
+        </Link>
+        <Nav className="flex-column sub-nav shop-info">
+          <Nav.Item>
+            <a href="/shop-info#menu">Menu</a>
+          </Nav.Item>
+          <Nav.Item>
+            <a href="/shop-info#opening-hours">Opening Hours</a>
+          </Nav.Item>
+          <Nav.Item>
+            <a href="/shop-info#contact">Contact</a>
+          </Nav.Item>
+          <Nav.Item>
+            <a href="/shop-info#q-a">Q&amp;A</a>
+          </Nav.Item>
+        </Nav>
+      </Nav.Item>
+      <Nav.Item className="opening-hours">
+        <Figure>
+          <Figure.Image
             src={data.openingHours.publicURL}
             alt={`${data.openingHours.name} icon`}
           />
-          <div className="opening-hours-details">
-            <OpeningHours />
-            <p>
-              <b>Mon:</b> Closed
-              <br />
-              <b>Tue - Sat:</b> 11:00 - 18:00
-              <br />
-              (last order 17:45)
-              <br />
-              <b>Sun:</b> 12:00 - 17:00
-              <br />
-              (last order 16:45)
-              <br />
-            </p>
-          </div>
-        </li>
-      </ul>
-    </Container>
+        </Figure>
+        <div className="opening-hours-details">
+          <OpeningHours />
+          <p>
+            <b>Mon:</b> Closed
+            <br />
+            <b>Tue - Sat:</b> 11:00 - 18:00
+            <br />
+            (last order 17:45)
+            <br />
+            <b>Sun:</b> 12:00 - 17:00
+            <br />
+            (last order 16:45)
+            <br />
+          </p>
+        </div>
+      </Nav.Item>
+    </Nav>
   );
 };
 

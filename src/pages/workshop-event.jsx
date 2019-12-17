@@ -4,7 +4,7 @@ import Img from "gatsby-image";
 
 import Layout from "../components/layout";
 import SEO from "../components/seo";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 
 const WorkshopEvent = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -47,9 +47,7 @@ const WorkshopEvent = ({ location }) => {
         keywords={["Round&Round", "Workshop", "Rotterdam"]}
       />
 
-      <Container as="h3" className="sub-heading mb-3">
-        Upcoming
-      </Container>
+      <h3 className="sub-heading mb-3">Upcoming</h3>
       {data.allEvents.edges
         .filter(node => {
           if (Date.parse(node.node.frontmatter.date) >= Date.now()) {
@@ -58,10 +56,11 @@ const WorkshopEvent = ({ location }) => {
           return false;
         })
         .map(({ node }) => (
-          <Row className="mb-4" key={node.index}>
-            <Col md={5} xs={4}>
+          <Row className="mb-3" key={node.index}>
+            <Col md={4} lg={5}>
               <Img
                 fluid={node.frontmatter.thumbnail.childImageSharp.fluid}
+                className="mb-3"
                 style={{
                   position: "relative",
                   overflow: "hidden",
@@ -70,7 +69,7 @@ const WorkshopEvent = ({ location }) => {
                 }}
               />
             </Col>
-            <Col md={7} xs={8}>
+            <Col md={8} lg={7}>
               <Row className="event-header">
                 <Col
                   md={2}
@@ -80,40 +79,36 @@ const WorkshopEvent = ({ location }) => {
                     backgroundSize: "contain"
                   }}
                 >
-                  <Container className="month">
+                  <span className="month">
                     {new Date(node.frontmatter.date).toLocaleString("en-UK", {
                       month: "short"
                     })}
-                  </Container>
-                  <Container className="day">
+                  </span>
+                  <span className="day">
                     {new Date(node.frontmatter.date).toLocaleString("en-UK", {
                       day: "2-digit"
                     })}
-                  </Container>
+                  </span>
                 </Col>
                 <Col md={10}>
-                  <Container as="h4" style={{ lineHeight: "inherit" }}>
+                  <h4 style={{ lineHeight: "inherit" }}>
                     <Link to={node.fields.slug}>{node.frontmatter.title}</Link>
-                  </Container>
-                  <Container className="date-mobile">
+                  </h4>
+                  <span className="date-mobile">
                     {new Date(node.frontmatter.date).toLocaleDateString(
                       "en-UK",
                       { month: "long", day: "2-digit" }
                     )}
-                  </Container>
+                  </span>
                   {node.frontmatter.time}
                 </Col>
               </Row>
-              <Container as="p" className="excerpt">
-                {node.frontmatter.description}
-              </Container>
+              <p className="excerpt">{node.frontmatter.description}</p>
             </Col>
           </Row>
         ))}
 
-      <Container as="h3" className="sub-heading mt-4 mb-3">
-        Past
-      </Container>
+      <h3 className="sub-heading mb-3">Past</h3>
       {data.allEvents.edges
         .filter(node => {
           if (Date.parse(node.node.frontmatter.date) < Date.now()) {
@@ -122,10 +117,11 @@ const WorkshopEvent = ({ location }) => {
           return false;
         })
         .map(({ node }) => (
-          <Row className="mb-4" key={node.index}>
-            <Col md={5} xs={4}>
+          <Row className="mb-3" key={node.index}>
+            <Col md={4} lg={5}>
               <Img
                 fluid={node.frontmatter.thumbnail.childImageSharp.fluid}
+                className="mb-3"
                 style={{
                   position: "relative",
                   overflow: "hidden",
@@ -134,7 +130,7 @@ const WorkshopEvent = ({ location }) => {
                 }}
               />
             </Col>
-            <Col md={7} xs={8}>
+            <Col md={8} lg={7}>
               <Row className="event-header">
                 <Col
                   md={2}
@@ -144,33 +140,31 @@ const WorkshopEvent = ({ location }) => {
                     backgroundSize: "contain"
                   }}
                 >
-                  <Container className="month">
+                  <span className="month">
                     {new Date(node.frontmatter.date).toLocaleString("en-UK", {
                       month: "short"
                     })}
-                  </Container>
-                  <Container className="day">
+                  </span>
+                  <span className="day">
                     {new Date(node.frontmatter.date).toLocaleString("en-UK", {
                       day: "2-digit"
                     })}
-                  </Container>
+                  </span>
                 </Col>
                 <Col md={10}>
-                  <Container as="h4" style={{ lineHeight: "inherit" }}>
+                  <h4 style={{ lineHeight: "inherit" }}>
                     <Link to={node.fields.slug}>{node.frontmatter.title}</Link>
-                  </Container>
-                  <Container className="date-mobile">
+                  </h4>
+                  <span className="date-mobile">
                     {new Date(node.frontmatter.date).toLocaleDateString(
                       "en-UK",
                       { month: "long", day: "2-digit" }
                     )}
-                  </Container>
+                  </span>
                   {node.frontmatter.time}
                 </Col>
               </Row>
-              <Container as="p" className="excerpt">
-                {node.frontmatter.description}
-              </Container>
+              <p className="excerpt">{node.frontmatter.description}</p>
             </Col>
           </Row>
         ))}

@@ -1,16 +1,17 @@
-import React from 'react';
-import { useStaticQuery, graphql, Link } from 'gatsby';
-import Img from 'gatsby-image';
+import React from "react";
+import { useStaticQuery, graphql, Link } from "gatsby";
+import Img from "gatsby-image";
 
-import Carousel from 'react-bootstrap/Carousel';
+import Carousel from "react-bootstrap/Carousel";
 
-import Header from '../components/header';
-import Sidebar from '../components/sidebar';
-import Footer from '../components/footer';
-import SEO from '../components/seo';
-import Instagram from '../components/instagram';
+import Header from "../components/header";
+import Sidebar from "../components/sidebar";
+import Footer from "../components/footer";
+import SEO from "../components/seo";
+import Instagram from "../components/instagram";
+import { Button, Col, Container, Row } from "react-bootstrap";
 
-import { ReactComponent as Socials } from '../../content/assets/pages/index/social.svg';
+import { ReactComponent as Socials } from "../../content/assets/pages/index/social.svg";
 
 const Index = ({ location }) => {
   const [toggleNav, setToggleNav] = React.useState(false);
@@ -64,63 +65,60 @@ const Index = ({ location }) => {
     }
   `);
   return (
-    <div className={`site-wrapper index ${toggleNav ? 'site-head-open' : ''}`}>
-      <SEO title="Welcome" keywords={['Round&Round', 'Rotterdam', 'matcha']} />
+    <Container
+      className={`site-wrapper index ${toggleNav ? "site-head-open" : ""}`}
+    >
+      <SEO title="Welcome" keywords={["Round&Round", "Rotterdam", "matcha"]} />
 
-      <button
-        className="nav-burger"
-        href="#"
-        type="button"
+      <Button
+        className={`nav-burger hamburger hamburger--collapse ${
+          toggleNav ? "is-active" : ""
+        }`}
+        variant="link"
         onClick={() => setToggleNav(!toggleNav)}
       >
-        <div
-          className="hamburger hamburger--collapse"
-          aria-label="Menu"
-          role="button"
-          aria-controls="navigation"
-        >
-          <div className="hamburger-box">
-            <div className="hamburger-inner" />
-          </div>
-        </div>
-      </button>
+        <span className="hamburger-box">
+          <span className="hamburger-inner"></span>
+        </span>
+      </Button>
 
       <Header />
-      <main id="site-main" className="site-main transition-fade">
-        <div className="row">
-          <div className="col-lg-3">
+
+      <main>
+        <Row>
+          <Col lg={3}>
             <Sidebar location={location} />
-          </div>
-          <div className="main-content col-lg-9 col-md-12">
+          </Col>
+          <Col lg={9} className="content">
             <Img fluid={data.main.childImageSharp.fluid} />
-          </div>
-        </div>
+          </Col>
+        </Row>
 
         <h3 className="text-center mt-4 mt-lg-0 mb-4">
-          We are Matcha specialists, Cake roll lovers & Culture explorers.
+          We are Matcha specialists, Cake roll lovers &amp; Culture explorers.
         </h3>
 
-        <div className="row store-info">
-          <div className="col-lg-4">
+        <Row className="store-info">
+          <Col lg={4}>
             <img src={data.address.publicURL} alt={data.address.name} />
             <p>
               Hoogstraat 55A
               <br />
               3011PG Rotterdam
             </p>
-          </div>
-          <div className="col-lg-4">
+          </Col>
+          <Col lg={4}>
             <img src={data.email.publicURL} alt={data.email.name} />
             <p>info@roundandround.nl</p>
             <img src={data.phone.publicURL} alt={data.phone.name} />
             <p>010 785 6545</p>
-          </div>
-          <div className="col-lg-4">
+          </Col>
+          <Col lg={4}>
             <Socials />
-          </div>
-        </div>
+          </Col>
+        </Row>
 
-        <div className="row mt-4 mb-4">
+        <Row className="mt-4 mb-4">
           <a
             href="/special/2019-christmas"
             className="col-12"
@@ -139,28 +137,29 @@ const Index = ({ location }) => {
               ))}
             </Carousel>
           </a>
-        </div>
+        </Row>
 
-        <div className="row">
-          <div className="col-lg-6 mb-3">
+        <Row>
+          <Col lg={6} className="mb-3">
             <h3>We’re Matcha Lovers!</h3>
             <p>
               Japanese Matcha tea is a finely ground powder of shade-grown green
               tea. Matcha is rich in antioxidants and vitamins. What we do here
-              in Round & Round...
+              in Round&amp;Round...
               <br />
               <Link to="/our-story">Read more</Link>
             </p>
             <Img fluid={data.story.childImageSharp.fluid} />
-          </div>
-          <div className="col-lg-6">
+          </Col>
+          <Col lg={6}>
             <h3>We’re on Instagram!</h3>
             <Instagram />
-          </div>
-        </div>
+          </Col>
+        </Row>
       </main>
+
       <Footer />
-    </div>
+    </Container>
   );
 };
 

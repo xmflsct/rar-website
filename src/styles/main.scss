@@ -1,15 +1,22 @@
-@import "hamburgers/hamburgers";
-
 @import "global/variables";
 @import "global/header";
 @import "global/footer";
 @import "global/sidebar";
+@import "global/opening-hours";
 @import "global/form";
 
 @import "pages/homepage";
 @import "pages/cake-hightea";
 @import "pages/workshop-event";
 @import "pages/shop-info";
+
+$hamburger-layer-width: 20px;
+$hamburger-layer-height: 1px;
+$hamburger-layer-spacing: 5px;
+$hamburger-layer-color: $color-primary-light;
+$hamburger-layer-border-radius: 0;
+$hamburger-types: (collapse);
+@import "hamburgers/hamburgers";
 
 /* Main - Theme styles
 /* ---------------------------------------------------------- */
@@ -80,11 +87,6 @@ button {
   margin-left: auto;
   margin-right: auto;
 }
-@media (max-width: 768px) {
-  .site-wrapper {
-    padding: 0 6vw;
-  }
-}
 
 .site-wrapper > header,
 .site-wrapper > main,
@@ -100,31 +102,6 @@ button {
   opacity: 1;
   visibility: visible;
   transition: opacity 500ms ease-out, visibility 500ms ease-out;
-}
-
-.opening-hours-details span.shop-badge {
-  padding: 8px 12px;
-  text-align: center;
-  border-radius: 5px;
-  color: white;
-  font-weight: $font-weight-normal;
-}
-
-.opening-hours-details span.shop-open {
-  background: $color-matcha;
-}
-
-.opening-hours-details span.shop-close {
-  background: $color-shop-close;
-}
-
-.opening-hours-details span.shop-open-soon,
-.opening-hours-details span.shop-last-order {
-  background: $color-shop-soon;
-}
-
-.opening-hours-details p {
-  margin-top: 0.8em;
 }
 
 /* Page - All pages except index
