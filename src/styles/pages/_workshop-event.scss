@@ -1,0 +1,24 @@
+.workshop-event .date-desktop {
+  font-size: 1.15em;
+  padding-top: 0.35em;
+}
+
+.workshop-event .excerpt {
+  border-top: 1px $color-primary-light dashed;
+  padding-top: 1em;
+  margin-top: 1em;
+}
+
+.date-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .date-desktop {
+    display: none;
+  }
+
+  .date-mobile {
+    display: block;
+  }
+}

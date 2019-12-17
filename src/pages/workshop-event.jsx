@@ -1,9 +1,10 @@
-import React from 'react';
-import { Link, useStaticQuery, graphql } from 'gatsby';
-import Img from 'gatsby-image';
+import React from "react";
+import { Link, useStaticQuery, graphql } from "gatsby";
+import Img from "gatsby-image";
 
-import Layout from '../components/layout';
-import SEO from '../components/seo';
+import Layout from "../components/layout";
+import SEO from "../components/seo";
+import { Col, Container, Row } from "react-bootstrap";
 
 const WorkshopEvent = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -41,130 +42,137 @@ const WorkshopEvent = ({ location }) => {
   `);
   return (
     <Layout location={location} name="workshop-event">
-      <SEO title="Workshop & Event" keywords={['Round&Round', 'Workshop', 'Rotterdam']} />
+      <SEO
+        title="Workshop &amp; Event"
+        keywords={["Round&Round", "Workshop", "Rotterdam"]}
+      />
 
-      <h3 className="sub-heading mb-3" id="matcha-lovers">
+      <Container as="h3" className="sub-heading mb-3">
         Upcoming
-      </h3>
+      </Container>
       {data.allEvents.edges
-        .filter((node) => {
+        .filter(node => {
           if (Date.parse(node.node.frontmatter.date) >= Date.now()) {
             return true;
           }
           return false;
         })
         .map(({ node }) => (
-          <div className="row mb-4" key={node.index}>
-            <div className="col-4 col-md-5">
+          <Row className="mb-4" key={node.index}>
+            <Col md={5} xs={4}>
               <Img
                 fluid={node.frontmatter.thumbnail.childImageSharp.fluid}
                 style={{
-                  position: 'relative',
-                  overflow: 'hidden',
-                  paddingBottom: '100%',
-                  height: '0',
+                  position: "relative",
+                  overflow: "hidden",
+                  paddingBottom: "100%",
+                  height: "0"
                 }}
               />
-            </div>
-            <div className="col-8 col-md-7">
-              <div className="row event-header">
-                <div
-                  className="col-md-2 date-desktop"
+            </Col>
+            <Col md={7} xs={8}>
+              <Row className="event-header">
+                <Col
+                  md={2}
+                  className="date-desktop"
                   style={{
                     background: `url(${data.date.publicURL}) no-repeat`,
-                    backgroundSize: 'contain',
+                    backgroundSize: "contain"
                   }}
                 >
-                  <div className="month">
-                    {new Date(node.frontmatter.date).toLocaleDateString(
-                      'en-UK',
-                      { month: 'short' },
-                    )}
-                  </div>
-                  <div className="day">
-                    {new Date(node.frontmatter.date).toLocaleDateString(
-                      'en-UK',
-                      { day: '2-digit' },
-                    )}
-                  </div>
-                </div>
-                <div className="col-md-10">
-                  <h4 style={{ lineHeight: 'inherit' }}>
+                  <Container className="month">
+                    {new Date(node.frontmatter.date).toLocaleString("en-UK", {
+                      month: "short"
+                    })}
+                  </Container>
+                  <Container className="day">
+                    {new Date(node.frontmatter.date).toLocaleString("en-UK", {
+                      day: "2-digit"
+                    })}
+                  </Container>
+                </Col>
+                <Col md={10}>
+                  <Container as="h4" style={{ lineHeight: "inherit" }}>
                     <Link to={node.fields.slug}>{node.frontmatter.title}</Link>
-                  </h4>
-                  <div className="date-mobile">
+                  </Container>
+                  <Container className="date-mobile">
                     {new Date(node.frontmatter.date).toLocaleDateString(
-                      'en-UK',
-                      { month: 'long', day: '2-digit' },
+                      "en-UK",
+                      { month: "long", day: "2-digit" }
                     )}
-                  </div>
+                  </Container>
                   {node.frontmatter.time}
-                </div>
-              </div>
-              <p className="excerpt">{node.frontmatter.description}</p>
-            </div>
-          </div>
+                </Col>
+              </Row>
+              <Container as="p" className="excerpt">
+                {node.frontmatter.description}
+              </Container>
+            </Col>
+          </Row>
         ))}
 
-      <h3 className="sub-heading mt-4 mb-3" id="matcha-lovers">
+      <Container as="h3" className="sub-heading mt-4 mb-3">
         Past
-      </h3>
+      </Container>
       {data.allEvents.edges
-        .filter((node) => {
+        .filter(node => {
           if (Date.parse(node.node.frontmatter.date) < Date.now()) {
             return true;
           }
           return false;
         })
         .map(({ node }) => (
-          <div className="row mb-4" key={node.index}>
-            <div className="col-4 col-md-5">
+          <Row className="mb-4" key={node.index}>
+            <Col md={5} xs={4}>
               <Img
                 fluid={node.frontmatter.thumbnail.childImageSharp.fluid}
                 style={{
-                  position: 'relative',
-                  overflow: 'hidden',
-                  paddingBottom: '100%',
-                  height: '0',
+                  position: "relative",
+                  overflow: "hidden",
+                  paddingBottom: "100%",
+                  height: "0"
                 }}
               />
-            </div>
-            <div className="col-8 col-md-7">
-              <div className="row event-header">
-                <div
-                  className="col-md-2 date-desktop"
+            </Col>
+            <Col md={7} xs={8}>
+              <Row className="event-header">
+                <Col
+                  md={2}
+                  className="date-desktop"
                   style={{
                     background: `url(${data.date.publicURL}) no-repeat`,
-                    backgroundSize: 'contain',
+                    backgroundSize: "contain"
                   }}
                 >
-                  <div className="month">
-                    {new Date(node.frontmatter.date).toLocaleString('en-UK', {
-                      month: 'short',
+                  <Container className="month">
+                    {new Date(node.frontmatter.date).toLocaleString("en-UK", {
+                      month: "short"
                     })}
-                  </div>
-                  <div className="day">
-                    {new Date(node.frontmatter.date).toLocaleString('en-UK', {
-                      day: '2-digit',
+                  </Container>
+                  <Container className="day">
+                    {new Date(node.frontmatter.date).toLocaleString("en-UK", {
+                      day: "2-digit"
                     })}
-                  </div>
-                </div>
-                <div className="col-md-10">
-                  <h4 style={{ lineHeight: 'inherit' }}>
+                  </Container>
+                </Col>
+                <Col md={10}>
+                  <Container as="h4" style={{ lineHeight: "inherit" }}>
                     <Link to={node.fields.slug}>{node.frontmatter.title}</Link>
-                  </h4>
-                  <div className="date-mobile">
+                  </Container>
+                  <Container className="date-mobile">
                     {new Date(node.frontmatter.date).toLocaleDateString(
-                      'en-UK',
-                      { month: 'long', day: '2-digit' },
+                      "en-UK",
+                      { month: "long", day: "2-digit" }
                     )}
-                  </div>
+                  </Container>
                   {node.frontmatter.time}
-                </div>
-              </div>
-              <p className="excerpt">{node.frontmatter.description}</p>
-            </div>
-          </div>
+                </Col>
+              </Row>
+              <Container as="p" className="excerpt">
+                {node.frontmatter.description}
+              </Container>
+            </Col>
+          </Row>
         ))}
     </Layout>
   );

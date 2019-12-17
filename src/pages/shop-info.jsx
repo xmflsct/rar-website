@@ -1,11 +1,12 @@
-import React from 'react';
-import { useStaticQuery, graphql } from 'gatsby';
-import Img from 'gatsby-image';
-import Accordion from 'react-bootstrap/Accordion';
-import Card from 'react-bootstrap/Card';
+import React from "react";
+import { useStaticQuery, graphql } from "gatsby";
+import Img from "gatsby-image";
+import Accordion from "react-bootstrap/Accordion";
+import Card from "react-bootstrap/Card";
 
-import Layout from '../components/layout';
-import SEO from '../components/seo';
+import Layout from "../components/layout";
+import SEO from "../components/seo";
+import { Container } from "react-bootstrap";
 
 const ShopInfo = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -51,13 +52,13 @@ const ShopInfo = ({ location }) => {
   `);
   return (
     <Layout location={location} name="shop-info">
-      <SEO title="Shop Info" keywords={['Round&Round', 'Rotterdam']} />
+      <SEO title="Shop Info" keywords={["Round&Round", "Rotterdam"]} />
 
       <Img fluid={data.main.childImageSharp.fluid} />
 
-      <h3 className="sub-heading mt-4 mb-3" id="menu">
+      <Container as="h3" className="sub-heading mt-4 mb-3" id="menu">
         Menu
-      </h3>
+      </Container>
       <p>
         <a
           href={data.mainMenu.publicURL}
@@ -75,33 +76,24 @@ const ShopInfo = ({ location }) => {
           rel="noopener noreferrer"
           alt="Download seasonal menu"
         >
-          Check out our
-          {' '}
-          <b>seasonal menu</b>
-!
+          Check out our <b>seasonal menu</b>!
         </a>
       </p>
 
-      <h3 className="sub-heading mt-4 mb-3" id="opening-hours">
+      <Container as="h3" className="sub-heading mt-4 mb-3" id="opening-hours">
         Opening Hours
-      </h3>
+      </Container>
       <p>
-        <b>Monday:</b>
-        {' '}
-Closed
+        <b>Monday:</b> Closed
         <br />
-        <b>Tuesday - Saturday:</b>
-        {' '}
-11:00 - 18:00 (last order 17:45)
+        <b>Tuesday - Saturday:</b> 11:00 - 18:00 (last order 17:45)
         <br />
-        <b>Sunday:</b>
-        {' '}
-12:00 - 17:00 (last order 16:45)
+        <b>Sunday:</b> 12:00 - 17:00 (last order 16:45)
       </p>
 
-      <h3 className="sub-heading mt-4 mb-3" id="contact">
+      <Container as="h3" className="sub-heading mt-4 mb-3" id="contact">
         Contact
-      </h3>
+      </Container>
       <iframe
         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2460.6118759084343!2d4.490871915785305!3d51.92279197970556!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c433451debd72f%3A0xc4ada4e0ae53ac9c!2sRound%26Round%20Rotterdam!5e0!3m2!1sen!2sse!4v1571081880892!5m2!1sen!2sse"
         title="Google Maps"
@@ -159,9 +151,9 @@ Closed
         </a>
       </p>
 
-      <h3 className="sub-heading mt-4 mb-3" id="q-a">
-        Q&A
-      </h3>
+      <Container as="h3" className="sub-heading mt-4 mb-3" id="q-a">
+        Q&amp;A
+      </Container>
       <Accordion defaultActiveKey="0">
         <Accordion.Toggle as={Card.Title} eventKey="0">
           Q: How do I order a whole cake?
@@ -272,8 +264,8 @@ Closed
         </Accordion.Collapse>
 
         <Accordion.Toggle as={Card.Title} eventKey="6">
-          Q: I&apos;m interested in booking a large order of cakes. How do I go about
-          it?
+          Q: I&apos;m interested in booking a large order of cakes. How do I go
+          about it?
         </Accordion.Toggle>
         <Accordion.Collapse eventKey="6">
           <Card.Body>
@@ -287,8 +279,8 @@ Closed
         </Accordion.Collapse>
 
         <Accordion.Toggle as={Card.Title} eventKey="7">
-          Q: I&apos;d like to have your cakes for a wedding or a party. How do I book
-          my order?
+          Q: I&apos;d like to have your cakes for a wedding or a party. How do I
+          book my order?
         </Accordion.Toggle>
         <Accordion.Collapse eventKey="7">
           <Card.Body>

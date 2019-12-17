@@ -1,49 +1,53 @@
-import React from 'react';
+import React from "react";
 
-import Img from 'gatsby-image';
+import Img from "gatsby-image";
 
-import { currency } from './currency';
+import { currency } from "./currency";
+import { Col, Container, Row } from "react-bootstrap";
 
 const CakeList = ({ node }) => (
-  <div className="col-12 col-md-4">
+  <Col md={4} xs={12}>
     <Img
       fluid={node.frontmatter.thumbnail.childImageSharp.fluid}
       style={{
-        position: 'relative',
-        overflow: 'hidden',
-        paddingBottom: '100%',
-        height: '0',
+        position: "relative",
+        overflow: "hidden",
+        paddingBottom: "100%",
+        height: "0"
       }}
     />
-    <div className="row mt-2 no-gutters">
-      <h6 className="col">{node.frontmatter.cake_hightea.name}</h6>
-      <span className="col-auto price">
+    <Row className="mt-2 no-gutters">
+      <Col>
+        <Container as="h6">{node.frontmatter.cake_hightea.name}</Container>
+      </Col>
+      <Container as="span" className="col-auto price">
         {node.frontmatter.cake_hightea.price
           ? node.frontmatter.cake_hightea.price.piece
             ? node.frontmatter.cake_hightea.price.whole
-              ? `${currency(node.frontmatter.cake_hightea.price.piece)
-              }/${
-                currency(node.frontmatter.cake_hightea.price.whole)}`
+              ? `${currency(
+                  node.frontmatter.cake_hightea.price.piece
+                )}/${currency(node.frontmatter.cake_hightea.price.whole)}`
               : currency(node.frontmatter.cake_hightea.price.piece)
             : node.frontmatter.cake_hightea.price.whole
-              ? currency(node.frontmatter.cake_hightea.price.whole)
-              : ''
-          : ''}
-      </span>
-    </div>
+            ? currency(node.frontmatter.cake_hightea.price.whole)
+            : ""
+          : ""}
+      </Container>
+    </Row>
 
     {node.frontmatter.cake_hightea.description ? (
-      <div
+      <Container
         dangerouslySetInnerHTML={{
-          __html: node.frontmatter.cake_hightea.description,
+          __html: node.frontmatter.cake_hightea.description
         }}
-        style={{ whiteSpace: 'pre-line' }}
+        style={{ whiteSpace: "pre-line" }}
         className="description mb-4"
+        fluid="true"
       />
     ) : (
-      ''
+      ""
     )}
-  </div>
+  </Col>
 );
 
 export default CakeList;

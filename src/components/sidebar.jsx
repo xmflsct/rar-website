@@ -1,15 +1,15 @@
-import React from 'react';
-import { useStaticQuery, graphql, Link } from 'gatsby';
+import React from "react";
+import { useStaticQuery, graphql, Link } from "gatsby";
+import { Col, Container, Row } from "react-bootstrap";
 
+import OpeningHours from "./sidebar/opening-hours";
 
-import OpeningHours from './sidebar/opening-hours';
-
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   // eslint-disable-next-line global-require
-  require('smooth-scroll')('a[href*="#"]', {
+  require("smooth-scroll")('a[href*="#"]', {
     speed: 800,
     speedAsDuration: true,
-    easing: 'easeInOutCubic',
+    easing: "easeInOutCubic"
   });
 }
 
@@ -57,7 +57,7 @@ const Sidebar = () => {
     }
   `);
   return (
-    <div className="sidebar">
+    <Container className="sidebar">
       <ul role="menu">
         <li className="top-nav" role="menuitem">
           <img
@@ -100,10 +100,7 @@ const Sidebar = () => {
               </Link>
             </li>
             <li>
-              <Link
-                to="/cake-hightea/forest-hightea"
-                activeClassName="active"
-              >
+              <Link to="/cake-hightea/forest-hightea" activeClassName="active">
                 Forest Hightea
               </Link>
             </li>
@@ -159,11 +156,7 @@ const Sidebar = () => {
             src={data.workshopEvent.publicURL}
             alt={`Link to ${data.workshopEvent.name}page`}
           />
-          <Link
-            to="/workshop-event"
-            activeClassName="active"
-            partiallyActive
-          >
+          <Link to="/workshop-event" activeClassName="active" partiallyActive>
             Workshop & Event
           </Link>
         </li>
@@ -215,19 +208,13 @@ const Sidebar = () => {
           <div className="opening-hours-details">
             <OpeningHours />
             <p>
-              <b>Mon:</b>
-              {' '}
-Closed
+              <b>Mon:</b> Closed
               <br />
-              <b>Tue - Sat:</b>
-              {' '}
-11:00 - 18:00
+              <b>Tue - Sat:</b> 11:00 - 18:00
               <br />
               (last order 17:45)
               <br />
-              <b>Sun:</b>
-              {' '}
-12:00 - 17:00
+              <b>Sun:</b> 12:00 - 17:00
               <br />
               (last order 16:45)
               <br />
@@ -235,7 +222,7 @@ Closed
           </div>
         </li>
       </ul>
-    </div>
+    </Container>
   );
 };
 

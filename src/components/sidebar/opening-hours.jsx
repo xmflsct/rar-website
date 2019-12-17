@@ -1,5 +1,6 @@
-import React from 'react';
-import { StaticQuery, graphql } from 'gatsby';
+import React from "react";
+import { StaticQuery, graphql } from "gatsby";
+import { Container } from "react-bootstrap";
 
 class OpeningHours extends React.Component {
   constructor(props) {
@@ -17,9 +18,13 @@ class OpeningHours extends React.Component {
       Date.now() <= Date.parse(this.props.closedDates.end)
     ) {
       return (
-        <span className="shop-badge shop-close" key={this.state.isClient}>
+        <Container
+          as="span"
+          className="shop-badge shop-close"
+          key={this.state.isClient}
+        >
           Closed for holiday
-        </span>
+        </Container>
       );
     }
     if (this.props.openingHours.nodes[new Date().getDay()].open) {
@@ -54,43 +59,61 @@ class OpeningHours extends React.Component {
       );
       if (currentTime >= almostOpen && currentTime < open) {
         return (
-          <span className="shop-badge shop-open-soon" key={this.state.isClient}>
+          <Container
+            as="span"
+            className="shop-badge shop-open-soon"
+            key={this.state.isClient}
+          >
             Open soon
-          </span>
+          </Container>
         );
-      } if (currentTime >= open && currentTime < lastOrder) {
+      }
+      if (currentTime >= open && currentTime < lastOrder) {
         return (
-          <span className="shop-badge shop-open" key={this.state.isClient}>
+          <Container
+            as="span"
+            className="shop-badge shop-open"
+            key={this.state.isClient}
+          >
             Open now
-          </span>
+          </Container>
         );
       } else if (currentTime >= lastOrder && currentTime < close) {
         return (
-          <span
+          <Container
+            as="span"
             className="shop-badge shop-last-order"
             key={this.state.isClient}
           >
             Last order
-          </span>
+          </Container>
         );
       } else {
         return (
-          <span className="shop-badge shop-close" key={this.state.isClient}>
+          <Container
+            as="span"
+            className="shop-badge shop-close"
+            key={this.state.isClient}
+          >
             Closed
-          </span>
+          </Container>
         );
       }
     } else {
       return (
-        <span className="shop-badge shop-close" key={this.state.isClient}>
+        <Container
+          as="span"
+          className="shop-badge shop-close"
+          key={this.state.isClient}
+        >
           Closed for today
-        </span>
+        </Container>
       );
     }
   }
 }
 
-export default (props) => (
+export default props => (
   <StaticQuery
     query={graphql`
       query {

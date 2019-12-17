@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 export default function HTML(props) {
   return (
@@ -10,6 +10,12 @@ export default function HTML(props) {
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+        <link
+          rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+          crossOrigin="anonymous"
         />
         <script
           dangerouslySetInnerHTML={{
@@ -42,7 +48,7 @@ export default function HTML(props) {
                 };
                 s.parentNode.insertBefore(tk, s);
               })(document);
-            `,
+            `
           }}
         />
         {props.headComponents}
@@ -69,5 +75,5 @@ HTML.propTypes = {
   bodyAttributes: PropTypes.object,
   preBodyComponents: PropTypes.array,
   body: PropTypes.string,
-  postBodyComponents: PropTypes.array,
+  postBodyComponents: PropTypes.array
 };

@@ -107,6 +107,13 @@ module.exports = {
       options: {
         svgo: "true"
       }
+    },
+    {
+      resolve: "gatsby-plugin-sass",
+      options: {
+        includePaths: ['src/styles'],
+        precision: 6
+      }
     }
   ]
 };

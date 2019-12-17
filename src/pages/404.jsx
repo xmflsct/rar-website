@@ -1,10 +1,11 @@
-import React from 'react';
-import { useStaticQuery, graphql, Link } from 'gatsby';
-import Img from 'gatsby-image';
+import React from "react";
+import { useStaticQuery, graphql, Link } from "gatsby";
+import Img from "gatsby-image";
 
-import Header from '../components/header';
-import Footer from '../components/footer';
-import SEO from '../components/seo';
+import Header from "../components/header";
+import Footer from "../components/footer";
+import SEO from "../components/seo";
+import { Col, Container, Row } from "react-bootstrap";
 
 const PageNotFound = () => {
   const data = useStaticQuery(graphql`
@@ -19,27 +20,33 @@ const PageNotFound = () => {
     }
   `);
   return (
-    <div className="site-wrapper craft">
+    <Container className="site-wrapper">
       <Header />
       <SEO
         title="404: where is the cake"
-        keywords={['Round&Round', 'Rotterdam', '404']}
+        keywords={["Round&Round", "Rotterdam", "404"]}
       />
-      <main id="site-main" className="site-main transition-fade">
-        <div className="row text-center">
-          <h3 className="col-12">404: where is the cake</h3>
-          <Link
-            to="/cake-hightea/signature-cake-roll"
-            className="mt-3 mb-5"
-            style={{ marginLeft: 'auto', marginRight: 'auto' }}
-          >
-            Take a look at our signature cake roll?
-          </Link>
-          <Img fluid={data.image.childImageSharp.fluid} className="col-12" />
-        </div>
-      </main>
+      <Container as="main" id="site-main" className="site-main">
+        <Container className="text-center">
+          <Row>
+            <Col as="h3" xs={12}>
+              404: where is the cake
+            </Col>
+            <Link
+              to="/cake-hightea/signature-cake-roll"
+              className="mt-3 mb-5"
+              style={{ marginLeft: "auto", marginRight: "auto" }}
+            >
+              Take a look at our signature cake roll?
+            </Link>
+            <Col xs={12}>
+              <Img fluid={data.image.childImageSharp.fluid} />
+            </Col>
+          </Row>
+        </Container>
+      </Container>
       <Footer />
-    </div>
+    </Container>
   );
 };
 

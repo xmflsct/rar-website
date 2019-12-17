@@ -1,17 +1,17 @@
-import React from 'react';
+import React from "react";
 
-import Header from './header';
-import Sidebar from './sidebar';
-import Footer from './footer';
+import Header from "./header";
+import Sidebar from "./sidebar";
+import Footer from "./footer";
 
-const Layout = (props) => {
+const Layout = props => {
   const [toggleNav, setToggleNav] = React.useState(false);
 
   const { children, location, name } = props;
 
   return (
     <div
-      className={`site-wrapper ${name} ${toggleNav ? 'site-head-open' : ''}`}
+      className={`site-wrapper ${name} ${toggleNav ? "site-head-open" : ""}`}
     >
       <button
         className="nav-burger"

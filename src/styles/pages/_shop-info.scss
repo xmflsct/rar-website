@@ -1,0 +1,15 @@
+.shop-info img.contact-icon {
+  width: 30px;
+  height: 30px;
+  float: left;
+  margin-right: 6px;
+}
+
+.shop-info .accordion .card-title:before {
+  content: "> ";
+}
+
+.shop-info .accordion .card-title {
+  font-size: 1em;
+  cursor: pointer;
+}

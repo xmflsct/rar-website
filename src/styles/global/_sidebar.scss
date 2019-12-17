@@ -1,0 +1,107 @@
+.sidebar {
+  background: white;
+  z-index: 8888;
+}
+
+.sidebar > ul {
+  list-style: none;
+  padding-left: 10px;
+}
+
+.site-wrapper:not(.index) .sidebar {
+  position: sticky;
+  top: 1.5vw;
+}
+
+.sidebar li {
+  padding: 5px 0;
+}
+
+.sidebar img {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.sidebar a {
+  color: $color-primary-light;
+  border: none;
+}
+
+.sidebar a:hover,
+.sidebar a:active,
+.sidebar a.active {
+  font-weight: $font-weight-bold;
+}
+
+.sidebar .sub-nav {
+  font-size: 0.9em;
+  padding-inline-start: 40px;
+  display: none;
+}
+
+.site-wrapper.cake-hightea .sidebar .sub-nav.cake-hightea,
+.site-wrapper.matcha .sidebar .sub-nav.matcha,
+.site-wrapper.our-story .sidebar .sub-nav.our-story,
+.site-wrapper.shop-info .sidebar .sub-nav.shop-info {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .sidebar .sub-nav.cake-hightea {
+    display: block;
+  }
+
+  .sidebar .sub-nav.matcha,
+  .sidebar .sub-nav.our-story,
+  .sidebar .sub-nav.shop-info {
+    display: none !important;
+  }
+}
+
+.sidebar .opening-hours {
+  padding-top: 25px;
+}
+
+.sidebar .opening-hours img {
+  float: left;
+}
+
+.sidebar .opening-hours .opening-hours-details {
+  padding-left: 40px;
+}
+
+.sidebar .opening-hours .opening-hours-details p {
+  font-size: 0.85em;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    left: calc(-100vw - 15px);
+    position: absolute !important;
+    width: calc(100% + 6vw);
+    height: calc(100vh - 182px);
+    padding: 0 6vw;
+    transition: left 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+    overflow: auto;
+  }
+
+  .site-wrapper.site-head-open .sidebar {
+    left: calc(15px - 6vw);
+  }
+
+  .sidebar li.opening-hours {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    opacity: 1;
+    transition: opacity 0.45s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+  }
+
+  .site-wrapper.site-head-open .main-content {
+    opacity: 0;
+  }
+}

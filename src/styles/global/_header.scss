@@ -1,0 +1,35 @@
+.header-left .opening-hours-details {
+  display: none;
+}
+
+.header-center {
+  margin-top: 110px;
+}
+
+.header-center p {
+  margin: 0;
+  line-height: 1.3em;
+}
+
+.header-center p b {
+  color: $color-matcha;
+}
+
+@media (max-width: 768px) {
+  .header-left {
+    max-width: 180px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .header-left .opening-hours-details {
+    display: block;
+    text-align: center;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .header-center {
+    display: none;
+  }
+}
