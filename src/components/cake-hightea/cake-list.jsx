@@ -3,10 +3,10 @@ import React from "react";
 import Img from "gatsby-image";
 
 import { currency } from "./currency";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 
 const CakeList = ({ node }) => (
-  <Col md={4} xs={12}>
+  <Col md={4} xs={12} className="mb-4">
     <Img
       fluid={node.frontmatter.thumbnail.childImageSharp.fluid}
       style={{
@@ -18,9 +18,9 @@ const CakeList = ({ node }) => (
     />
     <Row className="mt-2 no-gutters">
       <Col>
-        <Container as="h6">{node.frontmatter.cake_hightea.name}</Container>
+        <h6>{node.frontmatter.cake_hightea.name}</h6>
       </Col>
-      <Container as="span" className="col-auto price">
+      <span className="col-auto price">
         {node.frontmatter.cake_hightea.price
           ? node.frontmatter.cake_hightea.price.piece
             ? node.frontmatter.cake_hightea.price.whole
@@ -32,16 +32,16 @@ const CakeList = ({ node }) => (
             ? currency(node.frontmatter.cake_hightea.price.whole)
             : ""
           : ""}
-      </Container>
+      </span>
     </Row>
 
     {node.frontmatter.cake_hightea.description ? (
-      <Container
+      <span
         dangerouslySetInnerHTML={{
           __html: node.frontmatter.cake_hightea.description
         }}
         style={{ whiteSpace: "pre-line" }}
-        className="description mb-4"
+        className="description"
         fluid="true"
       />
     ) : (

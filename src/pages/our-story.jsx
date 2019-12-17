@@ -4,6 +4,8 @@ import Img from 'gatsby-image';
 
 import Layout from '../components/layout';
 import SEO from '../components/seo';
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 
 const OurStory = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -45,12 +47,12 @@ const OurStory = ({ location }) => {
       <h3 className="sub-heading mb-3" id="press">
         Press
       </h3>
-      <div className="row">
-        <div className="col-6">
+      <Row>
+        <Col xs={6}>
           <Img fluid={data.press.nodes[0].childImageSharp.fluid} />
           <p className="text-center mt-2">Newspapers</p>
-        </div>
-        <div className="col-6">
+        </Col>
+        <Col xs={6}>
           <Img fluid={data.press.nodes[1].childImageSharp.fluid} />
           <p className="text-center mt-2">
             <a
@@ -62,8 +64,8 @@ const OurStory = ({ location }) => {
               Binnenstad Rotterdam #Rottergem
             </a>
           </p>
-        </div>
-        <div className="col-6">
+        </Col>
+        <Col xs={6}>
           <Img fluid={data.press.nodes[2].childImageSharp.fluid} />
           <p className="text-center mt-2">
             <a
@@ -75,8 +77,8 @@ const OurStory = ({ location }) => {
               Rotterdam Tourist Information
             </a>
           </p>
-        </div>
-        <div className="col-6">
+        </Col>
+        <Col xs={6}>
           <Img fluid={data.press.nodes[3].childImageSharp.fluid} />
           <p className="text-center mt-2">
             <a
@@ -88,8 +90,8 @@ const OurStory = ({ location }) => {
               De Buik van Rotterdam
             </a>
           </p>
-        </div>
-        <div className="col-6">
+        </Col>
+        <Col xs={6}>
           <Img fluid={data.press.nodes[4].childImageSharp.fluid} />
           <p className="text-center mt-2">
             <a
@@ -101,8 +103,8 @@ const OurStory = ({ location }) => {
               ELLE ETEN
             </a>
           </p>
-        </div>
-        <div className="col-6">
+        </Col>
+        <Col xs={6}>
           <Img fluid={data.press.nodes[5].childImageSharp.fluid} />
           <p className="text-center mt-2">
             <a
@@ -114,8 +116,8 @@ const OurStory = ({ location }) => {
               Open Rotterdam #matchaceremony
             </a>
           </p>
-        </div>
-        <div className="col-6">
+        </Col>
+        <Col xs={6}>
           <Img fluid={data.press.nodes[6].childImageSharp.fluid} />
           <p className="text-center mt-2">
             <a
@@ -127,8 +129,8 @@ const OurStory = ({ location }) => {
               HTSPT Rotterdam
             </a>
           </p>
-        </div>
-        <div className="col-6">
+        </Col>
+        <Col xs={6}>
           <Img fluid={data.press.nodes[7].childImageSharp.fluid} />
           <p className="text-center mt-2">
             <a
@@ -140,8 +142,8 @@ const OurStory = ({ location }) => {
               Hutspot Tips
             </a>
           </p>
-        </div>
-        <div className="col-6">
+        </Col>
+        <Col xs={6}>
           <Img fluid={data.press.nodes[8].childImageSharp.fluid} />
           <p className="text-center mt-2">
             <a
@@ -153,8 +155,8 @@ const OurStory = ({ location }) => {
               Liyen&apos;s food moments
             </a>
           </p>
-        </div>
-        <div className="col-6">
+        </Col>
+        <Col xs={6}>
           <Img fluid={data.press.nodes[9].childImageSharp.fluid} />
           <p className="text-center mt-2">
             <a
@@ -166,8 +168,8 @@ const OurStory = ({ location }) => {
               Hoogkwartier
             </a>
           </p>
-        </div>
-        <div className="col-6">
+        </Col>
+        <Col xs={6}>
           <Img fluid={data.press.nodes[10].childImageSharp.fluid} />
           <p className="text-center mt-2">
             <a
@@ -179,8 +181,8 @@ const OurStory = ({ location }) => {
               Spotte by Locals
             </a>
           </p>
-        </div>
-        <div className="col-6">
+        </Col>
+        <Col xs={6}>
           <Img fluid={data.press.nodes[11].childImageSharp.fluid} />
           <p className="text-center mt-2">
             <a
@@ -192,8 +194,8 @@ const OurStory = ({ location }) => {
               Hotspot Rotterdam
             </a>
           </p>
-        </div>
-        <div className="col-6">
+        </Col>
+        <Col xs={6}>
           <Img fluid={data.press.nodes[12].childImageSharp.fluid} />
           <p className="text-center mt-2">
             <a
@@ -205,8 +207,8 @@ const OurStory = ({ location }) => {
               CitizenMag
             </a>
           </p>
-        </div>
-        <div className="col-6">
+        </Col>
+        <Col xs={6}>
           <Img fluid={data.press.nodes[13].childImageSharp.fluid} />
           <p className="text-center mt-2">
             <a
@@ -218,16 +220,16 @@ const OurStory = ({ location }) => {
               RotterdamILoveYou
             </a>
           </p>
-        </div>
-      </div>
+        </Col>
+      </Row>
 
       <h3 className="sub-heading" id="story-of-our-journey">
         Story of our Journey
       </h3>
-      <h4>Our Story</h4>
+      <h5>Our Story</h5>
       <p>The start of our little journey...</p>
       <p>
-        We are Bing & Chao, the co-founders of Round & Round. A lot of people
+        We are Bing &amp; Chao, the co-founders of Round&amp;Round. A lot of people
         ask us, how do you two met? How did you decide to open a cake store? We
         always say it is a long story. We both studied in TU Delft, Bing studied
         Interaction Design and Chao studied Computer Science. After graduated
@@ -251,7 +253,7 @@ const OurStory = ({ location }) => {
         a different view and always be open-minded!
       </p>
 
-      <h4>Crossing the rivers, and climbing the mountains.</h4>
+      <h5>Crossing the rivers, and climbing the mountains.</h5>
       <p>
         We both know that what we want to bring to our customers : tasty natural
         cake with lower amount of sugar; a cute and relax shop atmosphere and an
@@ -301,11 +303,11 @@ const OurStory = ({ location }) => {
         </div>
       </div>
 
-      <h4>China & Japan: fountain of inspirations</h4>
+      <h5>China &amp; Japan: fountain of inspirations</h5>
       <p>
         Nowadays in China, Japan or some other asian countries, there are many
         modern cafes which has creative characters and a ‘cute’ style. This is
-        what we miss here in Holland, so we want to bring this type of ‘cute’ &
+        what we miss here in Holland, so we want to bring this type of ‘cute’ &amp;
         ‘forest’ style cafe to people here.
       </p>
       <p>
@@ -335,9 +337,9 @@ const OurStory = ({ location }) => {
         </div>
       </div>
 
-      <h4>We found Rotterdam, or Rotterdam found us?</h4>
+      <h5>We found Rotterdam, or Rotterdam found us?</h5>
       <p>
-        In the meanwhile of baking cakes & writing our business plan, we were
+        In the meanwhile of baking cakes &amp; writing our business plan, we were
         searching for a shop location. Finally we came to Rotterdam which is
         full of new concept and cool ideas. We explored the city and we found
         this little place on Hoogstraat. We love the atmosphere and friendly
@@ -388,7 +390,7 @@ const OurStory = ({ location }) => {
       <p>
         On January 16th 2016, we had our Grand Opening. We will always remember
         that day, with chaos, surprises, laughters and tears. In general, we
-        survived our first day :) and the journey of Round&Round shop officially
+        survived our first day :) and the journey of Round&amp;Round shop officially
         begins.
       </p>
       <div className="row justify-content-md-center mb-4">
@@ -397,10 +399,10 @@ const OurStory = ({ location }) => {
         </div>
       </div>
 
-      <h4>Our journey just began...</h4>
+      <h5>Our journey just began...</h5>
       <p>
         From that day, we are here almost everyday to meet different people. We
-        serve the cakes & drinks we also love. We are lucky that we have met a
+        serve the cakes &amp; drinks we also love. We are lucky that we have met a
         lot of cute clients and we become friends. Our new partner Sissy was one
         of our customers as well. We are lucky girls!
       </p>
@@ -411,7 +413,7 @@ const OurStory = ({ location }) => {
       </div>
       <p>
         To run a shop is never easy, but we have a smile on our faces everyday.
-        Isn’t it enough? :) When this story has been written, Round & Round is
+        Isn’t it enough? :) When this story has been written, Round &amp; Round is
         just one and half year old. We are still very young and we still have a
         lot ideas that we want to experiment.
       </p>
@@ -427,12 +429,12 @@ const OurStory = ({ location }) => {
       <p>
         At the end, we want to give our great thanks to people who have
         supported us on our journey, special thanks to families and friends of
-        Bing & Chao, who are always there for us; and of course our cute
+        Bing &amp; Chao, who are always there for us; and of course our cute
         customers who are always as curious as we are.
       </p>
       <p>
         We hope our story will be inspiring to you, and see you around in
-        Round&Round
+        Round&amp;Round
       </p>
       <div className="row mb-4">
         <div className="col">
@@ -453,7 +455,7 @@ const OurStory = ({ location }) => {
       <p>
         Love,
         <br />
-        Team R&R
+        Team R&amp;R
         <br />
         2017 Autumn
       </p>

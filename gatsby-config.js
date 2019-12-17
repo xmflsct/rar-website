@@ -55,33 +55,12 @@ module.exports = {
     "gatsby-transformer-sharp",
     "gatsby-plugin-sharp",
     {
-      resolve: "gatsby-plugin-postcss",
+      resolve: "gatsby-plugin-sass",
       options: {
-        postCssPlugins: [
-          require("postcss-easy-import")(),
-          require("postcss-custom-properties")({ preserve: false }),
-          require("postcss-color-function")()
-        ]
+        precision: 6
       }
     },
-    {
-      resolve: "gatsby-plugin-purgecss",
-      options: {
-        // printRejected: true,
-        develop: true,
-        whitelistPatternsChildren: [
-          /(accordion)/,
-          /(collapse)/,
-          /(collapsing)/,
-          /(show)/,
-          /(carousel)/,
-          /(wf-)/,
-          /(form)/,
-          /(was)/,
-          /(btn)/
-        ]
-      }
-    },
+
     {
       resolve: "gatsby-plugin-google-analytics",
       options: {
@@ -106,13 +85,6 @@ module.exports = {
       resolve: "gatsby-plugin-svgr",
       options: {
         svgo: "true"
-      }
-    },
-    {
-      resolve: "gatsby-plugin-sass",
-      options: {
-        includePaths: ['src/styles'],
-        precision: 6
       }
     }
   ]

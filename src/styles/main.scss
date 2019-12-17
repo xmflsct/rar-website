@@ -4,105 +4,15 @@
 @import "global/sidebar";
 @import "global/opening-hours";
 @import "global/form";
+@import "global/default";
 
 @import "pages/homepage";
 @import "pages/cake-hightea";
 @import "pages/workshop-event";
 @import "pages/shop-info";
 
-$hamburger-layer-width: 20px;
-$hamburger-layer-height: 1px;
-$hamburger-layer-spacing: 5px;
-$hamburger-layer-color: $color-primary-light;
-$hamburger-layer-border-radius: 0;
-$hamburger-types: (collapse);
+@import "global/hamburger-settings";
 @import "hamburgers/hamburgers";
-
-/* Main - Theme styles
-/* ---------------------------------------------------------- */
-
-body {
-  font-family: $font-sans-serif;
-  font-weight: $font-weight-normal;
-  color: $color-primary-light;
-  transition: background 0.3s ease-out;
-  transition-delay: 0.25;
-  background: $color-background-light;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5 {
-  font-weight: $font-weight-normal;
-}
-
-@media (max-width: 768px) {
-  h3 {
-    font-size: 1.5rem;
-  }
-  h4 {
-    font-size: 1.2rem;
-  }
-}
-
-a {
-  color: $color-primary-light;
-  border-bottom: 1px dashed $color-primary-light;
-}
-
-.carousel a {
-  border: none;
-}
-
-b {
-  font-weight: $font-weight-bold;
-}
-
-a:hover,
-a:active {
-  text-decoration: none;
-  color: $color-primary-light;
-  border-bottom: 1px solid $color-primary-light;
-}
-
-.img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background-position: center center;
-  background-size: cover;
-  border-radius: 100%;
-}
-
-button {
-  -webkit-appearance: none;
-  border: none;
-  background: none;
-}
-
-.site-wrapper {
-  max-width: 920px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.site-wrapper > header,
-.site-wrapper > main,
-.site-wrapper > footer {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 250ms ease-out, visibility 250ms ease-out;
-}
-
-.wf-active .site-wrapper > header,
-.wf-active .site-wrapper > main,
-.wf-active .site-wrapper > footer {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 500ms ease-out, visibility 500ms ease-out;
-}
 
 /* Page - All pages except index
 /* ---------------------------------------------------------- */

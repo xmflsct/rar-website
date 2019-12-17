@@ -10,7 +10,6 @@
     "gatsby-image": "^2.2.24",
     "gatsby-plugin-google-analytics": "^2.1.20",
     "gatsby-plugin-manifest": "^2.2.20",
-    "gatsby-plugin-postcss": "^2.1.18",
     "gatsby-plugin-purgecss": "^4.0.1",
     "gatsby-plugin-react-helmet": "^3.1.10",
     "gatsby-plugin-recaptcha": "^1.0.5",
@@ -38,14 +37,10 @@
   },
   "devDependencies": {
     "autoprefixer": "^9.6.4",
-    "gh-pages": "^2.1.1",
-    "postcss-color-function": "^4.1.0",
-    "postcss-custom-properties": "^9.0.2",
-    "postcss-easy-import": "^3.0.0"
+    "gh-pages": "^2.1.1"
   },
   "browserslist": [
-    "last 2 version",
-    "> 2%"
+    "defaults"
   ],
   "homepage": "https://roundandround.nl",
   "license": "MIT",
@@ -55,10 +50,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xmflsct/roundandround.github.io.git"
+    "url": "https://github.com/xmflsct/roundandround.github.io.git"
   },
   "scripts": {
     "build": "gatsby build",
-    "develop": "gatsby develop"
+    "develop": "gatsby develop -H 0.0.0.0",
+    "serve": "gatsby serve -H 0.0.0.0 -p 8000"
   }
 }

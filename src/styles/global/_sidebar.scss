@@ -58,7 +58,7 @@
   }
 
   .sub-nav {
-    font-size: 0.9em;
+    font-size: 0.85em;
     margin-top: -5px;
     padding-inline-start: 28px;
     display: none;
@@ -95,7 +95,7 @@
       display: block;
 
       &:not(.cake-hightea) {
-        display: none;
+        display: none!important;
       }
     }
   }

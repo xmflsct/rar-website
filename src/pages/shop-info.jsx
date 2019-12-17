@@ -6,7 +6,6 @@ import Card from "react-bootstrap/Card";
 
 import Layout from "../components/layout";
 import SEO from "../components/seo";
-import { Container } from "react-bootstrap";
 
 const ShopInfo = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -56,9 +55,9 @@ const ShopInfo = ({ location }) => {
 
       <Img fluid={data.main.childImageSharp.fluid} />
 
-      <Container as="h3" className="sub-heading mt-4 mb-3" id="menu">
+      <h3 className="sub-heading mt-4 mb-3" id="menu">
         Menu
-      </Container>
+      </h3>
       <p>
         <a
           href={data.mainMenu.publicURL}
@@ -80,9 +79,9 @@ const ShopInfo = ({ location }) => {
         </a>
       </p>
 
-      <Container as="h3" className="sub-heading mt-4 mb-3" id="opening-hours">
+      <h3 className="sub-heading mt-4 mb-3" id="opening-hours">
         Opening Hours
-      </Container>
+      </h3>
       <p>
         <b>Monday:</b> Closed
         <br />
@@ -91,9 +90,9 @@ const ShopInfo = ({ location }) => {
         <b>Sunday:</b> 12:00 - 17:00 (last order 16:45)
       </p>
 
-      <Container as="h3" className="sub-heading mt-4 mb-3" id="contact">
+      <h3 className="sub-heading mt-4 mb-3" id="contact">
         Contact
-      </Container>
+      </h3>
       <iframe
         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2460.6118759084343!2d4.490871915785305!3d51.92279197970556!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c433451debd72f%3A0xc4ada4e0ae53ac9c!2sRound%26Round%20Rotterdam!5e0!3m2!1sen!2sse!4v1571081880892!5m2!1sen!2sse"
         title="Google Maps"
@@ -151,9 +150,9 @@ const ShopInfo = ({ location }) => {
         </a>
       </p>
 
-      <Container as="h3" className="sub-heading mt-4 mb-3" id="q-a">
+      <h3 className="sub-heading mt-4 mb-3" id="q-a">
         Q&amp;A
-      </Container>
+      </h3>
       <Accordion defaultActiveKey="0">
         <Accordion.Toggle as={Card.Title} eventKey="0">
           Q: How do I order a whole cake?

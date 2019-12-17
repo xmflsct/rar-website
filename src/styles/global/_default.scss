@@ -1,0 +1,63 @@
+body {
+  font-family: $font-sans-serif;
+  font-weight: $font-weight-normal;
+  color: $color-primary-light;
+}
+
+b {
+  font-weight: $font-weight-bold;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: $font-weight-normal;
+}
+
+a {
+  color: $color-primary-light;
+  border-bottom: 1px dashed $color-primary-light;
+
+  &:hover,
+  &:active {
+    text-decoration: none;
+    color: $color-primary-light;
+    border-bottom: 1px solid $color-primary-light;
+  }
+}
+
+.carousel a {
+  border: none;
+}
+
+.site-wrapper {
+  max-width: 920px;
+  margin-left: auto;
+  margin-right: auto;
+
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 250ms ease-out, visibility 250ms ease-out;
+
+  transition: 0.25s;
+  opacity: 1;
+  animation: slideUp 0.9s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+  transform: translate3d(0, 4vh, 0);
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translate3d(0, 4vh, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.wf-active .site-wrapper {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 500ms ease-out, visibility 500ms ease-out;
+}

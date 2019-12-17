@@ -1,6 +1,5 @@
 import React from "react";
 import { StaticQuery, graphql } from "gatsby";
-import { Container } from "react-bootstrap";
 
 class OpeningHours extends React.Component {
   constructor(props) {
@@ -18,13 +17,12 @@ class OpeningHours extends React.Component {
       Date.now() <= Date.parse(this.props.closedDates.end)
     ) {
       return (
-        <Container
-          as="span"
+        <span
           className="shop-badge shop-close"
           key={this.state.isClient}
         >
           Closed for holiday
-        </Container>
+        </span>
       );
     }
     if (this.props.openingHours.nodes[new Date().getDay()].open) {
@@ -59,55 +57,50 @@ class OpeningHours extends React.Component {
       );
       if (currentTime >= almostOpen && currentTime < open) {
         return (
-          <Container
-            as="span"
+          <span
             className="shop-badge shop-open-soon"
             key={this.state.isClient}
           >
             Open soon
-          </Container>
+          </span>
         );
       }
       if (currentTime >= open && currentTime < lastOrder) {
         return (
-          <Container
-            as="span"
+          <span
             className="shop-badge shop-open"
             key={this.state.isClient}
           >
             Open now
-          </Container>
+          </span>
         );
       } else if (currentTime >= lastOrder && currentTime < close) {
         return (
-          <Container
-            as="span"
+          <span
             className="shop-badge shop-last-order"
             key={this.state.isClient}
           >
             Last order
-          </Container>
+          </span>
         );
       } else {
         return (
-          <Container
-            as="span"
+          <span
             className="shop-badge shop-close"
             key={this.state.isClient}
           >
             Closed
-          </Container>
+          </span>
         );
       }
     } else {
       return (
-        <Container
-          as="span"
+        <span
           className="shop-badge shop-close"
           key={this.state.isClient}
         >
           Closed for today
-        </Container>
+        </span>
       );
     }
   }

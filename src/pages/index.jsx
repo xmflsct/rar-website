@@ -66,7 +66,7 @@ const Index = ({ location }) => {
   `);
   return (
     <Container
-      className={`site-wrapper index ${toggleNav ? "site-head-open" : ""}`}
+      className={`site-wrapper homepage ${toggleNav ? "site-head-open" : ""}`}
     >
       <SEO title="Welcome" keywords={["Round&Round", "Rotterdam", "matcha"]} />
 

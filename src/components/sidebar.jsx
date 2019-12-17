@@ -162,7 +162,7 @@ const Sidebar = () => {
             alt={`Link to ${data.workshopEvent.name}page`}
           />
         </Figure>
-        <Link to="/workshop-event" activeClassName="active">
+        <Link to="/workshop-event" activeClassName="active" partiallyActive>
           Workshop &amp; Event
         </Link>
       </Nav.Item>

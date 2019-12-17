@@ -4,7 +4,8 @@ import Img from "gatsby-image";
 
 import Layout from "../components/layout";
 import SEO from "../components/seo";
-import { Col, Row } from "react-bootstrap";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 
 const WorkshopEvent = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -91,9 +92,9 @@ const WorkshopEvent = ({ location }) => {
                   </span>
                 </Col>
                 <Col md={10}>
-                  <h4 style={{ lineHeight: "inherit" }}>
+                  <h5 style={{ lineHeight: "inherit" }}>
                     <Link to={node.fields.slug}>{node.frontmatter.title}</Link>
-                  </h4>
+                  </h5>
                   <span className="date-mobile">
                     {new Date(node.frontmatter.date).toLocaleDateString(
                       "en-UK",
@@ -152,9 +153,9 @@ const WorkshopEvent = ({ location }) => {
                   </span>
                 </Col>
                 <Col md={10}>
-                  <h4 style={{ lineHeight: "inherit" }}>
+                  <h5 style={{ lineHeight: "inherit" }}>
                     <Link to={node.fields.slug}>{node.frontmatter.title}</Link>
-                  </h4>
+                  </h5>
                   <span className="date-mobile">
                     {new Date(node.frontmatter.date).toLocaleDateString(
                       "en-UK",
