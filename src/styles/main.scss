@@ -1,51 +1,18 @@
 @import "global/variables";
+
+@import "global/hamburger-settings";
+@import "hamburgers/hamburgers";
+
 @import "global/header";
 @import "global/footer";
 @import "global/sidebar";
 @import "global/opening-hours";
 @import "global/form";
 @import "global/default";
+@import "global/hamburger";
 
+@import "pages/default";
 @import "pages/homepage";
 @import "pages/cake-hightea";
 @import "pages/workshop-event";
 @import "pages/shop-info";
-
-@import "global/hamburger-settings";
-@import "hamburgers/hamburgers";
-
-/* Page - All pages except index
-/* ---------------------------------------------------------- */
-
-.site-main .sub-heading {
-  background: $color-background-light;
-  padding: 15px 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-/* Mobile Nav Menu
-/* ---------------------------------------------------------- */
-
-.nav-burger {
-  display: none;
-  position: absolute;
-  left: 0;
-  z-index: 9999;
-  padding: 6vw;
-}
-
-@media (max-width: 768px) {
-  .nav-burger {
-    display: block;
-  }
-
-  .site-head-open {
-    background: $color-background-light;
-    transition: background 0.5s ease-out;
-    transition-delay: 0.25;
-    overflow: hidden;
-    height: 100vh;
-  }
-}

@@ -1,0 +1,21 @@
+.nav-burger {
+  display: none;
+  position: absolute;
+  left: 0;
+  z-index: 9999;
+  padding: 6vw;
+}
+
+@media (max-width: 768px) {
+  .nav-burger {
+    display: block;
+  }
+
+  .site-head-open {
+    background: $color-background-light;
+    transition: background 0.5s ease-out;
+    transition-delay: 0.25;
+    overflow: hidden;
+    height: 100vh;
+  }
+}
