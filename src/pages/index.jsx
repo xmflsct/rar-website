@@ -85,11 +85,33 @@ const Index = ({ location }) => {
       <Header />
 
       <main>
-        <Row>
+        <Row className="mb-5">
           <Col lg={3}>
             <Sidebar location={location} />
           </Col>
           <Col lg={9} className="content">
+            <Row className="announcement justify-content-center">
+              <Col xs={11} md={9}>
+                <h5 className="text-center">[Holiday Time Open Hours]</h5>
+                <p className="text-center">
+                  Merry Christmas 🎄&amp; Happy New Year 🧨!
+                </p>
+                <p>
+                  <b>24 Dec  2019</b> [Order Pick Up Only]<br />
+                  Note: we may have some Christmas special rolls available in the
+                  shop, please call us to check.
+                </p>
+                <p>
+                  <b>25 Dec 2019 - 3 Jan 2020</b> [Shop Closed]
+                </p>
+                <p>
+                  <b>4 Jan 2020 onwards</b> [Open Normally]
+                </p>
+                <p>
+                  <b>16 Jan 2020</b> [Our 4th Anniversary 🎈]
+                </p>
+              </Col>
+            </Row>
             <Img fluid={data.main.childImageSharp.fluid} />
           </Col>
         </Row>
@@ -130,8 +152,8 @@ const Index = ({ location }) => {
               fade
               interval={5000}
             >
-              {data.carousel.edges.map(({ node }) => (
-                <Carousel.Item key={node.index}>
+              {data.carousel.edges.map(({ node }, index) => (
+                <Carousel.Item key={index}>
                   <Img fluid={node.childImageSharp.fluid} />
                 </Carousel.Item>
               ))}

@@ -27,7 +27,7 @@ class Instagram extends React.Component {
             this.state.images.map(({ node }, index) => {
               if (index < 9) {
                 return (
-                  <Col lg={4} className="px-2 px-lg-2 mb-3">
+                  <Col lg={4} className="px-2 px-lg-2 mb-3" key={index}>
                     <a
                       href={"https://instagram.com/p/" + node.shortcode}
                       alt="Instagram post"
