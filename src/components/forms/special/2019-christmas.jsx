@@ -1,7 +1,6 @@
 import React from "react";
 import Reaptcha from "reaptcha";
-// import { order_request_trello } from "../../api/order-request-trello";
-import { order_request_sendgrid } from "../../api/order-request-sendgrid";
+// import { order_request_sendgrid } from "../../api/order-request-sendgrid";
 
 export default class Form2019Christmas extends React.Component {
   constructor(props) {
@@ -33,22 +32,22 @@ export default class Form2019Christmas extends React.Component {
       ".<br /> Notes: " +
       this.state.notes;
     var datetime = this.state.date + " at " + this.state.time;
-    order_request_sendgrid(
-      token,
-      this.state.email,
-      "Order from " + this.state.name,
-      content,
-      this.state.name,
-      this.state.phone,
-      datetime
-    )
-      .then(() => {
-        this.setState({ buttonStatus: 2 });
-        this.setState({ isFormSubmitted: true });
-      })
-      .catch(() => {
-        this.setState({ buttonStatus: 3 });
-      });
+    // order_request_sendgrid(
+    //   token,
+    //   this.state.email,
+    //   "Order from " + this.state.name,
+    //   content,
+    //   this.state.name,
+    //   this.state.phone,
+    //   datetime
+    // )
+    //   .then(() => {
+    //     this.setState({ buttonStatus: 2 });
+    //     this.setState({ isFormSubmitted: true });
+    //   })
+    //   .catch(() => {
+    //     this.setState({ buttonStatus: 3 });
+    //   });
   };
   handleInputChange = event => {
     const target = event.target;

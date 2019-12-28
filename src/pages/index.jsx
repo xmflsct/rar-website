@@ -141,11 +141,7 @@ const Index = ({ location }) => {
         </Row>
 
         <Row className="mt-4 mb-4">
-          <a
-            href="/special/2019-christmas"
-            className="col-12"
-            rel="noopener noreferrer"
-          >
+          <Col xs={12}>
             <Carousel
               className="carousel"
               controls={false}
@@ -158,7 +154,7 @@ const Index = ({ location }) => {
                 </Carousel.Item>
               ))}
             </Carousel>
-          </a>
+          </Col>
         </Row>
 
         <Row>
