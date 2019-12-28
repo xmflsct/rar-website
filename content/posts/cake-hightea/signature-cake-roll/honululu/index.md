@@ -2,7 +2,7 @@
 cake-hightea:
   name: "Honululu"
   category: "Signature Cake Roll"
-  order: 13
+  order: 11
   price:
     piece: 3.8
     whole: 21.2

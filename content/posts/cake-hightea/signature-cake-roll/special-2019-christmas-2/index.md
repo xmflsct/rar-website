@@ -2,14 +2,14 @@
 cake-hightea:
   name: "2019 Christmas Special No.2"
   category: "Signature Cake Roll"
-  order: 2
+  order: 17
   price:
     whole: 23.5
   description: |
-      <b><a href="/special/2019-christmas" rel="noopener noreferrer">Snowy Forest</a></b>
+      <b>Sold out!</b>
+      Snowy Forest
       - Matcha Cake
       - Raspberry Cream
       - Strawberry
-      <a href="/special/2019-christmas" rel="noopener noreferrer">Order here</a>
 thumbnail: ./main.jpg
 ---

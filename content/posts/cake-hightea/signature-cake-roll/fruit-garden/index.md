@@ -2,7 +2,7 @@
 cake-hightea:
   name: "Fruit Garden"
   category: "Signature Cake Roll"
-  order: 7
+  order: 5
   price:
     piece: 3.5
     whole: 19.6

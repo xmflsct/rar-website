@@ -2,7 +2,7 @@
 cake-hightea:
   name: "Moshi-Moshi"
   category: "Signature Cake Roll"
-  order: 3
+  order: 1
   price:
     piece: 3.5
     whole: 19.6

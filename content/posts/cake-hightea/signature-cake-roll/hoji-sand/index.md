@@ -2,7 +2,7 @@
 cake-hightea:
   name: "Hoji Sand"
   category: "Signature Cake Roll"
-  order: 12
+  order: 10
   price:
     piece: 3.5
     whole: 19.6
