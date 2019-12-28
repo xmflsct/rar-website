@@ -1,7 +1,7 @@
 import React from "react";
 import { useStaticQuery, graphql, Link } from "gatsby";
 import Img from "gatsby-image";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 
 import OpeningHours from "./sidebar/opening-hours";
 
@@ -23,9 +23,9 @@ const Header = () => {
         <Link to="/">
           <Img className="m-3" fluid={data.file.childImageSharp.fluid} />
         </Link>
-        <Container className="opening-hours-details">
+        <div className="opening-hours-details">
           <OpeningHours />
-        </Container>
+        </div>
       </Col>
       <Col lg={9} className="header-center">
         <p>A Little</p>
