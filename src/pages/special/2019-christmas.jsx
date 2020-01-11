@@ -5,8 +5,6 @@ import Img from "gatsby-image";
 import Layout from "../../components/layout";
 import SEO from "../../components/seo";
 
-import Form2019Christmas from "../../components/forms/special/2019-christmas";
-
 const Special2019Christmas = ({ location }) => {
   const data = useStaticQuery(graphql`
     {
@@ -86,7 +84,6 @@ const Special2019Christmas = ({ location }) => {
         <Link to="/shop-info#contact">email or call us</Link> to check
         availability of the day.
       </p>
-      <Form2019Christmas />
     </Layout>
   );
 };
