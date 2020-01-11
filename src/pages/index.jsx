@@ -90,7 +90,7 @@ const Index = ({ location }) => {
             <Sidebar location={location} />
           </Col>
           <Col lg={9} className="content">
-            <Row className="announcement justify-content-center">
+            {/* <Row className="announcement justify-content-center">
               <Col xs={11} md={9}>
                 <h5 className="text-center">[Holiday Time Open Hours]</h5>
                 <p className="text-center">
@@ -111,7 +111,7 @@ const Index = ({ location }) => {
                   <b>16 Jan 2020</b> [Our 4th Anniversary 🎈]
                 </p>
               </Col>
-            </Row>
+            </Row> */}
             <Img fluid={data.main.childImageSharp.fluid} />
           </Col>
         </Row>
