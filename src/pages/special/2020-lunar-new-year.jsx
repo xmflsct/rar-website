@@ -28,13 +28,13 @@ const Special2020LunarNewYear = ({ location }) => {
   return (
     <Layout location={location} name="special-2020-lunar-new-year">
       <SEO
-        title="2019 Christmas Special"
+        title="2020 Lunar New Year Special"
         keywords={["Round&Round", "Rotterdam"]}
       />
 
       <h3 className="sub-heading mb-3">2020 Lunar New Year Special</h3>
-      <div className="row justify-content-md-center mb-3">
-        <div className="col-10">
+      <div className="row justify-content-center mb-3">
+        <div className="col-12 col-md-10">
           <Img fluid={data.images.nodes[0].childImageSharp.fluid} />
         </div>
       </div>

@@ -2,7 +2,7 @@
 cake-hightea:
   name: "2019 Lunar New Year Special"
   category: "Signature Cake Roll"
-  order: 15
+  order: 17
   price:
     whole: 23
   description: |

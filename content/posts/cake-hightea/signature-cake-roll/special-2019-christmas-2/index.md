@@ -2,7 +2,7 @@
 cake-hightea:
   name: "2019 Christmas Special No.2"
   category: "Signature Cake Roll"
-  order: 17
+  order: 19
   price:
     whole: 23.5
   description: |

@@ -2,7 +2,7 @@
 cake-hightea:
   name: "Giraffe"
   category: "Signature Cake Roll"
-  order: 7
+  order: 9
   price:
     piece: 3.2
     whole: 17.9

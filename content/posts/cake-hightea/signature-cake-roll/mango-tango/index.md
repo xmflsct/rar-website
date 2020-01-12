@@ -2,7 +2,7 @@
 cake-hightea:
   name: "Mango Tango"
   category: "Signature Cake Roll"
-  order: 8
+  order: 10
   price:
     piece: 3.2
     whole: 17.9
