@@ -54,6 +54,7 @@
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop -H 0.0.0.0",
-    "serve": "gatsby serve -H 0.0.0.0 -p 8000"
+    "serve": "gatsby serve -H 0.0.0.0 -p 8000",
+    "clean": "gatsby clean"
   }
 }
