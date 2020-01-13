@@ -33,7 +33,7 @@ export default class Form2020LunarNewYear extends React.Component {
     order_request_sendgrid(
       token,
       this.state.email,
-      "Order from " + this.state.name,
+      "[2020 Lunar New Year] Order from " + this.state.name,
       content,
       this.state.name,
       this.state.phone,
