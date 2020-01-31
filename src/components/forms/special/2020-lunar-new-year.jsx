@@ -30,22 +30,22 @@ export default class Form2020LunarNewYear extends React.Component {
       ".<br /> Notes: " +
       this.state.notes;
     var datetime = this.state.date + " at " + this.state.time;
-    order_request_sendgrid(
-      token,
-      this.state.email,
-      "[2020 Lunar New Year] Order from " + this.state.name,
-      content,
-      this.state.name,
-      this.state.phone,
-      datetime
-    )
-      .then(() => {
-        this.setState({ buttonStatus: 2 });
-        this.setState({ isFormSubmitted: true });
-      })
-      .catch(() => {
-        this.setState({ buttonStatus: 3 });
-      });
+    // order_request_sendgrid(
+    //   token,
+    //   this.state.email,
+    //   "[2020 Lunar New Year] Order from " + this.state.name,
+    //   content,
+    //   this.state.name,
+    //   this.state.phone,
+    //   datetime
+    // )
+    //   .then(() => {
+    //     this.setState({ buttonStatus: 2 });
+    //     this.setState({ isFormSubmitted: true });
+    //   })
+    //   .catch(() => {
+    //     this.setState({ buttonStatus: 3 });
+    //   });
   };
   handleInputChange = event => {
     const target = event.target;

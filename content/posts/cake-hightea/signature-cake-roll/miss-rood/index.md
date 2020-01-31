@@ -2,7 +2,7 @@
 cake-hightea:
   name: "Miss Rood"
   category: "Signature Cake Roll"
-  order: 8
+  order: 6
   price:
     piece: 3.5
     whole: 19.6

@@ -5,7 +5,7 @@ import Img from "gatsby-image";
 import Layout from "../../components/layout";
 import SEO from "../../components/seo";
 
-import Form2020LunarNewYear from "../../components/forms/special/2020-lunar-new-year";
+// import Form2020LunarNewYear from "../../components/forms/special/2020-lunar-new-year";
 
 const Special2020LunarNewYear = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -78,7 +78,7 @@ const Special2020LunarNewYear = ({ location }) => {
         <Link to="/shop-info#contact">email or call us</Link> to check
         availability of the day.
       </p>
-      <Form2020LunarNewYear />
+      {/* <Form2020LunarNewYear /> */}
     </Layout>
   );
 };

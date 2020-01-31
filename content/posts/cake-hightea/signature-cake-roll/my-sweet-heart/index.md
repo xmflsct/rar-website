@@ -2,7 +2,7 @@
 cake-hightea:
   name: "My Sweet Heart"
   category: "Signature Cake Roll"
-  order: 14
+  order: 12
   price:
     piece: 3.5
     whole: 19.6

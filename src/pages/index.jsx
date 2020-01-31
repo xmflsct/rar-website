@@ -139,7 +139,6 @@ const Index = ({ location }) => {
             <Socials />
           </Col>
         </Row>
-        <a href="/special/2020-lunar-new-year">
         <Row className="mt-4 mb-4">
           <Col xs={12}>
             <Carousel
@@ -156,7 +155,6 @@ const Index = ({ location }) => {
             </Carousel>
           </Col>
         </Row>
-        </a>
         <Row>
           <Col lg={6} className="mb-3">
             <h3>We’re Matcha Lovers!</h3>

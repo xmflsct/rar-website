@@ -2,12 +2,12 @@
 cake-hightea:
   name: "2020 Lunar New Year Special No. 1"
   category: "Signature Cake Roll"
-  order: 1
+  order: 18
   price:
     whole: 23.5
   description: |
-      <b><a href="/special/2020-lunar-new-year">Order here</a></b>
-      <b>Golden Rat Year</b>
+      <b>Sold out!</b>
+      Golden Rat Year
       - Red Yeast Rice Colored Cake
       - Red Bean Cream
       - Strawberry
