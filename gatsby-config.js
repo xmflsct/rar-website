@@ -67,17 +67,6 @@ module.exports = {
         head: "true"
       }
     },
-    {
-      resolve: "gatsby-plugin-manifest",
-      options: {
-        name: siteConfig.title,
-        short_name: siteConfig.shortTitle,
-        background_color: "#ffffff",
-        theme_color: "#ffffff",
-        display: "minimal-ui",
-        icon: "static/favicon.png"
-      }
-    },
     "gatsby-plugin-react-helmet",
     "gatsby-plugin-sitemap",
     {
