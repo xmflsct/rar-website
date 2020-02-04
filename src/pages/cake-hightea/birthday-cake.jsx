@@ -8,156 +8,111 @@ import CakeList from "../../components/cake-hightea/cake-list";
 const BirthdayCake = ({ location }) => {
   const data = useStaticQuery(graphql`
     {
-      cakeA: allMarkdownRemark(
-        filter: {
-          fileAbsolutePath: { regex: "/(cake-hightea/birthday-cake)/" }
-          frontmatter: { cake_hightea: { group: { eq: "A" } } }
-        }
-        sort: { order: ASC, fields: frontmatter___cake_hightea___order }
+      cakeA: allContentfulCakesCakeList(
+        filter: { contentful_id: { eq: "7DKcphH2mLyGWMDTgUH89P" } }
+        sort: { order: ASC }
       ) {
         edges {
           node {
-            frontmatter {
-              cake_hightea {
-                name
-                order
-                category
-                description
-                price {
-                  piece
-                  whole
+            cakes {
+              image {
+                fluid(maxWidth: 400) {
+                  ...GatsbyContentfulFluid
                 }
               }
-              thumbnail {
-                childImageSharp {
-                  fluid(maxWidth: 250) {
-                    ...GatsbyImageSharpFluid_withWebp
-                  }
-                }
+              name
+              pricePiece
+              priceWhole
+              description {
+                json
               }
             }
           }
         }
       }
-      cakeB: allMarkdownRemark(
-        filter: {
-          fileAbsolutePath: { regex: "/(cake-hightea/birthday-cake)/" }
-          frontmatter: { cake_hightea: { group: { eq: "B" } } }
-        }
-        sort: { order: ASC, fields: frontmatter___cake_hightea___order }
+      cakeB: allContentfulCakesCakeList(
+        filter: { contentful_id: { eq: "u7eAu6AfSqmOVpCwE019H" } }
+        sort: { order: ASC }
       ) {
         edges {
           node {
-            frontmatter {
-              cake_hightea {
-                name
-                order
-                category
-                description
-                price {
-                  piece
-                  whole
+            cakes {
+              image {
+                fluid(maxWidth: 400) {
+                  ...GatsbyContentfulFluid
                 }
               }
-              thumbnail {
-                childImageSharp {
-                  fluid(maxWidth: 250) {
-                    ...GatsbyImageSharpFluid_withWebp
-                  }
-                }
+              name
+              pricePiece
+              priceWhole
+              description {
+                json
               }
             }
           }
         }
       }
-      cakeC: allMarkdownRemark(
-        filter: {
-          fileAbsolutePath: { regex: "/(cake-hightea/birthday-cake)/" }
-          frontmatter: { cake_hightea: { group: { eq: "C" } } }
-        }
-        sort: { order: ASC, fields: frontmatter___cake_hightea___order }
+      cakeC: allContentfulCakesCakeList(
+        filter: { contentful_id: { eq: "4jfUsFXdxP0YtsCK19kMs3" } }
+        sort: { order: ASC }
       ) {
         edges {
           node {
-            frontmatter {
-              cake_hightea {
-                name
-                order
-                category
-                description
-                price {
-                  piece
-                  whole
+            cakes {
+              image {
+                fluid(maxWidth: 400) {
+                  ...GatsbyContentfulFluid
                 }
               }
-              thumbnail {
-                childImageSharp {
-                  fluid(maxWidth: 250) {
-                    ...GatsbyImageSharpFluid_withWebp
-                  }
-                }
+              name
+              pricePiece
+              priceWhole
+              description {
+                json
               }
             }
           }
         }
       }
-      cakeD: allMarkdownRemark(
-        filter: {
-          fileAbsolutePath: { regex: "/(cake-hightea/birthday-cake)/" }
-          frontmatter: { cake_hightea: { group: { eq: "D" } } }
-        }
-        sort: { order: ASC, fields: frontmatter___cake_hightea___order }
+      cakeD: allContentfulCakesCakeList(
+        filter: { contentful_id: { eq: "7Gp3BMdBEWbbHfOz05xvRc" } }
+        sort: { order: ASC }
       ) {
         edges {
           node {
-            frontmatter {
-              cake_hightea {
-                name
-                order
-                category
-                description
-                price {
-                  piece
-                  whole
+            cakes {
+              image {
+                fluid(maxWidth: 400) {
+                  ...GatsbyContentfulFluid
                 }
               }
-              thumbnail {
-                childImageSharp {
-                  fluid(maxWidth: 250) {
-                    ...GatsbyImageSharpFluid_withWebp
-                  }
-                }
+              name
+              pricePiece
+              priceWhole
+              description {
+                json
               }
             }
           }
         }
       }
-      cakeE: allMarkdownRemark(
-        filter: {
-          fileAbsolutePath: { regex: "/(cake-hightea/birthday-cake)/" }
-          frontmatter: { cake_hightea: { group: { eq: "E" } } }
-        }
-        sort: { order: ASC, fields: frontmatter___cake_hightea___order }
+      cakeE: allContentfulCakesCakeList(
+        filter: { contentful_id: { eq: "2VSsrXcHMzf9NUtVUdlX45" } }
+        sort: { order: ASC }
       ) {
         edges {
           node {
-            frontmatter {
-              cake_hightea {
-                name
-                order
-                category
-                description
-                price {
-                  piece
-                  whole
+            cakes {
+              image {
+                fluid(maxWidth: 400) {
+                  ...GatsbyContentfulFluid
                 }
               }
-              thumbnail {
-                childImageSharp {
-                  fluid(maxWidth: 250) {
-                    ...GatsbyImageSharpFluid_withWebp
-                  }
-                }
+              name
+              pricePiece
+              priceWhole
+              description {
+                json
               }
             }
           }
@@ -188,29 +143,17 @@ const BirthdayCake = ({ location }) => {
 
       <h5 className="sub-heading mt-4">A. 6” Cakes (for 2-4 people) € 19,-</h5>
       <p>Vanilla Chiffon base. (Cacao/Matcha Base + € 2,-)</p>
-      <div className="row">
-        {data.cakeA.edges.map(({ node }) => (
-          <CakeList node={node} key={node.index} />
-        ))}
-      </div>
+      <CakeList cakes={data.cakeA.edges[0].node.cakes} />
 
       <h5 className="sub-heading mt-4">B. 8” Cakes (for 6-8 people) € 26,-</h5>
       <p>Vanilla Chiffon base. (Cacao/Matcha Base + € 2,-)</p>
-      <div className="row">
-        {data.cakeB.edges.map(({ node }) => (
-          <CakeList node={node} key={node.index} />
-        ))}
-      </div>
+      <CakeList cakes={data.cakeB.edges[0].node.cakes} />
 
       <h5 className="sub-heading mt-4">
         C. 10” Cakes (for 10-12 people) € 33,-
       </h5>
       <p>Vanilla Chiffon base. (Cacao/Matcha Base + € 2,-)</p>
-      <div className="row">
-        {data.cakeC.edges.map(({ node }) => (
-          <CakeList node={node} key={node.index} />
-        ))}
-      </div>
+      <CakeList cakes={data.cakeC.edges[0].node.cakes} />
 
       <h5 className="sub-heading mt-4">
         D. Flower Deco High Cakes (for a small party) € 45,-
@@ -228,18 +171,10 @@ const BirthdayCake = ({ location }) => {
           please let us know.
         </i>
       </p>
-      <div className="row">
-        {data.cakeD.edges.map(({ node }) => (
-          <CakeList node={node} key={node.index} />
-        ))}
-      </div>
+      <CakeList cakes={data.cakeD.edges[0].node.cakes} />
 
       <h5 className="sub-heading mt-4">E. Celebration Cakes</h5>
-      <div className="row">
-        {data.cakeE.edges.map(({ node }) => (
-          <CakeList node={node} key={node.index} />
-        ))}
-      </div>
+      <CakeList cakes={data.cakeE.edges[0].node.cakes} />
     </Layout>
   );
 };

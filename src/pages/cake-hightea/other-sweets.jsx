@@ -8,29 +8,23 @@ import CakeList from '../../components/cake-hightea/cake-list';
 const PartyWeddingTower = ({ location }) => {
   const data = useStaticQuery(graphql`
     {
-      allMarkdownRemark(
-        filter: { fileAbsolutePath: { regex: "/(cake-hightea/other-sweets)/" } }
-        sort: { order: ASC, fields: frontmatter___cake_hightea___order }
+      cake: allContentfulCakesCakeList(
+        filter: { contentful_id: { eq: "1FQ41FJ8eDAQKF1qXcpVSz" } }
+        sort: { order: ASC }
       ) {
         edges {
           node {
-            frontmatter {
-              cake_hightea {
-                name
-                order
-                category
-                description
-                price {
-                  piece
-                  whole
+            cakes {
+              image {
+                fluid(maxWidth: 400) {
+                  ...GatsbyContentfulFluid
                 }
               }
-              thumbnail {
-                childImageSharp {
-                  fluid(maxWidth: 250) {
-                    ...GatsbyImageSharpFluid_withWebp
-                  }
-                }
+              name
+              pricePiece
+              priceWhole
+              description {
+                json
               }
             }
           }
@@ -44,11 +38,7 @@ const PartyWeddingTower = ({ location }) => {
 
       <h3 className="sub-heading mb-3">Other Sweets</h3>
 
-      <div className="row">
-        {data.allMarkdownRemark.edges.map(({ node }) => (
-          <CakeList node={node} key={node.index} />
-        ))}
-      </div>
+      <CakeList cakes={data.cake.edges[0].node.cakes} />
     </Layout>
   );
 };

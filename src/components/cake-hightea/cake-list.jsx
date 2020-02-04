@@ -1,53 +1,48 @@
 import React from "react";
-
-import Img from "gatsby-image";
-
-import { currency } from "./currency";
 import { Col, Row } from "react-bootstrap";
+import Img from "gatsby-image";
+import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
+import { currency } from "./currency";
 
-const CakeList = ({ node }) => (
-  <Col md={4} xs={12} className="mb-4">
-    <Img
-      fluid={node.frontmatter.thumbnail.childImageSharp.fluid}
-      style={{
-        position: "relative",
-        overflow: "hidden",
-        paddingBottom: "100%",
-        height: "0"
-      }}
-    />
-    <Row className="mt-2 no-gutters">
-      <Col>
-        <h6>{node.frontmatter.cake_hightea.name}</h6>
+const CakeList = ({ cakes }) => (
+  <Row>
+    {cakes.map(cake => (
+      <Col key={cake.name} md={4} xs={12} className="mb-4">
+        <Img
+          fluid={cake.image.fluid}
+          style={{
+            position: "relative",
+            overflow: "hidden",
+            paddingBottom: "100%",
+            height: "0"
+          }}
+        />
+        <Row className="mt-2 no-gutters">
+          <Col>
+            <h6>{cake.name}</h6>
+          </Col>
+          <span className="col-auto price">
+            {cake.pricePiece || cake.priceWhole
+              ? cake.pricePiece
+                ? cake.priceWhole
+                  ? `${currency(cake.pricePiece)}/${currency(cake.priceWhole)}`
+                  : currency(cake.pricePiece)
+                : cake.priceWhole
+                ? currency(cake.priceWhole)
+                : ""
+              : ""}
+          </span>
+        </Row>
+        <Row className="description">
+          <Col>
+            {cake.description
+              ? documentToReactComponents(cake.description.json)
+              : ""}
+          </Col>
+        </Row>
       </Col>
-      <span className="col-auto price">
-        {node.frontmatter.cake_hightea.price
-          ? node.frontmatter.cake_hightea.price.piece
-            ? node.frontmatter.cake_hightea.price.whole
-              ? `${currency(
-                  node.frontmatter.cake_hightea.price.piece
-                )}/${currency(node.frontmatter.cake_hightea.price.whole)}`
-              : currency(node.frontmatter.cake_hightea.price.piece)
-            : node.frontmatter.cake_hightea.price.whole
-            ? currency(node.frontmatter.cake_hightea.price.whole)
-            : ""
-          : ""}
-      </span>
-    </Row>
-
-    {node.frontmatter.cake_hightea.description ? (
-      <span
-        dangerouslySetInnerHTML={{
-          __html: node.frontmatter.cake_hightea.description
-        }}
-        style={{ whiteSpace: "pre-line" }}
-        className="description"
-        fluid="true"
-      />
-    ) : (
-      ""
-    )}
-  </Col>
+    ))}
+  </Row>
 );
 
 export default CakeList;

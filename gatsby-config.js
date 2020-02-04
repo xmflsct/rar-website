@@ -1,4 +1,7 @@
 const siteConfig = require("./siteConfig");
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
 
 module.exports = {
   siteMetadata: {
@@ -7,6 +10,16 @@ module.exports = {
     siteUrl: siteConfig.url
   },
   plugins: [
+    {
+      resolve: `gatsby-source-contentful`,
+      options: {
+        spaceId: process.env.CONTENTFUL_SPACEID,
+        accessToken: process.env.CONTENTFUL_ACCESSTOKEN,
+        // host: `preview.contentful.com`,
+        // environment: `master`,
+        // downloadLocal: true
+      },
+    },
     "gatsby-transformer-json",
     {
       resolve: "gatsby-source-filesystem",
