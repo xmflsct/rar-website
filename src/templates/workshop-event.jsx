@@ -2,43 +2,50 @@ import React from "react";
 import { graphql } from "gatsby";
 import Img from "gatsby-image";
 
+import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
+
 import Layout from "../components/layout";
 import SEO from "../components/seo";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 
-class ProjectTemplate extends React.Component {
+class EventTemplate extends React.Component {
   render() {
-    const post = this.props.data.markdownRemark;
-    const localDate = new Date(post.frontmatter.date).toLocaleDateString(
-      "en-UK",
-      {
-        weekday: "long",
-        year: "numeric",
-        month: "short",
-        day: "numeric"
-      }
-    );
+    const event = this.props.data.contentfulEventsEvent;
+    const localDate = new Date(event.date).toLocaleDateString("en-UK", {
+      weekday: "long",
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    });
 
     return (
-      <Layout location={this.props.location} name={post.frontmatter.title}>
+      <Layout location={this.props.location} name={event.name}>
         <SEO
-          title={post.frontmatter.title}
+          title={event.name}
           keywords={["Round&Round", "Workshop", "Rotterdam"]}
         />
 
-        <h3 className="mb-4">{post.frontmatter.title}</h3>
+        <h3 className="mb-4">{event.name}</h3>
 
         <Row className="mb-4">
           <Col md={3}>
             <h6>Date</h6>
             <p>{localDate}</p>
             <h6>Time</h6>
-            <p>{post.frontmatter.time}</p>
+            <p>
+              {new Date(event.timeStart).toLocaleTimeString("nl-NL", {
+                timeStyle: "short"
+              })}{" "}
+              -{" "}
+              {new Date(event.timeFinish).toLocaleTimeString("nl-NL", {
+                timeStyle: "short"
+              })}
+            </p>
             <h6>Link</h6>
             <p>
               <a
-                href={post.frontmatter.link}
+                href={event.link}
                 target="_blank"
                 rel="noopener noreferrer"
                 alt="Facebook event link"
@@ -61,35 +68,40 @@ class ProjectTemplate extends React.Component {
           </Col>
         </Row>
 
-        <Img
-          fluid={post.frontmatter.thumbnail.childImageSharp.fluid}
-          className="mb-4"
-        />
+        <Img fluid={event.image.fluid} className="mb-4" />
 
-        <div dangerouslySetInnerHTML={{ __html: post.html }} />
+        <Row className="description">
+          <Col>
+            {event.description
+              ? documentToReactComponents(event.description.json)
+              : ""}
+          </Col>
+        </Row>
       </Layout>
     );
   }
 }
 
-export default ProjectTemplate;
+export default EventTemplate;
 
 export const pageQuery = graphql`
-  query ProjectBySlug($slug: String!) {
-    markdownRemark(fields: { slug: { eq: $slug } }) {
-      html
-      frontmatter {
-        title
-        date
-        time
-        thumbnail {
-          childImageSharp {
-            fluid(maxWidth: 700) {
-              ...GatsbyImageSharpFluid_withWebp
-            }
-          }
+  query EventBySlug($slug: String!) {
+    contentfulEventsEvent(slug: { eq: $slug }) {
+      name
+      date
+      timeStart
+      timeFinish
+      link
+      location {
+        name
+      }
+      image {
+        fluid(maxWidth: 800) {
+          ...GatsbyContentfulFluid
         }
-        link
+      }
+      description {
+        json
       }
     }
   }

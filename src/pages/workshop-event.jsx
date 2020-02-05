@@ -10,27 +10,21 @@ import Row from "react-bootstrap/Row";
 const WorkshopEvent = ({ location }) => {
   const data = useStaticQuery(graphql`
     {
-      allEvents: allMarkdownRemark(
-        sort: { order: DESC, fields: frontmatter___date }
-        filter: { frontmatter: { date: {} } }
-      ) {
+      events: allContentfulEventsEvent(sort: { order: DESC, fields: date }) {
         edges {
           node {
-            fields {
-              slug
-            }
-            frontmatter {
-              date
-              time
-              title
-              description
-              thumbnail {
-                childImageSharp {
-                  fluid(maxWidth: 300) {
-                    ...GatsbyImageSharpFluid_withWebp
-                  }
-                }
+            image {
+              fluid(maxWidth: 300) {
+                ...GatsbyContentfulFluid
               }
+            }
+            date
+            name
+            slug
+            timeStart
+            timeFinish
+            excerpt {
+              excerpt
             }
           }
         }
@@ -49,18 +43,12 @@ const WorkshopEvent = ({ location }) => {
       />
 
       <h3 className="sub-heading mb-3">Upcoming</h3>
-      {data.allEvents.edges
-        .filter(node => {
-          if (Date.parse(node.node.frontmatter.date) >= Date.now()) {
-            return true;
-          }
-          return false;
-        })
-        .map(({ node }) => (
-          <Row className="mb-3" key={node.index}>
+      {data.events.edges.map(event => {
+        return Date.parse(event.node.timeStart) > Date.now() ? (
+          <Row className="mb-3" key={event.node.name}>
             <Col md={4} lg={5}>
               <Img
-                fluid={node.frontmatter.thumbnail.childImageSharp.fluid}
+                fluid={event.node.image.fluid}
                 className="mb-3"
                 style={{
                   position: "relative",
@@ -81,47 +69,44 @@ const WorkshopEvent = ({ location }) => {
                   }}
                 >
                   <span className="month">
-                    {new Date(node.frontmatter.date).toLocaleString("en-UK", {
+                    {new Date(event.node.date).toLocaleString("en-UK", {
                       month: "short"
                     })}
                   </span>
                   <span className="day">
-                    {new Date(node.frontmatter.date).toLocaleString("en-UK", {
+                    {new Date(event.node.date).toLocaleString("en-UK", {
                       day: "2-digit"
                     })}
                   </span>
                 </Col>
                 <Col md={10}>
                   <h5 style={{ lineHeight: "inherit" }}>
-                    <Link to={node.fields.slug}>{node.frontmatter.title}</Link>
+                    <Link to={event.node.name}>{event.node.name}</Link>
                   </h5>
                   <span className="date-mobile">
-                    {new Date(node.frontmatter.date).toLocaleDateString(
-                      "en-UK",
-                      { month: "long", day: "2-digit" }
-                    )}
+                    {new Date(event.node.date).toLocaleDateString("en-UK", {
+                      month: "long",
+                      day: "2-digit"
+                    })}
                   </span>
-                  {node.frontmatter.time}
+                  {event.node.date}
                 </Col>
               </Row>
-              <p className="excerpt">{node.frontmatter.description}</p>
+              <p className="excerpt">{event.node.excerpt.excerpt}</p>
             </Col>
           </Row>
-        ))}
+        ) : (
+          <></>
+        );
+      })}
 
       <h3 className="sub-heading mb-3">Past</h3>
-      {data.allEvents.edges
-        .filter(node => {
-          if (Date.parse(node.node.frontmatter.date) < Date.now()) {
-            return true;
-          }
-          return false;
-        })
-        .map(({ node }) => (
-          <Row className="mb-3" key={node.index}>
+      {data.events.edges.map(event => {
+        return Date.parse(event.node.timeStart) < Date.now() ? (
+          <Row className="mb-3" key={event.node.date}>
             <Col md={4} lg={5}>
               <Img
-                fluid={node.frontmatter.thumbnail.childImageSharp.fluid}
+                fluid={event.node.image.fluid}
                 className="mb-3"
                 style={{
                   position: "relative",
@@ -142,33 +127,58 @@ const WorkshopEvent = ({ location }) => {
                   }}
                 >
                   <span className="month">
-                    {new Date(node.frontmatter.date).toLocaleString("en-UK", {
+                    {new Date(event.node.date).toLocaleString("en-UK", {
                       month: "short"
                     })}
                   </span>
                   <span className="day">
-                    {new Date(node.frontmatter.date).toLocaleString("en-UK", {
+                    {new Date(event.node.date).toLocaleString("en-UK", {
                       day: "2-digit"
                     })}
                   </span>
                 </Col>
                 <Col md={10}>
                   <h5 style={{ lineHeight: "inherit" }}>
-                    <Link to={node.fields.slug}>{node.frontmatter.title}</Link>
+                    <Link
+                      to={
+                        "workshop-event/" +
+                        String(new Date(event.node.date).getFullYear()) +
+                        "/" +
+                        String(
+                          (
+                            "0" +
+                            (new Date(event.node.date).getMonth() + 1)
+                          ).slice(-2)
+                        ) +
+                        "/" +
+                        event.node.slug
+                      }
+                    >
+                      {event.node.name}
+                    </Link>
                   </h5>
                   <span className="date-mobile">
-                    {new Date(node.frontmatter.date).toLocaleDateString(
-                      "en-UK",
-                      { month: "long", day: "2-digit" }
-                    )}
+                    {new Date(event.node.date).toLocaleDateString("en-UK", {
+                      month: "long",
+                      day: "2-digit"
+                    })}
                   </span>
-                  {node.frontmatter.time}
+                  {new Date(event.node.timeStart).toLocaleTimeString("nl-NL", {
+                    timeStyle: "short"
+                  })}{" "}
+                  -{" "}
+                  {new Date(event.node.timeFinish).toLocaleTimeString("nl-NL", {
+                    timeStyle: "short"
+                  })}
                 </Col>
               </Row>
-              <p className="excerpt">{node.frontmatter.description}</p>
+              <p className="excerpt">{event.node.excerpt.excerpt}</p>
             </Col>
           </Row>
-        ))}
+        ) : (
+          <></>
+        );
+      })}
     </Layout>
   );
 };

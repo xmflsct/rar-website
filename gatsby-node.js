@@ -1,61 +1,48 @@
-const path = require('path');
-const { createFilePath } = require('gatsby-source-filesystem');
+const path = require("path");
 
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;
 
-  const workshopEventTemplate = path.resolve(
-    './src/templates/workshop-event.jsx',
-  );
-
   return graphql(
     `
       {
-        events: allMarkdownRemark(
-          sort: { fields: [frontmatter___date], order: DESC }
-          filter: { fileAbsolutePath: { regex: "/(workshop-event)/" } }
-        ) {
+        events: allContentfulEventsEvent(sort: { order: DESC, fields: date }) {
           edges {
             node {
-              fields {
-                slug
-              }
+              date
+              slug
             }
           }
         }
       }
-    `,
-  ).then((result) => {
+    `
+  ).then(result => {
     if (result.errors) {
       throw result.errors;
     }
 
-    const allWorkshopEvent = result.data.events.edges;
+    const eventTemplate = path.resolve("src/templates/workshop-event.jsx");
 
-    allWorkshopEvent.forEach((workshopEvent) => {
+    result.data.events.edges.forEach(event => {
+      eventYear = new Date(event.node.date).getFullYear();
+      eventMonth = ("0" + (new Date(event.node.date).getMonth() + 1)).slice(-2);
+      eventSlug =
+        "workshop-event/" +
+        eventYear +
+        "/" +
+        eventMonth +
+        "/" +
+        event.node.slug;
+
       createPage({
-        path: workshopEvent.node.fields.slug,
-        component: workshopEventTemplate,
+        path: eventSlug,
+        component: eventTemplate,
         context: {
-          slug: workshopEvent.node.fields.slug,
-        },
+          slug: event.node.slug
+        }
       });
     });
 
     return null;
   });
-};
-
-exports.onCreateNode = ({ node, actions, getNode }) => {
-  const { createNodeField } = actions;
-
-  if (node.internal.type === 'MarkdownRemark') {
-    const value = createFilePath({ node, getNode });
-
-    createNodeField({
-      name: 'slug',
-      node,
-      value,
-    });
-  }
 };
