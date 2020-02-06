@@ -3,7 +3,6 @@ import { useStaticQuery, graphql, Link } from "gatsby";
 import Img from "gatsby-image";
 
 import Layout from "../../components/layout";
-import SEO from "../../components/seo";
 import CakeList from "../../components/cake-hightea/cake-list";
 
 const SignatureCakeRoll = ({ location }) => {
@@ -43,12 +42,12 @@ const SignatureCakeRoll = ({ location }) => {
     }
   `);
   return (
-    <Layout location={location} name="cake-hightea signature-cake-roll">
-      <SEO
-        title="Signature Cake Roll"
-        keywords={["Round&Round", "Rotterdam"]}
-      />
-
+    <Layout
+      location={location}
+      name="cake-hightea signature-cake-roll"
+      SEOtitle="Signature Cake Roll"
+      SEOkeywords={["Cake roll", "Rotterdam"]}
+    >
       <Img fluid={data.image1.childImageSharp.fluid} />
 
       <h3 className="sub-heading mb-3">Signature Cake Rolls</h3>

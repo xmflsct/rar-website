@@ -1,19 +1,21 @@
 import React from "react";
 
-import Header from "./header";
-import Sidebar from "./sidebar";
-import Footer from "./footer";
+import SEO from "./layout/seo";
+import Header from "./layout/header";
+import Sidebar from "./layout/sidebar";
+import Footer from "./layout/footer";
 import { Button, Col, Container, Row } from "react-bootstrap";
 
 const Layout = props => {
   const [toggleNav, setToggleNav] = React.useState(false);
 
-  const { children, location, name } = props;
+  const { children, location, name, SEOtitle, SEOkeywords } = props;
 
   return (
     <Container
       className={`site-wrapper ${name} ${toggleNav ? "site-head-open" : ""}`}
     >
+      <SEO title={SEOtitle} keywords={SEOkeywords} />
       <Button
         className={`nav-burger hamburger hamburger--collapse ${
           toggleNav ? "is-active" : ""

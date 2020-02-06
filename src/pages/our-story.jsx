@@ -1,9 +1,9 @@
-import React from 'react';
-import { useStaticQuery, graphql } from 'gatsby';
-import Img from 'gatsby-image';
+import React from "react";
+import { useStaticQuery, graphql } from "gatsby";
+import Img from "gatsby-image";
 
-import Layout from '../components/layout';
-import SEO from '../components/seo';
+import Layout from "../components/layout";
+
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 
@@ -41,9 +41,12 @@ const OurStory = ({ location }) => {
     }
   `);
   return (
-    <Layout location={location} name="our-story">
-      <SEO title="Our Story" keywords={['Round&Round', 'Rotterdam']} />
-
+    <Layout
+      location={location}
+      name="our-story"
+      SEOtitle="Our Story"
+      SEOkeywords={["Story", "Rotterdam"]}
+    >
       <h3 className="sub-heading mb-3" id="press">
         Press
       </h3>
@@ -229,14 +232,14 @@ const OurStory = ({ location }) => {
       <h5>Our Story</h5>
       <p>The start of our little journey...</p>
       <p>
-        We are Bing &amp; Chao, the co-founders of Round&amp;Round. A lot of people
-        ask us, how do you two met? How did you decide to open a cake store? We
-        always say it is a long story. We both studied in TU Delft, Bing studied
-        Interaction Design and Chao studied Computer Science. After graduated
-        and worked for a while, in 2015, we met each other on a dinner party
-        (yes food links Chinese people together). We became friends and we did a
-        lot of morning joggings together that spring. Later we found that we
-        both have passion in baking and we both dream of opening a shop. A
+        We are Bing &amp; Chao, the co-founders of Round&amp;Round. A lot of
+        people ask us, how do you two met? How did you decide to open a cake
+        store? We always say it is a long story. We both studied in TU Delft,
+        Bing studied Interaction Design and Chao studied Computer Science. After
+        graduated and worked for a while, in 2015, we met each other on a dinner
+        party (yes food links Chinese people together). We became friends and we
+        did a lot of morning joggings together that spring. Later we found that
+        we both have passion in baking and we both dream of opening a shop. A
         little space where we meet people, share our stories and interests.
         Finally we decided to make this dream come true together.
       </p>
@@ -307,8 +310,8 @@ const OurStory = ({ location }) => {
       <p>
         Nowadays in China, Japan or some other asian countries, there are many
         modern cafes which has creative characters and a ‘cute’ style. This is
-        what we miss here in Holland, so we want to bring this type of ‘cute’ &amp;
-        ‘forest’ style cafe to people here.
+        what we miss here in Holland, so we want to bring this type of ‘cute’
+        &amp; ‘forest’ style cafe to people here.
       </p>
       <p>
         Furthermore, we both love Japanese cake rolls and matcha, so it was not
@@ -339,9 +342,9 @@ const OurStory = ({ location }) => {
 
       <h5>We found Rotterdam, or Rotterdam found us?</h5>
       <p>
-        In the meanwhile of baking cakes &amp; writing our business plan, we were
-        searching for a shop location. Finally we came to Rotterdam which is
-        full of new concept and cool ideas. We explored the city and we found
+        In the meanwhile of baking cakes &amp; writing our business plan, we
+        were searching for a shop location. Finally we came to Rotterdam which
+        is full of new concept and cool ideas. We explored the city and we found
         this little place on Hoogstraat. We love the atmosphere and friendly
         hosts on this part of the street. Then things went smoothly: we got the
         key of our shop location!
@@ -390,8 +393,8 @@ const OurStory = ({ location }) => {
       <p>
         On January 16th 2016, we had our Grand Opening. We will always remember
         that day, with chaos, surprises, laughters and tears. In general, we
-        survived our first day :) and the journey of Round&amp;Round shop officially
-        begins.
+        survived our first day :) and the journey of Round&amp;Round shop
+        officially begins.
       </p>
       <div className="row justify-content-md-center mb-4">
         <div className="col col-md-8">
@@ -402,9 +405,9 @@ const OurStory = ({ location }) => {
       <h5>Our journey just began...</h5>
       <p>
         From that day, we are here almost everyday to meet different people. We
-        serve the cakes &amp; drinks we also love. We are lucky that we have met a
-        lot of cute clients and we become friends. Our new partner Sissy was one
-        of our customers as well. We are lucky girls!
+        serve the cakes &amp; drinks we also love. We are lucky that we have met
+        a lot of cute clients and we become friends. Our new partner Sissy was
+        one of our customers as well. We are lucky girls!
       </p>
       <div className="row justify-content-md-center mb-4">
         <div className="col col-md-8">
@@ -413,9 +416,9 @@ const OurStory = ({ location }) => {
       </div>
       <p>
         To run a shop is never easy, but we have a smile on our faces everyday.
-        Isn’t it enough? :) When this story has been written, Round &amp; Round is
-        just one and half year old. We are still very young and we still have a
-        lot ideas that we want to experiment.
+        Isn’t it enough? :) When this story has been written, Round &amp; Round
+        is just one and half year old. We are still very young and we still have
+        a lot ideas that we want to experiment.
       </p>
       <p>
         People ask what our final goals and dreams are. It is always difficult

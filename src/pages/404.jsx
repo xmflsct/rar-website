@@ -2,9 +2,8 @@ import React from "react";
 import { useStaticQuery, graphql, Link } from "gatsby";
 import Img from "gatsby-image";
 
-import Header from "../components/header";
-import Footer from "../components/footer";
-import SEO from "../components/seo";
+import Header from "../components/layout/header";
+import Footer from "../components/layout/footer";
 import { Col, Container, Row } from "react-bootstrap";
 
 const PageNotFound = () => {
@@ -22,10 +21,6 @@ const PageNotFound = () => {
   return (
     <Container className="site-wrapper">
       <Header />
-      <SEO
-        title="404: where is the cake"
-        keywords={["Round&Round", "Rotterdam", "404"]}
-      />
       <Container as="main" id="site-main" className="site-main">
         <Container className="text-center">
           <Row>

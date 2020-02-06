@@ -2,7 +2,6 @@ import React from "react";
 import { useStaticQuery, graphql, Link } from "gatsby";
 
 import Layout from "../../components/layout";
-import SEO from "../../components/seo";
 import CakeList from "../../components/cake-hightea/cake-list";
 
 const RoundCake = ({ location }) => {
@@ -33,9 +32,12 @@ const RoundCake = ({ location }) => {
     }
   `);
   return (
-    <Layout location={location} name="cake-hightea round-cake">
-      <SEO title="Round Cake" keywords={["Round&Round", "Rotterdam"]} />
-
+    <Layout
+      location={location}
+      name="cake-hightea round-cake"
+      SEOtitle="Round Cake"
+      SEOkeywords={["Round cake", "Rotterdam"]}
+    >
       <h3 className="sub-heading mb-3">Round Cake</h3>
 
       <p>

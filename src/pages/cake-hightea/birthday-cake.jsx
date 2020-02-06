@@ -2,7 +2,6 @@ import React from "react";
 import { useStaticQuery, graphql } from "gatsby";
 
 import Layout from "../../components/layout";
-import SEO from "../../components/seo";
 import CakeList from "../../components/cake-hightea/cake-list";
 
 const BirthdayCake = ({ location }) => {
@@ -121,9 +120,12 @@ const BirthdayCake = ({ location }) => {
     }
   `);
   return (
-    <Layout location={location} name="cake-hightea birthday-cake">
-      <SEO title="Birthday Cake" keywords={["Round&Round", "Rotterdam"]} />
-
+    <Layout
+      location={location}
+      name="cake-hightea birthday-cake"
+      SEOtitle="Birthday Cake"
+      SEOkeywords={["Birthday cake", "Rotterdam"]}
+    >
       <h3 className="sub-heading mb-3">Birthday Cake</h3>
 
       <p>

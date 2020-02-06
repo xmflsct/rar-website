@@ -1,11 +1,10 @@
-import React from 'react';
-import { useStaticQuery, graphql } from 'gatsby';
-import Img from 'gatsby-image';
+import React from "react";
+import { useStaticQuery, graphql } from "gatsby";
+import Img from "gatsby-image";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 
-import Layout from '../components/layout';
-import SEO from '../components/seo';
+import Layout from "../components/layout";
 
 const OurStory = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -26,9 +25,12 @@ const OurStory = ({ location }) => {
     }
   `);
   return (
-    <Layout location={location} name="craft">
-      <SEO title="Craft" keywords={['Round&Round', 'Rotterdam', 'craft']} />
-
+    <Layout
+      location={location}
+      name="craft"
+      SEOtitle="Craft"
+      SEOkeywords={["Craft", "Rotterdam"]}
+    >
       <h3 className="sub-heading mb-3" id="selected">
         Selected by Round&amp;Round
       </h3>

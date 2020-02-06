@@ -3,7 +3,6 @@ import { useStaticQuery, graphql, Link } from "gatsby";
 import Img from "gatsby-image";
 
 import Layout from "../../components/layout";
-import SEO from "../../components/seo";
 
 // import Form2020LunarNewYear from "../../components/forms/special/2020-lunar-new-year";
 
@@ -11,7 +10,9 @@ const Special2020LunarNewYear = ({ location }) => {
   const data = useStaticQuery(graphql`
     {
       images: allFile(
-        filter: { relativeDirectory: { regex: "/(special/2020-lunar-new-year)/" } }
+        filter: {
+          relativeDirectory: { regex: "/(special/2020-lunar-new-year)/" }
+        }
         sort: { order: ASC, fields: name }
       ) {
         nodes {
@@ -26,12 +27,12 @@ const Special2020LunarNewYear = ({ location }) => {
     }
   `);
   return (
-    <Layout location={location} name="special-2020-lunar-new-year">
-      <SEO
-        title="2020 Lunar New Year Special"
-        keywords={["Round&Round", "Rotterdam"]}
-      />
-
+    <Layout
+      location={location}
+      name="special-2020-lunar-new-year"
+      SEOtitle="2020 Lunar New Year Special"
+      SEOkeywords={["Lunar new year", "Chinese new year", "Rotterdam"]}
+    >
       <h3 className="sub-heading mb-3">2020 Lunar New Year Special</h3>
       <div className="row justify-content-center mb-3">
         <div className="col-12 col-md-10">
@@ -39,7 +40,8 @@ const Special2020LunarNewYear = ({ location }) => {
         </div>
       </div>
       <p>
-      It is almost Lunar New Year (Chinese Spring Festival) again! From now on, you can order our beloved Spring Festival Special Cake Roll.
+        It is almost Lunar New Year (Chinese Spring Festival) again! From now
+        on, you can order our beloved Spring Festival Special Cake Roll.
       </p>
       <p>This year we got 2 flavors for you.</p>
       <div className="row">
@@ -47,14 +49,17 @@ const Special2020LunarNewYear = ({ location }) => {
           <Img fluid={data.images.nodes[1].childImageSharp.fluid} />
           <h5 className="mt-2">1 [Golden Rat Year 金鼠献瑞]</h5>
           <p>
-            <strong>Flavour:</strong> Red yeast rice powder colored cake, Red bean cream, Strawberry; Topped with Vanilla cream, Mouse head cookie, Raspberry and Blueberry.
+            <strong>Flavour:</strong> Red yeast rice powder colored cake, Red
+            bean cream, Strawberry; Topped with Vanilla cream, Mouse head
+            cookie, Raspberry and Blueberry.
           </p>
         </div>
         <div className="col-12 col-md-6">
           <Img fluid={data.images.nodes[2].childImageSharp.fluid} />
           <h5 className="mt-2">2 [Happiness is here 福气临门]</h5>
           <p>
-            <strong>Flavour:</strong> Red yeast rice powder colored cake, Matcha cream and Red beans.
+            <strong>Flavour:</strong> Red yeast rice powder colored cake, Matcha
+            cream and Red beans.
           </p>
         </div>
       </div>

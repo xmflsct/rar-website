@@ -1,44 +1,31 @@
-const siteConfig = require("./siteConfig");
 require("dotenv").config({
-  path: `.env.${process.env.NODE_ENV}`,
-})
+  path: `.env.${process.env.NODE_ENV}`
+});
 
 module.exports = {
   siteMetadata: {
-    title: siteConfig.title,
-    description: siteConfig.description,
-    siteUrl: siteConfig.url
+    title: "Round&Round Rotterdam",
+    description:
+      "Round&Round, Handmade Cakes&Crafts. Leading a cross-cultural lifestyle that relaxes you with an adult sense of cuteness. 跨文化＋治愈系可爱感＋手作蛋糕&杂货＝R&R生活美学",
+    url: "https://roundandround.nl",
+    image: "./static/favicon.png"
   },
   plugins: [
     {
       resolve: `gatsby-source-contentful`,
       options: {
         spaceId: process.env.CONTENTFUL_SPACEID,
-        accessToken: process.env.CONTENTFUL_ACCESSTOKEN,
+        accessToken: process.env.CONTENTFUL_ACCESSTOKEN
         // host: process.env.CONTENTFUL_HOST,
         // environment: `master`,
         // downloadLocal: true
-      },
+      }
     },
     "gatsby-transformer-json",
     {
       resolve: "gatsby-source-filesystem",
       options: {
-        path: `${__dirname}/content/data`
-      }
-    },
-    {
-      resolve: "gatsby-source-filesystem",
-      options: {
-        path: `${__dirname}/content/posts`,
-        name: "posts"
-      }
-    },
-    {
-      resolve: "gatsby-source-filesystem",
-      options: {
-        path: `${__dirname}/content/assets`,
-        name: "assets"
+        path: `${__dirname}/content`
       }
     },
     {

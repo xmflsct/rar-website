@@ -3,7 +3,6 @@ import { useStaticQuery, graphql, Link } from "gatsby";
 import Img from "gatsby-image";
 
 import Layout from "../../components/layout";
-import SEO from "../../components/seo";
 
 const Special2019Christmas = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -24,12 +23,12 @@ const Special2019Christmas = ({ location }) => {
     }
   `);
   return (
-    <Layout location={location} name="special-2019-christmas">
-      <SEO
-        title="2019 Christmas Special"
-        keywords={["Round&Round", "Rotterdam"]}
-      />
-
+    <Layout
+      location={location}
+      name="special-2019-christmas"
+      SEOtitle="2019 Christmas Special"
+      SEOkeywords={["Christmas", "Rotterdam"]}
+    >
       <h3 className="sub-heading mb-3">2019 Christmas Special</h3>
       <div className="row mb-3">
         <div className="col-6">

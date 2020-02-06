@@ -5,7 +5,6 @@ import Accordion from "react-bootstrap/Accordion";
 import Card from "react-bootstrap/Card";
 
 import Layout from "../components/layout";
-import SEO from "../components/seo";
 
 const ShopInfo = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -50,9 +49,12 @@ const ShopInfo = ({ location }) => {
     }
   `);
   return (
-    <Layout location={location} name="shop-info">
-      <SEO title="Shop Info" keywords={["Round&Round", "Rotterdam"]} />
-
+    <Layout
+      location={location}
+      name="shop-info"
+      SEOtitle="Shop Info"
+      SEOkeywords={["Information", "Rotterdam"]}
+    >
       <Img fluid={data.main.childImageSharp.fluid} />
 
       <h3 className="sub-heading mt-4 mb-3" id="menu">
@@ -135,6 +137,8 @@ const ShopInfo = ({ location }) => {
         <a
           href="https://www.instagram.com/roundandround_rotterdam/"
           alt="Instagram"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           roundandround_rotterdam
         </a>
@@ -145,8 +149,13 @@ const ShopInfo = ({ location }) => {
           src={data.facebook.publicURL}
           alt={data.facebook.name}
         />
-        <a href="https://www.facebook.com/roundandround.nl/" alt="Facebook">
-          Round&Round Rotterdam
+        <a
+          href="https://www.facebook.com/roundandround.nl/"
+          alt="Facebook"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Round&amp;Round Rotterdam
         </a>
       </p>
 

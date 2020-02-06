@@ -4,14 +4,14 @@ import Img from "gatsby-image";
 
 import Carousel from "react-bootstrap/Carousel";
 
-import Header from "../components/header";
-import Sidebar from "../components/sidebar";
-import Footer from "../components/footer";
-import SEO from "../components/seo";
-import Instagram from "../components/instagram";
+import Header from "../components/layout/header";
+import Sidebar from "../components/layout/sidebar";
+import Footer from "../components/layout/footer";
+import SEO from "../components/layout/seo";
+import Instagram from "../components/index/instagram";
 import { Button, Col, Container, Row } from "react-bootstrap";
 
-import { ReactComponent as Socials } from "../../content/assets/pages/index/social.svg";
+import { ReactComponent as Socials } from "../../content/pages/index/social.svg";
 
 const Index = ({ location }) => {
   const [toggleNav, setToggleNav] = React.useState(false);
