@@ -4,13 +4,16 @@ on:
   push:
     branches:
       - gatsby-dev
+  repository_dispatch:
+    event_type:
+      - contentful-publish
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: xmflsct/action-publish-gatsby-contentful@v1.0.0
+      - uses: actions/checkout@v2
+      - uses: xmflsct/action-publish-gatsby-contentful@v1.1.0
         with:
           publishBranch: 'master'
           token: ${{ secrets.PAT }}
@@ -18,3 +21,4 @@ jobs:
           email: 'me@xmflsct.com'
           contentfulSpace: ${{ secrets.CONTENTFUL_SPACEID }}
           contentfulToken: ${{ secrets.CONTENTFUL_ACCESSTOKEN }}
+          isContentfulPublish: ${{ github.event.client_payload.isContentfulPublish }}
