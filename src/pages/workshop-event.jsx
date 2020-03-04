@@ -30,7 +30,6 @@ const WorkshopEvent = ({ location }) => {
         }
       }
       eventsPast: allContentfulEventsEvent(
-        filter: { date: { gt: "2020-01-01" } }
         sort: { order: DESC, fields: date }
       ) {
         edges {
