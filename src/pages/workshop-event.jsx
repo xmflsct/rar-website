@@ -7,7 +7,32 @@ import EventList from "../components/workshop-event/event-list";
 const WorkshopEvent = ({ location }) => {
   const data = useStaticQuery(graphql`
     {
-      events: allContentfulEventsEvent(sort: { order: DESC, fields: date }) {
+      eventsUpcoming: allContentfulEventsEvent(
+        filter: { date: { gt: "2020-01-01" } }
+        sort: { order: ASC, fields: date }
+      ) {
+        edges {
+          node {
+            image {
+              fluid(maxWidth: 300) {
+                ...GatsbyContentfulFluid
+              }
+            }
+            date
+            name
+            slug
+            timeStart
+            timeFinish
+            excerpt {
+              excerpt
+            }
+          }
+        }
+      }
+      eventsPast: allContentfulEventsEvent(
+        filter: { date: { gt: "2020-01-01" } }
+        sort: { order: DESC, fields: date }
+      ) {
         edges {
           node {
             image {
@@ -40,7 +65,7 @@ const WorkshopEvent = ({ location }) => {
       SEOkeywords={["Workshop", "Event", "Rotterdam"]}
     >
       <h3 className="sub-heading mb-3">Upcoming</h3>
-      {data.events.edges.map(event => {
+      {data.eventsUpcoming.edges.map(event => {
         return Date.parse(event.node.timeStart) >= Date.now() ? (
           <EventList
             event={event}
@@ -53,8 +78,8 @@ const WorkshopEvent = ({ location }) => {
         );
       })}
 
-    <h3 className="sub-heading mb-3">Past in {new Date().getFullYear()}</h3>
-      {data.events.edges.map(event => {
+      <h3 className="sub-heading mb-3">Past in {new Date().getFullYear()}</h3>
+      {data.eventsPast.edges.map(event => {
         const theYear = new Date(event.node.date).getFullYear();
         const thisYear = new Date().getFullYear() - 1;
         return Date.parse(event.node.timeStart) < Date.now() &&
@@ -71,7 +96,7 @@ const WorkshopEvent = ({ location }) => {
       })}
 
       <h3 className="sub-heading mb-3">Archives</h3>
-      {data.events.edges.map(event => {
+      {data.eventsPast.edges.map(event => {
         const theYear = new Date(event.node.date).getFullYear();
         const thisYear = new Date().getFullYear() - 1;
         return theYear <= thisYear ? (
