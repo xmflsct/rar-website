@@ -141,18 +141,20 @@ const Index = ({ location }) => {
         </Row>
         <Row className="mt-4 mb-4">
           <Col xs={12}>
-            <Carousel
-              className="carousel"
-              controls={false}
-              fade
-              interval={5000}
-            >
-              {data.carousel.edges.map(({ node }, index) => (
-                <Carousel.Item key={index}>
-                  <Img fluid={node.childImageSharp.fluid} />
-                </Carousel.Item>
-              ))}
-            </Carousel>
+            <a href="/cake-hightea/forest-hightea">
+              <Carousel
+                className="carousel"
+                controls={false}
+                fade
+                interval={5000}
+              >
+                {data.carousel.edges.map(({ node }, index) => (
+                  <Carousel.Item key={index}>
+                    <Img fluid={node.childImageSharp.fluid} />
+                  </Carousel.Item>
+                ))}
+              </Carousel>
+            </a>
           </Col>
         </Row>
         <Row>

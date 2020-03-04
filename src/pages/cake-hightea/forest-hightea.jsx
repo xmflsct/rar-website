@@ -50,40 +50,40 @@ const ForestHightea = ({ location }) => {
         people.
       </p>
       <Img fluid={data.allFile.nodes[0].childImageSharp.fluid} />
-      <h5 className="mt-4">1. ChaCha Date Hightea (Autumn/Winter Special)</h5>
-      <p>Full: € 25.00/p.p Mini: € 18.00/p.p</p>
+      <h5 className="mt-4">1. Sakura Hightea (March-April Spring Special)</h5>
+      <p>Full: € 27.00/p.p. Mini: € 19.00/p.p.</p>
       <p>
         <b>[Starter]</b>
         <br />
-        Warm Ginger Tea
+        Sakura Calpis Soda
         <br />
         <b>[Cake Roll]</b>
         <br />
-        Hojicha | Oreo | Seasalt
+        Beetroot | Blackberry
         <br />
-        <b>[Signature Cheese Cake]</b>
+        <b>[Hanami Cheese Cake]</b>
         <br />
-        Earl Grey | Matcha Bavarois | Oreo | Chestnut
+        Raspberry | Blackberry | Yoghurt
         <br />
         <b>[Tart]</b>
         <br />
-        Stewed Apple | Cream | Cinnamon
+        Stewed Apple | Strawberry
         <br />
-        <b>[Jelly*]</b>
+        <b>[Jelly *]</b>
         <br />
-        Special Thai Tea | Almond | Agar Agar
+        Almond Tofu | Lychee Jelly | Salted Sakura
         <br />
-        <b>[Pound Cake*]</b>
+        <b>[Pound Cake *]</b>
         <br />
-        Pure Matcha & Ginger
+        Matcha &amp; English Tea
         <br />
-        <b>[Dorayaki*]</b>
+        <b>[Dorayaki *]</b>
         <br />
-        Sweet Potato Puree
+        Beetroot | Sweetened Red Beans
         <br />
         <b>[Small Bites]</b>
         <br />
-        Cookies | Matcha Nama Chocolate
+        Cookies | Earl Grey Nama Chocolate
         <br />
         <b>[Sth Savory]</b>
         <br />
@@ -95,9 +95,11 @@ const ForestHightea = ({ location }) => {
       </p>
       <p>
         <i>
-          Mini hightea will be rather smaller.
+          Full: € 27.00/p.p
           <br />
-          Above items with * are not included in the mini hightea.
+          Mini: € 19.00/p.p. (exclude items with *)
+          <br />
+          Reservation Required
         </i>
       </p>
 
