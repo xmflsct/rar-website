@@ -90,28 +90,20 @@ const Index = ({ location }) => {
             <Sidebar location={location} />
           </Col>
           <Col lg={9} className="content">
-            {/* <Row className="announcement justify-content-center">
+            <Row className="announcement justify-content-center">
               <Col xs={11} md={9}>
-                <h5 className="text-center">[Holiday Time Open Hours]</h5>
-                <p className="text-center">
-                  Merry Christmas 🎄&amp; Happy New Year 🧨!
-                </p>
+                <h5 className="text-center">[Announcement]</h5>
                 <p>
-                  <b>24 Dec  2019</b> [Order Pick Up Only]<br />
-                  Note: we may have some Christmas special rolls available in the
-                  shop, please call us to check.
-                </p>
-                <p>
-                  <b>25 Dec 2019 - 3 Jan 2020</b> [Shop Closed]
-                </p>
-                <p>
-                  <b>4 Jan 2020 onwards</b> [Open Normally]
-                </p>
-                <p>
-                  <b>16 Jan 2020</b> [Our 4th Anniversary 🎈]
+                  Dear Customers, probably you have heard the news already. Yes
+                  Round&amp;Round is also going to be closed from today till April
+                  6th. All the cakes/hightea reservations will be canceled then.
+                  It is a tough time for everyone but we believe that we will
+                  see each other very soon :) In the meanwhile, take care
+                  everyone! Hopefully we will open again in April ^_^ yes see
+                  you in Spring
                 </p>
               </Col>
-            </Row> */}
+            </Row>
             <Img fluid={data.main.childImageSharp.fluid} />
           </Col>
         </Row>
