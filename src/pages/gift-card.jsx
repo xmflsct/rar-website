@@ -30,7 +30,7 @@ const GiftCard = ({ location }) => {
   const stripePromise = loadStripe(
     "pk_test_zeXIOyCPled3HXSt7ZHA02dF00QsL1i5hd"
   );
-  const { control, getValues, register, handleSubmit, watch } = useForm();
+  const { control, getValues, register, handleSubmit } = useForm();
   const [amount20, setAmount20] = useState(0);
   const [amount50, setAmount50] = useState(0);
   const [amount100, setAmount100] = useState(0);
@@ -99,6 +99,7 @@ const GiftCard = ({ location }) => {
         sessionId: res.body.sessionId
       });
       if (error) {
+        setButtonState(false)
         console.warn("Error:", error);
       }
     } else {
