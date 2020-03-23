@@ -1,5 +1,5 @@
 export async function checkout(token, customer, items, metadata, url, shipping) {
-  const res = await fetch("https://api.roundandround.nl/checkout", {
+  const res = await fetch("https://api.roundandround.nl/checkout?key=AIzaSyBMgqjqljsjCe6aq-B5-JQZ6eNzv5m8JhI", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
