@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useStaticQuery, graphql, Link } from "gatsby";
+import { useStaticQuery, graphql } from "gatsby";
 import Img from "gatsby-image";
 import { Button, Col, Form, InputGroup } from "react-bootstrap";
 import { useForm, Controller } from "react-hook-form";
@@ -10,23 +10,26 @@ import { checkout } from "../components/api/checkout";
 import Layout from "../components/layout";
 
 const GiftCard = ({ location }) => {
-  // const data = useStaticQuery(graphql`
-  //   {
-  //     matcha: allFile(
-  //       filter: { relativeDirectory: { regex: "/(matcha)/" } }
-  //       sort: { order: ASC, fields: name }
-  //     ) {
-  //       nodes {
-  //         childImageSharp {
-  //           fluid(maxWidth: 700) {
-  //             ...GatsbyImageSharpFluid_withWebp
-  //           }
-  //         }
-  //         name
-  //       }
-  //     }
-  //   }
-  // `);
+  const data = useStaticQuery(graphql`
+    {
+      paymentStripe: file(name: { eq: "payment-stripe" }) {
+        childImageSharp {
+          fixed(height: 38) {
+            ...GatsbyImageSharpFixed_withWebp
+          }
+        }
+        name
+      }
+      paymentiDEAL: file(name: { eq: "payment-iDEAL" }) {
+        childImageSharp {
+          fixed(height: 38) {
+            ...GatsbyImageSharpFixed_withWebp
+          }
+        }
+        name
+      }
+    }
+  `);
   const stripePromise = loadStripe(
     "pk_test_zeXIOyCPled3HXSt7ZHA02dF00QsL1i5hd"
   );
@@ -99,7 +102,7 @@ const GiftCard = ({ location }) => {
         sessionId: res.body.sessionId
       });
       if (error) {
-        setButtonState(false)
+        setButtonState(false);
         console.warn("Error:", error);
       }
     } else {
@@ -266,7 +269,9 @@ const GiftCard = ({ location }) => {
               />
             </InputGroup.Prepend>
             <InputGroup.Text>
-              Mail to a postal address in NL<br />(add address during checkout)
+              Mail to a postal address in NL
+              <br />
+              (add address during checkout)
             </InputGroup.Text>
           </InputGroup>
         </Form.Group>
@@ -334,6 +339,24 @@ const GiftCard = ({ location }) => {
         <Button type="submit" disabled={buttonState} className="mb-3">
           {buttonState ? "Please wait" : "Buy now"}
         </Button>
+        <Form.Row className="mb-2">
+          <Col>
+            <a
+              href="https://stripe.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Img fixed={data.paymentStripe.childImageSharp.fixed} />
+            </a>{" "}
+            <a
+              href="https://www.ideal.nl/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Img fixed={data.paymentiDEAL.childImageSharp.fixed} />
+            </a>
+          </Col>
+        </Form.Row>
         <Reaptcha
           ref={e => setRecaptcha(e)}
           sitekey="6Le85MYUAAAAAFIN9CKLxzyqnep4zJjeFxr4RpxU"
