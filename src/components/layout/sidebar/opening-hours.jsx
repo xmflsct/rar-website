@@ -21,7 +21,7 @@ class OpeningHours extends React.Component {
           className="shop-badge shop-close"
           key={this.state.isClient}
         >
-          Closed for holiday
+          Closed
         </span>
       );
     }
