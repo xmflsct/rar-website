@@ -40,6 +40,12 @@ const Sidebar = () => {
         publicURL
         name
       }
+      giftCard: file(
+        relativePath: { regex: "/(sidebar/gift-card.svg)/" }
+      ) {
+        publicURL
+        name
+      }
       ourStory: file(relativePath: { regex: "/(sidebar/our-story.svg)/" }) {
         publicURL
         name
@@ -155,6 +161,17 @@ const Sidebar = () => {
           Craft
         </Link>
       </Nav.Item>
+      {/* <Nav.Item>
+        <Figure>
+          <Figure.Image
+            src={data.giftCard.publicURL}
+            alt={`Link to ${data.giftCard.name}page`}
+          />
+        </Figure>
+        <Link to="/gift-card" activeClassName="active" partiallyActive>
+          Buy Gift Card
+        </Link>
+      </Nav.Item> */}
       <Nav.Item>
         <Figure>
           <Figure.Image

@@ -218,10 +218,9 @@ const Matcha = ({ location }) => {
       <p>
         We host matcha/tea ceremony and other workshops regularly.
         <br />
-        Please check out our <Link to="/workshop-event">
-          Workshop & Event
-        </Link>{" "}
-        page or facebook page for more info.
+        Please check out our{" "}
+        <Link to="/workshop-event">Workshop &amp; Event</Link> page or facebook
+        page for more info.
       </p>
     </Layout>
   );
