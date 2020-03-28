@@ -164,7 +164,7 @@ const GiftCard = ({ location }) => {
     recaptcha.reset()
     recaptcha.execute()
   }
-  console.log(formState)
+
   return (
     <Layout
       location={location}
