@@ -161,7 +161,7 @@ const Sidebar = () => {
           Craft
         </Link>
       </Nav.Item>
-      {/* <Nav.Item>
+      <Nav.Item>
         <Figure>
           <Figure.Image
             src={data.giftCard.publicURL}
@@ -171,7 +171,7 @@ const Sidebar = () => {
         <Link to="/gift-card" activeClassName="active" partiallyActive>
           Buy Gift Card
         </Link>
-      </Nav.Item> */}
+      </Nav.Item>
       <Nav.Item>
         <Figure>
           <Figure.Image
