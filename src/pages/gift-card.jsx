@@ -59,12 +59,11 @@ const GiftCard = ({ location }) => {
     }
   `)
   const stripePromise = loadStripe("pk_test_zeXIOyCPled3HXSt7ZHA02dF00QsL1i5hd")
-  const { control, getValues, register, handleSubmit } = useForm()
+  const { control, formState, register, handleSubmit } = useForm()
   const [amount20, setAmount20] = useState(0)
   const [amount50, setAmount50] = useState(0)
   const [amount100, setAmount100] = useState(0)
   const [amountTotal, setAmountTotal] = useState(0)
-  const [buttonState, setButtonState] = useState(false)
   const [recaptcha, setRecaptcha] = useState(null)
 
   const onChangeAmount = e => {
@@ -98,50 +97,53 @@ const GiftCard = ({ location }) => {
     }
   }
 
-  const onVerify = async token => {
-    const formData = getValues()
-    const customer = { email: formData.email }
+  const onVerify = () => {
+    handleSubmit(formSubmit)()
+  }
+
+  const formSubmit = async d => {
+    const customer = { email: d.email }
     const items = []
-    formData.option20 &&
+    d.option20 &&
       items.push({
         name: data.giftCard20.name,
         amount: data.giftCard20.priceOriginal,
         currency: "eur",
-        quantity: parseInt(formData.option20),
+        quantity: parseInt(d.option20),
         description: data.giftCard20.sku
       })
-    formData.option50 &&
+    d.option50 &&
       items.push({
         name: data.giftCard50.name,
         amount: data.giftCard50.priceOriginal,
         currency: "eur",
-        quantity: parseInt(formData.option50),
+        quantity: parseInt(d.option50),
         description: data.giftCard50.sku
       })
-    formData.option100 &&
+    d.option100 &&
       items.push({
         name: data.giftCard100.name,
         amount: data.giftCard100.priceOriginal,
         currency: "eur",
-        quantity: parseInt(formData.option100),
+        quantity: parseInt(d.option100),
         description: data.giftCard100.sku
       })
     const metadata = {
-      name: formData.name,
-      phone: formData.phone,
-      notes: formData.notes
+      name: d.name,
+      phone: d.phone,
+      notes: d.notes
     }
     const url = {
       success: window.location.origin + "/checkout/success",
       cancel: window.location.origin + "/gift-card"
     }
     const res = await checkout(
-      token,
+      await recaptcha.getResponse(),
       customer,
       items,
       metadata,
       url,
-      formData.delivery === "mail"
+      d.delivery === "mail"
     )
     if (res.sessionId) {
       const stripe = await stripePromise
@@ -149,21 +151,20 @@ const GiftCard = ({ location }) => {
         sessionId: res.sessionId
       })
       if (error) {
-        setButtonState(false)
+        return false
       }
-    } else {
-      setButtonState(false)
     }
   }
 
-  const onSubmit = async () => {
+  const onSubmit = async e => {
+    e.preventDefault()
     if (amountTotal === 0) {
-      return
+      return false
     }
+    recaptcha.reset()
     recaptcha.execute()
-    setButtonState(true)
   }
-
+  console.log(formState)
   return (
     <Layout
       location={location}
@@ -240,7 +241,7 @@ const GiftCard = ({ location }) => {
           </Figure.Caption>
         </Col>
       </Row>
-      <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={e => onSubmit(e)}>
         <Form.Text as='p'>
           Please choose the gift cards you would like to buy:
         </Form.Text>
@@ -426,8 +427,14 @@ const GiftCard = ({ location }) => {
             {amount100 / 100}
           </InputGroup.Text>
         </InputGroup>
-        <Button type='submit' disabled={buttonState} className='mb-3'>
-          {buttonState ? "Connecting..." : "Buy now"}
+        <Button
+          type='submit'
+          disabled={formState.isSubmitting}
+          className='mb-3'
+        >
+          {(formState.isSubmitting && "Connecting") ||
+            (formState.submitCount !== 0 && "Retry") ||
+            "Buy now"}
         </Button>
         <Form.Row className='mb-2'>
           <Col>
