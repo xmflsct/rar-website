@@ -58,7 +58,7 @@ const GiftCard = ({ location }) => {
       }
     }
   `)
-  const stripePromise = loadStripe("pk_test_zeXIOyCPled3HXSt7ZHA02dF00QsL1i5hd")
+  const stripePromise = loadStripe("pk_live_lgoA0djNGei42J44JWXonbSR00V5eey2Bf")
   const { control, formState, register, handleSubmit } = useForm()
   const [amount20, setAmount20] = useState(0)
   const [amount50, setAmount50] = useState(0)
