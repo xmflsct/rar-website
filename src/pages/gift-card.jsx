@@ -183,7 +183,7 @@ const GiftCard = ({ location }) => {
     recaptcha.reset()
     recaptcha.execute()
   }
-  console.log(getValues())
+
   return (
     <Layout
       location={location}
@@ -385,7 +385,7 @@ const GiftCard = ({ location }) => {
                 valueName='label'
                 required
                 control={control}
-                onChange={async e => {
+                onChange={e => {
                   setAmountShipping(data.giftCardShipping.priceOriginal / 100)
                   setAmountTotal(
                     amount20 +
