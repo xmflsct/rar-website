@@ -27,6 +27,13 @@ const GiftCard = ({ location }) => {
         sku
         priceOriginal
       }
+      giftCardShipping: contentfulWebshopItem(
+        sku: { eq: "gift-card-shipping" }
+      ) {
+        name
+        sku
+        priceOriginal
+      }
       images: allFile(
         filter: { relativeDirectory: { regex: "/(gift-card)/" } }
         sort: { order: ASC, fields: name }
@@ -59,10 +66,11 @@ const GiftCard = ({ location }) => {
     }
   `)
   const stripePromise = loadStripe("pk_live_lgoA0djNGei42J44JWXonbSR00V5eey2Bf")
-  const { control, formState, register, handleSubmit } = useForm()
+  const { control, formState, getValues, register, handleSubmit } = useForm()
   const [amount20, setAmount20] = useState(0)
   const [amount50, setAmount50] = useState(0)
   const [amount100, setAmount100] = useState(0)
+  const [amountShipping, setAmountShipping] = useState(0)
   const [amountTotal, setAmountTotal] = useState(0)
   const [recaptcha, setRecaptcha] = useState(null)
 
@@ -73,7 +81,8 @@ const GiftCard = ({ location }) => {
         setAmountTotal(
           e.target.value * (data.giftCard20.priceOriginal / 100) +
             amount50 +
-            amount100
+            amount100 +
+            amountShipping
         )
         break
       case "option50":
@@ -81,7 +90,8 @@ const GiftCard = ({ location }) => {
         setAmountTotal(
           amount20 +
             e.target.value * (data.giftCard50.priceOriginal / 100) +
-            amount100
+            amount100 +
+            amountShipping
         )
         break
       case "option100":
@@ -89,7 +99,8 @@ const GiftCard = ({ location }) => {
         setAmountTotal(
           amount20 +
             amount50 +
-            e.target.value * (data.giftCard100.priceOriginal / 100)
+            e.target.value * (data.giftCard100.priceOriginal / 100) +
+            amountShipping
         )
         break
       default:
@@ -128,6 +139,14 @@ const GiftCard = ({ location }) => {
         quantity: parseInt(d.option100),
         description: data.giftCard100.sku
       })
+    d.delivery === "mail" &&
+      items.push({
+        name: data.giftCardShipping.name,
+        amount: data.giftCardShipping.priceOriginal,
+        currency: "eur",
+        quantity: 1,
+        description: data.giftCardShipping.sku
+      })
     const metadata = {
       name: d.name,
       phone: d.phone,
@@ -164,7 +183,7 @@ const GiftCard = ({ location }) => {
     recaptcha.reset()
     recaptcha.execute()
   }
-
+  console.log(getValues())
   return (
     <Layout
       location={location}
@@ -248,9 +267,6 @@ const GiftCard = ({ location }) => {
         <Form.Row>
           <Form.Group as={Col} lg={4}>
             <Form.Label>{data.giftCard20.name}</Form.Label>
-            <Form.Text>
-              Plus a postcard and a 10% off Birthday cake voucher
-            </Form.Text>
             <InputGroup>
               <InputGroup.Prepend>
                 <InputGroup.Text>
@@ -262,7 +278,9 @@ const GiftCard = ({ location }) => {
                 as='select'
                 onChange={e => onChangeAmount(e)}
                 ref={register}
-                required={amountTotal === 0}
+                required={
+                  amountTotal <= data.giftCardShipping.priceOriginal / 100
+                }
               >
                 <option value=''>0</option>
                 <option value={1}>× 1</option>
@@ -272,12 +290,12 @@ const GiftCard = ({ location }) => {
                 <option value={5}>× 5</option>
               </Form.Control>
             </InputGroup>
+            <Form.Text>
+              Plus a postcard and a 10% off Birthday cake voucher
+            </Form.Text>
           </Form.Group>
           <Form.Group as={Col} lg={4}>
             <Form.Label>{data.giftCard50.name}</Form.Label>
-            <Form.Text>
-              Plus a postcard and a 20% off Birthday cake voucher
-            </Form.Text>
             <InputGroup>
               <InputGroup.Prepend>
                 <InputGroup.Text>
@@ -289,7 +307,9 @@ const GiftCard = ({ location }) => {
                 as='select'
                 onChange={e => onChangeAmount(e)}
                 ref={register}
-                required={amountTotal === 0}
+                required={
+                  amountTotal <= data.giftCardShipping.priceOriginal / 100
+                }
               >
                 <option value=''>0</option>
                 <option value={1}>× 1</option>
@@ -299,13 +319,12 @@ const GiftCard = ({ location }) => {
                 <option value={5}>× 5</option>
               </Form.Control>
             </InputGroup>
+            <Form.Text>
+              Plus a postcard and a 20% off Birthday cake voucher
+            </Form.Text>
           </Form.Group>
           <Form.Group as={Col} lg={4}>
             <Form.Label>{data.giftCard100.name}</Form.Label>
-            <Form.Text>
-              Plus a postcard, a 10% off Birthday cake voucher and a R&amp;R
-              tote bag
-            </Form.Text>
             <InputGroup>
               <InputGroup.Prepend>
                 <InputGroup.Text>
@@ -317,7 +336,9 @@ const GiftCard = ({ location }) => {
                 as='select'
                 onChange={e => onChangeAmount(e)}
                 ref={register}
-                required={amountTotal === 0}
+                required={
+                  amountTotal <= data.giftCardShipping.priceOriginal / 100
+                }
               >
                 <option value=''>0</option>
                 <option value={1}>× 1</option>
@@ -327,6 +348,10 @@ const GiftCard = ({ location }) => {
                 <option value={5}>× 5</option>
               </Form.Control>
             </InputGroup>
+            <Form.Text>
+              Plus a postcard, a 20% off Birthday cake voucher and a R&amp;R Eco
+              tote bag
+            </Form.Text>
           </Form.Group>
         </Form.Row>
         <Form.Text as='p'>
@@ -342,6 +367,11 @@ const GiftCard = ({ location }) => {
                 valueName='label'
                 required
                 control={control}
+                onChange={e => {
+                  setAmountShipping(0)
+                  setAmountTotal(amount20 + amount50 + amount100)
+                  return e[0].target.value
+                }}
               />
             </InputGroup.Prepend>
             <InputGroup.Text>Pickup at our shop</InputGroup.Text>
@@ -355,12 +385,21 @@ const GiftCard = ({ location }) => {
                 valueName='label'
                 required
                 control={control}
+                onChange={async e => {
+                  setAmountShipping(data.giftCardShipping.priceOriginal / 100)
+                  setAmountTotal(
+                    amount20 +
+                      amount50 +
+                      amount100 +
+                      data.giftCardShipping.priceOriginal / 100
+                  )
+                  return e[0].target.value
+                }}
               />
             </InputGroup.Prepend>
             <InputGroup.Text>
-              Mail to a postal address in NL
-              <br />
-              (add address during checkout)
+              Mail to an address in NL (+ €{" "}
+              {data.giftCardShipping.priceOriginal / 100})
             </InputGroup.Text>
           </InputGroup>
         </Form.Group>
@@ -420,12 +459,7 @@ const GiftCard = ({ location }) => {
           <InputGroup.Prepend>
             <InputGroup.Text>Total</InputGroup.Text>
           </InputGroup.Prepend>
-          <InputGroup.Text>
-            € {amountTotal} = € {data.giftCard20.priceOriginal / 100} ×{" "}
-            {amount20 / 20} + € {data.giftCard50.priceOriginal / 100} ×{" "}
-            {amount50 / 50} + € {data.giftCard100.priceOriginal / 100} ×{" "}
-            {amount100 / 100}
-          </InputGroup.Text>
+          <InputGroup.Text>€ {amountTotal}</InputGroup.Text>
         </InputGroup>
         <Button
           type='submit'

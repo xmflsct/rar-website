@@ -1,6 +1,6 @@
 require("dotenv").config({
   path: `.env.${process.env.NODE_ENV}`
-});
+})
 
 module.exports = {
   siteMetadata: {
@@ -14,10 +14,10 @@ module.exports = {
     {
       resolve: `gatsby-source-contentful`,
       options: {
-        spaceId: process.env.CONTENTFUL_SPACEID,
-        accessToken: process.env.CONTENTFUL_ACCESSTOKEN,
-        // host: process.env.CONTENTFUL_HOST,
-        // downloadLocal: true
+        host: process.env.CONTENTFUL_HOST,
+        accessToken: process.env.CONTENTFUL_KEY_GATSBY,
+        spaceId: process.env.CONTENTFUL_SPACE,
+        environment: process.env.CONTENTFUL_ENVIRONMENT
       }
     },
     "gatsby-transformer-json",
@@ -75,4 +75,4 @@ module.exports = {
       }
     }
   ]
-};
+}

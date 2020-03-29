@@ -1,0 +1,18 @@
+{
+  "build": {
+    "env": {
+      "CONTENTFUL_HOST": "@rar-website-contentful-host",
+      "CONTENTFUL_KEY_GATSBY": "@rar-website-contentful-key-gatsby",
+      "CONTENTFUL_SPACE": "@rar-website-contentful-space",
+      "CONTENTFUL_ENVIRONMENT": "@rar-website-contentful-environment"
+    }
+  },
+  "env": {
+    "CONTENTFUL_HOST": "@rar-website-contentful-host",
+    "CONTENTFUL_KEY_CHECKOUT": "@rar-website-contentful-key-checkout",
+    "CONTENTFUL_SPACE": "@rar-website-contentful-space",
+    "CONTENTFUL_ENVIRONMENT": "@rar-website-contentful-environment",
+    "RECAPTCHA_PRIVATE_KEY": "@rar-website-recaptcha-private-key",
+    "STRIPE_PRIVATE_KEY": "@rar-website-stripe-private-key"
+  }
+}
