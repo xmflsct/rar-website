@@ -9,14 +9,13 @@ export async function checkout(
   let response = null
   try {
     response = await fetch(
-      "https://api.roundandround.nl/checkout?key=AIzaSyBMgqjqljsjCe6aq-B5-JQZ6eNzv5m8JhI",
+      window.location.origin + "/api/checkout?token=" + token,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          token: token,
           customer: customer,
           items: items,
           metadata: metadata,

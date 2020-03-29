@@ -172,6 +172,8 @@ const GiftCard = ({ location }) => {
       if (error) {
         return false
       }
+    } else {
+      return false
     }
   }
 

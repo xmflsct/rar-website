@@ -1,37 +1,42 @@
-const stripe = require("stripe")(process.env.STRIPE_PRIVATE_SECRET)
-const express = require("express")
-const asyncHandler = require("express-async-handler")
+const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 const fetch = require("node-fetch")
 
 async function checkRecaptcha(req) {
   console.log("[checkout - checkRecaptcha] Start")
+  if (!req.query.token)
+    return {
+      fail: true,
+      error: "[checkout - checkRecaptcha] No token is provided"
+    }
   const secret = process.env.RECAPTCHA_PRIVATE_SECRET
   const url =
     "https://www.google.com/recaptcha/api/siteverify?secret=" +
     secret +
     "&response=" +
-    req.body.token +
+    req.query.token +
     "&remoteip=" +
     req.connection.remoteAddress
   await fetch(url)
-    .catch(() => {
-      throw new Error(
-        "[checkout - checkRecaptcha] Google reCAPTCHA did not respond"
-      )
+    .catch(err => {
+      return { fail: true, error: err }
     })
     .then(res => {
       if (!res.ok)
-        throw new Error(
-          "[checkout - checkRecaptcha] Google reCAPTCHA server responds error"
-        )
+        return {
+          fail: true,
+          error:
+            "[checkout - checkRecaptcha] Google reCAPTCHA server responds error"
+        }
       return res
     })
     .then(res => res.json())
     .then(json => {
       if (!json.success)
-        throw new Error(
-          "[checkout - checkRecaptcha] Google reCAPTCHA could not verify user action"
-        )
+        return {
+          fail: true,
+          error:
+            "[checkout - checkRecaptcha] Google reCAPTCHA could not verify user action"
+        }
     })
   console.log("[checkout - checkRecaptcha] End")
 }
@@ -39,7 +44,7 @@ async function checkRecaptcha(req) {
 async function checkContentful(req) {
   console.log("[checkout - checkContentful] Start")
   if (req.body.items.length === 0)
-    throw new Error("[checkout - checkContentful] Content error")
+    return { fail: true, error: "[checkout - checkContentful] Content error" }
   let url = "https://" + process.env.CONTENTFUL_HOST
   const space = process.env.CONTENTFUL_SPACE
   const secret = process.env.CONTENTFUL_KEY_CHECKOUT
@@ -61,20 +66,23 @@ async function checkContentful(req) {
     skus
   await fetch(url)
     .catch(() => {
-      throw new Error(
-        "[checkout - checkContentful] Contentful server did not respond"
-      )
+      return {
+        fail: true,
+        error: "[checkout - checkContentful] Contentful server did not respond"
+      }
     })
     .then(res => {
       if (!res.ok)
-        throw new Error(
-          "[checkout - checkContentful] Contentful server responds error"
-        )
+        return {
+          fail: true,
+          error: "[checkout - checkContentful] Contentful server responds error"
+        }
       return res
     })
     .then(res => res.json())
     .then(json => {
       for (const item of json.items) {
+        let contentfulPrice
         if (item.fields.priceSale) {
           contentfulPrice = item.fields.priceSale
         } else {
@@ -86,13 +94,16 @@ async function checkContentful(req) {
             req.body.items.findIndex(i => i.description === item.fields.sku)
           ].amount !== contentfulPrice
         )
-          throw new Error("[checkout - checkContentful] Submitted price error")
+          return {
+            fail: true,
+            error: "[checkout - checkContentful] Submitted price error"
+          }
       }
     })
   console.log("[checkout - checkContentful] End")
 }
 
-async function stripeSession(req, res) {
+async function stripeSession(req) {
   console.log("[checkout - stripeSession] Start")
   var sessionData = {}
   try {
@@ -123,31 +134,48 @@ async function stripeSession(req, res) {
           }
         }
   } catch (err) {
-    throw new Error("[checkout - stripeSession] Content error")
+    return { fail: true, error: err }
   }
   console.log("[checkout - stripeSession] Initialize stripe session")
   const session = await stripe.checkout.sessions.create(sessionData)
-  res.status(200).send({ sessionId: session.id })
-  console.log("[checkout - stripeSession] End")
+  if (session.id) {
+    console.log("[checkout - stripeSession] End")
+    return { fail: false, sessionId: session.id }
+  } else {
+    console.log("[checkout - stripeSession] End")
+    return {
+      fail: true,
+      error: "[checkout - stripeSession] Failed creating session"
+    }
+  }
 }
 
-const app = express()
-app.use(express.json())
-app.post(
-  "/",
-  asyncHandler(async (req, res) => {
-    console.log("[app] Start")
-    if (!req.is("application/json") || !req.body.token) {
-      throw new Error("[app] Content error")
-    }
+export default async (req, res) => {
+  console.log("[app] Start")
+  if (!req.body || Object.keys(req.body).length === 0) {
+    res.status(400).send({ error: "[app] Body empty or error" })
+    return
+  }
 
-    await checkRecaptcha(req)
-    await checkContentful(req)
-    await stripeSession(req, res)
-    console.log("[app] End")
-  })
-)
+  const resRecaptcha = await checkRecaptcha(req)
+  if (resRecaptcha) {
+    res.status(400).send({ error: resRecaptcha.error })
+    return
+  }
 
-module.exports = {
-  app
+  const resContentful = await checkContentful(req)
+  if (resContentful) {
+    res.status(400).send({ error: resContentful.error })
+    return
+  }
+
+  const resStripe = await stripeSession(req, res)
+  if (resStripe.sessionId) {
+    res.status(200).send({ sessionId: resStripe.sessionId })
+  } else {
+    res.status(400).send({ error: resStripe.error })
+    return
+  }
+
+  console.log("[app] End")
 }
