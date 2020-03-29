@@ -66,7 +66,7 @@ const GiftCard = ({ location }) => {
     }
   `)
   const stripePromise = loadStripe("pk_live_lgoA0djNGei42J44JWXonbSR00V5eey2Bf")
-  const { control, formState, getValues, register, handleSubmit } = useForm()
+  const { control, formState, register, handleSubmit } = useForm()
   const [amount20, setAmount20] = useState(0)
   const [amount50, setAmount50] = useState(0)
   const [amount100, setAmount100] = useState(0)
@@ -476,6 +476,7 @@ const GiftCard = ({ location }) => {
               href='https://stripe.com/'
               target='_blank'
               rel='noopener noreferrer'
+              className='no-border'
             >
               <Img fixed={data.paymentStripe.childImageSharp.fixed} />
             </a>{" "}
@@ -483,6 +484,7 @@ const GiftCard = ({ location }) => {
               href='https://www.ideal.nl/'
               target='_blank'
               rel='noopener noreferrer'
+              className='no-border'
             >
               <Img fixed={data.paymentiDEAL.childImageSharp.fixed} />
             </a>
