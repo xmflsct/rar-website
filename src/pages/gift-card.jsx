@@ -65,7 +65,7 @@ const GiftCard = ({ location }) => {
       }
     }
   `)
-  const stripePromise = loadStripe("pk_live_lgoA0djNGei42J44JWXonbSR00V5eey2Bf")
+  const stripePromise = loadStripe(process.env.GATSBY_STRIPE_PUBLIC_KEY)
   const { control, formState, register, handleSubmit } = useForm()
   const [amount20, setAmount20] = useState(0)
   const [amount50, setAmount50] = useState(0)
@@ -494,7 +494,7 @@ const GiftCard = ({ location }) => {
         </Form.Row>
         <Reaptcha
           ref={e => setRecaptcha(e)}
-          sitekey='6Le85MYUAAAAAFIN9CKLxzyqnep4zJjeFxr4RpxU'
+          sitekey={process.env.GATSBY_RECAPTCHA_PUBLIC_KEY}
           onVerify={onVerify}
           size='invisible'
           badge='inline'

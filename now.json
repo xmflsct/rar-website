@@ -4,7 +4,9 @@
       "CONTENTFUL_HOST": "@rar-website-contentful-host",
       "CONTENTFUL_KEY_GATSBY": "@rar-website-contentful-key-gatsby",
       "CONTENTFUL_SPACE": "@rar-website-contentful-space",
-      "CONTENTFUL_ENVIRONMENT": "@rar-website-contentful-environment"
+      "CONTENTFUL_ENVIRONMENT": "@rar-website-contentful-environment",
+      "GATSBY_RECAPTCHA_PUBLIC_KEY": "@rar-website-recaptcha-public-key",
+      "GATSBY_STRIPE_PUBLIC_KEY": "@rar-website-stripe-public-key"
     }
   },
   "env": {
