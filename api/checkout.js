@@ -1,5 +1,6 @@
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 const fetch = require("node-fetch")
+var _ = require("lodash")
 
 async function checkRecaptcha(req) {
   console.log("[checkout - checkRecaptcha] Start")
@@ -39,21 +40,23 @@ async function checkRecaptcha(req) {
         }
     })
   console.log("[checkout - checkRecaptcha] End")
+  return { fail: false }
 }
 
 async function checkContentful(req) {
   console.log("[checkout - checkContentful] Start")
   if (req.body.items.length === 0)
     return { fail: true, error: "[checkout - checkContentful] Content error" }
+  const line_items = req.body.items
   let url = "https://" + process.env.CONTENTFUL_HOST
   const space = process.env.CONTENTFUL_SPACE
   const secret = process.env.CONTENTFUL_KEY_CHECKOUT
   const environment = process.env.CONTENTFUL_ENVIRONMENT
-  let skus = []
-  for (const item of req.body.items) {
-    skus.push(item.description)
+  let ids = []
+  for (const item of line_items) {
+    ids.push(item.contentful_id)
   }
-  skus = skus.join(",")
+  ids = ids.join(",")
   url =
     url +
     "/spaces/" +
@@ -62,8 +65,8 @@ async function checkContentful(req) {
     environment +
     "/entries/?access_token=" +
     secret +
-    "&content_type=webshopItem&fields.sku[in]=" +
-    skus
+    "&content_type=cakesCake&sys.id[in]=" +
+    ids
   await fetch(url)
     .catch(() => {
       return {
@@ -81,37 +84,46 @@ async function checkContentful(req) {
     })
     .then(res => res.json())
     .then(json => {
-      for (const item of json.items) {
-        let contentfulPrice
-        if (item.fields.priceSale) {
-          contentfulPrice = item.fields.priceSale
-        } else {
-          contentfulPrice = item.fields.priceOriginal
-        }
-
+      for (const item of line_items) {
+        const iContentful = _.findIndex(json.items, r => {
+          return r.sys.id === item.contentful_id
+        })
         if (
-          req.body.items[
-            req.body.items.findIndex(i => i.description === item.fields.sku)
-          ].amount !== contentfulPrice
-        )
+          item.amount === json.items[iContentful].fields["price" + item.type]
+        ) {
+          item.amount = parseInt(item.amount * 100)
+          item.currency = "eur"
+          const thingIdentity =
+            item.type === "Whole" ? " " + item.wholeIdentity : " Piece"
+          item.name =
+            json.items[iContentful].fields.name +
+            " , " +
+            item.quantity +
+            thingIdentity
+          item.type === "Whole" && delete item.wholeIdentity
+          delete item.type
+          delete item.contentful_id
+        } else {
           return {
             fail: true,
             error: "[checkout - checkContentful] Submitted price error"
           }
+        }
       }
     })
   console.log("[checkout - checkContentful] End")
+  return { fail: false, line_items: line_items }
 }
 
-async function stripeSession(req) {
+async function stripeSession(req, line_items) {
   console.log("[checkout - stripeSession] Start")
-  var sessionData = {}
+  let sessionData = {}
   try {
     sessionData = req.body.shipping
       ? {
           payment_method_types: ["ideal"],
           customer_email: req.body.customer.email,
-          line_items: req.body.items,
+          line_items: line_items,
           shipping_address_collection: {
             allowed_countries: ["NL"]
           },
@@ -158,18 +170,18 @@ export default async (req, res) => {
   }
 
   const resRecaptcha = await checkRecaptcha(req)
-  if (resRecaptcha) {
+  if (resRecaptcha.fail) {
     res.status(400).send({ error: resRecaptcha.error })
     return
   }
 
   const resContentful = await checkContentful(req)
-  if (resContentful) {
+  if (resContentful.fail) {
     res.status(400).send({ error: resContentful.error })
     return
   }
 
-  const resStripe = await stripeSession(req, res)
+  const resStripe = await stripeSession(req, resContentful.line_items)
   if (resStripe.sessionId) {
     res.status(200).send({ sessionId: resStripe.sessionId })
   } else {

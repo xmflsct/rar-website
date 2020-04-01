@@ -20,6 +20,23 @@ h5 {
   font-weight: $font-weight-normal;
 }
 
+h1 {
+  font-size: 1.8em;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.6em;
+}
+
+h3 {
+  font-size: 1.35em;
+}
+
+h4 {
+  font-size: 1.15em;
+}
+
 a {
   color: $color-primary-light;
   border-bottom: 1px dashed $color-primary-light;
@@ -31,16 +48,45 @@ a {
     border-bottom: 1px solid $color-primary-light;
   }
   &.no-border {
-    border: none
+    border: none;
   }
+}
+
+form {
+  border-top: 1px dashed $color-primary-light;
+  padding-top: 1rem;
+  border-bottom: 1px dashed $color-primary-light;
+  padding-bottom: 1rem;
 }
 
 .carousel a {
   border: none;
 }
 
+.sticky-nav {
+  position: fixed;
+  width: 100%;
+  padding: 0 1em;
+  z-index: 9;
+
+  button {
+    background: $color-background-light;
+
+    &.bag {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 15px;
+
+      a {
+        border: none;
+      }
+    }
+  }
+}
+
 .site-wrapper {
-  max-width: 920px;
+  max-width: 800px;
   margin-left: auto;
   margin-right: auto;
 

@@ -1,15 +1,13 @@
-import React from "react";
-import { useStaticQuery, graphql, Link } from "gatsby";
-import Img from "gatsby-image";
+import React from "react"
+import { useStaticQuery, graphql, Link } from "gatsby"
+import Img from "gatsby-image"
 
-import Header from "../components/layout/header";
-import Footer from "../components/layout/footer";
-import { Col, Container, Row } from "react-bootstrap";
+import Layout from "../layouts/layout"
 
 const PageNotFound = () => {
   const data = useStaticQuery(graphql`
     query {
-      image: file(relativePath: { regex: "/(404.jpg)/" }) {
+      image: file(relativePath: { eq: "page-404/404.jpg" }) {
         childImageSharp {
           fluid(maxWidth: 920) {
             ...GatsbyImageSharpFluid_withWebp
@@ -17,32 +15,21 @@ const PageNotFound = () => {
         }
       }
     }
-  `);
+  `)
   return (
-    <Container className="site-wrapper">
-      <Header />
-      <Container as="main" id="site-main" className="site-main">
-        <Container className="text-center">
-          <Row>
-            <Col as="h3" xs={12}>
-              404: where is the cake
-            </Col>
-            <Link
-              to="/cake-hightea/signature-cake-roll"
-              className="mt-3 mb-5"
-              style={{ marginLeft: "auto", marginRight: "auto" }}
-            >
-              Take a look at our signature cake roll?
-            </Link>
-            <Col xs={12}>
-              <Img fluid={data.image.childImageSharp.fluid} />
-            </Col>
-          </Row>
-        </Container>
-      </Container>
-      <Footer />
-    </Container>
-  );
-};
+    <Layout>
+      <h1>404: where is the cake</h1>
+      <h3 className='text-center mt-3'>
+        <Link
+          to='/order-cakes'
+          style={{ marginLeft: "auto", marginRight: "auto" }}
+        >
+          Take a look at our online cake ordering?
+        </Link>
+      </h3>
+      <Img className="mt-5" fluid={data.image.childImageSharp.fluid} />
+    </Layout>
+  )
+}
 
-export default PageNotFound;
+export default PageNotFound

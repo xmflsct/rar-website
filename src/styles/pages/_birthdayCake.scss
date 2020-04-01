@@ -1,0 +1,25 @@
+.site-wrapper.cakes-list {
+  .price {
+    font-size: 0.9em;
+    top: -1px;
+  }
+
+  .description {
+    font-size: 0.9em;
+
+    p {
+      margin: 0;
+    }
+
+    ul {
+      list-style-type: circle;
+      padding-inline-start: 1rem;
+      margin-bottom: 0;
+    }
+  }
+
+  form {
+    display: grid;
+    border: none;
+  }
+}

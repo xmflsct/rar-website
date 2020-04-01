@@ -24,7 +24,8 @@ module.exports = {
     {
       resolve: "gatsby-source-filesystem",
       options: {
-        path: `${__dirname}/content`
+        name: "images",
+        path: `${__dirname}/src/images`
       }
     },
     {
@@ -52,6 +53,12 @@ module.exports = {
       }
     },
     "gatsby-transformer-sharp",
+    {
+      resolve: "gatsby-plugin-layout",
+      options: {
+        component: require.resolve(`./src/layouts/context-bag.jsx`)
+      }
+    },
     "gatsby-plugin-sharp",
     {
       resolve: "gatsby-plugin-sass",
