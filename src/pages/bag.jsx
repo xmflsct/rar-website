@@ -78,9 +78,7 @@ const Bag = () => {
   const stripePromise = loadStripe(process.env.GATSBY_STRIPE_PUBLIC_KEY)
   const { state, dispatch } = useContext(ContextBag)
   const { formState, handleSubmit, register } = useForm()
-  const [pickupDate, setPickupDate] = useState(
-    addDays(new Date(), new Date().getUTCHours() > 14 ? 2 : 1)
-  )
+  const [pickupDate, setPickupDate] = useState(addDays(new Date(), 2))
   const recaptchaRef = React.createRef()
 
   let amountTotal = 0
@@ -100,7 +98,7 @@ const Bag = () => {
   const excludeDates = []
   for (let i = new Date().getDate(); i < 31; i++) {
     const weekday = new Date(2020, 4, i).getDay()
-    if (weekday === 1 || weekday === 2 || weekday === 3) {
+    if (weekday === 0 || weekday === 1 || weekday === 2) {
       excludeDates.push(addDays(new Date(), i))
     }
   }
@@ -163,11 +161,9 @@ const Bag = () => {
         sessionId: res.sessionId
       })
       if (error) {
-        recaptchaRef.current.reset()
         return false
       }
     } else {
-      recaptchaRef.current.reset()
       return false
     }
   }
@@ -176,6 +172,7 @@ const Bag = () => {
     if (amountTotal === 0) {
       return false
     }
+    formState.submitCount > 0 && recaptchaRef.current.reset()
     recaptchaRef.current.execute()
   }
 
