@@ -14,7 +14,7 @@ import {
   faApplePay
 } from "@fortawesome/free-brands-svg-icons"
 import { find, sumBy } from "lodash"
-import Reaptcha from "reaptcha"
+import ReCAPTCHA from "react-google-recaptcha"
 import { loadStripe } from "@stripe/stripe-js"
 import { checkout } from "../api/checkout"
 
@@ -81,7 +81,7 @@ const Bag = () => {
   const [pickupDate, setPickupDate] = useState(
     addDays(new Date(), new Date().getUTCHours() > 14 ? 2 : 1)
   )
-  const [recaptcha, setRecaptcha] = useState(null)
+  const recaptchaRef = React.createRef()
 
   let amountTotal = 0
   for (const type in state.bag.things) {
@@ -105,10 +105,10 @@ const Bag = () => {
     }
   }
 
-  const onVerify = async () => {
-    handleSubmit(formSubmit)()
+  const userVerified = async token => {
+    handleSubmit(data => formSubmit(data, token))()
   }
-  const formSubmit = async d => {
+  const formSubmit = async (d, t) => {
     const customer = { email: d.email }
     const items = []
     const metadata = {
@@ -155,26 +155,18 @@ const Bag = () => {
       }
     }
 
-    const res = await checkout(
-      await recaptcha.getResponse(),
-      customer,
-      items,
-      metadata,
-      url,
-      shipping
-    )
+    const res = await checkout(t, customer, items, metadata, url, shipping)
     if (res.sessionId) {
       const stripe = await stripePromise
       const { error } = await stripe.redirectToCheckout({
         sessionId: res.sessionId
       })
       if (error) {
-        recaptcha.reset()
+        recaptchaRef.current.reset()
         return false
       }
     } else {
-      console.log(res.error)
-      recaptcha.reset()
+      recaptchaRef.current.reset()
       return false
     }
   }
@@ -183,7 +175,7 @@ const Bag = () => {
     if (amountTotal === 0) {
       return false
     }
-    recaptcha.execute()
+    recaptchaRef.current.execute()
   }
 
   return (
@@ -235,8 +227,8 @@ const Bag = () => {
                   <DatePicker
                     onChange={date => setPickupDate(date)}
                     selected={pickupDate}
-                    customInput={<Form.Control type="text"/>}
-                    dateFormat="yyyy - MM - dd"
+                    customInput={<Form.Control type='text' />}
+                    dateFormat='yyyy - MM - dd'
                     minDate={addDays(
                       new Date(),
                       new Date().getUTCHours() > 14 ? 2 : 1
@@ -273,12 +265,12 @@ const Bag = () => {
               <FontAwesomeIcon icon={faIdeal} size='3x' />{" "}
               <FontAwesomeIcon icon={faApplePay} size='3x' />
             </p>
-            <Reaptcha
-              ref={e => setRecaptcha(e)}
-              sitekey={process.env.GATSBY_RECAPTCHA_PUBLIC_KEY}
-              onVerify={onVerify}
+            <ReCAPTCHA
+              ref={recaptchaRef}
               size='invisible'
               badge='inline'
+              sitekey={process.env.GATSBY_RECAPTCHA_PUBLIC_KEY}
+              onChange={userVerified}
             />
           </Col>
         </Row>
