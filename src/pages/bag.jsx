@@ -54,7 +54,7 @@ const BagList = (things, dispatch) => {
           )}
         </p>
         <Button
-          variant='outline-dark'
+          variant='rar-reverse'
           name='remove'
           value={thing.contentful_id}
           onClick={e =>
@@ -98,9 +98,9 @@ const Bag = () => {
 
   const needPickup = state.bag.things.food && state.bag.things.food.length > 0
   const excludeDates = []
-  for (let i = 1; i < 22; i++) {
-    const weekday = addDays(new Date(), i).getDay()
-    if (weekday === 1 || weekday === 2) {
+  for (let i = new Date().getDate(); i < 31; i++) {
+    const weekday = new Date(2020, 4, i).getDay()
+    if (weekday === 1 || weekday === 2 || weekday === 3) {
       excludeDates.push(addDays(new Date(), i))
     }
   }
@@ -121,6 +121,7 @@ const Bag = () => {
         month: "long",
         day: "numeric"
       }))
+    needPickup && (metadata.nots = d.notes)
     const url = {
       success: window.location.origin + "/thank-you",
       cancel: window.location.origin + "/bag"
@@ -222,26 +223,39 @@ const Bag = () => {
                 />
               </Form.Group>
               {needPickup && (
-                <Form.Group>
-                  <Form.Label>Cakes pick-up date:</Form.Label>
-                  <DatePicker
-                    onChange={date => setPickupDate(date)}
-                    selected={pickupDate}
-                    customInput={<Form.Control type='text' />}
-                    dateFormat='yyyy - MM - dd'
-                    minDate={addDays(
-                      new Date(),
-                      new Date().getUTCHours() > 14 ? 2 : 1
-                    )}
-                    maxDate={addDays(new Date(), 21)}
-                    excludeDates={excludeDates}
-                  />
-                  <Form.Text className='text-muted'>
-                    We support at least +1 day pick-up when ordered before 4pm.
-                  </Form.Text>
-                </Form.Group>
+                <>
+                  <Form.Group>
+                    <Form.Label>Cakes pick-up date:</Form.Label>
+                    <DatePicker
+                      onChange={date => setPickupDate(date)}
+                      selected={pickupDate}
+                      customInput={<Form.Control type='text' />}
+                      dateFormat='yyyy - MM - dd'
+                      minDate={addDays(new Date(), 2)}
+                      maxDate={new Date(2020, 3, 30)}
+                      excludeDates={excludeDates}
+                      required
+                    />
+                    <Form.Text className='text-muted'>
+                      We support +2 days pick-up. Note we are closed Mon-Wed.
+                    </Form.Text>
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Pick-up notes:</Form.Label>
+                    <Form.Control
+                      name='notes'
+                      as='textarea'
+                      rows='2'
+                      ref={register}
+                    />
+                  </Form.Group>
+                </>
               )}
-              <Button type='submit' disabled={formState.isSubmitting}>
+              <Button
+                variant='rar'
+                type='submit'
+                disabled={formState.isSubmitting}
+              >
                 {(formState.isSubmitting && (
                   <Spinner
                     as='span'

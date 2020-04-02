@@ -3,88 +3,13 @@ import { useStaticQuery, graphql } from "gatsby"
 
 import Layout from "../layouts/layout"
 import ListThings from "../components/list-things/list-things"
+import * as currency from "../components/utils/currency"
 
 const TestTest = () => {
   const data = useStaticQuery(graphql`
     {
-      cakeA: contentfulCakesCakeList(
-        contentful_id: { eq: "7DKcphH2mLyGWMDTgUH89P" }
-      ) {
-        cakes {
-          contentful_id
-          image {
-            fluid(maxWidth: 400) {
-              ...GatsbyContentfulFluid
-            }
-          }
-          name
-          pricePiece
-          priceWhole
-          availability
-          description {
-            json
-          }
-        }
-      }
-      cakeB: contentfulCakesCakeList(
-        contentful_id: { eq: "u7eAu6AfSqmOVpCwE019H" }
-      ) {
-        cakes {
-          contentful_id
-          image {
-            fluid(maxWidth: 400) {
-              ...GatsbyContentfulFluid
-            }
-          }
-          name
-          pricePiece
-          priceWhole
-          availability
-          description {
-            json
-          }
-        }
-      }
-      cakeC: contentfulCakesCakeList(
-        contentful_id: { eq: "4jfUsFXdxP0YtsCK19kMs3" }
-      ) {
-        cakes {
-          contentful_id
-          image {
-            fluid(maxWidth: 400) {
-              ...GatsbyContentfulFluid
-            }
-          }
-          name
-          pricePiece
-          priceWhole
-          availability
-          description {
-            json
-          }
-        }
-      }
-      cakeD: contentfulCakesCakeList(
-        contentful_id: { eq: "7Gp3BMdBEWbbHfOz05xvRc" }
-      ) {
-        cakes {
-          contentful_id
-          image {
-            fluid(maxWidth: 400) {
-              ...GatsbyContentfulFluid
-            }
-          }
-          name
-          pricePiece
-          priceWhole
-          availability
-          description {
-            json
-          }
-        }
-      }
-      cakeE: contentfulCakesCakeList(
-        contentful_id: { eq: "2VSsrXcHMzf9NUtVUdlX45" }
+      cakes: contentfulCakesCakeList(
+        contentful_id: { eq: "66kWq7G8iHCqpuE9VaQARa" }
       ) {
         cakes {
           contentful_id
@@ -110,53 +35,47 @@ const TestTest = () => {
       SEOtitle='Birthday Cake'
       SEOkeywords={["Birthday cake", "Rotterdam"]}
     >
-      <h1>Birthday Cake</h1>
+      <h1>Birthday Cakes</h1>
 
       <p>
-        Our birthday cake is made with soft chiffon cake with fresh cream,
-        mascarpone, bio-jam and fresh fruit. The birthday cakes below can be
-        pre-ordered by sending us an email, calling us or Facebook messaging us.
-        You can just let us know the style number. Please order 5 days in
-        advance for certainty.
+        To reserve birthday cakes, please fill in the ordering form at the
+        bottom of this page. Please book 5 days in advance for certainty.
       </p>
       <p>
-        Usually we will put &quot;Happy Birthday&quot; chocolate tag and Bunny
-        cookies as shown in the cake photos. If you want to skip it, please let
-        us know. If you want other text than &quot;Happy Birthday&quot;, it is
-        possible to have a paper message tag on the cake. Please leave us the
-        message when you place the order (please keep the message short).
+        * Due to current not-so-easy situation, we have to scale down the
+        choices of our cake styles. We will keep this page updated with the
+        latest styles that we can prepare. :)
       </p>
 
-      <h2>A. 6” Cakes (for 2-4 people) € 19,-</h2>
-      <p>Vanilla Chiffon base. (Cacao/Matcha Base + € 2,-)</p>
-      <ListThings things={data.cakeA.cakes} />
-
-      <h2>B. 8” Cakes (for 6-8 people) € 26,-</h2>
-      <p>Vanilla Chiffon base. (Cacao/Matcha Base + € 2,-)</p>
-      <ListThings things={data.cakeB.cakes} />
-
-      <h2>C. 10” Cakes (for 10-12 people) € 33,-</h2>
-      <p>Vanilla Chiffon base. (Cacao/Matcha Base + € 2,-)</p>
-      <ListThings things={data.cakeC.cakes} />
-
-      <h2>D. Flower Deco High Cakes (for a small party) € 45,-</h2>
+      <h2>Cake Fruit Filling:</h2>
       <p>
-        <b>Base:</b> 3 layers of 8” Chiffon cakes (Default flavour Matcha, you
-        can also choose Vanilla/ Cacao).
+        For all the styles, you can choose the filling fruits from:
         <br />
-        <b>Cream flavour:</b> Vanilla, Strawberry or Lemon.
-        <br />
-        <b>Filling:</b> Strawberry or Mango.
-        <br />
-        <i>
-          * We use seasonal flowers. If you have any color theme preference,
-          please let us know.
-        </i>
+        mango, lychee, peach or strawberry&amp;raspberry mix
       </p>
-      <ListThings things={data.cakeD.cakes} />
+      <p>
+        * Because of unstable supply, we have to pause using fresh strawberry
+        filling in this period. Instead you can choose our high quality frozen
+        berry mix filling.
+      </p>
 
-      <h2>E. Celebration Cakes</h2>
-      <ListThings things={data.cakeE.cakes} />
+      <h2>Cake Sizes:</h2>
+      <p>
+        All the cakes below are available in <strong>3</strong> sizes.
+        <br />
+        Please understand that the final look of each size would be slightly
+        different)
+      </p>
+      <ul>
+        <li>6'' Cake ⌀ 15cm {currency.full(19)}</li>
+        <li>8'' Cake ⌀ 20cm {currency.full(28)}</li>
+        <li>10'' Cake ⌀ 25cm {currency.full(37)}</li>
+      </ul>
+
+      <h2>Cake Base:</h2>
+      <p className="mb-4">Default: Vanilla Chiffon<br />Cacao/Matcha base is also possible (+ {currency.full(2)})</p>
+
+      <ListThings things={data.cakes.cakes} />
     </Layout>
   )
 }

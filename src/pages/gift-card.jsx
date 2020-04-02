@@ -212,118 +212,115 @@ const GiftCard = ({ location }) => {
         </Col>
       </Row>
       <Form onSubmit={e => onSubmit(e)}>
-        <Form.Text as='p'>
-          Please choose the gift cards you would like to buy:
-        </Form.Text>
-        <Form.Row>
-          <Form.Group as={Col} lg={4}>
-            <Form.Label>{data.giftCard20.name}</Form.Label>
-            <InputGroup>
-              <InputGroup.Prepend>
-                <InputGroup.Text>
-                  {currency.short(data.giftCard20.priceWhole)}
-                </InputGroup.Text>
-              </InputGroup.Prepend>
-              <Form.Control
-                name='option20'
-                as='select'
-                onChange={e => setAmount20(e.target.value)}
-              >
-                <option value={0}>0</option>
-                <option value={1}>× 1</option>
-                <option value={2}>× 2</option>
-                <option value={3}>× 3</option>
-                <option value={4}>× 4</option>
-                <option value={5}>× 5</option>
-              </Form.Control>
-            </InputGroup>
-            <Form.Text>
-              Plus a postcard and a 10% off Birthday cake voucher
+        <Row>
+          <Col md={6}>
+            <Form.Text as='p'>
+              Please choose the gift cards you would like to buy:
             </Form.Text>
-          </Form.Group>
-          <Form.Group as={Col} lg={4}>
-            <Form.Label>{data.giftCard50.name}</Form.Label>
-            <InputGroup>
-              <InputGroup.Prepend>
-                <InputGroup.Text>
-                  {currency.short(data.giftCard50.priceWhole)}
-                </InputGroup.Text>
-              </InputGroup.Prepend>
-              <Form.Control
-                name='option50'
-                as='select'
-                onChange={e => setAmount50(e.target.value)}
-              >
-                <option value=''>0</option>
-                <option value={1}>× 1</option>
-                <option value={2}>× 2</option>
-                <option value={3}>× 3</option>
-                <option value={4}>× 4</option>
-                <option value={5}>× 5</option>
-              </Form.Control>
-            </InputGroup>
-            <Form.Text>
-              Plus a postcard and a 20% off Birthday cake voucher
+            <Form.Group>
+              <InputGroup>
+                <InputGroup.Prepend>
+                  <InputGroup.Text>{data.giftCard20.name}</InputGroup.Text>
+                </InputGroup.Prepend>
+                <Form.Control
+                  name='option20'
+                  as='select'
+                  onChange={e => setAmount20(e.target.value)}
+                >
+                  <option value={0}>0</option>
+                  <option value={1}>× 1</option>
+                  <option value={2}>× 2</option>
+                  <option value={3}>× 3</option>
+                  <option value={4}>× 4</option>
+                  <option value={5}>× 5</option>
+                </Form.Control>
+              </InputGroup>
+              <Form.Text>
+                Plus a postcard and a 10% off Birthday cake voucher
+              </Form.Text>
+            </Form.Group>
+            <Form.Group>
+              <InputGroup>
+                <InputGroup.Prepend>
+                  <InputGroup.Text>{data.giftCard50.name}</InputGroup.Text>
+                </InputGroup.Prepend>
+                <Form.Control
+                  name='option50'
+                  as='select'
+                  onChange={e => setAmount50(e.target.value)}
+                >
+                  <option value=''>0</option>
+                  <option value={1}>× 1</option>
+                  <option value={2}>× 2</option>
+                  <option value={3}>× 3</option>
+                  <option value={4}>× 4</option>
+                  <option value={5}>× 5</option>
+                </Form.Control>
+              </InputGroup>
+              <Form.Text>
+                Plus a postcard and a 20% off Birthday cake voucher
+              </Form.Text>
+            </Form.Group>
+            <Form.Group>
+              <InputGroup>
+                <InputGroup.Prepend>
+                  <InputGroup.Text>{data.giftCard100.name}</InputGroup.Text>
+                </InputGroup.Prepend>
+                <Form.Control
+                  name='option100'
+                  as='select'
+                  onChange={e => setAmount100(e.target.value)}
+                >
+                  <option value=''>0</option>
+                  <option value={1}>× 1</option>
+                  <option value={2}>× 2</option>
+                  <option value={3}>× 3</option>
+                  <option value={4}>× 4</option>
+                  <option value={5}>× 5</option>
+                </Form.Control>
+              </InputGroup>
+              <Form.Text>
+                Plus a postcard, a 20% off Birthday cake voucher and a R&amp;R
+                Eco tote bag
+              </Form.Text>
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Text as='p'>
+              Please choose how would you like to collect them:
             </Form.Text>
-          </Form.Group>
-          <Form.Group as={Col} lg={4}>
-            <Form.Label>{data.giftCard100.name}</Form.Label>
-            <InputGroup>
-              <InputGroup.Prepend>
+            <Form.Group>
+              <InputGroup className='mb-3'>
+                <InputGroup.Prepend>
+                  <InputGroup.Radio
+                    name='delivery'
+                    value='pickup'
+                    required
+                    onChange={() => setShipping(false)}
+                  />
+                </InputGroup.Prepend>
+                <InputGroup.Text>Pickup at our shop</InputGroup.Text>
+              </InputGroup>
+              <InputGroup className='mb-3'>
+                <InputGroup.Prepend>
+                  <InputGroup.Radio
+                    name='delivery'
+                    value='mail'
+                    required
+                    onChange={() => setShipping(true)}
+                  />
+                </InputGroup.Prepend>
                 <InputGroup.Text>
-                  {currency.short(data.giftCard100.priceWhole)}
+                  Mail to an address in NL (+{" "}
+                  {currency.short(data.giftCardShipping.priceWhole)})
                 </InputGroup.Text>
-              </InputGroup.Prepend>
-              <Form.Control
-                name='option100'
-                as='select'
-                onChange={e => setAmount100(e.target.value)}
-              >
-                <option value=''>0</option>
-                <option value={1}>× 1</option>
-                <option value={2}>× 2</option>
-                <option value={3}>× 3</option>
-                <option value={4}>× 4</option>
-                <option value={5}>× 5</option>
-              </Form.Control>
-            </InputGroup>
-            <Form.Text>
-              Plus a postcard, a 20% off Birthday cake voucher and a R&amp;R Eco
-              tote bag
-            </Form.Text>
-          </Form.Group>
-        </Form.Row>
-        <Form.Text as='p'>
-          Please choose how would you like to collect them:
-        </Form.Text>
-        <Form.Group>
-          <InputGroup className='mb-3'>
-            <InputGroup.Prepend>
-              <InputGroup.Radio
-                name='delivery'
-                value='pickup'
-                required
-                onChange={() => setShipping(false)}
-              />
-            </InputGroup.Prepend>
-            <InputGroup.Text>Pickup at our shop</InputGroup.Text>
-          </InputGroup>
-          <InputGroup className='mb-3'>
-            <InputGroup.Prepend>
-              <InputGroup.Radio
-                name='delivery'
-                value='mail'
-                required
-                onChange={() => setShipping(true)}
-              />
-            </InputGroup.Prepend>
-            <InputGroup.Text>
-              Mail to an address in NL (+{" "}
-              {currency.short(data.giftCardShipping.priceWhole)})
-            </InputGroup.Text>
-          </InputGroup>
-        </Form.Group>
-        <Button type='submit'>Add to bag</Button>
+              </InputGroup>
+            </Form.Group>
+            <Button variant='rar' type='submit'>
+              Add to bag
+            </Button>
+          </Col>
+        </Row>
       </Form>
     </Layout>
   )

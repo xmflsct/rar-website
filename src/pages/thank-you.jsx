@@ -1,10 +1,9 @@
 import React, { useContext, useState } from "react"
-import { Col, Row, Spinner } from "react-bootstrap"
-import Reaptcha from "reaptcha"
+// import { Col, Row, Spinner } from "react-bootstrap"
 
 import Layout from "../layouts/layout"
 import { ContextBag } from "../layouts/context-bag"
-import { thankYou } from "../api/thank-you"
+// import { thankYou } from "../api/thank-you"
 
 const ThankYou = () => {
   // const [recaptcha, setRecaptcha] = useState(null)
@@ -14,16 +13,6 @@ const ThankYou = () => {
   // )
   // const [sessionData, setSessionData] = useState({})
 
-  // const onVerify = async () => {
-  //   const res = await thankYou(await recaptcha.getResponse(), sessionId)
-  //   if (res.data) {
-  //     setLoading(false)
-  //     setSessionData(res.data)
-  //   } else {
-  //     setLoading(false)
-  //     setSessionId(null)
-  //   }
-  // }
   const { dispatch } = useContext(ContextBag)
   const [cleared, setCleared] = useState(false)
   let session_id = null
@@ -57,16 +46,6 @@ const ThankYou = () => {
                 <Spinner animation='grow' />
               </Col>
               <Col xs={12}>
-                <Reaptcha
-                  ref={e => {
-                    setRecaptcha(e)
-                    setTimeout(() => recaptcha.execute(), 5000)
-                  }}
-                  sitekey={process.env.GATSBY_RECAPTCHA_PUBLIC_KEY}
-                  onVerify={onVerify}
-                  size='invisible'
-                  badge='inline'
-                />
               </Col>
             </Row>
           ) : (

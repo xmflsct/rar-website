@@ -2,6 +2,8 @@ import React from "react"
 import { Col, Row } from "react-bootstrap"
 import { useStaticQuery, graphql, Link } from "gatsby"
 import Img from "gatsby-image"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faFacebookF, faInstagram } from "@fortawesome/free-brands-svg-icons"
 
 import Layout from "../layouts/layout"
 
@@ -40,7 +42,7 @@ const Index = () => {
           <p>
             Temporary Opening Hours
             <br />
-            [7th April - further notice]
+            [9th April - further notice]
           </p>
         </Col>
       </Row>
@@ -53,7 +55,29 @@ const Index = () => {
       </Row>
       <Row className='justify-content-center text-center'>
         <Col>
-          <p>Wed-Sun 12:00-16:00</p>
+          <p>Thu-Sun 12:00-16:00</p>
+        </Col>
+      </Row>
+      <Row className='justify-content-center text-center mb-3'>
+        <Col xs={2}>
+          <a
+            href='https://www.facebook.com/roundandround.nl'
+            className='no-border'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            <FontAwesomeIcon icon={faFacebookF} size='2x' />
+          </a>
+        </Col>
+        <Col xs={2}>
+          <a
+            href='https://www.instagram.com/roundandround_rotterdam/'
+            className='no-border'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            <FontAwesomeIcon icon={faInstagram} size='2x' />
+          </a>
         </Col>
       </Row>
       <Row className='justify-content-center text-center'>

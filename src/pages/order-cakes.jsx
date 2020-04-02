@@ -54,6 +54,9 @@ const OrderCakes = () => {
         in our shop.
       </p>
       <p>
+      One entire cake roll is about 22cm long. One cake roll slice is about 3cm long.  We can slice your entire roll order into slices, usually in 7 pieces. If needed, please leave a note when you checkout.
+      </p>
+      <p>
         We highly recommend to order in advance for centainty. It is also easier
         for us to prepare for you. We will pack your order in advance so the
         pick-up process will be faster.
@@ -68,7 +71,7 @@ const OrderCakes = () => {
         <br />
         Thank you for your understanding!
       </p>
-      <h3>Our Cake Menu [8th - 19th April]</h3>
+      <h3>Our Cake Menu [April]</h3>
       <ListThings things={data.things.cakes} shoppable />
     </Layout>
   )

@@ -62,7 +62,7 @@ const ThingForm = ({ thing }) => {
           </Form.Control>
         )}
       </Form.Group>
-      <Button variant='primary' type='submit'>
+      <Button variant='rar' type='submit'>
         Add to bag
       </Button>
     </Form>
