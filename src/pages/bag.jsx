@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react"
 import { Button, Col, Form, Row, Spinner } from "react-bootstrap"
 import DatePicker from "react-datepicker"
-import addDays from "date-fns/addDays"
+import { addDays, getDate } from "date-fns"
 import "react-datepicker/dist/react-datepicker.css"
 import { Link } from "gatsby"
 import Img from "gatsby-image"
@@ -78,7 +78,7 @@ const Bag = () => {
   const stripePromise = loadStripe(process.env.GATSBY_STRIPE_PUBLIC_KEY)
   const { state, dispatch } = useContext(ContextBag)
   const { formState, handleSubmit, register } = useForm()
-  const [pickupDate, setPickupDate] = useState(addDays(new Date(), 2))
+  const [pickupDate, setPickupDate] = useState(null)
   const recaptchaRef = React.createRef()
 
   let amountTotal = 0
@@ -96,7 +96,7 @@ const Bag = () => {
 
   const needPickup = state.bag.things.food && state.bag.things.food.length > 0
   const excludeDates = []
-  for (let i = new Date().getDate(); i < 31; i++) {
+  for (let i = 1; i < 31; i++) {
     const weekday = new Date(2020, 4, i).getDay()
     if (weekday === 0 || weekday === 1 || weekday === 2) {
       excludeDates.push(addDays(new Date(), i))
@@ -228,7 +228,11 @@ const Bag = () => {
                       selected={pickupDate}
                       customInput={<Form.Control type='text' />}
                       dateFormat='yyyy - MM - dd'
-                      minDate={addDays(new Date(), 2)}
+                      minDate={
+                        getDate(new Date()) >= 7
+                          ? addDays(new Date(), 2)
+                          : new Date(2020, 3, 9)
+                      }
                       maxDate={new Date(2020, 3, 30)}
                       excludeDates={excludeDates}
                       required
