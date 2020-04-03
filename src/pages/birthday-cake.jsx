@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { Button, Col, Form, Row, Spinner } from "react-bootstrap"
 import DatePicker from "react-datepicker"
 import {
@@ -44,12 +44,16 @@ const TestTest = () => {
       }
     }
   `)
-  const { control, formState, handleSubmit, register } = useForm()
+  const { control, formState, handleSubmit, register, setValue } = useForm()
+  const [submitStatus, setSubmitStatus] = useState(false)
+  const [minTime, setMinTime] = useState(
+    setHours(setMinutes(new Date(), 0), 12)
+  )
   const recaptchaRef = React.createRef()
   const excludeDates = []
   for (let i = new Date().getDate(); i < 31; i++) {
     const weekday = new Date(2020, 4, i).getDay()
-    if (weekday === 0 || weekday === 1 || weekday === 2) {
+    if (weekday === 0 || weekday === 1) {
       excludeDates.push(addDays(new Date(), i))
     }
   }
@@ -62,9 +66,9 @@ const TestTest = () => {
     d.time = getHours(d.time) + ":" + getMinutes(d.time)
     const res = await emailOrder(t, d)
     if (res.messageId) {
-      return true
+      setSubmitStatus(true)
     } else {
-      return false
+      setSubmitStatus(false)
     }
   }
   const onSubmit = async e => {
@@ -108,7 +112,7 @@ const TestTest = () => {
         All the cakes below are available in <strong>3</strong> sizes.
         <br />
         Please understand that the final look of each size would be slightly
-        different)
+        different.
       </p>
       <ul>
         <li>6'' Cake ⌀ 15cm {currency.full(19)}</li>
@@ -165,10 +169,19 @@ const TestTest = () => {
                 as={<DatePicker />}
                 control={control}
                 valueName='selected'
-                onChange={([selected]) => selected}
+                onChange={([selected]) => {
+                  setValue("time", null)
+                  if (selected.getDay() === 3) {
+                    setMinTime(setHours(setMinutes(new Date(), 0), 14))
+                  } else {
+                    setMinTime(setHours(setMinutes(new Date(), 0), 12))
+                  }
+                  return selected
+                }}
                 customInput={<Form.Control type='text' />}
                 minDate={addDays(new Date(), 5)}
                 maxDate={new Date(2020, 3, 30)}
+                dateFormat='yyyy - MM - dd'
                 excludeDates={excludeDates}
                 placeholderText='Date'
                 required
@@ -182,13 +195,14 @@ const TestTest = () => {
                 valueName='selected'
                 onChange={([selected]) => selected}
                 customInput={<Form.Control type='text' />}
-                dateFormat='hh:mm aa'
                 showTimeSelect
                 showTimeSelectOnly
                 timeIntervals={30}
                 timeCaption='Time'
-                minTime={setHours(setMinutes(new Date(), 0), 12)}
+                minTime={minTime}
                 maxTime={setHours(setMinutes(new Date(), 0), 16)}
+                dateFormat='HH:mm'
+                timeFormat='HH:mm'
                 placeholderText='Time'
                 required
               />
@@ -269,12 +283,13 @@ const TestTest = () => {
           </Col>
           <Col md={6}>
             <Button
+              name='submit'
               variant='rar'
               type='submit'
               className='mb-2'
-              disabled={formState.isSubmitting || formState.isSubmitted}
+              disabled={formState.isSubmitting || submitStatus}
             >
-              {(formState.isSubmitting && (
+              {formState.isSubmitting ? (
                 <Spinner
                   as='span'
                   animation='border'
@@ -282,11 +297,15 @@ const TestTest = () => {
                   role='status'
                   aria-hidden='true'
                 />
-              )) ||
-                (formState.submitCount > 0 && formState.isSubmitted
-                  ? "Thank you!"
-                  : "Retry") ||
-                "Send order to us"}
+              ) : formState.submitCount > 0 ? (
+                submitStatus ? (
+                  "Thank you!"
+                ) : (
+                  "Retry"
+                )
+              ) : (
+                "Send order to us"
+              )}
             </Button>
             <small>
               * This is only an order request form. There won't be any

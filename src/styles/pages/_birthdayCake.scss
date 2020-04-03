@@ -23,3 +23,7 @@
     border: none;
   }
 }
+
+li.react-datepicker__time-list-item--disabled {
+  display: none;
+}

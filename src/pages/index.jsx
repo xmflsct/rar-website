@@ -55,7 +55,11 @@ const Index = () => {
       </Row>
       <Row className='justify-content-center text-center'>
         <Col>
-          <p>Thu-Sun 12:00-16:00</p>
+          <p>
+            Thu-Sun 12:00-16:00
+            <br />
+            Wednesday [Appointment Only]
+          </p>
         </Col>
       </Row>
       <Row className='justify-content-center text-center mb-3'>

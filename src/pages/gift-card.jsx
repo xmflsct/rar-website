@@ -174,8 +174,8 @@ const GiftCard = ({ location }) => {
       <ul>
         <li>
           We have 3 different values of gift card: €{" "}
-          {data.giftCard20.priceWhole / 100}/{data.giftCard50.priceWhole / 100}/
-          {data.giftCard100.priceWhole / 100}.
+          {data.giftCard20.priceWhole}/{data.giftCard50.priceWhole}/
+          {data.giftCard100.priceWhole}.
         </li>
         <li>Gift cards can be purchased online and also in our shop.</li>
         <li>
