@@ -6,7 +6,7 @@ async function checkRecaptcha(req) {
   if (!req.body.token)
     return {
       success: false,
-      error: "[checkout - checkRecaptcha] No token is provided"
+      error: "[checkout - checkRecaptcha] No token is provided",
     }
 
   return await ky
@@ -14,8 +14,8 @@ async function checkRecaptcha(req) {
       searchParams: {
         secret: process.env.RECAPTCHA_PRIVATE_KEY,
         response: req.body.token,
-        remoteip: req.connection.remoteAddress
-      }
+        remoteip: req.connection.remoteAddress,
+      },
     })
     .json()
 }
@@ -24,7 +24,7 @@ async function checkContentful(req) {
   if (req.body.items.length === 0)
     return {
       success: false,
-      error: "[checkout - checkContentful] Content error"
+      error: "[checkout - checkContentful] Content error",
     }
 
   const url =
@@ -46,42 +46,38 @@ async function checkContentful(req) {
       searchParams: {
         access_token: process.env.CONTENTFUL_KEY_CHECKOUT,
         content_type: "cakesCake",
-        "sys.id[in]": ids
-      }
+        "sys.id[in]": ids,
+      },
     })
     .json()
 
   if (!response.hasOwnProperty("items")) {
     return {
       success: false,
-      error: "[checkout - checkContentful] Content error"
+      error: "[checkout - checkContentful] Content error",
     }
   }
 
   for (const item of line_items) {
-    const iContentful = _.findIndex(response.items, r => {
+    const iContentful = _.findIndex(response.items, (r) => {
       return r.sys.id === item.contentful_id
     })
     if (
       item.amount === response.items[iContentful].fields["price" + item.type]
     ) {
-      console.log(item.amount)
       item.amount = item.amount * 10 * 10
       item.currency = "eur"
       const thingIdentity =
         item.type === "Whole" ? " " + item.wholeIdentity : " Piece"
       item.name =
-        response.items[iContentful].fields.name +
-        " , " +
-        item.quantity +
-        thingIdentity
+        response.items[iContentful].fields.name + " | " + thingIdentity
       item.type === "Whole" && delete item.wholeIdentity
       delete item.type
       delete item.contentful_id
     } else {
       return {
         success: false,
-        error: "[checkout - checkContentful] Submitted price error"
+        error: "[checkout - checkContentful] Submitted price error",
       }
     }
   }
@@ -98,14 +94,14 @@ async function stripeSession(req, line_items) {
           customer_email: req.body.customer.email,
           line_items: line_items,
           shipping_address_collection: {
-            allowed_countries: ["NL"]
+            allowed_countries: ["NL"],
           },
           success_url:
             req.body.url.success + "?session_id={CHECKOUT_SESSION_ID}",
           cancel_url: req.body.url.cancel,
           payment_intent_data: {
-            metadata: req.body.metadata
-          }
+            metadata: req.body.metadata,
+          },
         }
       : {
           payment_method_types: ["ideal"],
@@ -115,8 +111,8 @@ async function stripeSession(req, line_items) {
             req.body.url.success + "?session_id={CHECKOUT_SESSION_ID}",
           cancel_url: req.body.url.cancel,
           payment_intent_data: {
-            metadata: req.body.metadata
-          }
+            metadata: req.body.metadata,
+          },
         }
   } catch (err) {
     return { success: false, error: err }
@@ -129,7 +125,7 @@ async function stripeSession(req, line_items) {
     console.log("[checkout - stripeSession] End")
     return {
       success: false,
-      error: "[checkout - stripeSession] Failed creating session"
+      error: "[checkout - stripeSession] Failed creating session",
     }
   }
 }

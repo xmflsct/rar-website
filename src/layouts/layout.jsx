@@ -3,7 +3,6 @@ import { Button, Col, Container, Row } from "react-bootstrap"
 import { Link } from "gatsby"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faShoppingBasket } from "@fortawesome/free-solid-svg-icons"
-import { sumBy } from "lodash"
 
 import SEO from "./seo"
 import Header from "./header"
@@ -17,11 +16,12 @@ const Layout = ({ children, name, SEOtitle, SEOkeywords }) => {
 
   let bagTotal = 0
   for (const type in state.bag.things) {
-    bagTotal =
-      bagTotal +
-      sumBy(state.bag.things[type], o =>
-        o.amountPiece ? o.amountPiece : 0 + o.amountWhole ? o.amountWhole : 0
-      )
+    for (const item of state.bag.things[type]) {
+      bagTotal =
+        bagTotal +
+        (item.amountPiece ? item.amountPiece : 0) +
+        (item.amountWhole ? item.amountWhole : 0)
+    }
   }
 
   return (

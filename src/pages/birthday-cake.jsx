@@ -8,7 +8,7 @@ import {
   getMinutes,
   getMonth,
   setHours,
-  setMinutes
+  setMinutes,
 } from "date-fns"
 import "react-datepicker/dist/react-datepicker.css"
 import ReCAPTCHA from "react-google-recaptcha"
@@ -52,14 +52,14 @@ const TestTest = () => {
   const recaptchaRef = React.createRef()
   const excludeDates = []
   for (let i = new Date().getDate(); i < 31; i++) {
-    const weekday = new Date(2020, 4, i).getDay()
-    if (weekday === 0 || weekday === 1) {
-      excludeDates.push(addDays(new Date(), i))
+    const weekday = new Date(2020, 3, i).getDay()
+    if (weekday === 1 || weekday === 2) {
+      excludeDates.push(new Date(2020, 3, i))
     }
   }
 
-  const userVerified = async token => {
-    handleSubmit(data => formSubmit(token, data))()
+  const userVerified = async (token) => {
+    handleSubmit((data) => formSubmit(token, data))()
   }
   const formSubmit = async (t, d) => {
     d.date = getMonth(d.date) + 1 + " / " + getDate(d.date)
@@ -71,7 +71,7 @@ const TestTest = () => {
       setSubmitStatus(false)
     }
   }
-  const onSubmit = async e => {
+  const onSubmit = async (e) => {
     e.preventDefault()
     formState.submitCount > 0 && recaptchaRef.current.reset()
     recaptchaRef.current.execute()
@@ -130,7 +130,7 @@ const TestTest = () => {
       <ListThings things={data.cakes.cakes} />
 
       <h2>Place Order Now</h2>
-      <Form onSubmit={e => onSubmit(e)}>
+      <Form onSubmit={(e) => onSubmit(e)}>
         <Row>
           <Col md={6}>
             <h3>Your info</h3>

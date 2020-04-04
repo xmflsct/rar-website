@@ -13114,10 +13114,10 @@ strip-outer@^1.0.0:
   dependencies:
     escape-string-regexp "^1.0.2"
 
-stripe@^8.38.0:
-  version "8.38.0"
-  resolved "https://registry.yarnpkg.com/stripe/-/stripe-8.38.0.tgz#0b673a690be8fac79026c33fa656a3a2e3a49ee9"
-  integrity sha512-dhYHHJMJIOTtP9f1IaOKt+RKFSiSci2q2oNrRM3HLMNFi6ahZvMWKE2+bLetwFa4CZZLt9x2SXM7dPrL3KRVng==
+stripe@^8.39.0:
+  version "8.39.0"
+  resolved "https://registry.yarnpkg.com/stripe/-/stripe-8.39.0.tgz#3932bddb94d35d03f816d770d1b63ea139684468"
+  integrity sha512-fLWSYlZ0zR+BPB53M0D+bY2dTmlpqdZyIlL8uo67l+Ypvyl4ojVb9I87N8ZrNkepYZOXrIn4dfrnLa+20xxd+g==
   dependencies:
     "@types/node" ">=8.1.0"
     qs "^6.6.0"

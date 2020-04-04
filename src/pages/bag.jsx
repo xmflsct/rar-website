@@ -8,11 +8,7 @@ import Img from "gatsby-image"
 import { useForm } from "react-hook-form"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTimes } from "@fortawesome/free-solid-svg-icons"
-import {
-  faStripe,
-  faIdeal,
-  faApplePay
-} from "@fortawesome/free-brands-svg-icons"
+import { faStripe, faIdeal } from "@fortawesome/free-brands-svg-icons"
 import { find, sumBy } from "lodash"
 import ReCAPTCHA from "react-google-recaptcha"
 import { loadStripe } from "@stripe/stripe-js"
@@ -23,7 +19,7 @@ import { ContextBag } from "../layouts/context-bag"
 import * as currency from "../components/utils/currency"
 
 const BagList = (things, dispatch) => {
-  return things.map(thing => (
+  return things.map((thing) => (
     <Row key={thing.contentful_id} className='mb-3 bag-item'>
       <Col xs={5}>
         <Img fluid={thing.image.fluid} />
@@ -34,6 +30,7 @@ const BagList = (things, dispatch) => {
           {thing.amountPiece > 0 && thing.pricePiece > 0 && (
             <>
               {thing.amountPiece} Piece × {currency.full(thing.pricePiece)}
+              <br />
             </>
           )}
           {thing.amountWhole > 0 && thing.priceWhole > 0 && (
@@ -46,24 +43,21 @@ const BagList = (things, dispatch) => {
           <br />
           Total:{" "}
           {currency.full(
-            thing.amountPiece
-              ? thing.amountPiece * thing.pricePiece
-              : 0 + thing.amountWhole
-              ? thing.amountWhole * thing.priceWhole
-              : 0
+            (thing.amountPiece ? thing.amountPiece * thing.pricePiece : 0) +
+              (thing.amountWhole ? thing.amountWhole * thing.priceWhole : 0)
           )}
         </p>
         <Button
           variant='rar-reverse'
           name='remove'
           value={thing.contentful_id}
-          onClick={e =>
+          onClick={(e) =>
             dispatch({
               type: "remove",
               data: {
                 type: thing.type,
-                contentful_id: e.target.value
-              }
+                contentful_id: e.target.value,
+              },
             })
           }
         >
@@ -83,51 +77,48 @@ const Bag = () => {
 
   let amountTotal = 0
   for (const type in state.bag.things) {
-    amountTotal =
-      amountTotal +
-      sumBy(state.bag.things[type], o =>
-        o.amountPiece > 0
-          ? o.amountPiece * o.pricePiece
-          : 0 + o.amountWhole > 0
-          ? o.amountWhole * o.priceWhole
-          : 0
-      )
+    for (const item of state.bag.things[type]) {
+      amountTotal =
+        amountTotal +
+        (item.amountPiece ? item.amountPiece * item.pricePiece : 0) +
+        (item.amountWhole ? item.amountWhole * item.priceWhole : 0)
+    }
   }
 
   const needPickup = state.bag.things.food && state.bag.things.food.length > 0
   const excludeDates = []
   for (let i = 1; i < 31; i++) {
-    const weekday = new Date(2020, 4, i).getDay()
-    if (weekday === 0 || weekday === 1 || weekday === 2) {
-      excludeDates.push(addDays(new Date(), i))
+    const weekday = new Date(2020, 3, i).getDay()
+    if (weekday === 1 || weekday === 2 || weekday === 3) {
+      excludeDates.push(new Date(2020, 3, i))
     }
   }
 
-  const userVerified = async token => {
-    handleSubmit(data => formSubmit(data, token))()
+  const userVerified = async (token) => {
+    handleSubmit((data) => formSubmit(data, token))()
   }
   const formSubmit = async (d, t) => {
     const customer = { email: d.email }
     const items = []
     const metadata = {
-      phone: d.phone
+      phone: d.phone,
     }
     needPickup &&
       (metadata.pickupDate = pickupDate.toLocaleString("en-GB", {
         weekday: "long",
         year: "numeric",
         month: "long",
-        day: "numeric"
+        day: "numeric",
       }))
     needPickup && (metadata.nots = d.notes)
     const url = {
       success: window.location.origin + "/thank-you",
-      cancel: window.location.origin + "/bag"
+      cancel: window.location.origin + "/bag",
     }
     const shipping =
       find(state.bag.things.none_food, [
         "contentful_id",
-        "44AIXbCxKgKAkDr2366hZ2"
+        "44AIXbCxKgKAkDr2366hZ2",
       ]) !== undefined
         ? true
         : false
@@ -140,7 +131,7 @@ const Bag = () => {
             contentful_id: thing.contentful_id,
             amount: thing.pricePiece,
             quantity: parseInt(thing.amountPiece),
-            images: ["https:" + thing.image.fluid.src]
+            images: ["https:" + thing.image.fluid.src],
           })
         thing.amountWhole > 0 &&
           items.push({
@@ -149,7 +140,7 @@ const Bag = () => {
             amount: thing.priceWhole,
             quantity: parseInt(thing.amountWhole),
             images: ["https:" + thing.image.fluid.src],
-            wholeIdentity: thing.wholeIdentity
+            wholeIdentity: thing.wholeIdentity,
           })
       }
     }
@@ -158,7 +149,7 @@ const Bag = () => {
     if (res.sessionId) {
       const stripe = await stripePromise
       const { error } = await stripe.redirectToCheckout({
-        sessionId: res.sessionId
+        sessionId: res.sessionId,
       })
       if (error) {
         return false
@@ -167,7 +158,7 @@ const Bag = () => {
       return false
     }
   }
-  const onSubmit = async e => {
+  const onSubmit = async (e) => {
     e.preventDefault()
     if (amountTotal === 0) {
       return false
@@ -183,12 +174,14 @@ const Bag = () => {
       SEOkeywords={["Shopping Bag", "Rotterdam"]}
     >
       <h1>My Bag</h1>
-      {sumBy(Object.keys(state.bag.things), k => state.bag.things[k].length) !==
-      0 ? (
+      {sumBy(
+        Object.keys(state.bag.things),
+        (k) => state.bag.things[k].length
+      ) !== 0 ? (
         <Row>
           <Col md={8}>
             <h2>Overview</h2>
-            {Object.keys(state.bag.things).map(key =>
+            {Object.keys(state.bag.things).map((key) =>
               BagList(state.bag.things[key], dispatch)
             )}
           </Col>
@@ -197,7 +190,7 @@ const Bag = () => {
             <p>
               <strong>Total: {currency.full(amountTotal)}</strong>
             </p>
-            <Form onSubmit={e => onSubmit(e)} className='mb-3 checkout'>
+            <Form onSubmit={(e) => onSubmit(e)} className='mb-3 checkout'>
               <Form.Group>
                 <Form.Label>Email:</Form.Label>
                 <Form.Control
@@ -224,7 +217,7 @@ const Bag = () => {
                   <Form.Group>
                     <Form.Label>Cakes pick-up date:</Form.Label>
                     <DatePicker
-                      onChange={date => setPickupDate(date)}
+                      onChange={(date) => setPickupDate(date)}
                       selected={pickupDate}
                       customInput={<Form.Control type='text' />}
                       dateFormat='yyyy - MM - dd'
@@ -277,8 +270,7 @@ const Bag = () => {
               <br />
               We support
               <br />
-              <FontAwesomeIcon icon={faIdeal} size='3x' />{" "}
-              <FontAwesomeIcon icon={faApplePay} size='3x' />
+              <FontAwesomeIcon icon={faIdeal} size='3x' />
             </p>
             <ReCAPTCHA
               ref={recaptchaRef}
