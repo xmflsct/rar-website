@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react"
-import { Button, Col, Form, Row, Spinner } from "react-bootstrap"
+import { Button, Col, Form, InputGroup, Row, Spinner } from "react-bootstrap"
 import DatePicker from "react-datepicker"
 import { addDays, getDate } from "date-fns"
 import "react-datepicker/dist/react-datepicker.css"
@@ -101,16 +101,17 @@ const Bag = () => {
     const customer = { email: d.email }
     const items = []
     const metadata = {
-      phone: d.phone,
+      "Phone number": d.phone,
+      "Gift card number": "IPG000NU-" + d.giftcardnum,
     }
     needPickup &&
-      (metadata.pickupDate = pickupDate.toLocaleString("en-GB", {
+      (metadata["Pick-up date"] = pickupDate.toLocaleString("en-GB", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
       }))
-    needPickup && (metadata.nots = d.notes)
+    needPickup && (metadata["Notes"] = d.notes)
     const url = {
       success: window.location.origin + "/thank-you",
       cancel: window.location.origin + "/bag",
@@ -245,6 +246,22 @@ const Bag = () => {
                   </Form.Group>
                 </>
               )}
+              <InputGroup className='mb-3'>
+                <Form.Label>Gift card number:</Form.Label>
+                <InputGroup.Prepend>
+                  <InputGroup.Text>IPG000NU</InputGroup.Text>
+                </InputGroup.Prepend>
+                <Form.Control
+                  name='giftcardnum'
+                  type='text'
+                  placeholder='******'
+                  ref={register}
+                />
+                <Form.Text className='text-muted'>
+                  We will manually register your gift card's expense and refund
+                  the corresponding amount to this payment.
+                </Form.Text>
+              </InputGroup>
               <Button
                 variant='rar'
                 type='submit'
