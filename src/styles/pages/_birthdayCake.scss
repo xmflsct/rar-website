@@ -1,26 +1,31 @@
 .site-wrapper.cakes-list {
-  .price {
-    font-size: 0.9em;
-    top: -1px;
-  }
+  .one-thing {
+    display: flex;
+    flex-direction: column;
 
-  .description {
-    font-size: 0.9em;
-
-    p {
-      margin: 0;
+    .price {
+      font-size: 0.9em;
+      top: -1px;
     }
 
-    ul {
-      list-style-type: circle;
-      padding-inline-start: 1rem;
-      margin-bottom: 0;
-    }
-  }
+    .description {
+      font-size: 0.9em;
+      flex-grow: 1;
 
-  form {
-    display: grid;
-    border: none;
+      p {
+        margin: 0;
+      }
+
+      ul {
+        list-style-type: circle;
+        padding-inline-start: 1rem;
+        margin-bottom: 0;
+      }
+    }
+
+    form {
+      border: none;
+    }
   }
 }
 

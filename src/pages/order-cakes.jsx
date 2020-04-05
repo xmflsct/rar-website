@@ -7,6 +7,26 @@ import ListThings from "../components/list-things/list-things"
 const OrderCakes = () => {
   const data = useStaticQuery(graphql`
     {
+      easter: contentfulCakesCakeList(
+        contentful_id: { eq: "6UQ46HMF9jimrdBcxzTrD" }
+      ) {
+        cakes {
+          contentful_id
+          image {
+            fluid(maxWidth: 200) {
+              ...GatsbyContentfulFluid_withWebp
+            }
+          }
+          name
+          pricePiece
+          priceWhole
+          wholeIdentity
+          availability
+          description {
+            json
+          }
+        }
+      }
       things: contentfulCakesCakeList(
         contentful_id: { eq: "2YNSMPnD9oZ9fxjFX212dw" }
       ) {
@@ -55,7 +75,7 @@ const OrderCakes = () => {
         We might not be able to pick up phone call.
       </p>
 
-      <h2>2. Cake Rolls / Other Cakes and Sweets</h2>
+      <h2>2. Easter Specials / Cake Rolls / Other Cakes and Sweets</h2>
       <p>
         Below are the cakes that can be ordered in advance online, and pick-up
         in our shop.
@@ -80,6 +100,13 @@ const OrderCakes = () => {
         <br />
         Thank you for your understanding!
       </p>
+      <h3>
+        Easter Specials{" "}
+        <span role='img' aria-label='cake'>
+          🐇
+        </span>
+      </h3>
+      <ListThings things={data.easter.cakes} shoppable />
       <h3>Our Cake Menu [April]</h3>
       <ListThings things={data.things.cakes} shoppable />
     </Layout>

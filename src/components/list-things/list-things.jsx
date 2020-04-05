@@ -10,7 +10,7 @@ const ListThings = ({ things, shoppable }) => {
   return (
     <Row className="list-things">
       {things.map(thing => (
-        <Col key={thing.contentful_id} md={4} sm={12} className='mb-4'>
+        <Col key={thing.contentful_id} md={4} sm={12} className='one-thing mb-4'>
           <Img
             fluid={thing.image.fluid}
             style={{

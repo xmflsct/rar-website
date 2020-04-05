@@ -37,16 +37,14 @@ const Header = () => {
         </Nav.Item>
         <Nav.Item>
           <Link to='/order-cakes' activeClassName='active'>
-            Order Cakes
+            Order Cakes{" "}
+            <span role='img' aria-label='easter'>
+              🐇
+            </span>
           </Link>
         </Nav.Item>
         <Nav.Item>
           Webshop
-          <br />
-          [Coming Soon]
-        </Nav.Item>
-        <Nav.Item>
-          Easter Specials
           <br />
           [Coming Soon]
         </Nav.Item>
