@@ -1,11 +1,11 @@
-const nodemailer = require("nodemailer")
+const sgMail = require("@sendgrid/mail")
 const ky = require("ky-universal")
 
 async function checkRecaptcha(req) {
   if (!req.body.token)
     return {
       success: false,
-      error: "[email order - checkRecaptcha] No token is provided"
+      error: "[email order - checkRecaptcha] No token is provided",
     }
 
   return await ky
@@ -13,28 +13,19 @@ async function checkRecaptcha(req) {
       searchParams: {
         secret: process.env.RECAPTCHA_PRIVATE_KEY,
         response: req.body.token,
-        remoteip: req.connection.remoteAddress
-      }
+        remoteip: req.connection.remoteAddress,
+      },
     })
     .json()
 }
 
-async function mailSession(req) {
-  let transporter = nodemailer.createTransport({
-    host: "smtp.zoho.com",
-    port: 465,
-    secure: true,
-    auth: {
-      user: "shop@roundandround.nl",
-      pass: process.env.ZOHO_PASSWORD
-    }
-  })
-
+async function sendGrid(req) {
+  sgMail.setApiKey(process.env.SENDGRID_KEY)
   let message = {
-    from: '"Round&Round Rotterdam" <shop@roundandround.nl>',
+    from: `${req.body.data.name} <${req.body.data.email}>`,
     to: "info@roundandround.nl",
-    replyTo: req.body.data.email,
-    subject: "[2020] Birthday Cake Order",
+    // replyTo: req.body.data.email,
+    subject: `[2020] Birthday Cake Order - ${req.body.data.name}`,
     html: `<p>Name: ${req.body.data.name}</p>
       <p>Email: ${req.body.data.email}</p>
       <p>Phone: ${req.body.data.phone}</p>
@@ -45,15 +36,19 @@ async function mailSession(req) {
       <p>Base: ${req.body.data.base}</p>
       <p>Filling: ${req.body.data.filling}</p>
       <p>Chocotag: ${req.body.data.chocotag}</p>
-      <p>Notes: ${req.body.data.notes}</p>`
+      <p>Notes: ${req.body.data.notes}</p>`,
   }
-
-  const response = await transporter.sendMail(message)
-  return {
-    success: response.accepted.length > 0,
-    response: response.response,
-    messageId: response.messageId
-  }
+  let response = {}
+  await sgMail.send(message, (error, result) => {
+    if (error) {
+      console.log(error)
+      response = { success: false, error: error }
+    } else {
+      console.log(result)
+      response = { success: true }
+    }
+  })
+  return response
 }
 
 export default async (req, res) => {
@@ -72,12 +67,12 @@ export default async (req, res) => {
   }
 
   console.log("[email order - mailSession] Start")
-  const resNodemailer = await mailSession(req)
+  const resNodemailer = await sendGrid(req)
   console.log("[email order - mailSession] End")
   if (resNodemailer.success) {
-    res.status(200).send({ messageId: resNodemailer.messageId })
+    res.status(200).send({ success: true })
   } else {
-    res.status(400).send({ error: resNodemailer.response })
+    res.status(400).send({ error: resNodemailer.error })
     return
   }
 

@@ -48,6 +48,7 @@
     "store2": "^2.11.0"
   },
   "devDependencies": {
+    "@sendgrid/mail": "^7.0.0",
     "nodemailer": "^6.4.6",
     "stripe": "^8.39.0"
   },

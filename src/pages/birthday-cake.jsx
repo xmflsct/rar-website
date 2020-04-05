@@ -65,7 +65,7 @@ const TestTest = () => {
     d.date = getMonth(d.date) + 1 + " / " + getDate(d.date)
     d.time = getHours(d.time) + ":" + getMinutes(d.time)
     const res = await emailOrder(t, d)
-    if (res.messageId) {
+    if (res.success) {
       setSubmitStatus(true)
     } else {
       setSubmitStatus(false)

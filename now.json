@@ -16,6 +16,6 @@
     "CONTENTFUL_ENVIRONMENT": "@rar-website-contentful-environment",
     "RECAPTCHA_PRIVATE_KEY": "@rar-website-recaptcha-private-key",
     "STRIPE_PRIVATE_KEY": "@rar-website-stripe-private-key",
-    "ZOHO_PASSWORD": "@rar-website-zoho-password"
+    "SENDGRID_KEY": "@rar-website-sendgrid-key"
   }
 }
