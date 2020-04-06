@@ -179,7 +179,7 @@ const TestTest = () => {
                   return selected
                 }}
                 customInput={<Form.Control type='text' />}
-                minDate={addDays(new Date(), 5)}
+                minDate={addDays(new Date(), 2)}
                 maxDate={new Date(2020, 3, 30)}
                 dateFormat='yyyy - MM - dd'
                 excludeDates={excludeDates}
