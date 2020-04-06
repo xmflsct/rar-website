@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Button, Col, Form, Row, Spinner } from "react-bootstrap"
+import { Button, Col, Form, InputGroup, Row, Spinner } from "react-bootstrap"
 import DatePicker from "react-datepicker"
 import {
   addDays,
@@ -280,6 +280,26 @@ const TestTest = () => {
               ref={register}
               placeholder='If without chocotag, do you want to have a message paper tag on the cake? Max 30 characters.'
             />
+            <InputGroup className='mb-3'>
+              <InputGroup.Prepend>
+                <InputGroup.Text>Gift card: IPG000NU</InputGroup.Text>
+              </InputGroup.Prepend>
+              <Form.Control
+                name='giftcard'
+                type='text'
+                ref={register}
+              />
+            </InputGroup>
+            <InputGroup className='mb-3'>
+              <InputGroup.Prepend>
+                <InputGroup.Text>Voucher number:</InputGroup.Text>
+              </InputGroup.Prepend>
+              <Form.Control
+                name='voucher'
+                type='text'
+                ref={register}
+              />
+            </InputGroup>
           </Col>
           <Col md={6}>
             <Button
@@ -307,11 +327,11 @@ const TestTest = () => {
                 "Send order to us"
               )}
             </Button>
-            <small>
+            <Form.Text className='text-muted'>
               * This is only an order request form. There won't be any
               auto-reply after your submission. We need time to confirm your
               order and we will get back to you very soon by email.
-            </small>
+            </Form.Text>
             <ReCAPTCHA
               ref={recaptchaRef}
               size='invisible'

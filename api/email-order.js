@@ -36,7 +36,9 @@ async function sendGrid(req) {
       <p>Base: ${req.body.data.base}</p>
       <p>Filling: ${req.body.data.filling}</p>
       <p>Chocotag: ${req.body.data.chocotag}</p>
-      <p>Notes: ${req.body.data.notes}</p>`,
+      <p>Notes: ${req.body.data.notes}</p>
+      <p>Gift card: IPG000NU-${req.body.data.giftcard}</p>
+      <p>Voucher: ${req.body.data.voucher}</p>`,
   }
   let response = {}
   await sgMail.send(message, (error, result) => {
