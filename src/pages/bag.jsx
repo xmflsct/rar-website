@@ -1,11 +1,11 @@
-import React, { useContext, useState } from "react"
+import React, { useContext } from "react"
 import { Button, Col, Form, InputGroup, Row, Spinner } from "react-bootstrap"
 import DatePicker from "react-datepicker"
-import { addDays, getDate } from "date-fns"
+import { addDays, getDate, setHours, setMinutes } from "date-fns"
 import "react-datepicker/dist/react-datepicker.css"
 import { Link } from "gatsby"
 import Img from "gatsby-image"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTimes } from "@fortawesome/free-solid-svg-icons"
 import { faStripe, faIdeal } from "@fortawesome/free-brands-svg-icons"
@@ -71,8 +71,7 @@ const BagList = (things, dispatch) => {
 const Bag = () => {
   const stripePromise = loadStripe(process.env.GATSBY_STRIPE_PUBLIC_KEY)
   const { state, dispatch } = useContext(ContextBag)
-  const { formState, handleSubmit, register } = useForm()
-  const [pickupDate, setPickupDate] = useState(null)
+  const { control, formState, handleSubmit, register } = useForm()
   const recaptchaRef = React.createRef()
 
   let amountTotal = 0
@@ -104,13 +103,17 @@ const Bag = () => {
       "Phone number": d.phone,
       "Gift card number": "IPG000NU-" + d.giftcardnum,
     }
-    needPickup &&
-      (metadata["Pick-up date"] = pickupDate.toLocaleString("en-GB", {
+    if (needPickup) {
+      metadata["Pick-up date"] = d.date.toLocaleString("en-GB", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
-      }))
+      })
+      metadata["Pick-up time"] = d.time.toLocaleString("en-GB", {
+        timeStyle: "medium",
+      })
+    }
     needPickup && (metadata["Notes"] = d.notes)
     const url = {
       success: window.location.origin + "/thank-you",
@@ -217,23 +220,45 @@ const Bag = () => {
                 <>
                   <Form.Group>
                     <Form.Label>Cakes pick-up date:</Form.Label>
-                    <DatePicker
-                      onChange={(date) => setPickupDate(date)}
-                      selected={pickupDate}
+                    <Controller
+                      name='date'
+                      as={<DatePicker />}
+                      control={control}
+                      valueName='selected'
                       customInput={<Form.Control type='text' />}
-                      dateFormat='yyyy - MM - dd'
                       minDate={
                         getDate(new Date()) >= 7
                           ? addDays(new Date(), 2)
                           : new Date(2020, 3, 9)
                       }
                       maxDate={new Date(2020, 3, 30)}
+                      dateFormat='yyyy - MM - dd'
                       excludeDates={excludeDates}
                       required
                     />
                     <Form.Text className='text-muted'>
                       We support +2 days pick-up. Note we are closed Mon-Wed.
                     </Form.Text>
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Cakes pick-up time:</Form.Label>
+                    <Controller
+                      name='time'
+                      as={<DatePicker />}
+                      control={control}
+                      valueName='selected'
+                      onChange={([selected]) => selected}
+                      customInput={<Form.Control type='text' />}
+                      showTimeSelect
+                      showTimeSelectOnly
+                      timeIntervals={30}
+                      timeCaption='Time'
+                      minTime={setHours(setMinutes(new Date(), 0), 12)}
+                      maxTime={setHours(setMinutes(new Date(), 0), 16)}
+                      dateFormat='HH:mm'
+                      timeFormat='HH:mm'
+                      required
+                    />
                   </Form.Group>
                   <Form.Group>
                     <Form.Label>Pick-up notes:</Form.Label>
