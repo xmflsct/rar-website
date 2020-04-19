@@ -1,5 +1,5 @@
 import React from "react"
-import { useStaticQuery, graphql, Link } from "gatsby"
+import { useStaticQuery, graphql } from "gatsby"
 
 import Layout from "../layouts/layout"
 import ListThings from "../components/list-things/list-things"
@@ -35,27 +35,7 @@ const OrderCakes = () => {
       SEOtitle='Birthday Cake'
       SEOkeywords={["Birthday cake", "Rotterdam"]}
     >
-      <h1>Order Cakes</h1>
-      <h2>1. Birthday Cakes</h2>
-      <p>
-        We still accept Birthday Cake orders.
-        <br />
-        Please check all available styles{" "}
-        <Link to='/birthday-cake'>
-          here{" "}
-          <span role='img' aria-label='cake'>
-            🍰
-          </span>
-        </Link>
-        .
-      </p>
-      <p>
-        Please contact us by email / Facebook / Instagram.
-        <br />
-        We might not be able to pick up phone call.
-      </p>
-
-      <h2>2. Cake Rolls / Other Cakes and Sweets</h2>
+      <h1>Cake Rolls, Other Cakes and Sweets</h1>
       <p>
         Below are the cakes that can be ordered in advance online, and pick-up
         in our shop.
@@ -80,7 +60,7 @@ const OrderCakes = () => {
         <br />
         Thank you for your understanding!
       </p>
-      <h3>Our Cake Menu [April]</h3>
+      <h3>Our Cake Menu [April &amp; May]</h3>
       <ListThings things={data.things.cakes} shoppable />
     </Layout>
   )

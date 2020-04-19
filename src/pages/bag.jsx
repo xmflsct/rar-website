@@ -1,7 +1,7 @@
 import React, { useContext } from "react"
 import { Button, Col, Form, InputGroup, Row, Spinner } from "react-bootstrap"
 import DatePicker from "react-datepicker"
-import { addDays, getDate, setHours, setMinutes } from "date-fns"
+import { addDays, setHours, setMinutes } from "date-fns"
 import "react-datepicker/dist/react-datepicker.css"
 import { Link } from "gatsby"
 import Img from "gatsby-image"
@@ -20,26 +20,35 @@ import * as currency from "../components/utils/currency"
 
 const BagList = (things, dispatch) => {
   return things.map((thing) => (
-    <Row key={thing.contentful_id} className='mb-3 bag-item'>
+    <Row key={thing.hash} className='mb-3 bag-item'>
       <Col xs={5}>
         <Img fluid={thing.image.fluid} />
       </Col>
       <Col xs={7}>
         <h4>{thing.name}</h4>
         <p style={{ fontSize: "0.8em" }}>
+          {thing.birthday_cake &&
+            Object.keys(thing.birthday_cake).map((k) => {
+              return (
+                <span key={k}>
+                  {`${k}: ${thing.birthday_cake[k]}`} <br />
+                </span>
+              )
+            })}
           {thing.amountPiece > 0 && thing.pricePiece > 0 && (
             <>
               {thing.amountPiece} Piece × {currency.full(thing.pricePiece)}
               <br />
             </>
           )}
-          {thing.amountWhole > 0 && thing.priceWhole > 0 && (
-            <>
-              {thing.amountWhole} {thing.wholeIdentity} ×{" "}
-              {currency.full(thing.priceWhole)}
-            </>
-          )}
-          <br />
+          {!thing.birthday_cake &&
+            thing.amountWhole > 0 &&
+            thing.priceWhole > 0 && (
+              <>
+                {thing.amountWhole} {thing.wholeIdentity} ×{" "}
+                {currency.full(thing.priceWhole)}
+              </>
+            )}
           <br />
           Total:{" "}
           {currency.full(
@@ -50,13 +59,12 @@ const BagList = (things, dispatch) => {
         <Button
           variant='rar-reverse'
           name='remove'
-          value={thing.contentful_id}
           onClick={(e) =>
             dispatch({
               type: "remove",
               data: {
                 type: thing.type,
-                contentful_id: e.target.value,
+                hash: thing.hash,
               },
             })
           }
@@ -85,11 +93,21 @@ const Bag = () => {
   }
 
   const needPickup = state.bag.things.food && state.bag.things.food.length > 0
+  const hasBirthdayCake =
+    state.bag.things.food &&
+    state.bag.things.food.filter((f) => f.birthday_cake_contentful_id).length >
+      0
   const excludeDates = []
   for (let i = 1; i < 31; i++) {
     const weekday = new Date(2020, 3, i).getDay()
     if (weekday === 1 || weekday === 2 || weekday === 3) {
       excludeDates.push(new Date(2020, 3, i))
+    }
+  }
+  for (let i = 1; i < 31; i++) {
+    const weekday = new Date(2020, 4, i).getDay()
+    if (weekday === 1 || weekday === 2 || weekday === 3) {
+      excludeDates.push(new Date(2020, 4, i))
     }
   }
 
@@ -115,6 +133,9 @@ const Bag = () => {
       })
     }
     needPickup && (metadata["Notes"] = d.notes)
+    if (hasBirthdayCake) {
+      metadata["Birthday cake voucher"] = d.voucher
+    }
     const url = {
       success: window.location.origin + "/thank-you",
       cancel: window.location.origin + "/bag",
@@ -137,7 +158,8 @@ const Bag = () => {
             quantity: parseInt(thing.amountPiece),
             images: ["https:" + thing.image.fluid.src],
           })
-        thing.amountWhole > 0 &&
+        !thing.birthday_cake &&
+          thing.amountWhole > 0 &&
           items.push({
             type: "Whole",
             contentful_id: thing.contentful_id,
@@ -145,6 +167,16 @@ const Bag = () => {
             quantity: parseInt(thing.amountWhole),
             images: ["https:" + thing.image.fluid.src],
             wholeIdentity: thing.wholeIdentity,
+          })
+        thing.birthday_cake &&
+          items.push({
+            type: "Birthday",
+            name: thing.name,
+            birthday_cake: thing.birthday_cake,
+            contentful_id: thing.birthday_cake_contentful_id,
+            amount: thing.priceWhole,
+            quantity: 1,
+            images: ["https:" + thing.image.fluid.src],
           })
       }
     }
@@ -227,17 +259,19 @@ const Bag = () => {
                       valueName='selected'
                       customInput={<Form.Control type='text' />}
                       minDate={
-                        getDate(new Date()) >= 7
-                          ? addDays(new Date(), 2)
-                          : new Date(2020, 3, 9)
+                        new Date().getUTCHours() > 14
+                          ? addDays(new Date(), 3)
+                          : addDays(new Date(), 2)
                       }
-                      maxDate={new Date(2020, 3, 30)}
+                      maxDate={new Date(2020, 4, 31)}
                       dateFormat='yyyy - MM - dd'
                       excludeDates={excludeDates}
                       required
                     />
                     <Form.Text className='text-muted'>
-                      We support +2 days pick-up. Note we are closed Mon-Wed.
+                      We support +2 days pick-up. If you have urgent order, you
+                      can always drop by our shop to buy our daily cakes. Note
+                      we are closed Mon-Wed.
                     </Form.Text>
                   </Form.Group>
                   <Form.Group>
@@ -287,6 +321,16 @@ const Bag = () => {
                   the corresponding amount to this payment.
                 </Form.Text>
               </InputGroup>
+              {hasBirthdayCake && (
+                <Form.Group>
+                  <Form.Label>Birthday cake voucher:</Form.Label>
+                  <Form.Control name='voucher' type='text' ref={register} />
+                  <Form.Text className='text-muted'>
+                    We will manually validate your voucher code and refund the
+                    corresponding amount to this payment.
+                  </Form.Text>
+                </Form.Group>
+              )}
               <Button
                 variant='rar'
                 type='submit'

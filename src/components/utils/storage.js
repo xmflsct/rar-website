@@ -8,7 +8,7 @@ export function add(data) {
   !storageData.things[data.type] && (storageData.things[data.type] = [])
   const keyIndex = findIndex(storageData.things[data.type], [
     "contentful_id",
-    data.contentful_id
+    data.contentful_id,
   ])
   if (keyIndex === -1) {
     storageData.things[data.type].push(data)
@@ -20,12 +20,11 @@ export function add(data) {
 }
 
 export function remove(data) {
-  const keyIndex = findIndex(storageData.things[data.type], [
-    "contentful_id",
-    data.contentful_id
-  ])
-  storageData.things[data.type].splice(keyIndex, 1)
-  store(storageKey, storageData)
+  const keyIndex = findIndex(storageData.things[data.type], ["hash", data.hash])
+  if (keyIndex !== -1) {
+    storageData.things[data.type].splice(keyIndex, 1)
+    store(storageKey, storageData)
+  }
   return storageData
 }
 
