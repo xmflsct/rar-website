@@ -31,23 +31,29 @@ const BagList = (things, dispatch) => {
             : thing.name}
         </h4>
         <div className='item-details'>
-          {thing.typeAAmount && (
+          {thing.typeAAmount ? (
             <p>
               {thing.typeAAmount} {thing.typeAUnit.typeUnit} ×{" "}
               {currency.full(thing.typeAPrice)}
             </p>
+          ) : (
+            ""
           )}
-          {thing.typeBAmount && (
+          {thing.typeBAmount ? (
             <p>
               {thing.typeBAmount} {thing.typeBUnit.typeUnit} ×{" "}
               {currency.full(thing.typeBPrice)}
             </p>
+          ) : (
+            ""
           )}
-          {thing.typeCAmount && (
+          {thing.typeCAmount ? (
             <p>
               {thing.typeCAmount} {thing.typeCUnit.typeUnit} ×{" "}
               {currency.full(thing.typeCPrice)}
             </p>
+          ) : (
+            ""
           )}
           {thing.customizationBirthdayCake &&
             Object.keys(thing.customizationBirthdayCake).map((k) => {
