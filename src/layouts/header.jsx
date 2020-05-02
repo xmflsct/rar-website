@@ -36,12 +36,12 @@ const Header = () => {
           </Link>
         </Nav.Item>
         <Nav.Item>
-          <Link to='/order-cakes' activeClassName='active'>
+          <Link to='/cakes-and-sweets' activeClassName='active'>
             Cakes &amp; Sweets
           </Link>
         </Nav.Item>
         <Nav.Item>
-          <Link to='/birthday-cake' activeClassName='active'>
+          <Link to='/birthday-cakes' activeClassName='active'>
             Birthday Cakes
           </Link>
         </Nav.Item>

@@ -37,16 +37,10 @@ async function checkContentful(req) {
     "/entries/"
   const line_items = req.body.items
   let ids = []
-  let idsBirthdayCake = []
   for (const item of line_items) {
-    if (item.type === "Birthday") {
-      idsBirthdayCake.push(item.contentful_id)
-    } else {
-      ids.push(item.contentful_id)
-    }
+    ids.push(item.contentful_id)
   }
   let response
-  let responseBirthdayCake
   if (ids.length) {
     ids = ids.join(",")
     response = await ky
@@ -54,7 +48,8 @@ async function checkContentful(req) {
         searchParams: {
           access_token: process.env.CONTENTFUL_KEY_CHECKOUT,
           content_type: "cakesCake",
-          select: "sys.id,fields.name,fields.pricePiece,fields.priceWhole",
+          select:
+            "sys.id,fields.name,fields.typeAPrice,fields.typeBPrice,fields.typeCPrice",
           "sys.id[in]": ids,
         },
       })
@@ -66,63 +61,22 @@ async function checkContentful(req) {
       }
     }
   }
-  if (idsBirthdayCake.length) {
-    idsBirthdayCake = idsBirthdayCake.join(",")
-    responseBirthdayCake = await ky
-      .get(url, {
-        searchParams: {
-          access_token: process.env.CONTENTFUL_KEY_CHECKOUT,
-          content_type: "orderBirthdayCake",
-          select: "sys.id,fields.price",
-          "sys.id[in]": idsBirthdayCake,
-        },
-      })
-      .json()
-    if (!responseBirthdayCake.hasOwnProperty("items")) {
+  for (const item of line_items) {
+    const iContentful = _.findIndex(response.items, (r) => {
+      return r.sys.id === item.contentful_id
+    })
+    if (
+      item.amount ===
+      response.items[iContentful].fields[`type${item.type}Price`]
+    ) {
+      item.amount = item.amount * 10 * 10
+      item.currency = "eur"
+      delete item.type
+      delete item.contentful_id
+    } else {
       return {
         success: false,
-        error: "[checkout - checkContentful] Content error",
-      }
-    }
-  }
-  for (const item of line_items) {
-    if (item.type === "Birthday") {
-      const iContentful = _.findIndex(responseBirthdayCake.items, (r) => {
-        return r.sys.id === item.contentful_id
-      })
-      if (item.amount === responseBirthdayCake.items[iContentful].fields.price) {
-        item.amount = item.amount * 10 * 10
-        item.currency = "eur"
-        item.name = `${item.name} | Size: ${item.birthday_cake.Size} | Base: ${item.birthday_cake.Base} | Filling: ${item.birthday_cake.Filling} | Chocotag: ${item.birthday_cake.Chocotag}`
-        delete item.type
-        delete item.birthday_cake
-        delete item.contentful_id
-      } else {
-        return {
-          success: false,
-          error: "[checkout - checkContentful] Submitted price error",
-        }
-      }
-    } else {
-      const iContentful = _.findIndex(response.items, (r) => {
-        return r.sys.id === item.contentful_id
-      })
-      if (
-        item.amount === response.items[iContentful].fields["price" + item.type]
-      ) {
-        item.amount = item.amount * 10 * 10
-        item.currency = "eur"
-        const thingIdentity =
-          item.type === "Whole" ? " " + item.wholeIdentity : " Piece"
-        item.name = `${response.items[iContentful].fields.name} | ${thingIdentity}`
-        item.type === "Whole" && delete item.wholeIdentity
-        delete item.type
-        delete item.contentful_id
-      } else {
-        return {
-          success: false,
-          error: "[checkout - checkContentful] Submitted price error",
-        }
+        error: "[checkout - checkContentful] Submitted price error",
       }
     }
   }

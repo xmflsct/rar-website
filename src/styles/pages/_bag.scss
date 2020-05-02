@@ -1,5 +1,14 @@
 .site-wrapper.bag {
   .bag-item {
+    margin-bottom: 1rem;
+
+    .item-details {
+      font-size: 0.8rem;
+
+      p {
+        margin: 0;
+      }
+    }
     button {
       position: absolute;
       top: 0;
