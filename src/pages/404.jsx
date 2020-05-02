@@ -21,7 +21,7 @@ const PageNotFound = () => {
       <h1>404: where is the cake</h1>
       <h3 className='text-center mt-3'>
         <Link
-          to='/order-cakes'
+          to='/cakes-and-sweets'
           style={{ marginLeft: "auto", marginRight: "auto" }}
         >
           Take a look at our online cake ordering?
