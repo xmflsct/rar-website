@@ -125,9 +125,21 @@ const CakeOrder = ({ cake }) => {
               <option value='' disabled>
                 Select size
               </option>
-              <option value='A'>1 × {cake.typeAUnit.typeUnit}</option>
-              <option value='B'>1 × {cake.typeBUnit.typeUnit}</option>
-              <option value='C'>1 × {cake.typeCUnit.typeUnit}</option>
+              {cake.typeAUnit ? (
+                <option value='A'>1 × {cake.typeAUnit.typeUnit}</option>
+              ) : (
+                ""
+              )}
+              {cake.typeBUnit ? (
+                <option value='B'>1 × {cake.typeBUnit.typeUnit}</option>
+              ) : (
+                ""
+              )}
+              {cake.typeCUnit ? (
+                <option value='C'>1 × {cake.typeCUnit.typeUnit}</option>
+              ) : (
+                ""
+              )}
             </Form.Control>
           </Form.Group>
           {cake.customizationBirthdayCake.map((customization) => (
