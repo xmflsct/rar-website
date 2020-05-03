@@ -19,8 +19,9 @@ const Layout = ({ children, name, SEOtitle, SEOkeywords }) => {
     for (const item of state.bag.things[type]) {
       bagTotal =
         bagTotal +
-        (item.amountPiece ? item.amountPiece : 0) +
-        (item.amountWhole ? item.amountWhole : 0)
+        (item.typeAAmount || 0) +
+        (item.typeBAmount || 0) +
+        (item.typeCAmount || 0)
     }
   }
 

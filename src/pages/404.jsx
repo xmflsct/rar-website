@@ -9,7 +9,7 @@ const PageNotFound = () => {
     query {
       image: file(relativePath: { eq: "page-404/404.jpg" }) {
         childImageSharp {
-          fluid(maxWidth: 920) {
+          fluid(maxWidth: 650) {
             ...GatsbyImageSharpFluid_withWebp
           }
         }
@@ -21,7 +21,7 @@ const PageNotFound = () => {
       <h1>404: where is the cake</h1>
       <h3 className='text-center mt-3'>
         <Link
-          to='/order-cakes'
+          to='/cakes-and-sweets'
           style={{ marginLeft: "auto", marginRight: "auto" }}
         >
           Take a look at our online cake ordering?

@@ -21,8 +21,10 @@ const GiftCard = ({ location }) => {
             ...GatsbyContentfulFluid_withWebp
           }
         }
-        priceWhole
-        wholeIdentity
+        typeAPrice
+        typeAUnit {
+          typeUnit
+        }
       }
       giftCard50: contentfulCakesCake(
         contentful_id: { eq: "6pHfPYlVeDZAP9srVEuPBB" }
@@ -34,8 +36,10 @@ const GiftCard = ({ location }) => {
             ...GatsbyContentfulFluid_withWebp
           }
         }
-        priceWhole
-        wholeIdentity
+        typeAPrice
+        typeAUnit {
+          typeUnit
+        }
       }
       giftCard100: contentfulCakesCake(
         contentful_id: { eq: "5TGcOiXyeHl4MQNxxb8DpN" }
@@ -47,8 +51,10 @@ const GiftCard = ({ location }) => {
             ...GatsbyContentfulFluid_withWebp
           }
         }
-        priceWhole
-        wholeIdentity
+        typeAPrice
+        typeAUnit {
+          typeUnit
+        }
       }
       giftCardShipping: contentfulCakesCake(
         contentful_id: { eq: "44AIXbCxKgKAkDr2366hZ2" }
@@ -60,8 +66,10 @@ const GiftCard = ({ location }) => {
             ...GatsbyContentfulFluid_withWebp
           }
         }
-        priceWhole
-        wholeIdentity
+        typeAPrice
+        typeAUnit {
+          typeUnit
+        }
       }
       images: allFile(
         filter: { relativeDirectory: { regex: "/(page-gift-card)/" } }
@@ -91,15 +99,15 @@ const GiftCard = ({ location }) => {
         dispatch({
           type: "add",
           data: {
-            type: "none_food",
+            type: "others",
             hash: MD5(
               new Date().getTime() + data.giftCard20.contentful_id
             ).toString(),
             contentful_id: data.giftCard20.contentful_id,
             name: data.giftCard20.name,
-            amountWhole: parseInt(amount20),
-            priceWhole: data.giftCard20.priceWhole,
-            wholeIdentity: data.giftCard20.wholeIdentity,
+            typeAAmount: parseInt(amount20),
+            typeAPrice: data.giftCard20.typeAPrice,
+            typeAUnit: data.giftCard20.typeAUnit,
             image: data.giftCard20.image,
           },
         })
@@ -113,9 +121,9 @@ const GiftCard = ({ location }) => {
             ).toString(),
             contentful_id: data.giftCard50.contentful_id,
             name: data.giftCard50.name,
-            amountWhole: parseInt(amount50),
-            priceWhole: data.giftCard50.priceWhole,
-            wholeIdentity: data.giftCard50.wholeIdentity,
+            typeAAmount: parseInt(amount50),
+            typeAPrice: data.giftCard50.typeAPrice,
+            typeAUnit: data.giftCard50.typeAUnit,
             image: data.giftCard50.image,
           },
         })
@@ -129,9 +137,9 @@ const GiftCard = ({ location }) => {
             ).toString(),
             contentful_id: data.giftCard100.contentful_id,
             name: data.giftCard100.name,
-            amountWhole: parseInt(amount100),
-            priceWhole: data.giftCard100.priceWhole,
-            wholeIdentity: data.giftCard100.wholeIdentity,
+            typeAAmount: parseInt(amount100),
+            typeAPrice: data.giftCard100.typeAPrice,
+            typeAUnit: data.giftCard100.typeAUnit,
             image: data.giftCard100.image,
           },
         })
@@ -145,9 +153,9 @@ const GiftCard = ({ location }) => {
             ).toString(),
             contentful_id: data.giftCardShipping.contentful_id,
             name: data.giftCardShipping.name,
-            amountWhole: 1,
-            priceWhole: data.giftCardShipping.priceWhole,
-            wholeIdentity: data.giftCardShipping.wholeIdentity,
+            typeAAmount: 1,
+            typeAPrice: data.giftCardShipping.typeAPrice,
+            typeAUnit: data.giftCardShipping.typeAUnit,
             image: data.giftCardShipping.image,
           },
         })
@@ -187,8 +195,8 @@ const GiftCard = ({ location }) => {
       <ul>
         <li>
           We have 3 different values of gift card: €{" "}
-          {data.giftCard20.priceWhole}/{data.giftCard50.priceWhole}/
-          {data.giftCard100.priceWhole}.
+          {data.giftCard20.typeAPrice}/{data.giftCard50.typeAPrice}/
+          {data.giftCard100.typeAPrice}.
         </li>
         <li>Gift cards can be purchased online and also in our shop.</li>
         <li>
@@ -325,7 +333,7 @@ const GiftCard = ({ location }) => {
                 </InputGroup.Prepend>
                 <InputGroup.Text>
                   Mail to an address in NL (+{" "}
-                  {currency.short(data.giftCardShipping.priceWhole)})
+                  {currency.short(data.giftCardShipping.typeAPrice)})
                 </InputGroup.Text>
               </InputGroup>
             </Form.Group>

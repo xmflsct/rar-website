@@ -20,42 +20,55 @@ import * as currency from "../components/utils/currency"
 
 const BagList = (things, dispatch) => {
   return things.map((thing) => (
-    <Row key={thing.hash} className='mb-3 bag-item'>
+    <Row key={thing.hash} className='bag-item'>
       <Col xs={5}>
         <Img fluid={thing.image.fluid} />
       </Col>
       <Col xs={7}>
-        <h4>{thing.name}</h4>
-        <p style={{ fontSize: "0.8em" }}>
-          {thing.birthday_cake &&
-            Object.keys(thing.birthday_cake).map((k) => {
+        <h4>
+          {thing.customizationBirthdayCake
+            ? `Birthday cake style ${thing.name}`
+            : thing.name}
+        </h4>
+        <div className='item-details'>
+          {thing.typeAAmount ? (
+            <p>
+              {thing.typeAAmount} {thing.typeAUnit.typeUnit} ×{" "}
+              {currency.full(thing.typeAPrice)}
+            </p>
+          ) : (
+            ""
+          )}
+          {thing.typeBAmount ? (
+            <p>
+              {thing.typeBAmount} {thing.typeBUnit.typeUnit} ×{" "}
+              {currency.full(thing.typeBPrice)}
+            </p>
+          ) : (
+            ""
+          )}
+          {thing.typeCAmount ? (
+            <p>
+              {thing.typeCAmount} {thing.typeCUnit.typeUnit} ×{" "}
+              {currency.full(thing.typeCPrice)}
+            </p>
+          ) : (
+            ""
+          )}
+          {thing.customizationBirthdayCake &&
+            Object.keys(thing.customizationBirthdayCake).map((k) => {
               return (
-                <span key={k}>
-                  {`${k}: ${thing.birthday_cake[k]}`} <br />
-                </span>
+                <p key={k}>{`${k}: ${thing.customizationBirthdayCake[k]}`}</p>
               )
             })}
-          {thing.amountPiece > 0 && thing.pricePiece > 0 && (
-            <>
-              {thing.amountPiece} Piece × {currency.full(thing.pricePiece)}
-              <br />
-            </>
-          )}
-          {!thing.birthday_cake &&
-            thing.amountWhole > 0 &&
-            thing.priceWhole > 0 && (
-              <>
-                {thing.amountWhole} {thing.wholeIdentity} ×{" "}
-                {currency.full(thing.priceWhole)}
-              </>
-            )}
           <br />
           Total:{" "}
           {currency.full(
-            (thing.amountPiece ? thing.amountPiece * thing.pricePiece : 0) +
-              (thing.amountWhole ? thing.amountWhole * thing.priceWhole : 0)
+            (thing.typeAAmount ? thing.typeAAmount * thing.typeAPrice : 0) +
+              (thing.typeBAmount ? thing.typeBAmount * thing.typeBPrice : 0) +
+              (thing.typeCAmount ? thing.typeCAmount * thing.typeCPrice : 0)
           )}
-        </p>
+        </div>
         <Button
           variant='rar-reverse'
           name='remove'
@@ -87,16 +100,16 @@ const Bag = () => {
     for (const item of state.bag.things[type]) {
       amountTotal =
         amountTotal +
-        (item.amountPiece ? item.amountPiece * item.pricePiece : 0) +
-        (item.amountWhole ? item.amountWhole * item.priceWhole : 0)
+        (item.typeAAmount ? item.typeAAmount * item.typeAPrice : 0) +
+        (item.typeBAmount ? item.typeBAmount * item.typeBPrice : 0) +
+        (item.typeCAmount ? item.typeCAmount * item.typeCPrice : 0)
     }
   }
 
-  const needPickup = state.bag.things.food && state.bag.things.food.length > 0
+  const needPickup = state.bag.things.cake && state.bag.things.cake.length > 0
   const hasBirthdayCake =
-    state.bag.things.food &&
-    state.bag.things.food.filter((f) => f.birthday_cake_contentful_id).length >
-      0
+    state.bag.things.cake &&
+    state.bag.things.cake.filter((f) => f.customizationBirthdayCake).length > 0
   const excludeDates = []
   for (let i = 1; i < 31; i++) {
     const weekday = new Date(2020, 3, i).getDay()
@@ -150,32 +163,49 @@ const Bag = () => {
 
     for (const type of Object.keys(state.bag.things)) {
       for (const thing of state.bag.things[type]) {
-        thing.amountPiece > 0 &&
+        let birthdayCakeName = `Birthday cake style ${thing.name} `
+        if (thing.customizationBirthdayCake) {
+          for (const bType in thing.customizationBirthdayCake) {
+            birthdayCakeName =
+              birthdayCakeName +
+              "| " +
+              bType +
+              ": " +
+              thing.customizationBirthdayCake[bType] +
+              " "
+          }
+        }
+        thing.typeAAmount > 0 &&
           items.push({
-            type: "Piece",
+            type: "A",
             contentful_id: thing.contentful_id,
-            amount: thing.pricePiece,
-            quantity: parseInt(thing.amountPiece),
+            name: thing.customizationBirthdayCake
+              ? `${birthdayCakeName} | Size: ${thing.typeAUnit.typeUnit}`
+              : `${thing.name} | ${thing.typeAUnit.typeUnit}`,
+            amount: thing.typeAPrice,
+            quantity: parseInt(thing.typeAAmount),
             images: ["https:" + thing.image.fluid.src],
           })
-        !thing.birthday_cake &&
-          thing.amountWhole > 0 &&
+        thing.typeBAmount > 0 &&
           items.push({
-            type: "Whole",
+            type: "B",
             contentful_id: thing.contentful_id,
-            amount: thing.priceWhole,
-            quantity: parseInt(thing.amountWhole),
+            name: thing.customizationBirthdayCake
+              ? `${birthdayCakeName} | Size: ${thing.typeBUnit.typeUnit}`
+              : `${thing.name} | ${thing.typeBUnit.typeUnit}`,
+            amount: thing.typeBPrice,
+            quantity: parseInt(thing.typeBAmount),
             images: ["https:" + thing.image.fluid.src],
-            wholeIdentity: thing.wholeIdentity,
           })
-        thing.birthday_cake &&
+        thing.typeCAmount > 0 &&
           items.push({
-            type: "Birthday",
-            name: thing.name,
-            birthday_cake: thing.birthday_cake,
-            contentful_id: thing.birthday_cake_contentful_id,
-            amount: thing.priceWhole,
-            quantity: 1,
+            type: "C",
+            contentful_id: thing.contentful_id,
+            name: thing.customizationBirthdayCake
+              ? `${birthdayCakeName} | Size: ${thing.typeCUnit.typeUnit}`
+              : `${thing.name} | ${thing.typeCUnit.typeUnit}`,
+            amount: thing.typeCPrice,
+            quantity: parseInt(thing.typeCAmount),
             images: ["https:" + thing.image.fluid.src],
           })
       }
@@ -370,7 +400,7 @@ const Bag = () => {
       ) : (
         <h3 className='text-center mt-3'>
           <Link
-            to='/order-cakes'
+            to='/cakes-and-sweets'
             style={{ marginLeft: "auto", marginRight: "auto" }}
           >
             Take a look at our online cake ordering?
