@@ -2,6 +2,7 @@ import store from "store2"
 import { findIndex } from "lodash"
 
 const storageKey = "rar-bag"
+const storageVer = "200503"
 let storageData = store(storageKey)
 
 export function add(data) {
@@ -30,7 +31,7 @@ export function remove(data) {
 
 export function clear() {
   const timestamp = new Date().getTime()
-  storageData = { things: {}, timestamp: timestamp }
+  storageData = { things: {}, timestamp: timestamp, version: storageVer }
   store(storageKey, storageData)
   return storageData
 }
@@ -38,13 +39,16 @@ export function clear() {
 export function check() {
   const timestamp = new Date().getTime()
   if (storageData) {
-    if (timestamp - storageData.timestamp > 60 * 60000) {
-      storageData = { things: {}, timestamp: timestamp }
+    if (
+      timestamp - storageData.timestamp > 60 * 60000 ||
+      storageVer !== storageData.version
+    ) {
+      storageData = { things: {}, timestamp: timestamp, version: storageVer }
     } else {
       storageData.timestamp = timestamp
     }
   } else {
-    storageData = { things: {}, timestamp: timestamp }
+    storageData = { things: {}, timestamp: timestamp, version: storageVer }
   }
   store(storageKey, storageData)
   return storageData
