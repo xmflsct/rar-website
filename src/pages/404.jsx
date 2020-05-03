@@ -9,7 +9,7 @@ const PageNotFound = () => {
     query {
       image: file(relativePath: { eq: "page-404/404.jpg" }) {
         childImageSharp {
-          fluid(maxWidth: 920) {
+          fluid(maxWidth: 650) {
             ...GatsbyImageSharpFluid_withWebp
           }
         }
