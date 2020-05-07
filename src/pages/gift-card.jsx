@@ -94,7 +94,7 @@ const GiftCard = ({ location }) => {
 
   const onSubmit = (e) => {
     e.preventDefault()
-    if (amount20 !== 0 || amount50 !== 0 || amount50 !== 0) {
+    if (amount20 !== 0 || amount50 !== 0 || amount100 !== 0) {
       amount20 !== 0 &&
         dispatch({
           type: "add",
@@ -115,7 +115,7 @@ const GiftCard = ({ location }) => {
         dispatch({
           type: "add",
           data: {
-            type: "none_food",
+            type: "others",
             hash: MD5(
               new Date().getTime() + data.giftCard50.contentful_id
             ).toString(),
@@ -131,7 +131,7 @@ const GiftCard = ({ location }) => {
         dispatch({
           type: "add",
           data: {
-            type: "none_food",
+            type: "others",
             hash: MD5(
               new Date().getTime() + data.giftCard100.contentful_id
             ).toString(),
@@ -147,7 +147,7 @@ const GiftCard = ({ location }) => {
         dispatch({
           type: "add",
           data: {
-            type: "none_food",
+            type: "others",
             hash: MD5(
               new Date().getTime() + data.giftCardShipping.contentful_id
             ).toString(),
