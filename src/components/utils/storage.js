@@ -2,7 +2,7 @@ import store from "store2"
 import { findIndex } from "lodash"
 
 const storageKey = "rar-bag"
-const storageVer = "200503"
+const storageVer = "200507"
 let storageData = store(storageKey)
 
 export function add(data) {
