@@ -94,7 +94,7 @@ const GiftCard = ({ location }) => {
 
   const onSubmit = (e) => {
     e.preventDefault()
-    if (amount20 !== 0 || amount50 !== 0 || amount50 !== 0) {
+    if (amount20 !== 0 || amount50 !== 0 || amount100 !== 0) {
       amount20 !== 0 &&
         dispatch({
           type: "add",
