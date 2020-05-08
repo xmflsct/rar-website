@@ -28,28 +28,25 @@ const ComponentCakesCake = ({ cakesCake }) => {
           <strike>{cakesCake.name}</strike>
         </h6>
       )}
-      {!cakesCake.customizationBirthdayCake && (
-        <div className='cake-price'>
-          {cakesCake.typeAPrice && (
-            <p>
-              {currency.full(cakesCake.typeAPrice)}/
-              {cakesCake.typeAUnit.typeUnit}
-            </p>
-          )}
-          {cakesCake.typeBPrice && (
-            <p>
-              {currency.full(cakesCake.typeBPrice)}/
-              {cakesCake.typeBUnit.typeUnit}
-            </p>
-          )}
-          {cakesCake.typeCPrice && (
-            <p>
-              {currency.full(cakesCake.typeCPrice)}/
-              {cakesCake.typeCUnit.typeUnit}
-            </p>
-          )}
-        </div>
-      )}
+      {/* {!cakesCake.customizationBirthdayCake && ( */}
+      <div className='cake-price'>
+        {cakesCake.typeAPrice && (
+          <p>
+            {currency.full(cakesCake.typeAPrice)}/{cakesCake.typeAUnit.typeUnit}
+          </p>
+        )}
+        {cakesCake.typeBPrice && (
+          <p>
+            {currency.full(cakesCake.typeBPrice)}/{cakesCake.typeBUnit.typeUnit}
+          </p>
+        )}
+        {cakesCake.typeCPrice && (
+          <p>
+            {currency.full(cakesCake.typeCPrice)}/{cakesCake.typeCUnit.typeUnit}
+          </p>
+        )}
+      </div>
+      {/* )} */}
       {cakesCake.description && (
         <div className='cake-description'>
           {documentToReactComponents(cakesCake.description?.json)}
