@@ -289,7 +289,7 @@ const Bag = () => {
                       valueName='selected'
                       customInput={<Form.Control type='text' />}
                       minDate={
-                        new Date().getUTCHours() > 14
+                        new Date().getUTCHours() > 9
                           ? addDays(new Date(), 3)
                           : addDays(new Date(), 2)
                       }
@@ -299,9 +299,9 @@ const Bag = () => {
                       required
                     />
                     <Form.Text className='text-muted'>
-                      We support +2 days pick-up. If you have urgent order, you
-                      can always drop by our shop to buy our daily cakes. Note
-                      we are closed Mon-Wed.
+                      We support min +2 days pick-up. If you have urgent order, you
+                      can always drop by our shop to buy our daily cakes. See{" "}
+                      <Link to='/'>opening hours</Link>.
                     </Form.Text>
                   </Form.Group>
                   <Form.Group>
