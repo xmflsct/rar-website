@@ -112,15 +112,15 @@ const Bag = () => {
     state.bag.things.cake.filter((f) => f.customizationBirthdayCake).length > 0
   const excludeDates = []
   for (let i = 1; i < 31; i++) {
-    const weekday = new Date(2020, 3, i).getDay()
-    if (weekday === 1 || weekday === 2 || weekday === 3) {
-      excludeDates.push(new Date(2020, 3, i))
-    }
-  }
-  for (let i = 1; i < 31; i++) {
     const weekday = new Date(2020, 4, i).getDay()
     if (weekday === 1 || weekday === 2 || weekday === 3) {
       excludeDates.push(new Date(2020, 4, i))
+    }
+  }
+  for (let i = 1; i < 31; i++) {
+    const weekday = new Date(2020, 5, i).getDay()
+    if (weekday === 1 || weekday === 2 || weekday === 3) {
+      excludeDates.push(new Date(2020, 5, i))
     }
   }
 
@@ -289,11 +289,11 @@ const Bag = () => {
                       valueName='selected'
                       customInput={<Form.Control type='text' />}
                       minDate={
-                        new Date().getUTCHours() > 9
+                        new Date().getUTCHours() > 7
                           ? addDays(new Date(), 3)
                           : addDays(new Date(), 2)
                       }
-                      maxDate={new Date(2020, 4, 31)}
+                      maxDate={new Date(2020, 5, 30)}
                       dateFormat='yyyy - MM - dd'
                       excludeDates={excludeDates}
                       required
