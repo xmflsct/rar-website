@@ -18,6 +18,9 @@ import Layout from '../layouts/layout'
 import { ContextBag } from '../layouts/context-bag'
 import * as currency from '../components/utils/currency'
 
+import * as Sentry from '@sentry/browser'
+Sentry.init({ dsn: process.env.GATSBY_SENTRY_DSN })
+
 const BagList = (things, dispatch) => {
   return things.map(thing => (
     <Row key={thing.hash} className='bag-item'>
