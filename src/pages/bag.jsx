@@ -1,25 +1,25 @@
-import React, { useContext } from "react"
-import { Button, Col, Form, InputGroup, Row, Spinner } from "react-bootstrap"
-import DatePicker from "react-datepicker"
-import { addDays, setHours, setMinutes } from "date-fns"
-import "react-datepicker/dist/react-datepicker.css"
-import { Link } from "gatsby"
-import Img from "gatsby-image"
-import { Controller, useForm } from "react-hook-form"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faTimes } from "@fortawesome/free-solid-svg-icons"
-import { faStripe, faIdeal } from "@fortawesome/free-brands-svg-icons"
-import { find, sumBy } from "lodash"
-import ReCAPTCHA from "react-google-recaptcha"
-import { loadStripe } from "@stripe/stripe-js"
-import { checkout } from "../api/checkout"
+import React, { useContext } from 'react'
+import { Button, Col, Form, InputGroup, Row, Spinner } from 'react-bootstrap'
+import DatePicker from 'react-datepicker'
+import { addDays, setHours, setMinutes } from 'date-fns'
+import 'react-datepicker/dist/react-datepicker.css'
+import { Link } from 'gatsby'
+import Img from 'gatsby-image'
+import { Controller, useForm } from 'react-hook-form'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faStripe, faIdeal } from '@fortawesome/free-brands-svg-icons'
+import { find, sumBy } from 'lodash'
+import ReCAPTCHA from 'react-google-recaptcha'
+import { loadStripe } from '@stripe/stripe-js'
+import { checkout } from '../api/checkout'
 
-import Layout from "../layouts/layout"
-import { ContextBag } from "../layouts/context-bag"
-import * as currency from "../components/utils/currency"
+import Layout from '../layouts/layout'
+import { ContextBag } from '../layouts/context-bag'
+import * as currency from '../components/utils/currency'
 
 const BagList = (things, dispatch) => {
-  return things.map((thing) => (
+  return things.map(thing => (
     <Row key={thing.hash} className='bag-item'>
       <Col xs={5}>
         <Img fluid={thing.image.fluid} />
@@ -33,36 +33,36 @@ const BagList = (things, dispatch) => {
         <div className='item-details'>
           {thing.typeAAmount ? (
             <p>
-              {thing.typeAAmount} {thing.typeAUnit.typeUnit} ×{" "}
+              {thing.typeAAmount} {thing.typeAUnit.typeUnit} ×{' '}
               {currency.full(thing.typeAPrice)}
             </p>
           ) : (
-            ""
+            ''
           )}
           {thing.typeBAmount ? (
             <p>
-              {thing.typeBAmount} {thing.typeBUnit.typeUnit} ×{" "}
+              {thing.typeBAmount} {thing.typeBUnit.typeUnit} ×{' '}
               {currency.full(thing.typeBPrice)}
             </p>
           ) : (
-            ""
+            ''
           )}
           {thing.typeCAmount ? (
             <p>
-              {thing.typeCAmount} {thing.typeCUnit.typeUnit} ×{" "}
+              {thing.typeCAmount} {thing.typeCUnit.typeUnit} ×{' '}
               {currency.full(thing.typeCPrice)}
             </p>
           ) : (
-            ""
+            ''
           )}
           {thing.customizationBirthdayCake &&
-            Object.keys(thing.customizationBirthdayCake).map((k) => {
+            Object.keys(thing.customizationBirthdayCake).map(k => {
               return (
                 <p key={k}>{`${k}: ${thing.customizationBirthdayCake[k]}`}</p>
               )
             })}
           <br />
-          Total:{" "}
+          Total:{' '}
           {currency.full(
             (thing.typeAAmount ? thing.typeAAmount * thing.typeAPrice : 0) +
               (thing.typeBAmount ? thing.typeBAmount * thing.typeBPrice : 0) +
@@ -72,13 +72,13 @@ const BagList = (things, dispatch) => {
         <Button
           variant='rar-reverse'
           name='remove'
-          onClick={(e) =>
+          onClick={e =>
             dispatch({
-              type: "remove",
+              type: 'remove',
               data: {
                 type: thing.type,
-                hash: thing.hash,
-              },
+                hash: thing.hash
+              }
             })
           }
         >
@@ -92,7 +92,7 @@ const BagList = (things, dispatch) => {
 const Bag = () => {
   const stripePromise = loadStripe(process.env.GATSBY_STRIPE_PUBLIC_KEY)
   const { state, dispatch } = useContext(ContextBag)
-  const { control, formState, handleSubmit, register } = useForm()
+  const { control, formState, handleSubmit, register, watch } = useForm()
   const recaptchaRef = React.createRef()
 
   let amountTotal = 0
@@ -109,7 +109,7 @@ const Bag = () => {
   const needPickup = state.bag.things.cake && state.bag.things.cake.length > 0
   const hasBirthdayCake =
     state.bag.things.cake &&
-    state.bag.things.cake.filter((f) => f.customizationBirthdayCake).length > 0
+    state.bag.things.cake.filter(f => f.customizationBirthdayCake).length > 0
   const excludeDates = []
   for (let i = 1; i < 31; i++) {
     const weekday = new Date(2020, 4, i).getDay()
@@ -124,39 +124,39 @@ const Bag = () => {
     }
   }
 
-  const userVerified = async (token) => {
-    handleSubmit((data) => formSubmit(data, token))()
+  const userVerified = async token => {
+    handleSubmit(data => formSubmit(data, token))()
   }
   const formSubmit = async (d, t) => {
     const customer = { email: d.email }
     const items = []
     const metadata = {
-      "Phone number": d.phone,
-      "Gift card number": "IPG000NU-" + d.giftcardnum,
+      'Phone number': d.phone,
+      'Gift card number': 'IPG000NU-' + d.giftcardnum
     }
     if (needPickup) {
-      metadata["Pick-up date"] = d.date.toLocaleString("en-GB", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
+      metadata['Pick-up date'] = d.date.toLocaleString('en-GB', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
       })
-      metadata["Pick-up time"] = d.time.toLocaleString("en-GB", {
-        timeStyle: "medium",
+      metadata['Pick-up time'] = d.time.toLocaleString('en-GB', {
+        timeStyle: 'medium'
       })
     }
-    needPickup && (metadata["Notes"] = d.notes)
+    needPickup && (metadata['Notes'] = d.notes)
     if (hasBirthdayCake) {
-      metadata["Birthday cake voucher"] = d.voucher
+      metadata['Birthday cake voucher'] = d.voucher
     }
     const url = {
-      success: window.location.origin + "/thank-you",
-      cancel: window.location.origin + "/bag",
+      success: window.location.origin + '/thank-you',
+      cancel: window.location.origin + '/bag'
     }
     const shipping =
       find(state.bag.things.none_food, [
-        "contentful_id",
-        "44AIXbCxKgKAkDr2366hZ2",
+        'contentful_id',
+        '44AIXbCxKgKAkDr2366hZ2'
       ]) !== undefined
         ? true
         : false
@@ -168,45 +168,45 @@ const Bag = () => {
           for (const bType in thing.customizationBirthdayCake) {
             birthdayCakeName =
               birthdayCakeName +
-              "| " +
+              '| ' +
               bType +
-              ": " +
+              ': ' +
               thing.customizationBirthdayCake[bType] +
-              " "
+              ' '
           }
         }
         thing.typeAAmount > 0 &&
           items.push({
-            type: "A",
+            type: 'A',
             contentful_id: thing.contentful_id,
             name: thing.customizationBirthdayCake
               ? `${birthdayCakeName} | Size: ${thing.typeAUnit.typeUnit}`
               : `${thing.name} | ${thing.typeAUnit.typeUnit}`,
             amount: thing.typeAPrice,
             quantity: parseInt(thing.typeAAmount),
-            images: ["https:" + thing.image.fluid.src],
+            images: ['https:' + thing.image.fluid.src]
           })
         thing.typeBAmount > 0 &&
           items.push({
-            type: "B",
+            type: 'B',
             contentful_id: thing.contentful_id,
             name: thing.customizationBirthdayCake
               ? `${birthdayCakeName} | Size: ${thing.typeBUnit.typeUnit}`
               : `${thing.name} | ${thing.typeBUnit.typeUnit}`,
             amount: thing.typeBPrice,
             quantity: parseInt(thing.typeBAmount),
-            images: ["https:" + thing.image.fluid.src],
+            images: ['https:' + thing.image.fluid.src]
           })
         thing.typeCAmount > 0 &&
           items.push({
-            type: "C",
+            type: 'C',
             contentful_id: thing.contentful_id,
             name: thing.customizationBirthdayCake
               ? `${birthdayCakeName} | Size: ${thing.typeCUnit.typeUnit}`
               : `${thing.name} | ${thing.typeCUnit.typeUnit}`,
             amount: thing.typeCPrice,
             quantity: parseInt(thing.typeCAmount),
-            images: ["https:" + thing.image.fluid.src],
+            images: ['https:' + thing.image.fluid.src]
           })
       }
     }
@@ -215,7 +215,7 @@ const Bag = () => {
     if (res.sessionId) {
       const stripe = await stripePromise
       const { error } = await stripe.redirectToCheckout({
-        sessionId: res.sessionId,
+        sessionId: res.sessionId
       })
       if (error) {
         return false
@@ -224,7 +224,7 @@ const Bag = () => {
       return false
     }
   }
-  const onSubmit = async (e) => {
+  const onSubmit = async e => {
     e.preventDefault()
     if (amountTotal === 0) {
       return false
@@ -237,17 +237,15 @@ const Bag = () => {
     <Layout
       name='bag'
       SEOtitle='Bag'
-      SEOkeywords={["Shopping Bag", "Rotterdam"]}
+      SEOkeywords={['Shopping Bag', 'Rotterdam']}
     >
       <h1>My Bag</h1>
-      {sumBy(
-        Object.keys(state.bag.things),
-        (k) => state.bag.things[k].length
-      ) !== 0 ? (
+      {sumBy(Object.keys(state.bag.things), k => state.bag.things[k].length) !==
+      0 ? (
         <Row>
           <Col md={8}>
             <h2>Overview</h2>
-            {Object.keys(state.bag.things).map((key) =>
+            {Object.keys(state.bag.things).map(key =>
               BagList(state.bag.things[key], dispatch)
             )}
           </Col>
@@ -256,7 +254,7 @@ const Bag = () => {
             <p>
               <strong>Total: {currency.full(amountTotal)}</strong>
             </p>
-            <Form onSubmit={(e) => onSubmit(e)} className='mb-3 checkout'>
+            <Form onSubmit={e => onSubmit(e)} className='mb-3 checkout'>
               <Form.Group>
                 <Form.Label>Email:</Form.Label>
                 <Form.Control
@@ -299,9 +297,9 @@ const Bag = () => {
                       required
                     />
                     <Form.Text className='text-muted'>
-                      We support min +2 days pick-up. If you have urgent order, you
-                      can always drop by our shop to buy our daily cakes. See{" "}
-                      <Link to='/'>opening hours</Link>.
+                      We support min +2 days pick-up. If you have urgent order,
+                      you can always drop by our shop to buy our daily cakes.
+                      See <Link to='/'>opening hours</Link>.
                     </Form.Text>
                   </Form.Group>
                   <Form.Group>
@@ -375,8 +373,8 @@ const Bag = () => {
                     aria-hidden='true'
                   />
                 )) ||
-                  (formState.submitCount > 0 && "Retry") ||
-                  "Checkout"}
+                  (formState.submitCount > 0 && 'Retry') ||
+                  'Checkout'}
               </Button>
             </Form>
             <p>
@@ -401,7 +399,7 @@ const Bag = () => {
         <h3 className='text-center mt-3'>
           <Link
             to='/cakes-and-sweets'
-            style={{ marginLeft: "auto", marginRight: "auto" }}
+            style={{ marginLeft: 'auto', marginRight: 'auto' }}
           >
             Take a look at our online cake ordering?
           </Link>
