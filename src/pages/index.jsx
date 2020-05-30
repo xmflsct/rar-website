@@ -42,7 +42,7 @@ const Index = () => {
           <p>
             Temporary Opening Hours
             <br />
-            [9th April - further notice]
+            [1st June - further notice]
           </p>
         </Col>
       </Row>
@@ -56,7 +56,9 @@ const Index = () => {
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
-            Thu-Sun 12:00-16:00
+            Thu-Sat 12:00-17:00
+            <br />
+            Sun 12:00-16:00
             <br />
             Wednesday [Appointment Only]
           </p>
