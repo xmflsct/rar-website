@@ -95,7 +95,7 @@ const BagList = (things, dispatch) => {
 const Bag = () => {
   const stripePromise = loadStripe(process.env.GATSBY_STRIPE_PUBLIC_KEY)
   const { state, dispatch } = useContext(ContextBag)
-  const { control, formState, handleSubmit, register, watch } = useForm()
+  const { control, formState, handleSubmit, register } = useForm()
   const recaptchaRef = React.createRef()
 
   let amountTotal = 0
@@ -115,15 +115,15 @@ const Bag = () => {
     state.bag.things.cake.filter(f => f.customizationBirthdayCake).length > 0
   const excludeDates = []
   for (let i = 1; i < 31; i++) {
-    const weekday = new Date(2020, 4, i).getDay()
-    if (weekday === 1 || weekday === 2 || weekday === 3) {
-      excludeDates.push(new Date(2020, 4, i))
-    }
-  }
-  for (let i = 1; i < 31; i++) {
     const weekday = new Date(2020, 5, i).getDay()
     if (weekday === 1 || weekday === 2 || weekday === 3) {
       excludeDates.push(new Date(2020, 5, i))
+    }
+  }
+  for (let i = 1; i < 31; i++) {
+    const weekday = new Date(2020, 6, i).getDay()
+    if (weekday === 1 || weekday === 2 || weekday === 3) {
+      excludeDates.push(new Date(2020, 6, i))
     }
   }
 
@@ -294,7 +294,7 @@ const Bag = () => {
                           ? addDays(new Date(), 3)
                           : addDays(new Date(), 2)
                       }
-                      maxDate={new Date(2020, 5, 30)}
+                      maxDate={new Date(2020, 6, 31)}
                       dateFormat='yyyy - MM - dd'
                       excludeDates={excludeDates}
                       required
