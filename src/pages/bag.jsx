@@ -248,6 +248,10 @@ const Bag = () => {
         <Row>
           <Col md={8}>
             <h2>Overview</h2>
+            <Row className='mb-3'>
+              <Col xs={5}>Transaction fee:</Col>
+              <Col xs={7}>{currency.full(0.3)}</Col>
+            </Row>
             {Object.keys(state.bag.things).map(key =>
               BagList(state.bag.things[key], dispatch)
             )}
@@ -255,7 +259,7 @@ const Bag = () => {
           <Col md={4}>
             <h2>Summary</h2>
             <p>
-              <strong>Total: {currency.full(amountTotal)}</strong>
+              <strong>Total: {currency.full(amountTotal + 0.3)}</strong>
             </p>
             <Form onSubmit={e => onSubmit(e)} className='mb-3 checkout'>
               <Form.Group>
