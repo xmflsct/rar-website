@@ -157,7 +157,7 @@ const Bag = () => {
       cancel: window.location.origin + '/bag'
     }
     const shipping =
-      find(state.bag.things.none_food, [
+      find(state.bag.things.others, [
         'contentful_id',
         '44AIXbCxKgKAkDr2366hZ2'
       ]) !== undefined
