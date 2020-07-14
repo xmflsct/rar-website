@@ -1,11 +1,11 @@
-import React from "react"
-import { Col, Row } from "react-bootstrap"
-import { useStaticQuery, graphql, Link } from "gatsby"
-import Img from "gatsby-image"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faFacebookF, faInstagram } from "@fortawesome/free-brands-svg-icons"
+import React from 'react'
+import { Col, Row } from 'react-bootstrap'
+import { useStaticQuery, graphql, Link } from 'gatsby'
+import Img from 'gatsby-image'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFacebookF, faInstagram } from '@fortawesome/free-brands-svg-icons'
 
-import Layout from "../layouts/layout"
+import Layout from '../layouts/layout'
 
 const Index = () => {
   const data = useStaticQuery(graphql`
@@ -23,11 +23,11 @@ const Index = () => {
     <Layout
       name='Round&amp;Round Rotterdam'
       SEOtitle='Home'
-      SEOkeywords={["Round&Round", "Rotterdam"]}
+      SEOkeywords={['Round&Round', 'Rotterdam']}
     >
       <Row className='justify-content-center text-center'>
         <Col>
-          <p>{"<< After the storm, the sun will always shine >>"}</p>
+          <p>{'<< After the storm, the sun will always shine >>'}</p>
         </Col>
       </Row>
       <Row className='justify-content-center'>
@@ -35,6 +35,15 @@ const Index = () => {
           <Link to='/gift-card'>
             <Img fluid={data.main.childImageSharp.fluid} />
           </Link>
+        </Col>
+      </Row>
+      <Row className='justify-content-center text-center'>
+        <Col>
+          <p>
+            <strong>We are on holiday</strong>
+            <br />
+            <strong>[3rd August - 19th August]</strong>
+          </p>
         </Col>
       </Row>
       <Row className='justify-content-center text-center'>
