@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { Button, Col, Form, InputGroup, Row, Spinner } from 'react-bootstrap'
-import DatePicker from 'react-datepicker'
+import ReactDatePicker from 'react-datepicker'
 import { addDays, setHours, setMinutes } from 'date-fns'
 import 'react-datepicker/dist/react-datepicker.css'
 import { Link } from 'gatsby'
@@ -294,19 +294,23 @@ const Bag = () => {
                     <Form.Label>Cakes pick-up date:</Form.Label>
                     <Controller
                       name='date'
-                      as={<DatePicker />}
                       control={control}
-                      valueName='selected'
-                      customInput={<Form.Control type='text' />}
-                      minDate={
-                        new Date().getUTCHours() > 7
-                          ? addDays(new Date(), 3)
-                          : addDays(new Date(), 2)
-                      }
-                      maxDate={new Date(2020, 7, 31)}
-                      dateFormat='yyyy - MM - dd'
-                      excludeDates={excludeDates}
-                      required
+                      rules={{ required: true }}
+                      render={props => (
+                        <ReactDatePicker
+                          customInput={<Form.Control type='text' />}
+                          minDate={
+                            new Date().getUTCHours() > 7
+                              ? addDays(new Date(), 3)
+                              : addDays(new Date(), 2)
+                          }
+                          maxDate={new Date(2020, 7, 31)}
+                          dateFormat='yyyy - MM - dd'
+                          excludeDates={excludeDates}
+                          onChange={e => props.onChange(e)}
+                          selected={props.value}
+                        />
+                      )}
                     />
                     <Form.Text className='text-muted'>
                       We support min +2 days pick-up. If you have urgent order,
@@ -318,20 +322,23 @@ const Bag = () => {
                     <Form.Label>Cakes pick-up time:</Form.Label>
                     <Controller
                       name='time'
-                      as={<DatePicker />}
                       control={control}
-                      valueName='selected'
-                      onChange={([selected]) => selected}
-                      customInput={<Form.Control type='text' />}
-                      showTimeSelect
-                      showTimeSelectOnly
-                      timeIntervals={30}
-                      timeCaption='Time'
-                      minTime={setHours(setMinutes(new Date(), 0), 12)}
-                      maxTime={setHours(setMinutes(new Date(), 0), 16)}
-                      dateFormat='HH:mm'
-                      timeFormat='HH:mm'
-                      required
+                      rules={{ required: true }}
+                      render={props => (
+                        <ReactDatePicker
+                          customInput={<Form.Control type='text' />}
+                          showTimeSelect
+                          showTimeSelectOnly
+                          timeIntervals={30}
+                          timeCaption='Time'
+                          minTime={setHours(setMinutes(new Date(), 0), 12)}
+                          maxTime={setHours(setMinutes(new Date(), 0), 16)}
+                          dateFormat='HH:mm'
+                          timeFormat='HH:mm'
+                          onChange={e => props.onChange(e)}
+                          selected={props.value}
+                        />
+                      )}
                     />
                   </Form.Group>
                   <Form.Group>
