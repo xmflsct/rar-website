@@ -114,13 +114,7 @@ const Bag = () => {
     state.bag.things.cake &&
     state.bag.things.cake.filter(f => f.customizationBirthdayCake).length > 0
   const excludeDates = []
-  for (let i = 1; i < 32; i++) {
-    const weekday = new Date(2020, 7, i).getDay()
-    if (weekday === 1 || weekday === 2 || weekday === 3) {
-      excludeDates.push(new Date(2020, 7, i))
-    }
-  }
-  for (let i = 1; i < 31; i++) {
+  for (let i = 1; i < 30; i++) {
     const weekday = new Date(2020, 8, i).getDay()
     if (weekday === 1 || weekday === 2 || weekday === 3) {
       excludeDates.push(new Date(2020, 8, i))
