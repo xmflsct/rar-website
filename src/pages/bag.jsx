@@ -293,7 +293,7 @@ const Bag = () => {
                               ? addDays(new Date(), 3)
                               : addDays(new Date(), 2)
                           }
-                          maxDate={new Date(2020, 8, 30)}
+                          maxDate={new Date(2020, 9, 3)}
                           dateFormat='yyyy - MM - dd'
                           excludeDates={excludeDates}
                           onChange={e => props.onChange(e)}
