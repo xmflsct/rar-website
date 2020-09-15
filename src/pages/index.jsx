@@ -58,18 +58,21 @@ const Index = () => {
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
-            <strong>[Pick-up only | Digital pay only]</strong>
+            <strong>[We are open for eat-in | No Reservation is needed]</strong>
           </p>
         </Col>
       </Row>
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
-            Thu-Sat 12:00-17:00
+            Thursday-Saturday 12:00-17:00
             <br />
-            Sun 12:00-16:00
+            Sunday 12:00-16:00
             <br />
-            Wednesday [Appointment Only]
+            Wednesday [Pick up only based on appointment]
+            <br />
+            * Pancake last-order is 1 hour prior to closing time
+            <br />* Digital pay only
           </p>
         </Col>
       </Row>
