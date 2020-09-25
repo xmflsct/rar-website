@@ -1,11 +1,11 @@
-import React, { useState } from "react"
-import { Button, Col, Collapse } from "react-bootstrap"
-import { graphql } from "gatsby"
-import Img from "gatsby-image"
-import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
+import React, { useState } from 'react'
+import { Button, Col, Collapse } from 'react-bootstrap'
+import { graphql } from 'gatsby'
+import Img from 'gatsby-image'
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 
-import CakeOrder from "./cake-order"
-import * as currency from "./utils/currency"
+import CakeOrder from './cake-order'
+import * as currency from './utils/currency'
 
 const ComponentCakesCake = ({ cakesCake }) => {
   const [cakeOrder, setCakeOrder] = useState(false)
@@ -15,18 +15,16 @@ const ComponentCakesCake = ({ cakesCake }) => {
       <Img
         fluid={cakesCake.image.fluid}
         style={{
-          position: "relative",
-          overflow: "hidden",
-          paddingBottom: "100%",
-          height: "0",
+          position: 'relative',
+          overflow: 'hidden',
+          paddingBottom: '100%',
+          height: '0'
         }}
       />
       {cakesCake.availableOnline ? (
         <h6 className='cake-name'>{cakesCake.name}</h6>
       ) : (
-        <h6 className='cake-name'>
-          <strike>{cakesCake.name}</strike>
-        </h6>
+        <h6 className='cake-name'>{cakesCake.name}</h6>
       )}
       {/* {!cakesCake.customizationBirthdayCake && ( */}
       <div className='cake-price'>
@@ -52,13 +50,13 @@ const ComponentCakesCake = ({ cakesCake }) => {
           {documentToReactComponents(cakesCake.description?.json)}
         </div>
       )}
-      {cakesCake.availableOnline && (
+      {cakesCake.availableOnline ? (
         <>
           <Button
             variant='rar'
             onClick={() => setCakeOrder(!cakeOrder)}
             aria-expanded={cakeOrder}
-            className={cakeOrder ? "d-none" : ""}
+            className={cakeOrder ? 'd-none' : ''}
           >
             Add my order
           </Button>
@@ -67,6 +65,12 @@ const ComponentCakesCake = ({ cakesCake }) => {
               <CakeOrder cake={cakesCake} />
             </div>
           </Collapse>
+        </>
+      ) : (
+        <>
+          <Button variant='outline-dark' disabled>
+            Request by Email
+          </Button>
         </>
       )}
     </Col>
