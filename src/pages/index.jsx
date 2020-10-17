@@ -49,7 +49,9 @@ const Index = () => {
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
-            <strong>[We are open for eat-in | No Reservation is needed]</strong>
+            <strong>
+              [We are still open for Take away &amp; Order pick up]
+            </strong>
           </p>
         </Col>
       </Row>
