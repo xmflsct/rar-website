@@ -255,6 +255,16 @@ const Bag = () => {
             {Object.keys(state.bag.things).map(key =>
               BagList(state.bag.things[key], dispatch)
             )}
+            <p>
+              <strong>Cancellation Policy:</strong>
+            </p>
+            <ul>
+              <li>
+                50% off the payment value will be charged within 48 hours of the
+                pick up time.
+              </li>
+              <li>No refund within 24 hours of the pick up time.</li>
+            </ul>
           </Col>
           <Col md={4}>
             <h2>Summary</h2>
