@@ -1,7 +1,7 @@
-import React from "react"
-import { Col, Nav, Row } from "react-bootstrap"
-import { useStaticQuery, graphql, Link } from "gatsby"
-import Img from "gatsby-image"
+import React from 'react'
+import { Col, Nav, Row } from 'react-bootstrap'
+import { useStaticQuery, graphql, Link } from 'gatsby'
+import Img from 'gatsby-image'
 
 const Header = () => {
   const data = useStaticQuery(graphql`
@@ -31,6 +31,11 @@ const Header = () => {
           </Link>
         </Nav.Item>
         <Nav.Item>
+          <Link to='/christmas-specials' activeClassName='active'>
+            Christmas Specials
+          </Link>
+        </Nav.Item>
+        <Nav.Item>
           <Link to='/gift-card' activeClassName='active'>
             Gift Card
           </Link>
@@ -44,11 +49,6 @@ const Header = () => {
           <Link to='/birthday-cakes' activeClassName='active'>
             Birthday Cakes
           </Link>
-        </Nav.Item>
-        <Nav.Item>
-          Webshop
-          <br />
-          [Coming Soon]
         </Nav.Item>
       </Nav>
     </>
