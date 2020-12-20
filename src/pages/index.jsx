@@ -40,13 +40,16 @@ const Index = () => {
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
-            Temporary Opening Hours
+            <strong>Holiday Close Time</strong>
             <br />
-            [1st June - further notice]
+            [December 25th - January 6th]
+            <br />
+            Open again on January 7th (Thu) for pick up only <br />
+            Merry Christmas &amp; Happy New Year!
           </p>
         </Col>
       </Row>
-      <Row className='justify-content-center text-center'>
+      {/* <Row className='justify-content-center text-center'>
         <Col>
           <p>
             <strong>
@@ -54,7 +57,7 @@ const Index = () => {
             </strong>
           </p>
         </Col>
-      </Row>
+      </Row> */}
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
