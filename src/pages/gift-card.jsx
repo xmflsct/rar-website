@@ -257,7 +257,7 @@ const GiftCard = ({ location }) => {
                 </Form.Control>
               </InputGroup>
               <Form.Text>
-                Plus a postcard and a 10% off Birthday cake voucher
+                Plus a postcard
               </Form.Text>
             </Form.Group>
             <Form.Group>
