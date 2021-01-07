@@ -1,12 +1,12 @@
-import React, { useContext, useState } from "react"
-import { Button, Col, Figure, Form, InputGroup, Row } from "react-bootstrap"
-import { useStaticQuery, graphql } from "gatsby"
-import Img from "gatsby-image"
-import MD5 from "crypto-js/md5"
+import React, { useContext, useState } from 'react'
+import { Button, Col, Figure, Form, InputGroup, Row } from 'react-bootstrap'
+import { useStaticQuery, graphql } from 'gatsby'
+import Img from 'gatsby-image'
+import MD5 from 'crypto-js/md5'
 
-import Layout from "../layouts/layout"
-import { ContextBag } from "../layouts/context-bag"
-import * as currency from "../components/utils/currency"
+import Layout from '../layouts/layout'
+import { ContextBag } from '../layouts/context-bag'
+import * as currency from '../components/utils/currency'
 
 const GiftCard = ({ location }) => {
   const data = useStaticQuery(graphql`
@@ -92,14 +92,14 @@ const GiftCard = ({ location }) => {
   const [amount100, setAmount100] = useState(0)
   const [shipping, setShipping] = useState(null)
 
-  const onSubmit = (e) => {
+  const onSubmit = e => {
     e.preventDefault()
     if (amount20 !== 0 || amount50 !== 0 || amount100 !== 0) {
       amount20 !== 0 &&
         dispatch({
-          type: "add",
+          type: 'add',
           data: {
-            type: "others",
+            type: 'others',
             hash: MD5(
               new Date().getTime() + data.giftCard20.contentful_id
             ).toString(),
@@ -108,14 +108,14 @@ const GiftCard = ({ location }) => {
             typeAAmount: parseInt(amount20),
             typeAPrice: data.giftCard20.typeAPrice,
             typeAUnit: data.giftCard20.typeAUnit,
-            image: data.giftCard20.image,
-          },
+            image: data.giftCard20.image
+          }
         })
       amount50 !== 0 &&
         dispatch({
-          type: "add",
+          type: 'add',
           data: {
-            type: "others",
+            type: 'others',
             hash: MD5(
               new Date().getTime() + data.giftCard50.contentful_id
             ).toString(),
@@ -124,14 +124,14 @@ const GiftCard = ({ location }) => {
             typeAAmount: parseInt(amount50),
             typeAPrice: data.giftCard50.typeAPrice,
             typeAUnit: data.giftCard50.typeAUnit,
-            image: data.giftCard50.image,
-          },
+            image: data.giftCard50.image
+          }
         })
       amount100 !== 0 &&
         dispatch({
-          type: "add",
+          type: 'add',
           data: {
-            type: "others",
+            type: 'others',
             hash: MD5(
               new Date().getTime() + data.giftCard100.contentful_id
             ).toString(),
@@ -140,14 +140,14 @@ const GiftCard = ({ location }) => {
             typeAAmount: parseInt(amount100),
             typeAPrice: data.giftCard100.typeAPrice,
             typeAUnit: data.giftCard100.typeAUnit,
-            image: data.giftCard100.image,
-          },
+            image: data.giftCard100.image
+          }
         })
       shipping &&
         dispatch({
-          type: "add",
+          type: 'add',
           data: {
-            type: "others",
+            type: 'others',
             hash: MD5(
               new Date().getTime() + data.giftCardShipping.contentful_id
             ).toString(),
@@ -156,8 +156,8 @@ const GiftCard = ({ location }) => {
             typeAAmount: 1,
             typeAPrice: data.giftCardShipping.typeAPrice,
             typeAUnit: data.giftCardShipping.typeAUnit,
-            image: data.giftCardShipping.image,
-          },
+            image: data.giftCardShipping.image
+          }
         })
     }
   }
@@ -167,7 +167,7 @@ const GiftCard = ({ location }) => {
       location={location}
       name='Gift Card'
       SEOtitle='Gift Card'
-      SEOkeywords={["Gift Card", "Gift", "Card", "Rotterdam"]}
+      SEOkeywords={['Gift Card', 'Gift', 'Card', 'Rotterdam']}
     >
       <h1 className='sub-heading mb-3' id='matcha-lovers'>
         Buy Round&amp;Round Gift Card
@@ -194,7 +194,7 @@ const GiftCard = ({ location }) => {
       <h2 className='mb-3'>Details</h2>
       <ul>
         <li>
-          We have 3 different values of gift card: €{" "}
+          We have 3 different values of gift card: €{' '}
           {data.giftCard20.typeAPrice}/{data.giftCard50.typeAPrice}/
           {data.giftCard100.typeAPrice}.
         </li>
@@ -232,7 +232,7 @@ const GiftCard = ({ location }) => {
           </Figure.Caption>
         </Col>
       </Row>
-      <Form onSubmit={(e) => onSubmit(e)}>
+      <Form onSubmit={e => onSubmit(e)}>
         <Row>
           <Col md={6}>
             <Form.Text as='p'>
@@ -246,7 +246,7 @@ const GiftCard = ({ location }) => {
                 <Form.Control
                   name='option20'
                   as='select'
-                  onChange={(e) => setAmount20(e.target.value)}
+                  onChange={e => setAmount20(e.target.value)}
                 >
                   <option value={0}>0</option>
                   <option value={1}>× 1</option>
@@ -256,9 +256,7 @@ const GiftCard = ({ location }) => {
                   <option value={5}>× 5</option>
                 </Form.Control>
               </InputGroup>
-              <Form.Text>
-                Plus a postcard
-              </Form.Text>
+              <Form.Text>Plus a postcard</Form.Text>
             </Form.Group>
             <Form.Group>
               <InputGroup>
@@ -268,7 +266,7 @@ const GiftCard = ({ location }) => {
                 <Form.Control
                   name='option50'
                   as='select'
-                  onChange={(e) => setAmount50(e.target.value)}
+                  onChange={e => setAmount50(e.target.value)}
                 >
                   <option value=''>0</option>
                   <option value={1}>× 1</option>
@@ -278,9 +276,7 @@ const GiftCard = ({ location }) => {
                   <option value={5}>× 5</option>
                 </Form.Control>
               </InputGroup>
-              <Form.Text>
-                Plus a postcard and a 20% off Birthday cake voucher
-              </Form.Text>
+              <Form.Text>Plus a postcard</Form.Text>
             </Form.Group>
             <Form.Group>
               <InputGroup>
@@ -290,7 +286,7 @@ const GiftCard = ({ location }) => {
                 <Form.Control
                   name='option100'
                   as='select'
-                  onChange={(e) => setAmount100(e.target.value)}
+                  onChange={e => setAmount100(e.target.value)}
                 >
                   <option value=''>0</option>
                   <option value={1}>× 1</option>
@@ -300,10 +296,7 @@ const GiftCard = ({ location }) => {
                   <option value={5}>× 5</option>
                 </Form.Control>
               </InputGroup>
-              <Form.Text>
-                Plus a postcard, a 20% off Birthday cake voucher and a R&amp;R
-                Eco tote bag
-              </Form.Text>
+              <Form.Text>Plus a postcard and a R&amp;R Eco tote bag</Form.Text>
             </Form.Group>
           </Col>
           <Col md={6}>
@@ -332,7 +325,7 @@ const GiftCard = ({ location }) => {
                   />
                 </InputGroup.Prepend>
                 <InputGroup.Text>
-                  Mail to an address in NL (+{" "}
+                  Mail to an address in NL (+{' '}
                   {currency.short(data.giftCardShipping.typeAPrice)})
                 </InputGroup.Text>
               </InputGroup>
