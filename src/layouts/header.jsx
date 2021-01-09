@@ -31,11 +31,6 @@ const Header = () => {
           </Link>
         </Nav.Item>
         <Nav.Item>
-          <Link to='/christmas-specials' activeClassName='active'>
-            Christmas Specials
-          </Link>
-        </Nav.Item>
-        <Nav.Item>
           <Link to='/gift-card' activeClassName='active'>
             Gift Card
           </Link>
