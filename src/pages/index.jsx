@@ -27,7 +27,11 @@ const Index = () => {
     >
       <Row className='justify-content-center text-center'>
         <Col>
-          <p>{'<< After the storm, the sun will always shine >>'}</p>
+          <p>
+            {
+              '<< We are 5 years old on January 16th 2021! Thank you for your love and support! >>'
+            }
+          </p>
         </Col>
       </Row>
       <Row className='justify-content-center'>
@@ -35,18 +39,6 @@ const Index = () => {
           <Link to='/gift-card'>
             <Img fluid={data.main.childImageSharp.fluid} />
           </Link>
-        </Col>
-      </Row>
-      <Row className='justify-content-center text-center'>
-        <Col>
-          <p>
-            <strong>Holiday Close Time</strong>
-            <br />
-            [December 25th - January 6th]
-            <br />
-            Open again on January 7th (Thu) for pick up only <br />
-            Merry Christmas &amp; Happy New Year!
-          </p>
         </Col>
       </Row>
       {/* <Row className='justify-content-center text-center'>
