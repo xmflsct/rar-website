@@ -31,7 +31,11 @@ const Header = () => {
           </Link>
         </Nav.Item>
         <Nav.Item>
-          <Link to='/lunar-new-year-special' activeClassName='active'>
+          <Link
+            to='/lunar-new-year-special'
+            activeClassName='active'
+            style={{ color: '#CC232A' }}
+          >
             Lunar New Year Special
           </Link>
         </Nav.Item>
