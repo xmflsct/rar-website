@@ -115,13 +115,13 @@ const Bag = () => {
     state.bag.things.cake.filter(f => f.customizationBirthdayCake).length > 0
   const excludeDates = []
   for (let i = 0; i < 31; i++) {
-    const weekday = new Date(2021, 0, i).getDay()
+    const weekday = new Date(2021, 1, i).getDay()
     if (weekday === 1 || weekday === 2 || weekday === 3) {
       excludeDates.push(new Date(2021, 0, i))
     }
   }
   for (let i = 0; i < 31; i++) {
-    const weekday = new Date(2021, 1, i).getDay()
+    const weekday = new Date(2021, 2, i).getDay()
     if (weekday === 1 || weekday === 2 || weekday === 3) {
       excludeDates.push(new Date(2021, 1, i))
     }
@@ -309,7 +309,7 @@ const Bag = () => {
                               ? addDays(new Date(), 3)
                               : addDays(new Date(), 2)
                           }
-                          maxDate={new Date(2021, 1, 30)}
+                          maxDate={new Date(2021, 2, 31)}
                           dateFormat='yyyy - MM - dd'
                           excludeDates={excludeDates}
                           onChange={e => props.onChange(e)}
