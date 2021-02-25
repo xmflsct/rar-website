@@ -117,13 +117,13 @@ const Bag = () => {
   for (let i = 0; i < 31; i++) {
     const weekday = new Date(2021, 1, i).getDay()
     if (weekday === 1 || weekday === 2 || weekday === 3) {
-      excludeDates.push(new Date(2021, 0, i))
+      excludeDates.push(new Date(2021, 1, i))
     }
   }
-  for (let i = 0; i < 31; i++) {
+  for (let i = 0; i < 32; i++) {
     const weekday = new Date(2021, 2, i).getDay()
     if (weekday === 1 || weekday === 2 || weekday === 3) {
-      excludeDates.push(new Date(2021, 1, i))
+      excludeDates.push(new Date(2021, 2, i))
     }
   }
 
