@@ -53,11 +53,9 @@ const Index = () => {
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
-            Thursday-Saturday 12:00-17:00
+            Wednesday-Saturday 12:00-17:00
             <br />
             Sunday 12:00-16:00
-            <br />
-            Wednesday [Pick up only based on appointment]
             <br />
             * Pancake last-order is 1 hour prior to closing time
             <br />* Digital pay only
