@@ -69,7 +69,7 @@ const ComponentCakesCake = ({ cakesCake }) => {
       ) : (
         <>
           <Button variant='outline-dark' disabled>
-            Sold Out
+            Temporary Sold Out
           </Button>
         </>
       )}
