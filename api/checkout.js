@@ -87,6 +87,14 @@ async function checkContentful (req) {
     currency: 'eur',
     quantity: 1
   })
+  req.body.metadata['Pick-up date'] &&
+    req.body.metadata['Pick-up time'] &&
+    line_items.push({
+      name: `Pick up: ${req.body.metadata['Pick-up date']}, ${req.body.metadata['Pick-up time']}`,
+      amount: 0,
+      currency: 'eur',
+      quantity: 1
+    })
   return { success: true, line_items: line_items }
 }
 
