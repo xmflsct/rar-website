@@ -28,9 +28,13 @@ const Index = () => {
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
-            {
-              '<< We are 5 years old on January 16th 2021! Thank you for your love and support! >>'
-            }
+            <strong>
+              From JUNE 30TH 2021 You can eat-in again at Round &amp; Round :)
+            </strong>
+          </p>
+          <p>
+            * We don't take reservations.
+            <br />* Pancake last-order is 1 hour prior to closing time.
           </p>
         </Col>
       </Row>
@@ -53,12 +57,9 @@ const Index = () => {
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
-            Wednesday-Saturday 12:00-17:00
+            Wednesday-Sunday 12:00-17:00
             <br />
-            Sunday 12:00-16:00
-            <br />
-            * Pancake last-order is 1 hour prior to closing time
-            <br />* Digital pay only
+            {'<Digital pay only>'}
           </p>
         </Col>
       </Row>
