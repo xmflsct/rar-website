@@ -36,6 +36,11 @@ const Header = () => {
           </Link>
         </Nav.Item>
         <Nav.Item>
+          <Link to='/hightea' activeClassName='active'>
+            Hightea
+          </Link>
+        </Nav.Item>
+        <Nav.Item>
           <Link to='/cakes-and-sweets' activeClassName='active'>
             Cakes &amp; Sweets
           </Link>
