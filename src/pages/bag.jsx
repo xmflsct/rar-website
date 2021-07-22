@@ -115,17 +115,24 @@ const Bag = () => {
     state.bag.things.cake.filter(f => f.customizationBirthdayCake).length > 0
   const excludeDates = []
   for (let i = 0; i < 31; i++) {
-    const weekday = new Date(2021, 5, i).getDay()
-    if (weekday === 1 || weekday === 2) {
-      excludeDates.push(new Date(2021, 5, i))
-    }
-  }
-  for (let i = 0; i < 32; i++) {
     const weekday = new Date(2021, 6, i).getDay()
     if (weekday === 1 || weekday === 2) {
       excludeDates.push(new Date(2021, 6, i))
     }
   }
+  for (let i = 0; i < 32; i++) {
+    const weekday = new Date(2021, 7, i).getDay()
+    if (weekday === 1 || weekday === 2) {
+      excludeDates.push(new Date(2021, 7, i))
+    }
+  }
+  excludeDates.push(new Date(2021, 7, 2))
+  excludeDates.push(new Date(2021, 7, 3))
+  excludeDates.push(new Date(2021, 7, 4))
+  excludeDates.push(new Date(2021, 7, 5))
+  excludeDates.push(new Date(2021, 7, 6))
+  excludeDates.push(new Date(2021, 7, 7))
+  excludeDates.push(new Date(2021, 7, 8))
 
   const userVerified = async token => {
     handleSubmit(data => formSubmit(data, token))()
@@ -309,7 +316,7 @@ const Bag = () => {
                               ? addDays(new Date(), 3)
                               : addDays(new Date(), 2)
                           }
-                          maxDate={new Date(2021, 6, 31)}
+                          maxDate={new Date(2021, 8, 5)}
                           dateFormat='yyyy - MM - dd'
                           excludeDates={excludeDates}
                           onChange={e => props.onChange(e)}
