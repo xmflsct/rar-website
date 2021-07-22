@@ -28,12 +28,10 @@ const Index = () => {
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
-            <strong>
-              From JUNE 30TH 2021 You can eat-in again at Round &amp; Round :)
-            </strong>
+            <strong>Summer Maintenance Closure: August 4th-8th</strong>
           </p>
           <p>
-            * We don't take reservations.
+            * Eat-in Possible; We don't take reservations.
             <br />* Pancake last-order is 1 hour prior to closing time.
           </p>
         </Col>
