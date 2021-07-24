@@ -28,9 +28,6 @@ const Index = () => {
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
-            <strong>Summer Maintenance Closure: August 4th-8th</strong>
-          </p>
-          <p>
             * Eat-in Possible; We don't take reservations.
             <br />* Pancake last-order is 1 hour prior to closing time.
           </p>
