@@ -126,13 +126,6 @@ const Bag = () => {
       excludeDates.push(new Date(2021, 7, i))
     }
   }
-  excludeDates.push(new Date(2021, 7, 2))
-  excludeDates.push(new Date(2021, 7, 3))
-  excludeDates.push(new Date(2021, 7, 4))
-  excludeDates.push(new Date(2021, 7, 5))
-  excludeDates.push(new Date(2021, 7, 6))
-  excludeDates.push(new Date(2021, 7, 7))
-  excludeDates.push(new Date(2021, 7, 8))
 
   const userVerified = async token => {
     handleSubmit(data => formSubmit(data, token))()
