@@ -115,15 +115,15 @@ const Bag = () => {
     state.bag.things.cake.filter(f => f.customizationBirthdayCake).length > 0
   const excludeDates = []
   for (let i = 0; i < 31; i++) {
-    const weekday = new Date(2021, 6, i).getDay()
-    if (weekday === 1 || weekday === 2) {
-      excludeDates.push(new Date(2021, 6, i))
-    }
-  }
-  for (let i = 0; i < 32; i++) {
     const weekday = new Date(2021, 7, i).getDay()
     if (weekday === 1 || weekday === 2) {
       excludeDates.push(new Date(2021, 7, i))
+    }
+  }
+  for (let i = 0; i < 32; i++) {
+    const weekday = new Date(2021, 8, i).getDay()
+    if ((weekday === 1 || weekday === 2) && i !== 20 && i !== 21) {
+      excludeDates.push(new Date(2021, 8, i))
     }
   }
 
@@ -309,7 +309,7 @@ const Bag = () => {
                               ? addDays(new Date(), 3)
                               : addDays(new Date(), 2)
                           }
-                          maxDate={new Date(2021, 8, 5)}
+                          maxDate={new Date(2021, 8, 30)}
                           dateFormat='yyyy - MM - dd'
                           excludeDates={excludeDates}
                           onChange={e => props.onChange(e)}
@@ -317,6 +317,10 @@ const Bag = () => {
                         />
                       )}
                     />
+                    <Form.Text className='text-muted'>
+                      Please note that September 20th and 21st are pick-up only
+                      days, no eat-in possible
+                    </Form.Text>
                     <Form.Text className='text-muted'>
                       We support min +2 days pick-up. If you have urgent order,
                       you can always drop by our shop to buy our daily cakes.
