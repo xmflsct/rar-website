@@ -10,7 +10,7 @@ import CakesList from '../components/cakes-list'
 const TemplateCakesPage = ({ data }) => {
   const options = {
     renderNode: {
-      [BLOCKS.EMBEDDED_ASSET]: (node, children) => {
+      [BLOCKS.EMBEDDED_ASSET]: node => {
         const theImage = data.allImages.nodes.filter(
           ({ contentful_id }) =>
             contentful_id === node.data.target.sys.contentful_id
@@ -30,7 +30,11 @@ const TemplateCakesPage = ({ data }) => {
       <h1>{data.cakesPage.heading}</h1>
       {documentToReactComponents(data.cakesPage.description?.json, options)}
       {data.cakesPage.cakesLists?.map(cakesList => (
-        <CakesList key={cakesList.heading} cakesList={cakesList} />
+        <CakesList
+          key={cakesList.heading}
+          cakesList={cakesList}
+          allImages={data.allImages}
+        />
       ))}
     </Layout>
   )
