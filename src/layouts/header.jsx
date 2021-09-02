@@ -26,8 +26,8 @@ const Header = () => {
       </Row>
       <Nav justify defaultActiveKey='/'>
         <Nav.Item>
-          <Link to='/full-moon-box' activeClassName='active'>
-            Full Moon Box 📪
+          <Link to='/' activeClassName='active'>
+            Sweet Home
           </Link>
         </Nav.Item>
         <Nav.Item>

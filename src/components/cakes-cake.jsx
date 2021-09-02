@@ -58,7 +58,7 @@ const ComponentCakesCake = ({ cakesCake }) => {
             aria-expanded={cakeOrder}
             className={cakeOrder ? 'd-none' : ''}
           >
-            Add my order
+            Add to bag
           </Button>
           <Collapse in={cakeOrder}>
             <div>
