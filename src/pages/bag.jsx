@@ -115,15 +115,15 @@ const Bag = () => {
     state.bag.things.cake.filter(f => f.customizationBirthdayCake).length > 0
   const excludeDates = []
   for (let i = 0; i < 31; i++) {
-    const weekday = new Date(2021, 8, i).getDay()
-    if (weekday === 1 || weekday === 2) {
-      excludeDates.push(new Date(2021, 8, i))
-    }
-  }
-  for (let i = 0; i < 32; i++) {
     const weekday = new Date(2021, 9, i).getDay()
     if (weekday === 1 || weekday === 2) {
       excludeDates.push(new Date(2021, 9, i))
+    }
+  }
+  for (let i = 0; i < 32; i++) {
+    const weekday = new Date(2021, 10, i).getDay()
+    if (weekday === 1 || weekday === 2) {
+      excludeDates.push(new Date(2021, 10, i))
     }
   }
 
@@ -143,9 +143,6 @@ const Bag = () => {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
-      })
-      metadata['Pick-up time'] = d.time.toLocaleString('en-GB', {
-        timeStyle: 'medium'
       })
     }
     needPickup && (metadata['Notes'] = d.notes)
@@ -309,7 +306,7 @@ const Bag = () => {
                               ? addDays(new Date(), 3)
                               : addDays(new Date(), 2)
                           }
-                          maxDate={new Date(2021, 9, 31)}
+                          maxDate={new Date(2021, 10, 30)}
                           dateFormat='yyyy - MM - dd'
                           excludeDates={excludeDates}
                           onChange={e => props.onChange(e)}
@@ -326,29 +323,6 @@ const Bag = () => {
                       you can always drop by our shop to buy our daily cakes.
                       See <Link to='/'>opening hours</Link>.
                     </Form.Text>
-                  </Form.Group>
-                  <Form.Group>
-                    <Form.Label>Cakes pick-up time:</Form.Label>
-                    <Controller
-                      name='time'
-                      control={control}
-                      rules={{ required: true }}
-                      render={props => (
-                        <ReactDatePicker
-                          customInput={<Form.Control type='text' />}
-                          showTimeSelect
-                          showTimeSelectOnly
-                          timeIntervals={30}
-                          timeCaption='Time'
-                          minTime={setHours(setMinutes(new Date(), 0), 12)}
-                          maxTime={setHours(setMinutes(new Date(), 0), 16)}
-                          dateFormat='HH:mm'
-                          timeFormat='HH:mm'
-                          onChange={e => props.onChange(e)}
-                          selected={props.value}
-                        />
-                      )}
-                    />
                   </Form.Group>
                   <Form.Group>
                     <Form.Label>Pick-up notes:</Form.Label>

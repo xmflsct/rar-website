@@ -2,7 +2,7 @@ const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 const ky = require('ky-universal')
 var _ = require('lodash')
 
-async function checkRecaptcha (req) {
+async function checkRecaptcha(req) {
   if (!req.body.token)
     return {
       success: false,
@@ -20,7 +20,7 @@ async function checkRecaptcha (req) {
     .json()
 }
 
-async function checkContentful (req) {
+async function checkContentful(req) {
   if (req.body.items.length === 0)
     return {
       success: false,
@@ -88,9 +88,8 @@ async function checkContentful (req) {
     quantity: 1
   })
   req.body.metadata['Pick-up date'] &&
-    req.body.metadata['Pick-up time'] &&
     line_items.push({
-      name: `Pick up: ${req.body.metadata['Pick-up date']}, ${req.body.metadata['Pick-up time']}`,
+      name: `Pick up: ${req.body.metadata['Pick-up date']}`,
       amount: 0,
       currency: 'eur',
       quantity: 1
@@ -98,7 +97,7 @@ async function checkContentful (req) {
   return { success: true, line_items: line_items }
 }
 
-async function stripeSession (req, line_items) {
+async function stripeSession(req, line_items) {
   let sessionData = {}
   try {
     sessionData = req.body.shipping
