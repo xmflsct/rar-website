@@ -315,8 +315,7 @@ const Bag = () => {
                       )}
                     />
                     <Form.Text className='text-muted'>
-                      Please note that September 20th and 21st are pick-up only
-                      days, no eat-in possible
+                      Pick up hours: 12:00 - 17:00
                     </Form.Text>
                     <Form.Text className='text-muted'>
                       We support min +2 days pick-up. If you have urgent order,
