@@ -315,7 +315,7 @@ const Bag = () => {
                       )}
                     />
                     <Form.Text className='text-muted'>
-                      Pick up hours: 12:00 - 17:00
+                      Pick up hours: 12:00 - 17:09
                     </Form.Text>
                     <Form.Text className='text-muted'>
                       We support min +2 days pick-up. If you have urgent order,
