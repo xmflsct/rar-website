@@ -49,7 +49,7 @@ const Hightea = () => {
         <li>[Daily Japanese Sandwich]</li>
         <li>[2h Unlimited Tea from Tea Menu]</li>
       </ul>
-      <h2>Hightea Time:</h2>
+      <h2>Hightea Time</h2>
       <p>
         We serve High-tea from Wednesday to Sunday.
         <br />
@@ -59,7 +59,7 @@ const Hightea = () => {
         <strong>Second round</strong> 14:30-16:45, we suggest you book your
         start time no later than 15:15.
       </p>
-      <h2>How to reserve:</h2>
+      <h2>How to reserve</h2>
       <ol>
         <li>
           Reservation can be made via email info@roundandround.nl Please mention
@@ -69,12 +69,11 @@ const Hightea = () => {
         <li>Minimal 2 people.</li>
         <li>Please reserve 2 working days in advance for certainty. </li>
       </ol>
-      <h2>Cancellation policy: </h2>
-      <p>
-        If you want to cancel, please let us know at least 24 hours prior to
-        your booking time. Otherwise 50% of the high-tea value will be charged.
-      </p>
-      <h2>Allergy:</h2>
+      <h2>Cancellation policy</h2>
+      <p>If you want to cancel, please let us know at least 24 hours prior to your booking time.</p>
+      <p>If you simply do not show up to a booked Hightea without contacting us or consecutively late you may not be able to make any future appointments.</p>
+      <p>Thank you for understanding.</p>
+      <h2>Allergy</h2>
       <p>
         Please let us know ASAP once you book your hightea, we will take care of
         it.
