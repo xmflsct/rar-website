@@ -1,16 +1,16 @@
-import React, { useContext } from "react"
-import { Button, Col, Container, Row } from "react-bootstrap"
-import { Link } from "gatsby"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faShoppingBasket } from "@fortawesome/free-solid-svg-icons"
+import React, { useContext } from 'react'
+import { Button, Col, Container, Row } from 'react-bootstrap'
+import { Link } from 'gatsby'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faShoppingBasket } from '@fortawesome/free-solid-svg-icons'
 
-import SEO from "./seo"
-import Header from "./header"
-import Footer from "./footer"
+import SEO from './seo'
+import Header from './header'
+import Footer from './footer'
 
-import { ContextBag } from "./context-bag"
+import { ContextBag } from './context-bag'
 
-const Layout = ({ children, name, SEOtitle, SEOkeywords }) => {
+const Layout = ({ children, name, SEOtitle, SEOkeywords, wider = false }) => {
   const [toggleNav, setToggleNav] = React.useState(false)
   const { state } = useContext(ContextBag)
 
@@ -30,7 +30,7 @@ const Layout = ({ children, name, SEOtitle, SEOkeywords }) => {
       <div className='sticky-nav'>
         <Button
           className={`nav-burger hamburger hamburger--collapse ${
-            toggleNav ? "is-active" : ""
+            toggleNav ? 'is-active' : ''
           }`}
           variant='link'
           onClick={() => setToggleNav(!toggleNav)}
@@ -46,12 +46,12 @@ const Layout = ({ children, name, SEOtitle, SEOkeywords }) => {
         </Button>
       </div>
       <Container
-        className={`site-wrapper ${name} ${toggleNav ? "site-head-open" : ""}`}
+        className={`site-wrapper ${name} ${toggleNav ? 'site-head-open' : ''}`}
       >
         <SEO title={SEOtitle} keywords={SEOkeywords} />
         <Header />
         <Row className='justify-content-center'>
-          <Col as='main' lg={10}>
+          <Col as='main' lg={wider ? 12 : 10}>
             {children}
           </Col>
         </Row>
