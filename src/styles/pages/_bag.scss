@@ -1,4 +1,7 @@
 .site-wrapper.bag {
+  .react-datepicker-wrapper {
+    display: block;
+  }
   .bag-item {
     margin-bottom: 1rem;
 
@@ -15,5 +18,8 @@
       right: 0;
       border: none;
     }
+  }
+  .cancellation {
+    margin-bottom: 0.5rem;
   }
 }

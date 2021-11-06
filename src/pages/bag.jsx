@@ -238,12 +238,13 @@ const Bag = () => {
       name='bag'
       SEOtitle='Bag'
       SEOkeywords={['Shopping Bag', 'Rotterdam']}
+      wider
     >
       <h1>My Bag</h1>
       {sumBy(Object.keys(state.bag.things), k => state.bag.things[k].length) !==
       0 ? (
         <Row>
-          <Col md={8}>
+          <Col md={7}>
             <h2>Overview</h2>
             <Row className='mb-3'>
               <Col xs={5}>Transaction fee:</Col>
@@ -252,18 +253,8 @@ const Bag = () => {
             {Object.keys(state.bag.things).map(key =>
               BagList(state.bag.things[key], dispatch)
             )}
-            <p>
-              <strong>Cancellation Policy:</strong>
-            </p>
-            <ul>
-              <li>
-                50% off the payment value will be charged within 48 hours of the
-                pick up time.
-              </li>
-              <li>No refund within 24 hours of the pick up time.</li>
-            </ul>
           </Col>
-          <Col md={4}>
+          <Col md={5}>
             <h2>Summary</h2>
             <p>
               <strong>Total: {currency.full(amountTotal + 0.3)}</strong>
@@ -300,6 +291,7 @@ const Bag = () => {
                       rules={{ required: true }}
                       render={props => (
                         <ReactDatePicker
+                          required
                           customInput={<Form.Control type='text' />}
                           minDate={
                             new Date().getUTCHours() > 7
@@ -315,7 +307,7 @@ const Bag = () => {
                       )}
                     />
                     <Form.Text className='text-muted'>
-                      Pick up hours: 12:00 - 17:09
+                      Pick up hours: 12:00 - 17:00
                     </Form.Text>
                     <Form.Text className='text-muted'>
                       We support min +2 days pick-up. If you have urgent order,
@@ -334,8 +326,8 @@ const Bag = () => {
                   </Form.Group>
                 </>
               )}
+              <Form.Label>Gift card number:</Form.Label>
               <InputGroup className='mb-3'>
-                <Form.Label>Gift card number:</Form.Label>
                 <InputGroup.Prepend>
                   <InputGroup.Text>IPG000NU</InputGroup.Text>
                 </InputGroup.Prepend>
@@ -360,6 +352,28 @@ const Bag = () => {
                   </Form.Text>
                 </Form.Group>
               )}
+              <Form.Group className='mb-3' controlId='formBasicCheckbox'>
+                <Form.Check
+                  type='checkbox'
+                  label='I have read and understood the cancellation policy:'
+                  required
+                  ref={register}
+                />
+                <Form.Text>
+                  <p className='cancellation'>
+                    Orders have to be collected on your selected date and within
+                    the opening hours.
+                  </p>
+                  <p className='cancellation'>
+                    We cannot issue a refund or exchange for any uncollected
+                    cakes.
+                  </p>
+                  <p className='cancellation'>
+                    Orders CANNOT be exchanged, canceled or refunded after 48
+                    hours before 11:00 am of the collection day.
+                  </p>
+                </Form.Text>
+              </Form.Group>
               <Button
                 variant='rar'
                 type='submit'
