@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Button, Col, Form, InputGroup, Row, Spinner } from 'react-bootstrap'
 import ReactDatePicker from 'react-datepicker'
-import { addDays, setHours, setMinutes } from 'date-fns'
+import { addDays } from 'date-fns'
 import 'react-datepicker/dist/react-datepicker.css'
 import { Link } from 'gatsby'
 import Img from 'gatsby-image'
@@ -115,15 +115,15 @@ const Bag = () => {
     state.bag.things.cake.filter(f => f.customizationBirthdayCake).length > 0
   const excludeDates = []
   for (let i = 0; i < 31; i++) {
-    const weekday = new Date(2021, 9, i).getDay()
-    if (weekday === 1 || weekday === 2) {
-      excludeDates.push(new Date(2021, 9, i))
-    }
-  }
-  for (let i = 0; i < 32; i++) {
     const weekday = new Date(2021, 10, i).getDay()
     if (weekday === 1 || weekday === 2) {
       excludeDates.push(new Date(2021, 10, i))
+    }
+  }
+  for (let i = 0; i < 25; i++) {
+    const weekday = new Date(2021, 11, i).getDay()
+    if (weekday === 1 || weekday === 2) {
+      excludeDates.push(new Date(2021, 11, i))
     }
   }
 
@@ -298,7 +298,7 @@ const Bag = () => {
                               ? addDays(new Date(), 3)
                               : addDays(new Date(), 2)
                           }
-                          maxDate={new Date(2021, 10, 30)}
+                          maxDate={new Date(2021, 11, 25)}
                           dateFormat='yyyy - MM - dd'
                           excludeDates={excludeDates}
                           onChange={e => props.onChange(e)}
