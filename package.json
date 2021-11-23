@@ -63,5 +63,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/xmflsct/rar-website.git"
+  },
+  "volta": {
+    "node": "14.18.1"
   }
 }
