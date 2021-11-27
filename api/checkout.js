@@ -114,33 +114,21 @@ async function checkContentful(req) {
 async function stripeSession(req, line_items) {
   let sessionData = {}
   try {
-    sessionData = req.body.shipping
-      ? {
-          payment_method_types: ['ideal'],
-          customer_email: req.body.customer.email,
-          line_items: line_items,
-          shipping_address_collection: {
-            allowed_countries: ['NL']
-          },
-          phone_number_collection: { enabled: true },
-          success_url:
-            req.body.url.success + '?session_id={CHECKOUT_SESSION_ID}',
-          cancel_url: req.body.url.cancel,
-          payment_intent_data: {
-            metadata: req.body.metadata
-          }
+    sessionData = {
+      ...(req.body.shipping && {
+        shipping_address_collection: {
+          allowed_countries: ['NL']
         }
-      : {
-          payment_method_types: ['ideal'],
-          customer_email: req.body.customer.email,
-          line_items: req.body.items,
-          success_url:
-            req.body.url.success + '?session_id={CHECKOUT_SESSION_ID}',
-          cancel_url: req.body.url.cancel,
-          payment_intent_data: {
-            metadata: req.body.metadata
-          }
-        }
+      }),
+      payment_method_types: ['ideal'],
+      line_items,
+      phone_number_collection: { enabled: true },
+      success_url: req.body.url.success + '?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: req.body.url.cancel,
+      payment_intent_data: {
+        metadata: req.body.metadata
+      }
+    }
   } catch (err) {
     return { success: false, error: err }
   }

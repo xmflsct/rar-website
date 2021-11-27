@@ -135,10 +135,8 @@ const Bag = () => {
     handleSubmit(data => formSubmit(data, token))()
   }
   const formSubmit = async (d, t) => {
-    const customer = { email: d.email }
     const items = []
     const metadata = {
-      'Phone number': d.phone,
       'Gift card number': 'IPG000NU-' + d.giftcardnum
     }
     if (needPickup) {
@@ -228,7 +226,7 @@ const Bag = () => {
       }
     }
 
-    const res = await checkout(t, customer, items, metadata, url, shipping)
+    const res = await checkout(t, items, metadata, url, shipping)
     if (res.sessionId) {
       const stripe = await stripePromise
       const { error } = await stripe.redirectToCheckout({
@@ -277,31 +275,10 @@ const Bag = () => {
               <strong>Total: {currency.full(amountTotal + 0.3)}</strong>
             </p>
             <Form onSubmit={e => onSubmit(e)} className='mb-3 checkout'>
-              <Form.Group>
-                <Form.Label>Email:</Form.Label>
-                <Form.Control
-                  name='email'
-                  type='email'
-                  required
-                  placeholder='me@example.com'
-                  ref={register}
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Phone:</Form.Label>
-                <Form.Control
-                  name='phone'
-                  type='tel'
-                  required
-                  pattern='06\d{8}'
-                  placeholder='0612345678'
-                  ref={register}
-                />
-              </Form.Group>
               {needPickup && (
                 <>
                   <Form.Group>
-                    <Form.Label>Cakes pick-up date:</Form.Label>
+                    <Form.Label>Cakes pick-up date: *</Form.Label>
                     <Controller
                       name='date'
                       control={control}
