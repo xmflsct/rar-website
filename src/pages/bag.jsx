@@ -134,26 +134,22 @@ const Bag = () => {
   const userVerified = async token => {
     handleSubmit(data => formSubmit(data, token))()
   }
-  const formSubmit = async (d, t) => {
+  const formSubmit = async (data, token) => {
     const items = []
     const metadata = {
-      'Gift card number': 'IPG000NU-' + d.giftcardnum
+      'Gift card number': 'IPG000NU-' + data.giftcardnum
     }
     if (needPickup) {
-      metadata['Pick-up date'] = d.date.toLocaleString('en-GB', {
+      metadata['Pick-up date'] = data.date.toLocaleString('en-GB', {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       })
     }
-    needPickup && (metadata['Notes'] = d.notes)
+    needPickup && (metadata['Notes'] = data.notes)
     if (hasBirthdayCake) {
-      metadata['Birthday cake voucher'] = d.voucher
-    }
-    const url = {
-      success: window.location.origin + '/thank-you',
-      cancel: window.location.origin + '/bag'
+      metadata['Birthday cake voucher'] = data.voucher
     }
     const shipping =
       (find(state.bag.things.others, [
@@ -226,7 +222,7 @@ const Bag = () => {
       }
     }
 
-    const res = await checkout(t, items, metadata, url, shipping)
+    const res = await checkout({ token, items, metadata, shipping })
     if (res.sessionId) {
       const stripe = await stripePromise
       const { error } = await stripe.redirectToCheckout({

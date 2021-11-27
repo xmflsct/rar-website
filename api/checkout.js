@@ -65,32 +65,18 @@ async function checkContentful(req) {
     const iContentful = _.findIndex(response.items, r => {
       return r.sys.id === item.contentful_id
     })
-    if (item.type === 'Shipping') {
-      if (item.amount === 7) {
-        item.amount = item.amount * 10 * 10
-        item.currency = 'eur'
-        delete item.type
-        delete item.contentful_id
-      } else {
-        return {
-          success: false,
-          error: '[checkout - checkContentful] Submitted price error'
-        }
-      }
+    if (
+      item.amount ===
+      response.items[iContentful].fields[`type${item.type}Price`]
+    ) {
+      item.amount = item.amount * 10 * 10
+      item.currency = 'eur'
+      delete item.type
+      delete item.contentful_id
     } else {
-      if (
-        item.amount ===
-        response.items[iContentful].fields[`type${item.type}Price`]
-      ) {
-        item.amount = item.amount * 10 * 10
-        item.currency = 'eur'
-        delete item.type
-        delete item.contentful_id
-      } else {
-        return {
-          success: false,
-          error: '[checkout - checkContentful] Submitted price error'
-        }
+      return {
+        success: false,
+        error: '[checkout - checkContentful] Submitted price error'
       }
     }
   }
@@ -114,20 +100,28 @@ async function checkContentful(req) {
 async function stripeSession(req, line_items) {
   let sessionData = {}
   try {
+    const returnURLBase =
+      process.env.VERCEL_ENV === 'development'
+        ? 'https://roundandround.nl'
+        : 'http://localhost:3000'
+    const returnURL = {
+      success_url: `${returnURLBase}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${returnURLBase}/bag`
+    }
     sessionData = {
       ...(req.body.shipping && {
         shipping_address_collection: {
           allowed_countries: ['NL']
-        }
+        },
+        shipping_options: { shipping_rate: req.body.shipping }
       }),
       payment_method_types: ['ideal'],
       line_items,
       phone_number_collection: { enabled: true },
-      success_url: req.body.url.success + '?session_id={CHECKOUT_SESSION_ID}',
-      cancel_url: req.body.url.cancel,
       payment_intent_data: {
         metadata: req.body.metadata
-      }
+      },
+      ...returnURL
     }
   } catch (err) {
     return { success: false, error: err }
