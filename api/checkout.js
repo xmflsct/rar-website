@@ -100,32 +100,42 @@ async function checkContentful(req) {
 async function stripeSession(req, line_items) {
   let sessionData = {}
   try {
-    sessionData = req.body.shipping
-      ? {
-          payment_method_types: ['ideal'],
-          customer_email: req.body.customer.email,
-          line_items: line_items,
-          shipping_address_collection: {
-            allowed_countries: ['NL']
-          },
-          success_url:
-            req.body.url.success + '?session_id={CHECKOUT_SESSION_ID}',
-          cancel_url: req.body.url.cancel,
-          payment_intent_data: {
-            metadata: req.body.metadata
+    const returnURLBase =
+      process.env.VERCEL_ENV === 'development'
+        ? 'https://roundandround.nl'
+        : 'http://localhost:3000'
+    const returnURL = {
+      success_url: `${returnURLBase}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${returnURLBase}/bag`
+    }
+    const shipping_options = []
+    if (req.body.shippingFee) {
+      shipping_options.push({
+        shipping_rate_data: {
+          display_name: '📦 Shipping in NL',
+          type: 'fixed_amount',
+          fixed_amount: {
+            amount: req.body.shippingFee * 10 * 10,
+            currency: 'EUR'
           }
         }
-      : {
-          payment_method_types: ['ideal'],
-          customer_email: req.body.customer.email,
-          line_items: req.body.items,
-          success_url:
-            req.body.url.success + '?session_id={CHECKOUT_SESSION_ID}',
-          cancel_url: req.body.url.cancel,
-          payment_intent_data: {
-            metadata: req.body.metadata
-          }
+      })
+    }
+    sessionData = {
+      ...(req.body.shippingFee && {
+        shipping_address_collection: {
+          allowed_countries: ['NL']
         }
+      }),
+      shipping_options,
+      payment_method_types: ['ideal'],
+      line_items,
+      phone_number_collection: { enabled: true },
+      payment_intent_data: {
+        metadata: req.body.metadata
+      },
+      ...returnURL
+    }
   } catch (err) {
     return { success: false, error: err }
   }
@@ -161,6 +171,7 @@ export default async (req, res) => {
   const resContentful = await checkContentful(req)
   console.log('[checkout - checkContentful] End')
   if (!resContentful.success) {
+    console.log(resContentful.error)
     res.status(400).send({ error: resContentful.error })
     return
   }

@@ -1,8 +1,8 @@
-import React, { useContext, useState } from "react"
-import { Button, Form } from "react-bootstrap"
-import MD5 from "crypto-js/md5"
+import React, { useContext, useState } from 'react'
+import { Button, Form } from 'react-bootstrap'
+import MD5 from 'crypto-js/md5'
 
-import { ContextBag } from "../../layouts/context-bag"
+import { ContextBag } from '../../layouts/context-bag'
 
 const ThingForm = ({ thing }) => {
   const { dispatch } = useContext(ContextBag)
@@ -14,9 +14,8 @@ const ThingForm = ({ thing }) => {
     e.preventDefault()
     if (piece !== 0 || whole !== 0) {
       dispatch({
-        type: "add",
+        type: 'add',
         data: {
-          type: "food",
           hash: MD5(new Date().getTime() + thing.contentful_id).toString(),
           contentful_id: thing.contentful_id,
           name: thing.name,

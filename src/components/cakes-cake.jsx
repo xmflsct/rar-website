@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Col, Collapse } from 'react-bootstrap'
+import { Button, Col, Collapse, Modal } from 'react-bootstrap'
 import { graphql } from 'gatsby'
 import Img from 'gatsby-image'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
@@ -9,9 +9,15 @@ import * as currency from './utils/currency'
 
 const ComponentCakesCake = ({ cakesCake }) => {
   const [cakeOrder, setCakeOrder] = useState(false)
+  const [modal, setModal] = useState(false)
 
   return (
-    <Col key={cakesCake.contentful_id} md={4} xs={6} className='cakes-cake'>
+    <Col
+      key={cakesCake.contentful_id}
+      md={6}
+      xs={cakesCake.special ? 12 : 6}
+      className='cakes-cake'
+    >
       <Img
         fluid={cakesCake.image.fluid}
         style={{
@@ -30,21 +36,41 @@ const ComponentCakesCake = ({ cakesCake }) => {
       <div className='cake-price'>
         {cakesCake.typeAPrice && (
           <p>
-            {currency.full(cakesCake.typeAPrice)}/{cakesCake.typeAUnit.typeUnit}
+            {currency.full(cakesCake.typeAPrice)} /{' '}
+            {cakesCake.typeAUnit.typeUnit}
           </p>
         )}
         {cakesCake.typeBPrice && (
           <p>
-            {currency.full(cakesCake.typeBPrice)}/{cakesCake.typeBUnit.typeUnit}
+            {currency.full(cakesCake.typeBPrice)} /{' '}
+            {cakesCake.typeBUnit.typeUnit}
           </p>
         )}
         {cakesCake.typeCPrice && (
           <p>
-            {currency.full(cakesCake.typeCPrice)}/{cakesCake.typeCUnit.typeUnit}
+            {currency.full(cakesCake.typeCPrice)} /{' '}
+            {cakesCake.typeCUnit.typeUnit}
           </p>
         )}
       </div>
       {/* )} */}
+      {cakesCake.additionalInformation && (
+        <>
+          <Button variant='link' onClick={() => setModal(true)}>
+            Please read before ordering
+          </Button>
+          <Modal show={modal} onHide={() => setModal(false)}>
+            <Modal.Body>
+              {documentToReactComponents(cakesCake.additionalInformation?.json)}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant='secondary' onClick={() => setModal(false)}>
+                Close
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+      )}
       {cakesCake.description && (
         <div className='cake-description'>
           {documentToReactComponents(cakesCake.description?.json)}
@@ -58,7 +84,7 @@ const ComponentCakesCake = ({ cakesCake }) => {
             aria-expanded={cakeOrder}
             className={cakeOrder ? 'd-none' : ''}
           >
-            Add to bag
+            Show Options
           </Button>
           <Collapse in={cakeOrder}>
             <div>
@@ -87,6 +113,7 @@ export const query = graphql`
     }
     name
     availableOnline
+    special
     typeAPrice
     typeAUnit {
       typeUnit
@@ -103,7 +130,15 @@ export const query = graphql`
       type
       options
     }
+    customizationShipping {
+      contentful_id
+      name
+      price
+    }
     description {
+      json
+    }
+    additionalInformation {
       json
     }
   }
