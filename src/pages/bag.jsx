@@ -177,7 +177,9 @@ const Bag = () => {
             : `${thing.name} | ${thing.typeAUnit.typeUnit}${
                 thing.customizationShipping?.price > 0
                   ? ` | Shipping ${thing.customizationShipping?.name}`
-                  : shippingFee && ' | Pick up in store'
+                  : shippingFee
+                  ? ' | Pick up in store'
+                  : ''
               }`,
           amount: thing.typeAPrice,
           quantity: parseInt(thing.typeAAmount),
@@ -192,7 +194,9 @@ const Bag = () => {
             : `${thing.name} | ${thing.typeBUnit.typeUnit}${
                 thing.customizationShipping?.price > 0
                   ? ` | Shipping ${thing.customizationShipping?.name}`
-                  : shippingFee && ' | Pick up in store'
+                  : shippingFee
+                  ? ' | Pick up in store'
+                  : ''
               }`,
           amount: thing.typeBPrice,
           quantity: parseInt(thing.typeBAmount),
@@ -207,7 +211,9 @@ const Bag = () => {
             : `${thing.name} | ${thing.typeCUnit.typeUnit}${
                 thing.customizationShipping?.price > 0
                   ? ` | Shipping ${thing.customizationShipping?.name}`
-                  : shippingFee && ' | Pick up in store'
+                  : shippingFee
+                  ? ' | Pick up in store'
+                  : ''
               }`,
           amount: thing.typeCPrice,
           quantity: parseInt(thing.typeCAmount),
