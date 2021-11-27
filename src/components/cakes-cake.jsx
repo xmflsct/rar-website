@@ -11,7 +11,12 @@ const ComponentCakesCake = ({ cakesCake }) => {
   const [cakeOrder, setCakeOrder] = useState(false)
 
   return (
-    <Col key={cakesCake.contentful_id} md={4} xs={6} className='cakes-cake'>
+    <Col
+      key={cakesCake.contentful_id}
+      md={4}
+      xs={cakesCake.special ? 12 : 6}
+      className='cakes-cake'
+    >
       <Img
         fluid={cakesCake.image.fluid}
         style={{
@@ -58,7 +63,7 @@ const ComponentCakesCake = ({ cakesCake }) => {
             aria-expanded={cakeOrder}
             className={cakeOrder ? 'd-none' : ''}
           >
-            Add to bag
+            Show Options
           </Button>
           <Collapse in={cakeOrder}>
             <div>
@@ -87,6 +92,7 @@ export const query = graphql`
     }
     name
     availableOnline
+    special
     typeAPrice
     typeAUnit {
       typeUnit
@@ -102,6 +108,11 @@ export const query = graphql`
     customizationBirthdayCake {
       type
       options
+    }
+    customizationShipping {
+      contentful_id
+      name
+      price
     }
     description {
       json

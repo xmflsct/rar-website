@@ -39,37 +39,40 @@ const BagList = (things, dispatch) => {
               {thing.typeAAmount} {thing.typeAUnit.typeUnit} ×{' '}
               {currency.full(thing.typeAPrice)}
             </p>
-          ) : (
-            ''
-          )}
+          ) : null}
           {thing.typeBAmount ? (
             <p>
               {thing.typeBAmount} {thing.typeBUnit.typeUnit} ×{' '}
               {currency.full(thing.typeBPrice)}
             </p>
-          ) : (
-            ''
-          )}
+          ) : null}
           {thing.typeCAmount ? (
             <p>
               {thing.typeCAmount} {thing.typeCUnit.typeUnit} ×{' '}
               {currency.full(thing.typeCPrice)}
             </p>
-          ) : (
-            ''
-          )}
+          ) : null}
           {thing.customizationBirthdayCake &&
             Object.keys(thing.customizationBirthdayCake).map(k => {
               return (
                 <p key={k}>{`${k}: ${thing.customizationBirthdayCake[k]}`}</p>
               )
             })}
+          {thing.customizationShipping ? (
+            <p>
+              1 Shipping {thing.customizationShipping.name} ×{' '}
+              {currency.full(thing.customizationShipping.price)}
+            </p>
+          ) : null}
           <br />
           Total:{' '}
           {currency.full(
             (thing.typeAAmount ? thing.typeAAmount * thing.typeAPrice : 0) +
               (thing.typeBAmount ? thing.typeBAmount * thing.typeBPrice : 0) +
-              (thing.typeCAmount ? thing.typeCAmount * thing.typeCPrice : 0)
+              (thing.typeCAmount ? thing.typeCAmount * thing.typeCPrice : 0) +
+              (thing.customizationShipping
+                ? thing.customizationShipping.price
+                : 0)
           )}
         </div>
         <Button
@@ -105,7 +108,8 @@ const Bag = () => {
         amountTotal +
         (item.typeAAmount ? item.typeAAmount * item.typeAPrice : 0) +
         (item.typeBAmount ? item.typeBAmount * item.typeBPrice : 0) +
-        (item.typeCAmount ? item.typeCAmount * item.typeCPrice : 0)
+        (item.typeCAmount ? item.typeCAmount * item.typeCPrice : 0) +
+        (item.customizationShipping ? item.customizationShipping.price : 0)
     }
   }
 
@@ -154,12 +158,16 @@ const Bag = () => {
       cancel: window.location.origin + '/bag'
     }
     const shipping =
-      find(state.bag.things.others, [
+      (find(state.bag.things.others, [
         'contentful_id',
         '44AIXbCxKgKAkDr2366hZ2'
       ]) !== undefined
         ? true
-        : false
+        : false) ||
+      state.bag.things.cake.filter(
+        cake =>
+          cake.customizationShipping && cake.customizationShipping.price > 0
+      ).length > 0
 
     for (const type of Object.keys(state.bag.things)) {
       for (const thing of state.bag.things[type]) {
@@ -207,6 +215,15 @@ const Bag = () => {
             amount: thing.typeCPrice,
             quantity: parseInt(thing.typeCAmount),
             images: ['https:' + thing.image.fluid.src]
+          })
+        thing.customizationShipping &&
+          thing.customizationShipping.price > 0 &&
+          items.push({
+            type: 'Shipping',
+            contentful_id: thing.customizationShipping.contentful_id,
+            name: `${thing.name} Shipping | ${thing.customizationShipping.name}`,
+            amount: thing.customizationShipping.price,
+            quantity: 1
           })
       }
     }

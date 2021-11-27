@@ -65,18 +65,32 @@ async function checkContentful(req) {
     const iContentful = _.findIndex(response.items, r => {
       return r.sys.id === item.contentful_id
     })
-    if (
-      item.amount ===
-      response.items[iContentful].fields[`type${item.type}Price`]
-    ) {
-      item.amount = item.amount * 10 * 10
-      item.currency = 'eur'
-      delete item.type
-      delete item.contentful_id
+    if (item.type === 'Shipping') {
+      if (item.amount === 7) {
+        item.amount = item.amount * 10 * 10
+        item.currency = 'eur'
+        delete item.type
+        delete item.contentful_id
+      } else {
+        return {
+          success: false,
+          error: '[checkout - checkContentful] Submitted price error'
+        }
+      }
     } else {
-      return {
-        success: false,
-        error: '[checkout - checkContentful] Submitted price error'
+      if (
+        item.amount ===
+        response.items[iContentful].fields[`type${item.type}Price`]
+      ) {
+        item.amount = item.amount * 10 * 10
+        item.currency = 'eur'
+        delete item.type
+        delete item.contentful_id
+      } else {
+        return {
+          success: false,
+          error: '[checkout - checkContentful] Submitted price error'
+        }
       }
     }
   }
@@ -108,6 +122,7 @@ async function stripeSession(req, line_items) {
           shipping_address_collection: {
             allowed_countries: ['NL']
           },
+          phone_number_collection: { enabled: true },
           success_url:
             req.body.url.success + '?session_id={CHECKOUT_SESSION_ID}',
           cancel_url: req.body.url.cancel,
