@@ -9,7 +9,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { faStripe, faIdeal } from '@fortawesome/free-brands-svg-icons'
-import { find, sumBy } from 'lodash'
+import { find, maxBy, sumBy } from 'lodash'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { loadStripe } from '@stripe/stripe-js'
 import { checkout } from '../api/checkout'
@@ -58,21 +58,17 @@ const BagList = (things, dispatch) => {
                 <p key={k}>{`${k}: ${thing.customizationBirthdayCake[k]}`}</p>
               )
             })}
-          {thing.customizationShipping ? (
-            <p>
-              1 Shipping {thing.customizationShipping.name} ×{' '}
-              {currency.full(thing.customizationShipping.price)}
-            </p>
-          ) : null}
+          <br />
+          {thing.customizationShipping &&
+            thing.customizationShipping.price > 0 && (
+              <>📧 included in shipping</>
+            )}
           <br />
           Total:{' '}
           {currency.full(
             (thing.typeAAmount ? thing.typeAAmount * thing.typeAPrice : 0) +
               (thing.typeBAmount ? thing.typeBAmount * thing.typeBPrice : 0) +
-              (thing.typeCAmount ? thing.typeCAmount * thing.typeCPrice : 0) +
-              (thing.customizationShipping
-                ? thing.customizationShipping.price
-                : 0)
+              (thing.typeCAmount ? thing.typeCAmount * thing.typeCPrice : 0)
           )}
         </div>
         <Button
@@ -101,6 +97,14 @@ const Bag = () => {
   const { control, formState, handleSubmit, register } = useForm()
   const recaptchaRef = React.createRef()
 
+  const findShipping = maxBy(
+    state.bag.things.cake,
+    thing => thing?.customizationShipping?.price
+  )
+  const shippingFee = findShipping
+    ? findShipping.customizationShipping?.price
+    : null
+
   let amountTotal = 0
   for (const type in state.bag.things) {
     for (const item of state.bag.things[type]) {
@@ -108,8 +112,7 @@ const Bag = () => {
         amountTotal +
         (item.typeAAmount ? item.typeAAmount * item.typeAPrice : 0) +
         (item.typeBAmount ? item.typeBAmount * item.typeBPrice : 0) +
-        (item.typeCAmount ? item.typeCAmount * item.typeCPrice : 0) +
-        (item.customizationShipping ? item.customizationShipping.price : 0)
+        (item.typeCAmount ? item.typeCAmount * item.typeCPrice : 0)
     }
   }
 
@@ -152,16 +155,13 @@ const Bag = () => {
       metadata['Birthday cake voucher'] = data.voucher
     }
     const shipping =
+      shippingFee ||
       (find(state.bag.things.others, [
         'contentful_id',
         '44AIXbCxKgKAkDr2366hZ2'
       ]) !== undefined
         ? true
-        : false) ||
-      state.bag.things.cake.filter(
-        cake =>
-          cake.customizationShipping && cake.customizationShipping.price > 0
-      ).length > 0
+        : false)
 
     for (const type of Object.keys(state.bag.things)) {
       for (const thing of state.bag.things[type]) {
@@ -210,15 +210,6 @@ const Bag = () => {
             quantity: parseInt(thing.typeCAmount),
             images: ['https:' + thing.image.fluid.src]
           })
-        thing.customizationShipping &&
-          thing.customizationShipping.price > 0 &&
-          items.push({
-            type: 'Shipping',
-            contentful_id: thing.customizationShipping.contentful_id,
-            name: `${thing.name} Shipping | ${thing.customizationShipping.name}`,
-            amount: thing.customizationShipping.price,
-            quantity: 1
-          })
       }
     }
 
@@ -257,18 +248,34 @@ const Bag = () => {
         <Row>
           <Col md={7}>
             <h2>Overview</h2>
-            <Row className='mb-3'>
-              <Col xs={5}>Transaction fee:</Col>
-              <Col xs={7}>{currency.full(0.3)}</Col>
-            </Row>
             {Object.keys(state.bag.things).map(key =>
               BagList(state.bag.things[key], dispatch)
             )}
           </Col>
           <Col md={5}>
             <h2>Summary</h2>
+            Transaction fee: {currency.full(0.3)}
+            <br />
+            {state.bag.things.cake.filter(
+              thing =>
+                thing.customizationShipping &&
+                thing.customizationShipping.price > 0
+            ).length > 0 && (
+              <>
+                Shipping fee:{' '}
+                {currency.full(
+                  maxBy(
+                    state.bag.things.cake,
+                    thing => thing.customizationShipping?.price
+                  ).customizationShipping.price
+                )}
+                <br />
+              </>
+            )}
             <p>
-              <strong>Total: {currency.full(amountTotal + 0.3)}</strong>
+              <strong>
+                Total: {currency.full(amountTotal + 0.3 + shippingFee)}
+              </strong>
             </p>
             <Form onSubmit={e => onSubmit(e)} className='mb-3 checkout'>
               {needPickup && (

@@ -113,7 +113,18 @@ async function stripeSession(req, line_items) {
         shipping_address_collection: {
           allowed_countries: ['NL']
         },
-        shipping_options: { shipping_rate: req.body.shipping }
+        shipping_options: [
+          {
+            shipping_rate_data: {
+              display_name: 'Shipping in NL',
+              type: 'fixed_amount',
+              fixed_amount: {
+                amount: req.body.shipping * 10 * 10,
+                currency: 'EUR'
+              }
+            }
+          }
+        ]
       }),
       payment_method_types: ['ideal'],
       line_items,

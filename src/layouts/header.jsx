@@ -26,11 +26,6 @@ const Header = () => {
       </Row>
       <Nav justify defaultActiveKey='/'>
         <Nav.Item>
-          <Link to='/' activeClassName='active'>
-            Sweet Home
-          </Link>
-        </Nav.Item>
-        <Nav.Item>
           <Link to='/gift-card' activeClassName='active'>
             Gift Card
           </Link>
@@ -38,6 +33,11 @@ const Header = () => {
         <Nav.Item>
           <Link to='/hightea' activeClassName='active'>
             Hightea
+          </Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Link to='/lucky-calendar-2022' activeClassName='active'>
+            Lucky Calendar 2022
           </Link>
         </Nav.Item>
         <Nav.Item>
