@@ -9,7 +9,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { faStripe, faIdeal } from '@fortawesome/free-brands-svg-icons'
-import { find, maxBy, sumBy } from 'lodash'
+import { maxBy, sumBy } from 'lodash'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { loadStripe } from '@stripe/stripe-js'
 import { checkout } from '../api/checkout'
@@ -21,7 +21,7 @@ import * as currency from '../components/utils/currency'
 import * as Sentry from '@sentry/browser'
 Sentry.init({ dsn: process.env.GATSBY_SENTRY_DSN })
 
-const BagList = (things, dispatch) => {
+const BagList = ({ things, dispatch, shippingFee }) => {
   return things.map(thing => (
     <Row key={thing.hash} className='bag-item'>
       <Col xs={5}>
@@ -60,9 +60,11 @@ const BagList = (things, dispatch) => {
             })}
           <br />
           {thing.customizationShipping &&
-            thing.customizationShipping.price > 0 && (
-              <>📧 included in shipping</>
-            )}
+          thing.customizationShipping.price > 0 ? (
+            <>📦 Shipping {thing.customizationShipping.name}</>
+          ) : shippingFee ? (
+            <>🛍️ Pick-up in store</>
+          ) : null}
           <br />
           Total:{' '}
           {currency.full(
@@ -78,7 +80,6 @@ const BagList = (things, dispatch) => {
             dispatch({
               type: 'remove',
               data: {
-                type: thing.type,
                 hash: thing.hash
               }
             })
@@ -98,28 +99,27 @@ const Bag = () => {
   const recaptchaRef = React.createRef()
 
   const findShipping = maxBy(
-    state.bag.things.cake,
+    state.bag.things,
     thing => thing?.customizationShipping?.price
   )
   const shippingFee = findShipping
     ? findShipping.customizationShipping?.price
     : null
+  const needPickup =
+    state.bag.things.filter(thing => !thing.customizationShipping).length > 0
 
   let amountTotal = 0
-  for (const type in state.bag.things) {
-    for (const item of state.bag.things[type]) {
-      amountTotal =
-        amountTotal +
-        (item.typeAAmount ? item.typeAAmount * item.typeAPrice : 0) +
-        (item.typeBAmount ? item.typeBAmount * item.typeBPrice : 0) +
-        (item.typeCAmount ? item.typeCAmount * item.typeCPrice : 0)
-    }
+  for (const item of state.bag.things) {
+    amountTotal =
+      amountTotal +
+      (item.typeAAmount ? item.typeAAmount * item.typeAPrice : 0) +
+      (item.typeBAmount ? item.typeBAmount * item.typeBPrice : 0) +
+      (item.typeCAmount ? item.typeCAmount * item.typeCPrice : 0)
   }
 
-  const needPickup = state.bag.things.cake && state.bag.things.cake.length > 0
   const hasBirthdayCake =
-    state.bag.things.cake &&
-    state.bag.things.cake.filter(f => f.customizationBirthdayCake).length > 0
+    state.bag.things &&
+    state.bag.things.filter(f => f.customizationBirthdayCake).length > 0
   const excludeDates = []
   for (let i = 0; i < 31; i++) {
     const weekday = new Date(2021, 10, i).getDay()
@@ -150,70 +150,78 @@ const Bag = () => {
         day: 'numeric'
       })
     }
-    needPickup && (metadata['Notes'] = data.notes)
+    metadata['Notes'] = data.notes
     if (hasBirthdayCake) {
       metadata['Birthday cake voucher'] = data.voucher
     }
-    const shipping =
-      shippingFee ||
-      (find(state.bag.things.others, [
-        'contentful_id',
-        '44AIXbCxKgKAkDr2366hZ2'
-      ]) !== undefined
-        ? true
-        : false)
 
-    for (const type of Object.keys(state.bag.things)) {
-      for (const thing of state.bag.things[type]) {
-        let birthdayCakeName = `Birthday cake style ${thing.name} `
-        if (thing.customizationBirthdayCake) {
-          for (const bType in thing.customizationBirthdayCake) {
-            birthdayCakeName =
-              birthdayCakeName +
-              '| ' +
-              bType +
-              ': ' +
-              thing.customizationBirthdayCake[bType] +
-              ' '
-          }
+    for (const thing of state.bag.things) {
+      let birthdayCakeName = `Birthday cake style ${thing.name} `
+      if (thing.customizationBirthdayCake) {
+        for (const bType in thing.customizationBirthdayCake) {
+          birthdayCakeName =
+            birthdayCakeName +
+            '| ' +
+            bType +
+            ': ' +
+            thing.customizationBirthdayCake[bType] +
+            ' '
         }
-        thing.typeAAmount > 0 &&
-          items.push({
-            type: 'A',
-            contentful_id: thing.contentful_id,
-            name: thing.customizationBirthdayCake
-              ? `${birthdayCakeName} | Size: ${thing.typeAUnit.typeUnit}`
-              : `${thing.name} | ${thing.typeAUnit.typeUnit}`,
-            amount: thing.typeAPrice,
-            quantity: parseInt(thing.typeAAmount),
-            images: ['https:' + thing.image.fluid.src]
-          })
-        thing.typeBAmount > 0 &&
-          items.push({
-            type: 'B',
-            contentful_id: thing.contentful_id,
-            name: thing.customizationBirthdayCake
-              ? `${birthdayCakeName} | Size: ${thing.typeBUnit.typeUnit}`
-              : `${thing.name} | ${thing.typeBUnit.typeUnit}`,
-            amount: thing.typeBPrice,
-            quantity: parseInt(thing.typeBAmount),
-            images: ['https:' + thing.image.fluid.src]
-          })
-        thing.typeCAmount > 0 &&
-          items.push({
-            type: 'C',
-            contentful_id: thing.contentful_id,
-            name: thing.customizationBirthdayCake
-              ? `${birthdayCakeName} | Size: ${thing.typeCUnit.typeUnit}`
-              : `${thing.name} | ${thing.typeCUnit.typeUnit}`,
-            amount: thing.typeCPrice,
-            quantity: parseInt(thing.typeCAmount),
-            images: ['https:' + thing.image.fluid.src]
-          })
       }
+      thing.typeAAmount > 0 &&
+        items.push({
+          type: 'A',
+          contentful_id: thing.contentful_id,
+          name: thing.customizationBirthdayCake
+            ? `${birthdayCakeName} | Size: ${thing.typeAUnit.typeUnit}`
+            : `${thing.name} | ${thing.typeAUnit.typeUnit}${
+                thing.customizationShipping?.price > 0
+                  ? ` | Shipping ${thing.customizationShipping?.name}`
+                  : shippingFee && ' | Pick up in store'
+              }`,
+          amount: thing.typeAPrice,
+          quantity: parseInt(thing.typeAAmount),
+          images: ['https:' + thing.image.fluid.src]
+        })
+      thing.typeBAmount > 0 &&
+        items.push({
+          type: 'B',
+          contentful_id: thing.contentful_id,
+          name: thing.customizationBirthdayCake
+            ? `${birthdayCakeName} | Size: ${thing.typeBUnit.typeUnit}`
+            : `${thing.name} | ${thing.typeBUnit.typeUnit}${
+                thing.customizationShipping?.price > 0
+                  ? ` | Shipping ${thing.customizationShipping?.name}`
+                  : shippingFee && ' | Pick up in store'
+              }`,
+          amount: thing.typeBPrice,
+          quantity: parseInt(thing.typeBAmount),
+          images: ['https:' + thing.image.fluid.src]
+        })
+      thing.typeCAmount > 0 &&
+        items.push({
+          type: 'C',
+          contentful_id: thing.contentful_id,
+          name: thing.customizationBirthdayCake
+            ? `${birthdayCakeName} | Size: ${thing.typeCUnit.typeUnit}`
+            : `${thing.name} | ${thing.typeCUnit.typeUnit}${
+                thing.customizationShipping?.price > 0
+                  ? ` | Shipping ${thing.customizationShipping?.name}`
+                  : shippingFee && ' | Pick up in store'
+              }`,
+          amount: thing.typeCPrice,
+          quantity: parseInt(thing.typeCAmount),
+          images: ['https:' + thing.image.fluid.src]
+        })
     }
 
-    const res = await checkout({ token, items, metadata, shipping })
+    const res = await checkout({
+      token,
+      items,
+      metadata,
+      shippingFee,
+      needPickup
+    })
     if (res.sessionId) {
       const stripe = await stripePromise
       const { error } = await stripe.redirectToCheckout({
@@ -248,15 +256,17 @@ const Bag = () => {
         <Row>
           <Col md={7}>
             <h2>Overview</h2>
-            {Object.keys(state.bag.things).map(key =>
-              BagList(state.bag.things[key], dispatch)
-            )}
+            <BagList
+              things={state.bag.things}
+              dispatch={dispatch}
+              shippingFee={shippingFee}
+            />
           </Col>
           <Col md={5}>
             <h2>Summary</h2>
             Transaction fee: {currency.full(0.3)}
             <br />
-            {state.bag.things.cake.filter(
+            {state.bag.things.filter(
               thing =>
                 thing.customizationShipping &&
                 thing.customizationShipping.price > 0
@@ -265,7 +275,7 @@ const Bag = () => {
                 Shipping fee:{' '}
                 {currency.full(
                   maxBy(
-                    state.bag.things.cake,
+                    state.bag.things,
                     thing => thing.customizationShipping?.price
                   ).customizationShipping.price
                 )}
@@ -312,17 +322,17 @@ const Bag = () => {
                       See <Link to='/'>opening hours</Link>.
                     </Form.Text>
                   </Form.Group>
-                  <Form.Group>
-                    <Form.Label>Pick-up notes:</Form.Label>
-                    <Form.Control
-                      name='notes'
-                      as='textarea'
-                      rows='2'
-                      ref={register}
-                    />
-                  </Form.Group>
                 </>
               )}
+              <Form.Group>
+                <Form.Label>Notes:</Form.Label>
+                <Form.Control
+                  name='notes'
+                  as='textarea'
+                  rows='2'
+                  ref={register}
+                />
+              </Form.Group>
               <Form.Label>Gift card number:</Form.Label>
               <InputGroup className='mb-3'>
                 <InputGroup.Prepend>

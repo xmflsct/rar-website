@@ -15,14 +15,12 @@ const Layout = ({ children, name, SEOtitle, SEOkeywords, wider = false }) => {
   const { state } = useContext(ContextBag)
 
   let bagTotal = 0
-  for (const type in state.bag.things) {
-    for (const item of state.bag.things[type]) {
-      bagTotal =
-        bagTotal +
-        (item.typeAAmount || 0) +
-        (item.typeBAmount || 0) +
-        (item.typeCAmount || 0)
-    }
+  for (const item of state.bag.things) {
+    bagTotal =
+      bagTotal +
+      (item.typeAAmount || 0) +
+      (item.typeBAmount || 0) +
+      (item.typeCAmount || 0)
   }
 
   return (

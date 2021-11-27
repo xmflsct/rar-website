@@ -60,7 +60,6 @@ const CakeOrder = ({ cake }) => {
       dispatch({
         type: 'add',
         data: {
-          type: 'cake',
           hash: MD5(new Date().getTime() + cake.contentful_id).toString(),
           contentful_id: cake.contentful_id,
           image: cake.image,

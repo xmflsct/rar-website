@@ -11,7 +11,7 @@ import * as currency from '../components/utils/currency'
 const GiftCard = ({ location }) => {
   const data = useStaticQuery(graphql`
     {
-      giftCard20: contentfulCakesCake(
+      giftCard: contentfulCakesCake(
         contentful_id: { eq: "4FPZT9Es23MBaZ31gK0UIG" }
       ) {
         contentful_id
@@ -25,50 +25,18 @@ const GiftCard = ({ location }) => {
         typeAUnit {
           typeUnit
         }
-      }
-      giftCard50: contentfulCakesCake(
-        contentful_id: { eq: "6pHfPYlVeDZAP9srVEuPBB" }
-      ) {
-        contentful_id
-        name
-        image {
-          fluid(maxWidth: 200) {
-            ...GatsbyContentfulFluid_withWebp
-          }
-        }
-        typeAPrice
-        typeAUnit {
+        typeBPrice
+        typeBUnit {
           typeUnit
         }
-      }
-      giftCard100: contentfulCakesCake(
-        contentful_id: { eq: "5TGcOiXyeHl4MQNxxb8DpN" }
-      ) {
-        contentful_id
-        name
-        image {
-          fluid(maxWidth: 200) {
-            ...GatsbyContentfulFluid_withWebp
-          }
-        }
-        typeAPrice
-        typeAUnit {
+        typeCPrice
+        typeCUnit {
           typeUnit
         }
-      }
-      giftCardShipping: contentfulCakesCake(
-        contentful_id: { eq: "44AIXbCxKgKAkDr2366hZ2" }
-      ) {
-        contentful_id
-        name
-        image {
-          fluid(maxWidth: 200) {
-            ...GatsbyContentfulFluid_withWebp
-          }
-        }
-        typeAPrice
-        typeAUnit {
-          typeUnit
+        customizationShipping {
+          contentful_id
+          name
+          price
         }
       }
       images: allFile(
@@ -87,78 +55,71 @@ const GiftCard = ({ location }) => {
     }
   `)
   const { dispatch } = useContext(ContextBag)
-  const [amount20, setAmount20] = useState(0)
-  const [amount50, setAmount50] = useState(0)
-  const [amount100, setAmount100] = useState(0)
-  const [shipping, setShipping] = useState(null)
+
+  const [typeASelected, setTypeASelected] = useState()
+  const [typeBSelected, setTypeBSelected] = useState()
+  const [typeCSelected, setTypeCSelected] = useState()
+  const [customizationShipping, setCustomizationShipping] = useState({})
 
   const onSubmit = e => {
     e.preventDefault()
-    if (amount20 !== 0 || amount50 !== 0 || amount100 !== 0) {
-      amount20 !== 0 &&
-        dispatch({
-          type: 'add',
-          data: {
-            type: 'others',
-            hash: MD5(
-              new Date().getTime() + data.giftCard20.contentful_id
-            ).toString(),
-            contentful_id: data.giftCard20.contentful_id,
-            name: data.giftCard20.name,
-            typeAAmount: parseInt(amount20),
-            typeAPrice: data.giftCard20.typeAPrice,
-            typeAUnit: data.giftCard20.typeAUnit,
-            image: data.giftCard20.image
-          }
-        })
-      amount50 !== 0 &&
-        dispatch({
-          type: 'add',
-          data: {
-            type: 'others',
-            hash: MD5(
-              new Date().getTime() + data.giftCard50.contentful_id
-            ).toString(),
-            contentful_id: data.giftCard50.contentful_id,
-            name: data.giftCard50.name,
-            typeAAmount: parseInt(amount50),
-            typeAPrice: data.giftCard50.typeAPrice,
-            typeAUnit: data.giftCard50.typeAUnit,
-            image: data.giftCard50.image
-          }
-        })
-      amount100 !== 0 &&
-        dispatch({
-          type: 'add',
-          data: {
-            type: 'others',
-            hash: MD5(
-              new Date().getTime() + data.giftCard100.contentful_id
-            ).toString(),
-            contentful_id: data.giftCard100.contentful_id,
-            name: data.giftCard100.name,
-            typeAAmount: parseInt(amount100),
-            typeAPrice: data.giftCard100.typeAPrice,
-            typeAUnit: data.giftCard100.typeAUnit,
-            image: data.giftCard100.image
-          }
-        })
-      shipping &&
-        dispatch({
-          type: 'add',
-          data: {
-            type: 'others',
-            hash: MD5(
-              new Date().getTime() + data.giftCardShipping.contentful_id
-            ).toString(),
-            contentful_id: data.giftCardShipping.contentful_id,
-            name: data.giftCardShipping.name,
-            typeAAmount: 1,
-            typeAPrice: data.giftCardShipping.typeAPrice,
-            typeAUnit: data.giftCardShipping.typeAUnit,
-            image: data.giftCardShipping.image
-          }
-        })
+    console.log(customizationShipping)
+    if (typeASelected) {
+      dispatch({
+        type: 'add',
+        data: {
+          hash: MD5(
+            new Date().getTime() + data.giftCard.contentful_id
+          ).toString(),
+          contentful_id: data.giftCard.contentful_id,
+          image: data.giftCard.image,
+          name: data.giftCard.name,
+          typeAPrice: data.giftCard.typeAPrice,
+          typeAUnit: data.giftCard.typeAUnit,
+          typeAAmount: parseInt(typeASelected),
+          ...(data.giftCard.customizationShipping && {
+            customizationShipping: customizationShipping
+          })
+        }
+      })
+    }
+    if (typeBSelected) {
+      dispatch({
+        type: 'add',
+        data: {
+          hash: MD5(
+            new Date().getTime() + data.giftCard.contentful_id
+          ).toString(),
+          contentful_id: data.giftCard.contentful_id,
+          image: data.giftCard.image,
+          name: data.giftCard.name,
+          typeBPrice: data.giftCard.typeAPrice,
+          typeBUnit: data.giftCard.typeAUnit,
+          typeBAmount: parseInt(typeBSelected),
+          ...(data.giftCard.customizationShipping && {
+            customizationShipping: JSON.parse(customizationShipping)
+          })
+        }
+      })
+    }
+    if (typeCSelected) {
+      dispatch({
+        type: 'add',
+        data: {
+          hash: MD5(
+            new Date().getTime() + data.giftCard.contentful_id
+          ).toString(),
+          contentful_id: data.giftCard.contentful_id,
+          image: data.giftCard.image,
+          name: data.giftCard.name,
+          typeCPrice: data.giftCard.typeAPrice,
+          typeCUnit: data.giftCard.typeAUnit,
+          typeCAmount: parseInt(typeCSelected),
+          ...(data.giftCard.customizationShipping && {
+            customizationShipping: JSON.parse(customizationShipping)
+          })
+        }
+      })
     }
   }
 
@@ -194,9 +155,8 @@ const GiftCard = ({ location }) => {
       <h2 className='mb-3'>Details</h2>
       <ul>
         <li>
-          We have 3 different values of gift card: €{' '}
-          {data.giftCard20.typeAPrice}/{data.giftCard50.typeAPrice}/
-          {data.giftCard100.typeAPrice}.
+          We have 3 different values of gift card: € {data.giftCard.typeAPrice}/
+          {data.giftCard.typeBPrice}/{data.giftCard.typeCPrice}.
         </li>
         <li>Gift cards can be purchased online and also in our shop.</li>
         <li>
@@ -241,12 +201,12 @@ const GiftCard = ({ location }) => {
             <Form.Group>
               <InputGroup>
                 <InputGroup.Prepend>
-                  <InputGroup.Text>{data.giftCard20.name}</InputGroup.Text>
+                  <InputGroup.Text>{data.giftCard.name} €20</InputGroup.Text>
                 </InputGroup.Prepend>
                 <Form.Control
                   name='option20'
                   as='select'
-                  onChange={e => setAmount20(e.target.value)}
+                  onChange={e => setTypeASelected(e.target.value)}
                 >
                   <option value={0}>0</option>
                   <option value={1}>× 1</option>
@@ -261,12 +221,12 @@ const GiftCard = ({ location }) => {
             <Form.Group>
               <InputGroup>
                 <InputGroup.Prepend>
-                  <InputGroup.Text>{data.giftCard50.name}</InputGroup.Text>
+                  <InputGroup.Text>{data.giftCard.name} €50</InputGroup.Text>
                 </InputGroup.Prepend>
                 <Form.Control
                   name='option50'
                   as='select'
-                  onChange={e => setAmount50(e.target.value)}
+                  onChange={e => setTypeBSelected(e.target.value)}
                 >
                   <option value=''>0</option>
                   <option value={1}>× 1</option>
@@ -281,12 +241,12 @@ const GiftCard = ({ location }) => {
             <Form.Group>
               <InputGroup>
                 <InputGroup.Prepend>
-                  <InputGroup.Text>{data.giftCard100.name}</InputGroup.Text>
+                  <InputGroup.Text>{data.giftCard.name} €100</InputGroup.Text>
                 </InputGroup.Prepend>
                 <Form.Control
                   name='option100'
                   as='select'
-                  onChange={e => setAmount100(e.target.value)}
+                  onChange={e => setTypeCSelected(e.target.value)}
                 >
                   <option value=''>0</option>
                   <option value={1}>× 1</option>
@@ -310,7 +270,12 @@ const GiftCard = ({ location }) => {
                     name='delivery'
                     value='pickup'
                     required
-                    onChange={() => setShipping(false)}
+                    onChange={() =>
+                      setCustomizationShipping({
+                        name: 'Free: Pick-up in Store',
+                        price: 0
+                      })
+                    }
                   />
                 </InputGroup.Prepend>
                 <InputGroup.Text>Pickup at our shop</InputGroup.Text>
@@ -321,12 +286,17 @@ const GiftCard = ({ location }) => {
                     name='delivery'
                     value='mail'
                     required
-                    onChange={() => setShipping(true)}
+                    onChange={() =>
+                      setCustomizationShipping(
+                        data.giftCard.customizationShipping[0]
+                      )
+                    }
                   />
                 </InputGroup.Prepend>
                 <InputGroup.Text>
                   Mail to an address in NL (+{' '}
-                  {currency.short(data.giftCardShipping.typeAPrice)})
+                  {currency.short(data.giftCard.customizationShipping[0].price)}
+                  )
                 </InputGroup.Text>
               </InputGroup>
             </Form.Group>
