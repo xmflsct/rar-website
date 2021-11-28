@@ -116,7 +116,7 @@ const GiftCard = ({ location }) => {
           typeCUnit: data.giftCard.typeAUnit,
           typeCAmount: parseInt(typeCSelected),
           ...(data.giftCard.customizationShipping && {
-            customizationShipping: JSON.parse(customizationShipping)
+            customizationShipping
           })
         }
       })
@@ -270,12 +270,7 @@ const GiftCard = ({ location }) => {
                     name='delivery'
                     value='pickup'
                     required
-                    onChange={() =>
-                      setCustomizationShipping({
-                        name: 'Free: Pick-up in Store',
-                        price: 0
-                      })
-                    }
+                    onChange={() => setCustomizationShipping(null)}
                   />
                 </InputGroup.Prepend>
                 <InputGroup.Text>Pickup at our shop</InputGroup.Text>

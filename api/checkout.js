@@ -102,8 +102,8 @@ async function stripeSession(req, line_items) {
   try {
     const returnURLBase =
       process.env.VERCEL_ENV === 'development'
-        ? 'https://roundandround.nl'
-        : 'http://localhost:3000'
+        ? 'http://localhost:3000'
+        : 'https://roundandround.nl'
     const returnURL = {
       success_url: `${returnURLBase}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${returnURLBase}/bag`

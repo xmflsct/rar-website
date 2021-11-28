@@ -11,7 +11,7 @@ const CakeOrder = ({ cake }) => {
   const [typeBSelected, setTypeBSelected] = useState()
   const [typeCSelected, setTypeCSelected] = useState()
   const [customizationBirthdayCake, setCustomizationBirthdayCake] = useState({})
-  const [customizationShipping, setCustomizationShipping] = useState({})
+  const [customizationShipping, setCustomizationShipping] = useState('')
 
   const TypeSelection = (type, unit) => (
     <Form.Group>
@@ -74,7 +74,7 @@ const CakeOrder = ({ cake }) => {
           typeCUnit: cake.typeCUnit,
           typeCAmount: parseInt(typeCSelected),
           ...(cake.customizationBirthdayCake && { customizationBirthdayCake }),
-          ...(cake.customizationShipping && {
+          ...(customizationShipping !== '' && {
             customizationShipping: JSON.parse(customizationShipping)
           })
         }
@@ -89,21 +89,14 @@ const CakeOrder = ({ cake }) => {
             <Form.Control
               as='select'
               name='type'
-              defaultValue=''
+              defaultValue='disabled'
               required
               onChange={e => setCustomizationShipping(e.target.value)}
             >
-              <option value='' disabled>
+              <option value='disabled' disabled>
                 Select shipping
               </option>
-              <option
-                value={JSON.stringify({
-                  name: 'Free: Pick-up in Store',
-                  price: 0
-                })}
-              >
-                Free: Pick-up in Store
-              </option>
+              <option value=''>Free: Pick-up in Store</option>
               {cake.customizationShipping.map(shipping => (
                 <option
                   key={shipping.contentful_id}
