@@ -10,7 +10,9 @@ import Layout from '../layouts/layout'
 const Index = () => {
   const data = useStaticQuery(graphql`
     {
-      main: file(relativePath: { regex: "/(page-index/main.jpg)/" }) {
+      main: file(
+        relativePath: { regex: "/(page-lucky-calendar-2022/calendar_01.png)/" }
+      ) {
         childImageSharp {
           fluid(maxWidth: 400) {
             ...GatsbyImageSharpFluid_withWebp_noBase64
@@ -28,6 +30,9 @@ const Index = () => {
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
+            * Christmas Holiday [December 26th - January 4th] We will be back on
+            Jan 5th :)
+            <br />
             * Eat-in Possible; We don't take reservations.
             <br />* Pancake last-order is 1 hour prior to closing time.
           </p>
