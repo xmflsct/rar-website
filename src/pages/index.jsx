@@ -30,7 +30,7 @@ const Index = () => {
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
-            * Christmas Holiday [December 26th - January 4th] We will be back on
+            * Christmas Holiday [December 25th - January 4th] We will be back on
             Jan 5th :)
             <br />
             * Eat-in Possible; We don't take reservations.
