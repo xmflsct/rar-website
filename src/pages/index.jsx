@@ -32,9 +32,8 @@ const Index = () => {
           <p>
             * Christmas Holiday [December 25th - January 4th] We will be back on
             Jan 5th :)
-            <br />
-            * Eat-in Possible; We don't take reservations.
-            <br />* Pancake last-order is 1 hour prior to closing time.
+            <br />* From 19-12-2021: Only Order Pick-up and Take Away possible,
+            no Eat-in till further notice.
           </p>
         </Col>
       </Row>
