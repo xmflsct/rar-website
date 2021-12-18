@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Button, Col, Figure, Form, InputGroup, Row } from 'react-bootstrap'
+import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap'
 import { useStaticQuery, graphql } from 'gatsby'
 import Img from 'gatsby-image'
 import MD5 from 'crypto-js/md5'
