@@ -11,7 +11,7 @@ const Index = () => {
   const data = useStaticQuery(graphql`
     {
       main: file(
-        relativePath: { regex: "/(page-lucky-calendar-2022/calendar_01.png)/" }
+        relativePath: { regex: "/(page-index/main.jpg)/" }
       ) {
         childImageSharp {
           fluid(maxWidth: 400) {
