@@ -11,7 +11,7 @@ const Index = () => {
   const data = useStaticQuery(graphql`
     {
       main: file(
-        relativePath: { regex: "/(page-lucky-calendar-2022/calendar_01.png)/" }
+        relativePath: { regex: "/(page-index/main.jpg)/" }
       ) {
         childImageSharp {
           fluid(maxWidth: 400) {
@@ -30,10 +30,8 @@ const Index = () => {
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
-            * Christmas Holiday [December 25th - January 4th] We will be back on
-            Jan 5th :)
-            <br />* From 19-12-2021: Only Order Pick-up and Take Away possible,
-            no Eat-in till further notice.
+            * From 19-12-2021: Only Order Pick-up and Take Away possible, no
+            Eat-in till further notice.
           </p>
         </Col>
       </Row>
