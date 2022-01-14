@@ -63,8 +63,7 @@ const GiftCard = ({ location }) => {
 
   const onSubmit = e => {
     e.preventDefault()
-    console.log(customizationShipping)
-    if (typeASelected) {
+    if (typeASelected || typeBSelected || typeCSelected) {
       dispatch({
         type: 'add',
         data: {
@@ -77,43 +76,11 @@ const GiftCard = ({ location }) => {
           typeAPrice: data.giftCard.typeAPrice,
           typeAUnit: data.giftCard.typeAUnit,
           typeAAmount: parseInt(typeASelected),
-          ...(data.giftCard.customizationShipping && {
-            customizationShipping: customizationShipping
-          })
-        }
-      })
-    }
-    if (typeBSelected) {
-      dispatch({
-        type: 'add',
-        data: {
-          hash: MD5(
-            new Date().getTime() + data.giftCard.contentful_id
-          ).toString(),
-          contentful_id: data.giftCard.contentful_id,
-          image: data.giftCard.image,
-          name: data.giftCard.name,
-          typeBPrice: data.giftCard.typeAPrice,
-          typeBUnit: data.giftCard.typeAUnit,
+          typeBPrice: data.giftCard.typeBPrice,
+          typeBUnit: data.giftCard.typeBUnit,
           typeBAmount: parseInt(typeBSelected),
-          ...(data.giftCard.customizationShipping && {
-            customizationShipping: JSON.parse(customizationShipping)
-          })
-        }
-      })
-    }
-    if (typeCSelected) {
-      dispatch({
-        type: 'add',
-        data: {
-          hash: MD5(
-            new Date().getTime() + data.giftCard.contentful_id
-          ).toString(),
-          contentful_id: data.giftCard.contentful_id,
-          image: data.giftCard.image,
-          name: data.giftCard.name,
-          typeCPrice: data.giftCard.typeAPrice,
-          typeCUnit: data.giftCard.typeAUnit,
+          typeCPrice: data.giftCard.typeCPrice,
+          typeCUnit: data.giftCard.typeCUnit,
           typeCAmount: parseInt(typeCSelected),
           ...(data.giftCard.customizationShipping && {
             customizationShipping
