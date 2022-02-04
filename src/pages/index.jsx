@@ -27,14 +27,6 @@ const Index = () => {
       SEOtitle='Home'
       SEOkeywords={['Round&Round', 'Rotterdam']}
     >
-      <Row className='justify-content-center text-center'>
-        <Col>
-          <p>
-            * From 19-12-2021: Only Order Pick-up and Take Away possible, no
-            Eat-in till further notice.
-          </p>
-        </Col>
-      </Row>
       <Row className='justify-content-center'>
         <Col md={8}>
           <Link to='/gift-card'>
