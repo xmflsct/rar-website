@@ -127,6 +127,12 @@ const Bag = () => {
       excludeDates.push(new Date(2022, 1, i))
     }
   }
+  for (let i = 0; i < 31; i++) {
+    const weekday = new Date(2022, 2, i).getDay()
+    if (weekday === 1 || weekday === 2) {
+      excludeDates.push(new Date(2022, 2, i))
+    }
+  }
 
   const userVerified = async token => {
     handleSubmit(data => formSubmit(data, token))()
@@ -305,7 +311,7 @@ const Bag = () => {
                               ? addDays(new Date(), 3)
                               : addDays(new Date(), 2)
                           }
-                          maxDate={new Date(2022, 1, 28)}
+                          maxDate={new Date(2022, 2, 31)}
                           dateFormat='yyyy - MM - dd'
                           excludeDates={excludeDates}
                           onChange={e => props.onChange(e)}
