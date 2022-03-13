@@ -36,11 +36,6 @@ const Header = () => {
           </Link>
         </Nav.Item>
         <Nav.Item>
-          <Link to='/lucky-calendar-2022' activeClassName='active'>
-            Lucky Calendar 2022
-          </Link>
-        </Nav.Item>
-        <Nav.Item>
           <Link to='/cakes-and-sweets' activeClassName='active'>
             Cakes &amp; Sweets
           </Link>
