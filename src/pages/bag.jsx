@@ -307,7 +307,7 @@ const Bag = () => {
                           required
                           customInput={<Form.Control type='text' />}
                           minDate={
-                            new Date().getUTCHours() > 7
+                            new Date().getHours() > 17
                               ? addDays(new Date(), 3)
                               : addDays(new Date(), 2)
                           }
