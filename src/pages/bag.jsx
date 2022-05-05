@@ -307,7 +307,13 @@ const Bag = () => {
                           required
                           customInput={<Form.Control type='text' />}
                           minDate={
-                            new Date().getHours() > 17
+                            parseInt(
+                              new Date().toLocaleString('nl-NL', {
+                                hour: '2-digit',
+                                hour12: false,
+                                timeZone: 'Europe/Amsterdam'
+                              })
+                            ) > 17
                               ? addDays(new Date(), 3)
                               : addDays(new Date(), 2)
                           }
