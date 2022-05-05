@@ -313,7 +313,7 @@ const Bag = () => {
                                 hour12: false,
                                 timeZone: 'Europe/Amsterdam'
                               })
-                            ) > 17
+                            ) > 16
                               ? addDays(new Date(), 3)
                               : addDays(new Date(), 2)
                           }
