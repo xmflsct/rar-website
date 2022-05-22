@@ -53,11 +53,10 @@ const Hightea = () => {
       <ol>
         <li>
           Reservation can be made via email info@roundandround.nl Please mention
-          which type of high-tea(Full or Mini), your preferred start time and
-          your phone number.
+          your preferred start time and your phone number.
         </li>
         <li>Minimal 2 people.</li>
-        <li>Please reserve 2 working days in advance for certainty. </li>
+        <li>Please reserve 2 working days in advance for certainty.</li>
       </ol>
       <h2>Cancellation policy</h2>
       <p>
