@@ -46,7 +46,7 @@ const Index = () => {
       <Row className='justify-content-center text-center'>
         <Col>
           <p>
-            Wednesday-Sunday 12:00-17:00
+            Wednesday-Sunday 12:00-18:00
             <br />
             {'<Digital pay only>'}
           </p>
