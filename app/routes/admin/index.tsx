@@ -1,5 +1,4 @@
 import { useTransition } from '@remix-run/react'
-import { useEffect } from 'react'
 import Layout from '~/layout'
 import { Navigation } from '~/layout/navigation'
 
@@ -10,10 +9,6 @@ export const adminNavs: Navigation[] = [
 
 const PageAdmin: React.FC = () => {
   const transition = useTransition()
-
-  useEffect(() => {
-    console.log(transition)
-  }, [transition])
 
   return (
     <Layout navs={adminNavs}>
