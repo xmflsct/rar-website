@@ -1,3 +1,5 @@
+import { useTransition } from '@remix-run/react'
+import { useEffect } from 'react'
 import Layout from '~/layout'
 import { Navigation } from '~/layout/navigation'
 
@@ -7,7 +9,23 @@ export const adminNavs: Navigation[] = [
 ]
 
 const PageAdmin: React.FC = () => {
-  return <Layout navs={adminNavs}>Hello world!</Layout>
+  const transition = useTransition()
+
+  useEffect(() => {
+    console.log(transition)
+  }, [transition])
+
+  return (
+    <Layout navs={adminNavs}>
+      <div className='text-center text-lg'>
+        {transition.state === 'loading' &&
+        transition.type === 'normalLoad' &&
+        transition.location.pathname === '/admin/orders'
+          ? 'Please wait...'
+          : null}
+      </div>
+    </Layout>
+  )
 }
 
 export default PageAdmin
