@@ -4,7 +4,7 @@ import { parseISO } from 'date-fns'
 import { sumBy } from 'lodash'
 import { CakeOrder } from '~/states/bag'
 import calShipping from './calShipping'
-import { apolloClient, Cake, Context, Shipping } from './contentful'
+import { apolloClient, Cake, Context, logError, Shipping } from './contentful'
 
 export type CheckoutContent = {
   orders: {
@@ -51,7 +51,7 @@ const verifyContentful = async ({
 
   const flatOrders = [...(orders.pickup || []), ...(orders.shipping || [])]
 
-  // Check objects
+  // Check cakes
   const tempIds: string[] = []
   let ids: string | undefined = undefined
   flatOrders?.forEach(order => tempIds.push(`"${order.sys.id}"`))
@@ -59,10 +59,15 @@ const verifyContentful = async ({
 
   if (ids?.length) {
     const items = (
-      await client.query({
-        query: gql`
-            query {
-              cakeCollection (where: { sys: { id_in: [${ids}] } }) {
+      await client
+        .query({
+          variables: { preview: context.ENVIRONMENT !== 'PRODUCTION', ids },
+          query: gql`
+            query Cakes($preview: Boolean, $ids: String) {
+              cakeCollection(
+                preview: $preview
+                where: { sys: { id_in: [$ids] } }
+              ) {
                 items {
                   sys {
                     id
@@ -84,7 +89,8 @@ const verifyContentful = async ({
               }
             }
           `
-      })
+        })
+        .catch(logError)
     ).data.cakeCollection.items as Pick<
       Cake,
       | 'sys'
@@ -156,19 +162,26 @@ const verifyContentful = async ({
   // Check delivery
   if (orders.shipping?.length) {
     const rates = (
-      await client.query<{
-        shippingCollection: { items: Shipping[] }
-      }>({
-        query: gql`
-          query {
-            shippingCollection(limit: 1, where: { year: 2022 }) {
-              items {
-                rates
+      await client
+        .query<{
+          shippingCollection: { items: Shipping[] }
+        }>({
+          variables: { preview: context.ENVIRONMENT !== 'PRODUCTION' },
+          query: gql`
+            query Delivery($preview: Boolean) {
+              shippingCollection(
+                preview: $preview
+                limit: 1
+                where: { year: 2022 }
+              ) {
+                items {
+                  rates
+                }
               }
             }
-          }
-        `
-      })
+          `
+        })
+        .catch(logError)
     ).data.shippingCollection.items[0].rates
 
     const shippingFee = calShipping({ rates, orders: orders.shipping })

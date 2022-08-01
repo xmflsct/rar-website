@@ -4,6 +4,7 @@ import { json } from '@remix-run/cloudflare'
 import { DataFunctionArgs } from '@remix-run/server-runtime'
 
 export type Context = {
+  ENVIRONMENT: 'PRODUCTION' | 'PREVIEW'
   CONTENTFUL_SPACE?: string
   CONTENTFUL_KEY?: string
   STRIPE_KEY_PRIVATE?: string

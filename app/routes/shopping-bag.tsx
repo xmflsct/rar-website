@@ -2,7 +2,13 @@ import { gql, QueryOptions } from '@apollo/client'
 import { faStripe, faIdeal } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ActionArgs, json, LoaderArgs } from '@remix-run/cloudflare'
-import { Form, Link, useActionData, useLoaderData } from '@remix-run/react'
+import {
+  Form,
+  Link,
+  useActionData,
+  useLoaderData,
+  useTransition
+} from '@remix-run/react'
 import { loadStripe } from '@stripe/stripe-js'
 import { addDays, getMonth, getYear } from 'date-fns'
 import { sumBy } from 'lodash'
@@ -21,14 +27,15 @@ import { getAllPages } from '~/utils/kv'
 
 export const loader = async (props: LoaderArgs) => {
   const query: QueryOptions = {
+    variables: { preview: props.context.ENVIRONMENT !== 'PRODUCTION' },
     query: gql`
-      query Shipping {
-        shippingCollection(limit: 1, where: { year: 2022 }) {
+      query Shipping($preview: Boolean) {
+        shippingCollection(preview: $preview, limit: 1, where: { year: 2022 }) {
           items {
             rates
           }
         }
-        maxCalendarMonthCollection(limit: 1) {
+        maxCalendarMonthCollection(preview: $preview, limit: 1) {
           items {
             month
           }
@@ -78,6 +85,7 @@ export const action = async ({ context, request }: ActionArgs) => {
 const ShoppingBag = () => {
   const { navs, shippingRates, maxCalendarMonth } =
     useLoaderData<typeof loader>()
+  const transition = useTransition()
   const { cakeOrders } = useContext(BagContext)
   const [pickup, setPickup] = useState<Date>()
   const [notes, setNotes] = useState<string>()
@@ -374,19 +382,15 @@ const ShoppingBag = () => {
                 before 11:00 am of the collection day.
               </div>
             </div>
-            <Button type='submit'>
-              Checkout
-              {/* {(formState.isSubmitting && (
-                  <Spinner
-                    as='span'
-                    animation='border'
-                    size='sm'
-                    role='status'
-                    aria-hidden='true'
-                  />
-                )) ||
-                  (formState.submitCount > 0 && 'Retry') ||
-                  'Checkout'} */}
+            <Button
+              type='submit'
+              disabled={transition.state === ('submitting' || 'loading')}
+            >
+              {transition.state === 'submitting'
+                ? '...'
+                : transition.state === 'loading'
+                ? '...'
+                : 'Checkout'}
             </Button>
             <div className='mt-4 text-sm'>
               <div className='flex flex-row items-center'>

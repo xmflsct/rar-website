@@ -10,12 +10,15 @@ import { getAllPages } from '~/utils/kv'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async (props: LoaderArgs) => {
-  const query: QueryOptions<{ slug: string }> = {
-    variables: { slug: props.params.slug! },
+  const query: QueryOptions<{ preview: boolean; slug: string }> = {
+    variables: {
+      preview: props.context.ENVIRONMENT !== 'PRODUCTION',
+      slug: props.params.slug!
+    },
     query: gql`
       ${CAKE_DETAILS}
-      query Cake($slug: String!) {
-        cakeCollection(limit: 1, where: { slug: $slug }) {
+      query Cake($preview: Boolean, $slug: String!) {
+        cakeCollection(preview: $preview, limit: 1, where: { slug: $slug }) {
           items {
             ...CakeDetails
           }

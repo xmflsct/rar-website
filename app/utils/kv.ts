@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import { gql, QueryOptions } from '@apollo/client'
 import { DataFunctionArgs } from '@remix-run/cloudflare'
 import { Navigation } from '~/layout/navigation'
 import { apolloClient, logError, Page, PAGE_CONTENT_LINKS } from './contentful'
@@ -16,25 +16,31 @@ const getAllPages = async (
   })
 
   if (pages === null) {
-    const { data } = await apolloClient(props)
-      .query<{ pages: { items: Page[] } }>({
-        query: gql`
-          ${PAGE_CONTENT_LINKS}
-          query Pages {
-            pages: pageCollection(limit: 8, order: priority_ASC) {
-              items {
-                priority
-                name
-                slug
-                content {
-                  json
-                  ...PageContentLinks
-                }
+    const query: QueryOptions<{ preview: boolean }> = {
+      variables: { preview: props.context.ENVIRONMENT !== 'PRODUCTION' },
+      query: gql`
+        ${PAGE_CONTENT_LINKS}
+        query Pages($preview: Boolean) {
+          pages: pageCollection(
+            preview: $preview
+            limit: 8
+            order: priority_ASC
+          ) {
+            items {
+              priority
+              name
+              slug
+              content {
+                json
+                ...PageContentLinks
               }
             }
           }
-        `
-      })
+        }
+      `
+    }
+    const { data } = await apolloClient(props)
+      .query<{ pages: { items: Page[] } }>(query)
       .catch(logError)
     pages = data.pages.items
 

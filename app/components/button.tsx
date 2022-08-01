@@ -13,7 +13,7 @@ const Button: React.FC<
 > = props => {
   return (
     <button
-      className='border border-neutral-500 rounded-md px-4 py-2'
+      className='border border-neutral-500 rounded-md px-4 py-2 disabled:opacity-50'
       {...props}
     />
   )
