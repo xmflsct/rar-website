@@ -234,11 +234,11 @@ const checkout = async ({
 
     if (!amount || !price) return
 
-    const name = new Array(order.name, unit?.unit).filter(f => f).join(' | ')
-    const description = new Array(
+    const name = new Array(
+      order.name,
       order.chosen.delivery?.type
         ? order.chosen.delivery.date
-          ? `Date ${order.chosen.delivery.type}: ${parseISO(
+          ? `Special ${order.chosen.delivery.type}: ${parseISO(
               order.chosen.delivery.date
             ).toLocaleString('en-GB', {
               weekday: 'short',
@@ -246,17 +246,9 @@ const checkout = async ({
               month: 'short',
               day: 'numeric'
             })}`
-          : order.chosen.delivery.type
+          : { pickup: '🛍️', shipping: '📦' }[order.chosen.delivery.type]
         : content.pickup_date
-        ? `Date pickup: ${parseISO(content.pickup_date).toLocaleString(
-            'en-GB',
-            {
-              weekday: 'short',
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            }
-          )}`
+        ? '🛍️'
         : undefined,
       order.chosen.cakeCustomizations
         ? order.chosen.cakeCustomizations
@@ -269,7 +261,8 @@ const checkout = async ({
               return `${type}: ${value[0].options[customization[1]]}`
             })
             .join(', ')
-        : undefined
+        : undefined,
+      unit?.unit
     )
       .filter(f => f)
       .join(' | ')
@@ -277,11 +270,7 @@ const checkout = async ({
       price_data: {
         currency: 'eur',
         unit_amount: price * 10 * 10,
-        product_data: {
-          name,
-          ...(description && { description }),
-          images: [order.image?.url]
-        }
+        product_data: { name, images: [order.image?.url] }
       },
       quantity: amount
     }
@@ -321,6 +310,11 @@ const checkout = async ({
     success_url: content.success_url + '/id/{CHECKOUT_SESSION_ID}',
     cancel_url: content.cancel_url,
     phone_number_collection: { enabled: true },
+    ...(content.pickup_date && {
+      payment_intent_data: {
+        description: `🛍️ pickup date: ${content.pickup_date}`
+      }
+    }),
     metadata: {
       ...(content.notes && { Notes: content.notes }),
       ...(content.gift_card && { 'Gift card number': content.gift_card }),

@@ -1,5 +1,4 @@
 import { Popover, Transition } from '@headlessui/react'
-import { format } from 'date-fns'
 import { Fragment } from 'react'
 import { DayPicker, DayPickerSingleProps } from 'react-day-picker'
 
@@ -28,7 +27,16 @@ const PickDay: React.FC<Props> = ({ name, date, setDate, ...props }) => {
             name={name}
             required={props.required}
             placeholder='Select date ...'
-            value={date ? format(date, 'y-MM-dd') : ''}
+            value={
+              date
+                ? date.toLocaleString('en-GB', {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                  })
+                : ''
+            }
             className='w-full h-full bg-inherit border-b border-neutral-500 pl-2 pr-4 text-left'
           />
           <Transition

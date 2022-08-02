@@ -11,9 +11,9 @@ export const loader = async (props: LoaderArgs) => {
 
   const session = await (
     await fetch(
-      `https://api.stripe.com/v1/checkout/sessions/${props.params.session}`,
+      `https://api.stripe.com/v1/checkout/sessions/${props.params.session}?expand[]=payment_intent`,
       {
-        headers: { Authorization: `Bearer ${props.context.STRIPE_KEY_PRIVATE}` }
+        headers: { Authorization: `Bearer ${props.context.STRIPE_KEY_ADMIN}` }
       }
     )
   ).json<{
@@ -22,6 +22,7 @@ export const loader = async (props: LoaderArgs) => {
     customer_details: { name: string }
     shipping_options: { shipping_amount: number }[]
     metadata: { [key: string]: string }
+    payment_intent: { description?: string }
   }>()
 
   if (session.payment_status !== 'paid') {
@@ -32,7 +33,7 @@ export const loader = async (props: LoaderArgs) => {
     await fetch(
       `https://api.stripe.com/v1/checkout/sessions/${props.params.session}/line_items?limit=100`,
       {
-        headers: { Authorization: `Bearer ${props.context.STRIPE_KEY_PRIVATE}` }
+        headers: { Authorization: `Bearer ${props.context.STRIPE_KEY_ADMIN}` }
       }
     )
   ).json<{
@@ -41,7 +42,6 @@ export const loader = async (props: LoaderArgs) => {
       description: string
       quantity: number
       amount_total: number
-      price: { metadata?: { description?: string } }
     }[]
   }>()
 
@@ -50,6 +50,7 @@ export const loader = async (props: LoaderArgs) => {
 
 const PageThankYou: React.FC = () => {
   const { session, line_items } = useLoaderData<typeof loader>()
+  console.log('session', session)
 
   useEffect(() => {
     localStorage.setItem('cakeOrders', JSON.stringify([]))
@@ -61,6 +62,9 @@ const PageThankYou: React.FC = () => {
         <h1 className='mb-4 text-2xl text-center'>
           {session.customer_details.name}, thank you for your order!
         </h1>
+        {session.payment_intent.description?.length && (
+          <p>{session.payment_intent.description}</p>
+        )}
         <table className='w-full'>
           <tbody>
             <tr>
@@ -74,14 +78,7 @@ const PageThankYou: React.FC = () => {
                 key={item.id}
                 className='border-t border-neutral-300 hover:bg-neutral-50 hover:cursor-pointer'
               >
-                <td className='p-1'>
-                  <div>{item.description}</div>
-                  {item.price.metadata?.description ? (
-                    <div className='text-sm text-neutral-500'>
-                      {item.price.metadata?.description}
-                    </div>
-                  ) : null}
-                </td>
+                <td className='p-1'>{item.description}</td>
                 <td className='p-1 text-right'>{item.quantity}</td>
                 <td className='p-1 text-right'>
                   {full(item.amount_total / item.quantity / 10 / 10)}

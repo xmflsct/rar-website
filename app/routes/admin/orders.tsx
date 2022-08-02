@@ -117,7 +117,9 @@ const PageAdminOrders: React.FC = () => {
         session.customer_details?.phone ||
         session.payment_intent.charges.data[0].metadata['Phone number'],
       email: session.customer_details?.email,
-      date: session.payment_intent.charges.data[0].metadata['Pick-up date'],
+      date:
+        session.payment_intent.charges.data[0].description ||
+        session.payment_intent.charges.data[0].metadata['Pick-up date'],
       shipping: session.payment_intent.charges.data[0].shipping,
       items: session.line_items
         .filter(
