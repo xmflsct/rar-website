@@ -23,6 +23,9 @@ const getAllPages = async (): Promise<{
               order: priority_ASC
             ) {
               items {
+                sys {
+                  publishedAt
+                }
                 priority
                 name
                 slug

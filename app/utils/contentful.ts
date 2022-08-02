@@ -73,7 +73,7 @@ export type CommonImage = {
 export type CommonRichText = { json: Document; links?: any }
 
 export type Page = {
-  sys: { id: string }
+  sys: { publishedAt: string }
   priority: number
   name: string
   slug: string
@@ -90,7 +90,7 @@ export type CakesGroup = {
 }
 
 export type Cake = {
-  sys: { id: string }
+  sys: { id: string; publishedAt: string }
   image?: CommonImage
   name: string
   slug: string
