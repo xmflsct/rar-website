@@ -1,51 +1,36 @@
 import { Document } from '@contentful/rich-text-types'
-import { json, LoaderArgs } from '@remix-run/cloudflare'
+import { json } from '@remix-run/cloudflare'
 import { gql, GraphQLClient, RequestDocument, Variables } from 'graphql-request'
-
-export type Context = {
-  ENVIRONMENT: 'PRODUCTION' | 'PREVIEW'
-  CONTENTFUL_SPACE?: string
-  CONTENTFUL_KEY?: string
-  STRIPE_KEY_PRIVATE?: string
-  STRIPE_KEY_ADMIN?: string
-}
+import { context } from '~/root'
 
 type GraphQLRequest = {
-  args: Pick<LoaderArgs, 'context'>
   query: RequestDocument
   variables?: Variables
 }
 
 export const graphqlRequest = async <T = unknown>({
-  args: {
-    context: { ENVIRONMENT, CONTENTFUL_SPACE, CONTENTFUL_KEY }
-  },
   query,
   variables
 }: GraphQLRequest) => {
-  if (!CONTENTFUL_SPACE || !CONTENTFUL_KEY) {
+  if (!context.CONTENTFUL_SPACE || !context.CONTENTFUL_KEY) {
     throw json('Missing Contentful config', { status: 500 })
   }
 
-  const preview = ENVIRONMENT !== 'PRODUCTION'
+  const preview = context.ENVIRONMENT !== 'PRODUCTION'
 
   return new GraphQLClient(
-    `https://graphql.contentful.com/content/v1/spaces/${CONTENTFUL_SPACE}/environments/master`,
+    `https://graphql.contentful.com/content/v1/spaces/${context.CONTENTFUL_SPACE}/environments/master`,
     {
       fetch,
-      headers: { Authorization: `Bearer ${CONTENTFUL_KEY}` },
+      headers: { Authorization: `Bearer ${context.CONTENTFUL_KEY}` },
       errorPolicy: preview ? 'none' : 'ignore'
     }
-  )
-    .request<T>(query, { ...variables, preview })
-    .catch(logError)
+  ).request<T>(query, { ...variables, preview })
 }
 export const cacheQuery = async <T = unknown>({
   ttlMinutes = 60,
   ...rest
-}: GraphQLRequest & { args: { request: Request } } & {
-  ttlMinutes?: number
-}): Promise<T> => {
+}: GraphQLRequest & { request: Request; ttlMinutes?: number }): Promise<T> => {
   const queryData = async () => await graphqlRequest<T>(rest)
 
   if (!ttlMinutes) {
@@ -55,7 +40,7 @@ export const cacheQuery = async <T = unknown>({
   // @ts-ignore
   const cache = caches.default
 
-  const cacheUrl = new URL(rest.args.request.url)
+  const cacheUrl = new URL(rest.request.url)
   const cacheKey = new Request(cacheUrl.toString())
 
   const cacheMatch = (await cache.match(cacheKey)) as Response
@@ -73,10 +58,6 @@ export const cacheQuery = async <T = unknown>({
   } else {
     return await cacheMatch.json()
   }
-}
-export const logError = (error: any) => {
-  console.error(JSON.stringify(error, undefined, 2))
-  throw json(null, { status: 500 })
 }
 
 export type CommonImage = {

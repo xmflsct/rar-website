@@ -9,12 +9,10 @@ import { cacheQuery, Cake, CAKE_DETAILS } from '~/utils/contentful'
 import { getAllPages } from '~/utils/kv'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async ({ params, request }: LoaderArgs) => {
   const data = await cacheQuery<{ cakeCollection: { items: Cake[] } }>({
-    args,
-    variables: {
-      slug: args.params.slug
-    },
+    request,
+    variables: { slug: params.slug },
     query: gql`
       ${CAKE_DETAILS}
       query Cake($preview: Boolean, $slug: String!) {
@@ -34,7 +32,7 @@ export const loader = async (args: LoaderArgs) => {
     throw json('Not Found', { status: 404 })
   }
 
-  const { navs } = await getAllPages(args)
+  const { navs } = await getAllPages()
   return json({ navs, cake: data.cakeCollection.items[0] })
 }
 

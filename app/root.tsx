@@ -12,7 +12,30 @@ import { withSentry } from '@sentry/remix'
 import BagProvider from './states/bag'
 import styles from './styles/app.css'
 
-export const loader = async ({ context }: LoaderArgs) => {
+export type Context =
+  | {
+      ENVIRONMENT?: 'PRODUCTION'
+      CONTENTFUL_SPACE?: string
+      CONTENTFUL_KEY?: string
+      STRIPE_KEY_PRIVATE?: string
+      STRIPE_KEY_PUBLIC?: string
+      STRIPE_KEY_ADMIN?: string
+      RAR_WEBSITE?: KVNamespace
+    }
+  | {
+      ENVIRONMENT?: 'PREVIEW'
+      CONTENTFUL_SPACE?: string
+      CONTENTFUL_KEY?: string
+      STRIPE_KEY_PRIVATE?: string
+      STRIPE_KEY_PUBLIC?: string
+      STRIPE_KEY_ADMIN?: string
+      RAR_WEBSITE_PREVIEW?: KVNamespace
+    }
+export let context: Context = {}
+
+export const loader = async (args: LoaderArgs) => {
+  context = args.context
+
   return json({
     ENV: { STRIPE_KEY_PUBLIC: context.STRIPE_KEY_PUBLIC }
   })
