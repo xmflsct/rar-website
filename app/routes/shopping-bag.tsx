@@ -25,11 +25,12 @@ import { cacheQuery, MaxCalendarMonth, Shipping } from '~/utils/contentful'
 import { full } from '~/utils/currency'
 import { getAllPages } from '~/utils/kv'
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ context, request }: LoaderArgs) => {
   const data = await cacheQuery<{
     shippingCollection: { items: Shipping[] }
     maxCalendarMonthCollection: { items: MaxCalendarMonth[] }
   }>({
+    context,
     request,
     ttlMinutes: 60 * 24 * 7,
     query: gql`
@@ -48,7 +49,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     `
   })
 
-  const { navs } = await getAllPages()
+  const { navs } = await getAllPages(context)
   return json({
     navs,
     shippingRates: data.shippingCollection.items[0].rates,
@@ -71,7 +72,10 @@ export const action = async ({ context, request }: ActionArgs) => {
     return { error: 'Parsing orders failed' }
   }
 
-  const res = (await checkout({ ...data, orders: parsedOrders })) as any
+  const res = (await checkout({
+    context,
+    content: { ...data, orders: parsedOrders }
+  })) as any
   if (res?.id) {
     return res.id
   } else {

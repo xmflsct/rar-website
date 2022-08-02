@@ -3,12 +3,13 @@ import { gql } from 'graphql-request'
 import { cacheQuery, Cake } from '~/utils/contentful'
 import { getAllPages } from '~/utils/kv'
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ context, request }: LoaderArgs) => {
   const {
     cakeCollection: { items: cakes }
   } = await cacheQuery<{
     cakeCollection: { items: Pick<Cake, 'sys' | 'slug'>[] }
   }>({
+    context,
     request,
     query: gql`
       query Cake($preview: Boolean) {
@@ -24,7 +25,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     `
   })
 
-  const { pages } = await getAllPages()
+  const { pages } = await getAllPages(context)
 
   const content = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

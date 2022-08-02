@@ -21,11 +21,8 @@ export type Context = {
   STRIPE_KEY_ADMIN?: string
   RAR_WEBSITE?: KVNamespace
 }
-export let context: Context = {}
 
-export const loader = async (args: LoaderArgs) => {
-  context = args.context
-
+export const loader = async ({ context }: LoaderArgs) => {
   return json({
     ENV: { STRIPE_KEY_PUBLIC: context.STRIPE_KEY_PUBLIC }
   })

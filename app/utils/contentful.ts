@@ -1,9 +1,10 @@
 import { Document } from '@contentful/rich-text-types'
 import { json } from '@remix-run/cloudflare'
 import { gql, GraphQLClient, RequestDocument, Variables } from 'graphql-request'
-import { context } from '~/root'
+import { Context } from '~/root'
 
 type GraphQLRequest = {
+  context: Context
   query: RequestDocument
   variables?: Variables
 }
@@ -11,6 +12,7 @@ type GraphQLRequest = {
 export let cached: boolean | undefined = undefined
 
 export const graphqlRequest = async <T = unknown>({
+  context,
   query,
   variables
 }: GraphQLRequest) => {

@@ -1,11 +1,13 @@
 import { gql } from 'graphql-request'
 import { Navigation } from '~/layout/navigation'
-import { context } from '~/root'
+import { Context } from '~/root'
 import { graphqlRequest, Page, PAGE_CONTENT_LINKS } from './contentful'
 
 export let kved: boolean | undefined = undefined
 
-const getAllPages = async (): Promise<{
+const getAllPages = async (
+  context: Context
+): Promise<{
   navs: Navigation[]
   pages: Page[]
 }> => {
@@ -14,6 +16,7 @@ const getAllPages = async (): Promise<{
       await graphqlRequest<{
         pages: { items: Page[] }
       }>({
+        context,
         query: gql`
           ${PAGE_CONTENT_LINKS}
           query Pages($preview: Boolean) {

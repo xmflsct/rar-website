@@ -2,7 +2,7 @@ import { json } from '@remix-run/cloudflare'
 import { parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
-import { context } from '~/root'
+import { Context } from '~/root'
 import { CakeOrder } from '~/states/bag'
 import calShipping from './calShipping'
 import { Cake, graphqlRequest, Shipping } from './contentful'
@@ -35,10 +35,12 @@ type ShippingOptions = {
 }
 
 const verifyContentful = async ({
-  orders,
-  subtotal_amount,
-  shipping_amount
-}: CheckoutContent): Promise<ShippingOptions | null> => {
+  context,
+  content: { orders, subtotal_amount, shipping_amount }
+}: {
+  context: Context
+  content: CheckoutContent
+}): Promise<ShippingOptions | null> => {
   if (
     (!orders.pickup?.length && !orders.shipping?.length) ||
     !subtotal_amount
@@ -77,6 +79,7 @@ const verifyContentful = async ({
           >[]
         }
       }>({
+        context,
         variables: { ids },
         query: gql`
           query Cakes($preview: Boolean, $ids: String) {
@@ -164,6 +167,7 @@ const verifyContentful = async ({
       await graphqlRequest<{
         shippingCollection: { items: Shipping[] }
       }>({
+        context,
         query: gql`
           query Delivery($preview: Boolean) {
             shippingCollection(
@@ -210,12 +214,18 @@ const verifyContentful = async ({
   }
 }
 
-const checkout = async (content: CheckoutContent) => {
+const checkout = async ({
+  context,
+  content
+}: {
+  context: Context
+  content: CheckoutContent
+}) => {
   if (!context.STRIPE_KEY_PRIVATE) {
     throw new Error('Missing stripe private key')
   }
 
-  const shipping = await verifyContentful(content)
+  const shipping = await verifyContentful({ context, content })
 
   const item = (order: CakeOrder, type: 'A' | 'B' | 'C') => {
     const amount = order.chosen[`type${type}Amount`]

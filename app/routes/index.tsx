@@ -1,11 +1,11 @@
-import { json, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import RichText from '~/components/richText'
 import Layout from '~/layout'
 import { getAllPages } from '~/utils/kv'
 
-export const loader = async () => {
-  const { navs, pages } = await getAllPages()
+export const loader = async ({ context }: LoaderArgs) => {
+  const { navs, pages } = await getAllPages(context)
 
   return json({ navs, page: pages[0] })
 }
