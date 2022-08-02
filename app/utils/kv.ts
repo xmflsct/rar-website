@@ -1,23 +1,25 @@
-import { gql, QueryOptions } from '@apollo/client'
-import { DataFunctionArgs } from '@remix-run/cloudflare'
+import { LoaderArgs } from '@remix-run/cloudflare'
+import { gql } from 'graphql-request'
 import { Navigation } from '~/layout/navigation'
-import { apolloClient, logError, Page, PAGE_CONTENT_LINKS } from './contentful'
+import { graphqlRequest, Page, PAGE_CONTENT_LINKS } from './contentful'
 
 const getAllPages = async (
-  props: DataFunctionArgs
+  args: LoaderArgs
 ): Promise<{ navs: Navigation[]; pages: Page[] }> => {
   const kvBinding =
-    props.context.ENVIRONMENT === 'PRODUCTION'
-      ? props.context.RAR_WEBSITE
-      : props.context.RAR_WEBSITE_PREVIEW
+    args.context.ENVIRONMENT === 'PRODUCTION'
+      ? args.context.RAR_WEBSITE
+      : args.context.RAR_WEBSITE_PREVIEW
 
   let pages: Page[] | null = await kvBinding.get(`pages`, {
     type: 'json'
   })
 
   if (pages === null) {
-    const query: QueryOptions<{ preview: boolean }> = {
-      variables: { preview: props.context.ENVIRONMENT !== 'PRODUCTION' },
+    const data = await graphqlRequest<{
+      pages: { items: Page[] }
+    }>({
+      args,
       query: gql`
         ${PAGE_CONTENT_LINKS}
         query Pages($preview: Boolean) {
@@ -38,10 +40,7 @@ const getAllPages = async (
           }
         }
       `
-    }
-    const { data } = await apolloClient(props)
-      .query<{ pages: { items: Page[] } }>(query)
-      .catch(logError)
+    })
     pages = data.pages.items
 
     await kvBinding.put(`pages`, JSON.stringify(pages), {

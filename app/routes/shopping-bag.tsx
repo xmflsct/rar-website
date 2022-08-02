@@ -1,4 +1,3 @@
-import { gql, QueryOptions } from '@apollo/client'
 import { faStripe, faIdeal } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ActionArgs, json, LoaderArgs } from '@remix-run/cloudflare'
@@ -11,6 +10,7 @@ import {
 } from '@remix-run/react'
 import { loadStripe } from '@stripe/stripe-js'
 import { addDays, getMonth, getYear } from 'date-fns'
+import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
 import { useContext, useEffect, useState } from 'react'
 import Button from '~/components/button'
@@ -25,9 +25,13 @@ import { cacheQuery, MaxCalendarMonth, Shipping } from '~/utils/contentful'
 import { full } from '~/utils/currency'
 import { getAllPages } from '~/utils/kv'
 
-export const loader = async (props: LoaderArgs) => {
-  const query: QueryOptions = {
-    variables: { preview: props.context.ENVIRONMENT !== 'PRODUCTION' },
+export const loader = async (args: LoaderArgs) => {
+  const data = await cacheQuery<{
+    shippingCollection: { items: Shipping[] }
+    maxCalendarMonthCollection: { items: MaxCalendarMonth[] }
+  }>({
+    args,
+    ttlMinutes: 60 * 24 * 7,
     query: gql`
       query Shipping($preview: Boolean) {
         shippingCollection(preview: $preview, limit: 1, where: { year: 2022 }) {
@@ -42,13 +46,9 @@ export const loader = async (props: LoaderArgs) => {
         }
       }
     `
-  }
-  const data = await cacheQuery<{
-    shippingCollection: { items: Shipping[] }
-    maxCalendarMonthCollection: { items: MaxCalendarMonth[] }
-  }>(query, 60 * 24 * 7, props)
+  })
 
-  const { navs } = await getAllPages(props)
+  const { navs } = await getAllPages(args)
   return json({
     navs,
     shippingRates: data.shippingCollection.items[0].rates,

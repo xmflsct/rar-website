@@ -5,9 +5,9 @@ import Layout from '~/layout'
 import { getAllPages } from '~/utils/kv'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
-export const loader = async (props: LoaderArgs) => {
-  const path = props.params['*']
-  const { navs, pages } = await getAllPages(props)
+export const loader = async (args: LoaderArgs) => {
+  const path = args.params['*']
+  const { navs, pages } = await getAllPages(args)
 
   const matchedPages = pages.filter(page => page.slug === path)
   if (!matchedPages.length) {

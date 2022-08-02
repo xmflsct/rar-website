@@ -4,8 +4,8 @@ import RichText from '~/components/richText'
 import Layout from '~/layout'
 import { getAllPages } from '~/utils/kv'
 
-export const loader = async (props: LoaderArgs) => {
-  const { navs, pages } = await getAllPages(props)
+export const loader = async (args: LoaderArgs) => {
+  const { navs, pages } = await getAllPages(args)
 
   return json({ navs, page: pages[0] })
 }

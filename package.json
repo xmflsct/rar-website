@@ -10,7 +10,6 @@
     "start": "cross-env NODE_ENV=production npm run dev:wrangler"
   },
   "dependencies": {
-    "@apollo/client": "^3.6.9",
     "@contentful/rich-text-plain-text-renderer": "^15.12.1",
     "@contentful/rich-text-react-renderer": "^15.12.1",
     "@contentful/rich-text-types": "^15.12.1",
@@ -28,6 +27,7 @@
     "cross-env": "^7.0.3",
     "date-fns": "^2.29.1",
     "graphql": "^16.5.0",
+    "graphql-request": "^4.3.0",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-day-picker": "^8.0.7",

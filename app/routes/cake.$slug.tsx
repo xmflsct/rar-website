@@ -1,7 +1,7 @@
-import { gql, QueryOptions } from '@apollo/client'
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
+import { gql } from 'graphql-request'
 import type { Product, WithContext } from 'schema-dts'
 import CakeView from '~/components/cakeView'
 import Layout from '~/layout'
@@ -9,11 +9,11 @@ import { cacheQuery, Cake, CAKE_DETAILS } from '~/utils/contentful'
 import { getAllPages } from '~/utils/kv'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
-export const loader = async (props: LoaderArgs) => {
-  const query: QueryOptions<{ preview: boolean; slug: string }> = {
+export const loader = async (args: LoaderArgs) => {
+  const data = await cacheQuery<{ cakeCollection: { items: Cake[] } }>({
+    args,
     variables: {
-      preview: props.context.ENVIRONMENT !== 'PRODUCTION',
-      slug: props.params.slug!
+      slug: args.params.slug
     },
     query: gql`
       ${CAKE_DETAILS}
@@ -25,12 +25,7 @@ export const loader = async (props: LoaderArgs) => {
         }
       }
     `
-  }
-  const data = await cacheQuery<{ cakeCollection: { items: Cake[] } }>(
-    query,
-    30,
-    props
-  )
+  })
 
   if (
     !data?.cakeCollection?.items?.length ||
@@ -39,7 +34,7 @@ export const loader = async (props: LoaderArgs) => {
     throw json('Not Found', { status: 404 })
   }
 
-  const { navs } = await getAllPages(props)
+  const { navs } = await getAllPages(args)
   return json({ navs, cake: data.cakeCollection.items[0] })
 }
 

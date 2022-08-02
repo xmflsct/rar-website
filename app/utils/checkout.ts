@@ -1,10 +1,10 @@
-import { gql } from '@apollo/client'
 import { json } from '@remix-run/cloudflare'
 import { parseISO } from 'date-fns'
+import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
 import { CakeOrder } from '~/states/bag'
 import calShipping from './calShipping'
-import { apolloClient, Cake, Context, logError, Shipping } from './contentful'
+import { Cake, Context, graphqlRequest, logError, Shipping } from './contentful'
 
 export type CheckoutContent = {
   orders: {
@@ -47,8 +47,6 @@ const verifyContentful = async ({
     throw json('Submitted checkout content error', { status: 400 })
   }
 
-  const client = apolloClient({ context })
-
   const flatOrders = [...(orders.pickup || []), ...(orders.shipping || [])]
 
   // Check cakes
@@ -59,55 +57,58 @@ const verifyContentful = async ({
 
   if (ids?.length) {
     const items = (
-      await client
-        .query({
-          variables: { preview: context.ENVIRONMENT !== 'PRODUCTION', ids },
-          query: gql`
-            query Cakes($preview: Boolean, $ids: String) {
-              cakeCollection(
-                preview: $preview
-                where: { sys: { id_in: [$ids] } }
-              ) {
-                items {
-                  sys {
-                    id
-                  }
-                  available
-                  typeAAvailable
-                  typeAPrice
-                  typeAMinimum
-                  typeBAvailable
-                  typeBPrice
-                  typeBMinimum
-                  typeCAvailable
-                  typeCPrice
-                  typeCMinimum
-                  deliveryCustomizations
-                  shippingWeight
-                  shippingAvailable
+      await graphqlRequest<{
+        cakeCollection: {
+          items: Pick<
+            Cake,
+            | 'sys'
+            | 'available'
+            | 'typeAAvailable'
+            | 'typeAPrice'
+            | 'typeAMinimum'
+            | 'typeBAvailable'
+            | 'typeBPrice'
+            | 'typeBMinimum'
+            | 'typeCAvailable'
+            | 'typeCPrice'
+            | 'typeCMinimum'
+            | 'deliveryCustomizations'
+            | 'shippingWeight'
+            | 'shippingAvailable'
+          >[]
+        }
+      }>({
+        args: { context },
+        variables: { ids },
+        query: gql`
+          query Cakes($preview: Boolean, $ids: String) {
+            cakeCollection(
+              preview: $preview
+              where: { sys: { id_in: [$ids] } }
+            ) {
+              items {
+                sys {
+                  id
                 }
+                available
+                typeAAvailable
+                typeAPrice
+                typeAMinimum
+                typeBAvailable
+                typeBPrice
+                typeBMinimum
+                typeCAvailable
+                typeCPrice
+                typeCMinimum
+                deliveryCustomizations
+                shippingWeight
+                shippingAvailable
               }
             }
-          `
-        })
-        .catch(logError)
-    ).data.cakeCollection.items as Pick<
-      Cake,
-      | 'sys'
-      | 'available'
-      | 'typeAAvailable'
-      | 'typeAPrice'
-      | 'typeAMinimum'
-      | 'typeBAvailable'
-      | 'typeBPrice'
-      | 'typeBMinimum'
-      | 'typeCAvailable'
-      | 'typeCPrice'
-      | 'typeCMinimum'
-      | 'deliveryCustomizations'
-      | 'shippingWeight'
-      | 'shippingAvailable'
-    >[]
+          }
+        `
+      })
+    ).cakeCollection.items
 
     for (const item of items) {
       const objectIndex = flatOrders.findIndex(i => i.sys.id === item.sys.id)
@@ -162,27 +163,25 @@ const verifyContentful = async ({
   // Check delivery
   if (orders.shipping?.length) {
     const rates = (
-      await client
-        .query<{
-          shippingCollection: { items: Shipping[] }
-        }>({
-          variables: { preview: context.ENVIRONMENT !== 'PRODUCTION' },
-          query: gql`
-            query Delivery($preview: Boolean) {
-              shippingCollection(
-                preview: $preview
-                limit: 1
-                where: { year: 2022 }
-              ) {
-                items {
-                  rates
-                }
+      await graphqlRequest<{
+        shippingCollection: { items: Shipping[] }
+      }>({
+        args: { context },
+        query: gql`
+          query Delivery($preview: Boolean) {
+            shippingCollection(
+              preview: $preview
+              limit: 1
+              where: { year: 2022 }
+            ) {
+              items {
+                rates
               }
             }
-          `
-        })
-        .catch(logError)
-    ).data.shippingCollection.items[0].rates
+          }
+        `
+      })
+    ).shippingCollection.items[0].rates
 
     const shippingFee = calShipping({ rates, orders: orders.shipping })
     if (!(shippingFee === parseFloat(shipping_amount || ''))) {

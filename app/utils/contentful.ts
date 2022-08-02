@@ -1,7 +1,6 @@
-import { ApolloClient, gql, InMemoryCache, QueryOptions } from '@apollo/client'
 import { Document } from '@contentful/rich-text-types'
-import { json } from '@remix-run/cloudflare'
-import { DataFunctionArgs } from '@remix-run/server-runtime'
+import { json, LoaderArgs } from '@remix-run/cloudflare'
+import { gql, GraphQLClient, RequestDocument, Variables } from 'graphql-request'
 
 export type Context = {
   ENVIRONMENT: 'PRODUCTION' | 'PREVIEW'
@@ -11,34 +10,43 @@ export type Context = {
   STRIPE_KEY_ADMIN?: string
 }
 
-export const apolloClient = ({
-  context: { CONTENTFUL_SPACE, CONTENTFUL_KEY }
-}: {
-  context: Context
-}) => {
+type GraphQLRequest = {
+  args: Pick<LoaderArgs, 'context'>
+  query: RequestDocument
+  variables?: Variables
+}
+
+export const graphqlRequest = async <T = unknown>({
+  args: {
+    context: { ENVIRONMENT, CONTENTFUL_SPACE, CONTENTFUL_KEY }
+  },
+  query,
+  variables
+}: GraphQLRequest) => {
   if (!CONTENTFUL_SPACE || !CONTENTFUL_KEY) {
     throw json('Missing Contentful config', { status: 500 })
   }
 
-  return new ApolloClient({
-    ssrMode: true,
-    cache: new InMemoryCache(),
-    uri: `https://graphql.contentful.com/content/v1/spaces/${CONTENTFUL_SPACE}/environments/master`,
-    headers: {
-      Authorization: `Bearer ${CONTENTFUL_KEY}`
-    },
-    defaultOptions: { query: { errorPolicy: 'ignore' } }
-  })
-}
+  const preview = ENVIRONMENT !== 'PRODUCTION'
 
-export let cached = false
-export const cacheQuery = async <T = unknown>(
-  query: QueryOptions,
-  ttlMinutes: number, // In minutes
-  props: DataFunctionArgs
-): Promise<T> => {
-  const queryData = async () =>
-    (await apolloClient(props).query<T>(query).catch(logError)).data
+  return new GraphQLClient(
+    `https://graphql.contentful.com/content/v1/spaces/${CONTENTFUL_SPACE}/environments/master`,
+    {
+      fetch,
+      headers: { Authorization: `Bearer ${CONTENTFUL_KEY}` },
+      errorPolicy: preview ? 'none' : 'ignore'
+    }
+  )
+    .request<T>(query, { ...variables, preview })
+    .catch(logError)
+}
+export const cacheQuery = async <T = unknown>({
+  ttlMinutes = 60,
+  ...rest
+}: GraphQLRequest & { args: { request: Request } } & {
+  ttlMinutes?: number
+}): Promise<T> => {
+  const queryData = async () => await graphqlRequest<T>(rest)
 
   if (!ttlMinutes) {
     return await queryData()
@@ -47,13 +55,12 @@ export const cacheQuery = async <T = unknown>(
   // @ts-ignore
   const cache = caches.default
 
-  const cacheUrl = new URL(props.request.url)
+  const cacheUrl = new URL(rest.args.request.url)
   const cacheKey = new Request(cacheUrl.toString())
 
   const cacheMatch = (await cache.match(cacheKey)) as Response
 
   if (!cacheMatch) {
-    cached = false
     const queryResponse = await queryData()
     if (!queryResponse) {
       throw json('Not Found', { status: 500 })
@@ -64,17 +71,11 @@ export const cacheQuery = async <T = unknown>(
     cache.put(cacheKey, cacheResponse)
     return queryResponse
   } else {
-    cached = true
     return await cacheMatch.json()
   }
 }
-
-export const logError = (e: any) => {
-  if (process.env.NODE_ENV === 'development') {
-    e?.graphqlErrors && console.log('GraphQL', e.graphqlErrors)
-    e?.clientErrors && console.log('client', e.clientErrors)
-    e?.networkError && console.log('network', e.networkError.result?.errors)
-  }
+export const logError = (error: any) => {
+  console.error(JSON.stringify(error, undefined, 2))
   throw json(null, { status: 500 })
 }
 
@@ -225,12 +226,14 @@ export const PAGE_CONTENT_LINKS = gql`
       entries {
         block {
           ... on Cake {
+            __typename
             sys {
               id
             }
             ...CakeDetails
           }
           ... on CakesGroup {
+            __typename
             sys {
               id
             }
