@@ -8,6 +8,8 @@ type GraphQLRequest = {
   variables?: Variables
 }
 
+export let cached: boolean | undefined = undefined
+
 export const graphqlRequest = async <T = unknown>({
   query,
   variables
@@ -46,6 +48,7 @@ export const cacheQuery = async <T = unknown>({
   const cacheMatch = (await cache.match(cacheKey)) as Response
 
   if (!cacheMatch) {
+    cached = false
     const queryResponse = await queryData()
     if (!queryResponse) {
       throw json('Not Found', { status: 500 })
@@ -56,6 +59,7 @@ export const cacheQuery = async <T = unknown>({
     cache.put(cacheKey, cacheResponse)
     return queryResponse
   } else {
+    cached = true
     return await cacheMatch.json()
   }
 }

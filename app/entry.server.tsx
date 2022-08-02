@@ -3,6 +3,8 @@ import { RemixServer } from '@remix-run/react'
 import * as Sentry from '@sentry/remix'
 import * as Tracing from '@sentry/tracing'
 import { renderToString } from 'react-dom/server'
+import { cached } from './utils/contentful'
+import { kved } from './utils/kv'
 
 Sentry.init({
   dsn: 'https://79b2ce77fbfc4511af541c7a4cf125d3@o389581.ingest.sentry.io/6617177',
@@ -21,6 +23,8 @@ export default function handleRequest(
   )
 
   responseHeaders.set('Content-Type', 'text/html')
+  responseHeaders.set('X-Cached', `${cached}`)
+  responseHeaders.set('X-KVed', `${kved}`)
 
   return new Response('<!DOCTYPE html>' + markup, {
     status: responseStatusCode,
