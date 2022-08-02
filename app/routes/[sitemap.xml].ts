@@ -31,12 +31,21 @@ export const loader = async ({ context, request }: LoaderArgs) => {
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       ${pages.map(
         (page, index) => `
-      <url>
-        <loc>https://roundandround.nl/${index === 0 ? '' : `${page.slug}`}</loc>
-        <lastmod>${page.sys.publishedAt}</lastmod>
-        <priority>0.6</priority>
-      </url>
-      `
+          ${
+            index === 0
+              ? `<url>
+                  <loc>https://roundandround.nl</loc>
+                  <lastmod>${page.sys.publishedAt}</lastmod>
+                  <priority>0.8</priority>
+                </url>`
+              : ''
+          }
+          <url>
+            <loc>https://roundandround.nl/${page.slug}</loc>
+            <lastmod>${page.sys.publishedAt}</lastmod>
+            <priority>0.6</priority>
+          </url>
+        `
       )}
       ${cakes.map(
         cake => `
