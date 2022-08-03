@@ -37,7 +37,8 @@ export const cacheQuery = async <T = unknown>({
 }: GraphQLRequest & { request: Request; ttlMinutes?: number }): Promise<T> => {
   const queryData = async () => await graphqlRequest<T>(rest)
 
-  if (!ttlMinutes) {
+  const preview = rest.context.ENVIRONMENT !== 'PRODUCTION'
+  if (!ttlMinutes || preview) {
     return await queryData()
   }
 
