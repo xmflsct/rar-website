@@ -72,7 +72,7 @@ const OrderList: React.FC<Props> = ({ order }) => {
             {typeOption('C')}
           </div>
           {order.chosen.delivery?.type && order.chosen.delivery.date && (
-            <p>{`Date ${order.chosen.delivery.type}: ${parseISO(
+            <p>{`Special ${order.chosen.delivery.type}: ${parseISO(
               order.chosen.delivery.date
             ).toLocaleString('en-GB', {
               timeZone: 'Europe/Amsterdam',
