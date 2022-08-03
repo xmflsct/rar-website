@@ -1,4 +1,4 @@
-import { json, LoaderArgs } from '@remix-run/cloudflare'
+import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { useEffect } from 'react'
 import Layout from '~/layout'
@@ -47,6 +47,10 @@ export const loader = async (props: LoaderArgs) => {
 
   return json({ session, line_items })
 }
+
+export const meta: MetaFunction = () => ({
+  title: `Thank you for your order!`
+})
 
 const PageThankYou: React.FC = () => {
   const { session, line_items } = useLoaderData<typeof loader>()

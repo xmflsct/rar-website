@@ -1,6 +1,11 @@
 import { faStripe, faIdeal } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ActionArgs, json, LoaderArgs } from '@remix-run/cloudflare'
+import {
+  ActionArgs,
+  json,
+  LoaderArgs,
+  MetaFunction
+} from '@remix-run/cloudflare'
 import {
   Form,
   Link,
@@ -82,6 +87,10 @@ export const action = async ({ context, request }: ActionArgs) => {
     return null
   }
 }
+
+export const meta: MetaFunction = () => ({
+  title: `Shipping Bag | Round&Round Rotterdam`
+})
 
 const ShoppingBag = () => {
   const { navs, shippingRates, maxCalendarMonth } =
