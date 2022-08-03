@@ -198,7 +198,18 @@ const verifyContentful = async ({
       shipping_rate_data: {
         display_name: new Array(
           'PostNL',
-          shippingDate ? orders.shipping[0].chosen.delivery?.date : undefined
+          shippingDate && orders.shipping[0].chosen.delivery?.date
+            ? parseISO(orders.shipping[0].chosen.delivery?.date).toLocaleString(
+                'en-GB',
+                {
+                  timeZone: 'Europe/Amsterdam',
+                  weekday: 'short',
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric'
+                }
+              )
+            : undefined
         )
           .filter(f => f)
           .join(' | '),
