@@ -147,8 +147,8 @@ const PageAdminOrders: React.FC = () => {
         <tbody>
           <tr>
             <th className='p-2'>Receipt</th>
-            <th className='p-2'>Customer</th>
             <th className='p-2'>Date and/or Address</th>
+            <th className='p-2'>Customer</th>
             <th className='p-2'>Items</th>
             <th className='p-2'>Gift Card and/or Notes</th>
           </tr>
@@ -159,13 +159,6 @@ const PageAdminOrders: React.FC = () => {
             >
               <td className='p-2 text-center whitespace-nowrap'>
                 {order.receipt}
-              </td>
-              <td className='p-2'>
-                <div className='flex flex-col'>
-                  <span>👤 {order.name}</span>
-                  <span>📱 {order.phone}</span>
-                  <span>📧 {order.email}</span>
-                </div>
               </td>
               <td className='p-2 max-w-sm'>
                 {order.date ? (
@@ -189,6 +182,13 @@ const PageAdminOrders: React.FC = () => {
                     {order.shipping.address?.city}
                   </div>
                 ) : null}
+              </td>
+              <td className='p-2'>
+                <div className='flex flex-col'>
+                  <span>👤 {order.name}</span>
+                  <span>📱 {order.phone}</span>
+                  <span>📧 {order.email}</span>
+                </div>
               </td>
               <td className='p-2 max-w-2xl'>
                 {order.items &&
