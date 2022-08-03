@@ -225,9 +225,9 @@ const ShoppingBag = () => {
                               before:
                                 parseInt(
                                   new Date().toLocaleString('nl-NL', {
+                                    timeZone: 'Europe/Amsterdam',
                                     hour: '2-digit',
-                                    hour12: false,
-                                    timeZone: 'Europe/Amsterdam'
+                                    hour12: false
                                   })
                                 ) > 16
                                   ? addDays(new Date(), 3)

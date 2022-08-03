@@ -30,6 +30,7 @@ const PickDay: React.FC<Props> = ({ name, date, setDate, ...props }) => {
             value={
               date
                 ? date.toLocaleString('en-GB', {
+                    timeZone: 'Europe/Amsterdam',
                     weekday: 'short',
                     year: 'numeric',
                     month: 'short',

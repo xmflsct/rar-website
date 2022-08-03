@@ -75,6 +75,7 @@ const OrderList: React.FC<Props> = ({ order }) => {
             <p>{`Date ${order.chosen.delivery.type}: ${parseISO(
               order.chosen.delivery.date
             ).toLocaleString('en-GB', {
+              timeZone: 'Europe/Amsterdam',
               weekday: 'short',
               year: 'numeric',
               month: 'short',

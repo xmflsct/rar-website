@@ -241,6 +241,7 @@ const checkout = async ({
           ? `Special ${order.chosen.delivery.type}: ${parseISO(
               order.chosen.delivery.date
             ).toLocaleString('en-GB', {
+              timeZone: 'Europe/Amsterdam',
               weekday: 'short',
               year: 'numeric',
               month: 'short',
