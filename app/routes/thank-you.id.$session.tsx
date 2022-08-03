@@ -58,7 +58,7 @@ const PageThankYou: React.FC = () => {
 
   return (
     <Layout navs={[]}>
-      <div className='mx-auto max-w-xl'>
+      <div className='mx-auto max-w-2xl'>
         <h1 className='mb-4 text-2xl text-center'>
           {session.customer_details.name}, thank you for your order!
         </h1>
@@ -69,7 +69,7 @@ const PageThankYou: React.FC = () => {
           <tbody>
             <tr>
               <th className='p-1 text-left'>Item</th>
-              <th className='p-1 text-right'>Quantity</th>
+              <th className='p-1 text-center'>Quantity</th>
               <th className='p-1 text-right'>Price</th>
               <th className='p-1 text-right'>Amount</th>
             </tr>
@@ -79,7 +79,7 @@ const PageThankYou: React.FC = () => {
                 className='border-t border-neutral-300 hover:bg-neutral-50 hover:cursor-pointer'
               >
                 <td className='p-1'>{item.description}</td>
-                <td className='p-1 text-right'>{item.quantity}</td>
+                <td className='p-1 text-center'>{item.quantity}</td>
                 <td className='p-1 text-right'>
                   {full(item.amount_total / item.quantity / 10 / 10)}
                 </td>
