@@ -32,7 +32,7 @@ export const loader = async ({ context, request }: LoaderArgs) => {
   }>({
     context,
     request,
-    ttlMinutes: 60 * 24 * 7,
+    ttlMinutes: 0,
     query: gql`
       query Shipping($preview: Boolean) {
         shippingCollection(preview: $preview, limit: 1, where: { year: 2022 }) {
