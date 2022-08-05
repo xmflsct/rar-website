@@ -158,7 +158,46 @@ const PageAdminOrders: React.FC = () => {
               className='border-t border-neutral-300 hover:bg-neutral-50'
             >
               <td className='p-2 text-center whitespace-nowrap'>
-                {order.receipt}
+                <input
+                  readOnly
+                  type='text'
+                  value={order.receipt || ''}
+                  onFocus={e =>
+                    e.target.setSelectionRange(0, order.receipt?.length || 999)
+                  }
+                  className='bg-transparent'
+                />
+              </td>
+              <td className='p-2'>
+                <div className='flex flex-col'>
+                  <input
+                    readOnly
+                    type='text'
+                    value={order.name || ''}
+                    onFocus={e =>
+                      e.target.setSelectionRange(0, order.name?.length || 999)
+                    }
+                    className='bg-transparent'
+                  />
+                  <input
+                    readOnly
+                    type='text'
+                    value={order.phone}
+                    onFocus={e =>
+                      e.target.setSelectionRange(0, order.phone?.length || 999)
+                    }
+                    className='bg-transparent'
+                  />
+                  <input
+                    readOnly
+                    type='text'
+                    value={order.email || ''}
+                    onFocus={e =>
+                      e.target.setSelectionRange(0, order.email?.length || 999)
+                    }
+                    className='bg-transparent'
+                  />
+                </div>
               </td>
               <td className='p-2 max-w-sm'>
                 {order.date ? (

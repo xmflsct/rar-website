@@ -54,7 +54,6 @@ export const meta: MetaFunction = () => ({
 
 const PageThankYou: React.FC = () => {
   const { session, line_items } = useLoaderData<typeof loader>()
-  console.log('session', session)
 
   useEffect(() => {
     localStorage.setItem('cakeOrders', JSON.stringify([]))
