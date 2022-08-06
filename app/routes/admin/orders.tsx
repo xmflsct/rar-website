@@ -165,39 +165,9 @@ const PageAdminOrders: React.FC = () => {
                   onFocus={e =>
                     e.target.setSelectionRange(0, order.receipt?.length || 999)
                   }
+                  size={10}
                   className='bg-transparent'
                 />
-              </td>
-              <td className='p-2'>
-                <div className='flex flex-col'>
-                  <input
-                    readOnly
-                    type='text'
-                    value={order.name || ''}
-                    onFocus={e =>
-                      e.target.setSelectionRange(0, order.name?.length || 999)
-                    }
-                    className='bg-transparent'
-                  />
-                  <input
-                    readOnly
-                    type='text'
-                    value={order.phone}
-                    onFocus={e =>
-                      e.target.setSelectionRange(0, order.phone?.length || 999)
-                    }
-                    className='bg-transparent'
-                  />
-                  <input
-                    readOnly
-                    type='text'
-                    value={order.email || ''}
-                    onFocus={e =>
-                      e.target.setSelectionRange(0, order.email?.length || 999)
-                    }
-                    className='bg-transparent'
-                  />
-                </div>
               </td>
               <td className='p-2 max-w-sm'>
                 {order.date ? (
@@ -224,9 +194,36 @@ const PageAdminOrders: React.FC = () => {
               </td>
               <td className='p-2'>
                 <div className='flex flex-col'>
-                  <span>👤 {order.name}</span>
-                  <span>📱 {order.phone}</span>
-                  <span>📧 {order.email}</span>
+                  <input
+                    readOnly
+                    type='text'
+                    value={order.name || ''}
+                    onFocus={e =>
+                      e.target.setSelectionRange(0, order.name?.length || 999)
+                    }
+                    size={25}
+                    className='bg-transparent'
+                  />
+                  <input
+                    readOnly
+                    type='text'
+                    value={order.phone}
+                    onFocus={e =>
+                      e.target.setSelectionRange(0, order.phone?.length || 999)
+                    }
+                    size={25}
+                    className='bg-transparent'
+                  />
+                  <input
+                    readOnly
+                    type='text'
+                    value={order.email || ''}
+                    onFocus={e =>
+                      e.target.setSelectionRange(0, order.email?.length || 999)
+                    }
+                    size={25}
+                    className='bg-transparent'
+                  />
                 </div>
               </td>
               <td className='p-2 max-w-2xl'>
