@@ -226,7 +226,7 @@ export const PAGE_CONTENT_LINKS = gql`
               id
             }
             name
-            cakesCollection(limit: 10) {
+            cakesCollection(limit: 20) {
               items {
                 ...CakeDetails
               }
