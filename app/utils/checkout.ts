@@ -309,7 +309,6 @@ const checkout = async ({
   })
 
   const sessionData = {
-    payment_method_types: ['ideal'],
     mode: 'payment',
     line_items: line_items.filter(l => l),
     ...(shipping && {

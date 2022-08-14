@@ -1,4 +1,10 @@
-import { faStripe, faIdeal } from '@fortawesome/free-brands-svg-icons'
+import {
+  faStripe,
+  faIdeal,
+  faCcApplePay,
+  faCcVisa,
+  faCcMastercard
+} from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   ActionArgs,
@@ -409,7 +415,17 @@ const ShoppingBag = () => {
               </div>
               <div className='flex flex-row items-center'>
                 We support
-                <FontAwesomeIcon icon={faIdeal} size='3x' className='ml-2' />
+                <FontAwesomeIcon
+                  icon={faCcApplePay}
+                  size='3x'
+                  className='ml-2'
+                />
+                <FontAwesomeIcon icon={faCcVisa} size='3x' className='ml-2' />
+                <FontAwesomeIcon
+                  icon={faCcMastercard}
+                  size='3x'
+                  className='ml-2'
+                />
               </div>
             </div>
           </div>
