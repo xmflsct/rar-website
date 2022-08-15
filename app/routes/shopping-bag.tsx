@@ -1,10 +1,4 @@
-import {
-  faStripe,
-  faIdeal,
-  faCcApplePay,
-  faCcVisa,
-  faCcMastercard
-} from '@fortawesome/free-brands-svg-icons'
+import { faStripe, faIdeal } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   ActionArgs,
@@ -188,16 +182,14 @@ const ShoppingBag = () => {
           <input
             type='hidden'
             name='success_url'
-            value={`${
-              typeof window !== 'undefined' && window.location.origin
-            }/thank-you`}
+            value={`${typeof window !== 'undefined' && window.location.origin
+              }/thank-you`}
           />
           <input
             type='hidden'
             name='cancel_url'
-            value={`${
-              typeof window !== 'undefined' && window.location.origin
-            }/shopping-bag`}
+            value={`${typeof window !== 'undefined' && window.location.origin
+              }/shopping-bag`}
           />
           <input type='hidden' name='orders' value={JSON.stringify(orders)} />
 
@@ -212,9 +204,8 @@ const ShoppingBag = () => {
                     p => p.chosen.delivery?.date === undefined
                   ).length ? (
                     <div
-                      className={`bg-neutral-100 rounded-tr-md rounded-br-md p-4 mb-2 border-l-2 ${
-                        pickup ? 'border-green-500' : 'border-red-500'
-                      }`}
+                      className={`bg-neutral-100 rounded-tr-md rounded-br-md p-4 mb-2 border-l-2 ${pickup ? 'border-green-500' : 'border-red-500'
+                        }`}
                     >
                       <div className='flex flex-row items-center'>
                         <div>Pickup date: </div>
@@ -228,9 +219,9 @@ const ShoppingBag = () => {
                           toMonth={
                             new Date(
                               getYear(new Date()) +
-                                (maxCalendarMonth >= getMonth(new Date())
-                                  ? 0
-                                  : 1),
+                              (maxCalendarMonth >= getMonth(new Date())
+                                ? 0
+                                : 1),
                               maxCalendarMonth - 1
                             )
                           }
@@ -311,8 +302,8 @@ const ShoppingBag = () => {
                   <td>
                     {full(
                       subtotal +
-                        (orders.shipping.length ? shippingFee : 0) +
-                        0.3
+                      (orders.shipping.length ? shippingFee : 0) +
+                      0.3
                     )}
                   </td>
                 </tr>
@@ -405,8 +396,8 @@ const ShoppingBag = () => {
               {transition.state === 'submitting'
                 ? '...'
                 : transition.state === 'loading'
-                ? '...'
-                : 'Checkout'}
+                  ? '...'
+                  : 'Checkout'}
             </Button>
             <div className='mt-4 text-sm'>
               <div className='flex flex-row items-center'>
@@ -415,17 +406,7 @@ const ShoppingBag = () => {
               </div>
               <div className='flex flex-row items-center'>
                 We support
-                <FontAwesomeIcon
-                  icon={faCcApplePay}
-                  size='3x'
-                  className='ml-2'
-                />
-                <FontAwesomeIcon icon={faCcVisa} size='3x' className='ml-2' />
-                <FontAwesomeIcon
-                  icon={faCcMastercard}
-                  size='3x'
-                  className='ml-2'
-                />
+                <FontAwesomeIcon icon={faIdeal} size='3x' className='ml-2' />
               </div>
             </div>
           </div>
