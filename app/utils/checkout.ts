@@ -1,8 +1,7 @@
-import { json } from '@remix-run/cloudflare'
+import { json, LoaderArgs } from '@remix-run/cloudflare'
 import { parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
-import { Context } from '~/root'
 import { CakeOrder } from '~/states/bag'
 import calShipping from './calShipping'
 import { Cake, graphqlRequest, Shipping } from './contentful'
@@ -38,7 +37,7 @@ const verifyContentful = async ({
   context,
   content: { orders, subtotal_amount, shipping_amount }
 }: {
-  context: Context
+  context: LoaderArgs['context']
   content: CheckoutContent
 }): Promise<ShippingOptions | null> => {
   if (
@@ -200,15 +199,15 @@ const verifyContentful = async ({
           'PostNL',
           shippingDate && orders.shipping[0].chosen.delivery?.date
             ? parseISO(orders.shipping[0].chosen.delivery?.date).toLocaleString(
-                'en-GB',
-                {
-                  timeZone: 'Europe/Amsterdam',
-                  weekday: 'short',
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric'
-                }
-              )
+              'en-GB',
+              {
+                timeZone: 'Europe/Amsterdam',
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              }
+            )
             : undefined
         )
           .filter(f => f)
@@ -229,7 +228,7 @@ const checkout = async ({
   context,
   content
 }: {
-  context: Context
+  context: LoaderArgs['context']
   content: CheckoutContent
 }) => {
   if (!context.STRIPE_KEY_PRIVATE) {
@@ -250,29 +249,29 @@ const checkout = async ({
       order.chosen.delivery?.type
         ? order.chosen.delivery.date
           ? `Special ${order.chosen.delivery.type}: ${parseISO(
-              order.chosen.delivery.date
-            ).toLocaleString('en-GB', {
-              timeZone: 'Europe/Amsterdam',
-              weekday: 'short',
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            })}`
+            order.chosen.delivery.date
+          ).toLocaleString('en-GB', {
+            timeZone: 'Europe/Amsterdam',
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })}`
           : { pickup: '🛍️', shipping: '📦' }[order.chosen.delivery.type]
         : content.pickup_date
-        ? '🛍️'
-        : undefined,
+          ? '🛍️'
+          : undefined,
       order.chosen.cakeCustomizations
         ? order.chosen.cakeCustomizations
-            .map(customization => {
-              const type = customization[0]
-              const value = order.cakeCustomizationsCollection?.items.filter(
-                c => c.type === customization[0]
-              )
-              if (!value) return
-              return `${type}: ${value[0].options[customization[1]]}`
-            })
-            .join(', ')
+          .map(customization => {
+            const type = customization[0]
+            const value = order.cakeCustomizationsCollection?.items.filter(
+              c => c.type === customization[0]
+            )
+            if (!value) return
+            return `${type}: ${value[0].options[customization[1]]}`
+          })
+          .join(', ')
         : undefined,
       unit?.unit
     )
@@ -309,6 +308,7 @@ const checkout = async ({
   })
 
   const sessionData = {
+    payment_method_types: ['ideal'],
     mode: 'payment',
     line_items: line_items.filter(l => l),
     ...(shipping && {
