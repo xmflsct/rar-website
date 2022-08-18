@@ -26,6 +26,7 @@ const PickDay: React.FC<Props> = ({ name, date, setDate, ...props }) => {
             type='text'
             name={name}
             required={props.required}
+            readOnly
             placeholder='Select date ...'
             value={
               date
