@@ -1,16 +1,18 @@
+import { LoaderArgs } from '@remix-run/cloudflare'
 import { gql } from 'graphql-request'
 import { Navigation } from '~/layout/navigation'
-import { Context } from '~/root'
 import { graphqlRequest, Page, PAGE_CONTENT_LINKS } from './contentful'
 
 export let kved: boolean | undefined = undefined
 
 const getAllPages = async (
-  context: Context
+  context: LoaderArgs['context']
 ): Promise<{
   navs: Navigation[]
   pages: Page[]
 }> => {
+  const preview = context.ENVIRONMENT !== 'PRODUCTION'
+
   const request = async () =>
     (
       await graphqlRequest<{
@@ -44,14 +46,13 @@ const getAllPages = async (
     ).pages.items
 
   const KV = context.RAR_WEBSITE
-  let pages: Page[] | null | undefined = await KV?.get(`pages`, {
-    type: 'json'
-  })
+  let pages: Page[] | null | undefined
 
-  if (KV === undefined) {
+  if (KV === undefined || preview) {
     kved = false
     pages = await request()
   } else {
+    pages = await KV.get(`pages`, { type: 'json' })
     if (!pages) {
       kved = false
       pages = await request()
