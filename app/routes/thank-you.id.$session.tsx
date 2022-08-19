@@ -13,7 +13,7 @@ export const loader = async (props: LoaderArgs) => {
     await fetch(
       `https://api.stripe.com/v1/checkout/sessions/${props.params.session}?expand[]=payment_intent`,
       {
-        headers: { Authorization: `Bearer ${props.context.STRIPE_KEY_ADMIN}` }
+        headers: { Authorization: `Bearer ${props.context?.STRIPE_KEY_ADMIN}` }
       }
     )
   ).json<{
@@ -33,7 +33,7 @@ export const loader = async (props: LoaderArgs) => {
     await fetch(
       `https://api.stripe.com/v1/checkout/sessions/${props.params.session}/line_items?limit=100`,
       {
-        headers: { Authorization: `Bearer ${props.context.STRIPE_KEY_ADMIN}` }
+        headers: { Authorization: `Bearer ${props.context?.STRIPE_KEY_ADMIN}` }
       }
     )
   ).json<{
@@ -65,9 +65,7 @@ const PageThankYou: React.FC = () => {
         <h1 className='mb-4 text-2xl text-center'>
           {session.customer_details.name}, thank you for your order!
         </h1>
-        {session.payment_intent.description?.length && (
-          <p>{session.payment_intent.description}</p>
-        )}
+        {session.payment_intent.description?.length && <p>{session.payment_intent.description}</p>}
         <table className='w-full'>
           <tbody>
             <tr>
@@ -86,9 +84,7 @@ const PageThankYou: React.FC = () => {
                 <td className='p-1 text-right'>
                   {full(item.amount_total / item.quantity / 10 / 10)}
                 </td>
-                <td className='p-1 text-right'>
-                  {full(item.amount_total / 10 / 10)}
-                </td>
+                <td className='p-1 text-right'>{full(item.amount_total / 10 / 10)}</td>
               </tr>
             ))}
             {session.shipping_options.length ? (

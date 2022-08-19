@@ -11,7 +11,7 @@ const getAllPages = async (
   navs: Navigation[]
   pages: Page[]
 }> => {
-  const preview = context.ENVIRONMENT !== 'PRODUCTION'
+  const preview = context?.ENVIRONMENT !== 'PRODUCTION'
 
   const request = async () =>
     (
@@ -45,7 +45,7 @@ const getAllPages = async (
       })
     ).pages.items
 
-  const KV = context.RAR_WEBSITE
+  const KV = context?.RAR_WEBSITE as KVNamespace | undefined
   let pages: Page[] | null | undefined
 
   if (KV === undefined || preview) {

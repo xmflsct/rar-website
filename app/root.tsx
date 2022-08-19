@@ -13,8 +13,11 @@ import BagProvider from './states/bag'
 import styles from './styles/app.css'
 
 export const loader = async ({ context }: LoaderArgs) => {
+  if (!context?.STRIPE_KEY_PUBLIC) {
+    throw json('Stripe public key missing', { status: 500 })
+  }
   return json({
-    ENV: { STRIPE_KEY_PUBLIC: context.STRIPE_KEY_PUBLIC }
+    ENV: { STRIPE_KEY_PUBLIC: context?.STRIPE_KEY_PUBLIC }
   })
 }
 
