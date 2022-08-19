@@ -1308,7 +1308,7 @@
     hoist-non-react-statics "^3.3.2"
     tslib "^1.9.3"
 
-"@sentry/remix@^7.10.0":
+"@sentry/remix@^7.11.1":
   version "7.11.1"
   resolved "https://registry.yarnpkg.com/@sentry/remix/-/remix-7.11.1.tgz#7c853d6bab7c72180a6dcccacc4b3a3a6b132449"
   integrity sha512-SCLVubhv22uf0q4yjthZjCk7dhAmVVLKd7ciMWrURWyjHTcv4QOJ2jyDSUL9XeO+lhrK55PKaIngQwULq2mH7A==
@@ -1461,10 +1461,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/lodash@^4.14.182":
-  version "4.14.183"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.183.tgz#1173e843e858cff5b997c234df2789a4a54c2374"
-  integrity sha512-UXavyuxzXKMqJPEpFPri6Ku5F9af6ZJXUneHhvQJxavrEjuHkFp2YnDWHcxJiG7hk8ZkWqjcyNeW1s/smZv5cw==
+"@types/lodash@^4.14.184":
+  version "4.14.184"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.184.tgz#23f96cd2a21a28e106dc24d825d4aa966de7a9fe"
+  integrity sha512-RoZphVtHbxPZizt4IcILciSWiC6dcn+eZ8oX9IWEYfDMcocdd42f7NPI6fQj+6zI8y4E0L7gu2pcZKLGTRaV9Q==
 
 "@types/mdast@^3.0.0":
   version "3.0.10"
@@ -2339,7 +2339,7 @@ date-fns@^2.16.1:
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.29.1.tgz#9667c2615525e552b5135a3116b95b1961456e60"
   integrity sha512-dlLD5rKaKxpFdnjrs+5azHDFOPEu4ANy/LTh04A1DTzMM7qoajmKCBc8pkKRFT41CNzw+4gQh79X5C+Jq27HAw==
 
-date-fns@^2.29.1:
+date-fns@^2.29.2:
   version "2.29.2"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.29.2.tgz#0d4b3d0f3dff0f920820a070920f0d9662c51931"
   integrity sha512-0VNbwmWJDS/G3ySwFSJA3ayhbURMTJLtwM2DTxf9CWondCnh6DTNlO9JgRSq6ibf4eD0lfMJNBxUdEAHHix+bA==
@@ -3237,7 +3237,7 @@ graphql-request@^4.3.0:
     extract-files "^9.0.0"
     form-data "^3.0.0"
 
-graphql@^16.5.0:
+graphql@^16.6.0:
   version "16.6.0"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.6.0.tgz#c2dcffa4649db149f6282af726c8c83f1c7c5fdb"
   integrity sha512-KPIBPDlW7NxrbT/eh4qPXz5FiFdL5UbaA0XUNz2Rp3Z3hqBSkbj0GVjwFDztsWVauZUWsbKHgMg++sk8UX0bkw==
@@ -5230,7 +5230,7 @@ raw-body@2.5.1:
     iconv-lite "0.4.24"
     unpipe "1.0.0"
 
-react-day-picker@^8.0.7:
+react-day-picker@^8.1.0:
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/react-day-picker/-/react-day-picker-8.1.0.tgz#600a39380326efa1f9d470497fe0918da31068a1"
   integrity sha512-K9HNvnu6dgLFPXTexKab7SsiC9mRTRRob39cQriUUrpWNEj888YuiI+3ZVZ0+Th9P/zd4O1aFNXmz7pk4VJtGQ==
