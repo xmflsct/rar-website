@@ -231,7 +231,7 @@ const checkout = async ({
   context: LoaderArgs['context']
   content: CheckoutContent
 }) => {
-  if (!context.STRIPE_KEY_PRIVATE) {
+  if (!context?.STRIPE_KEY_PRIVATE) {
     throw new Error('Missing stripe private key')
   }
 

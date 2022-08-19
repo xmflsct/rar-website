@@ -1,10 +1,9 @@
 import { Document } from '@contentful/rich-text-types'
-import { json } from '@remix-run/cloudflare'
+import { json, LoaderArgs } from '@remix-run/cloudflare'
 import { gql, GraphQLClient, RequestDocument, Variables } from 'graphql-request'
-import { Context } from '~/root'
 
 type GraphQLRequest = {
-  context: Context
+  context: LoaderArgs['context']
   query: RequestDocument
   variables?: Variables
 }
@@ -16,7 +15,7 @@ export const graphqlRequest = async <T = unknown>({
   query,
   variables
 }: GraphQLRequest) => {
-  if (!context.CONTENTFUL_SPACE || !context.CONTENTFUL_KEY) {
+  if (!context?.CONTENTFUL_SPACE || !context.CONTENTFUL_KEY) {
     throw json('Missing Contentful config', { status: 500 })
   }
 
@@ -37,7 +36,7 @@ export const cacheQuery = async <T = unknown>({
 }: GraphQLRequest & { request: Request; ttlMinutes?: number }): Promise<T> => {
   const queryData = async () => await graphqlRequest<T>(rest)
 
-  const preview = rest.context.ENVIRONMENT !== 'PRODUCTION'
+  const preview = rest.context?.ENVIRONMENT !== 'PRODUCTION'
   if (!ttlMinutes || preview) {
     return await queryData()
   }
