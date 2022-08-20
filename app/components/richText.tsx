@@ -158,6 +158,8 @@ const RichText: React.FC<Props> = ({ content, className, assetWidth }) => {
         prose-h6:mx-auto prose-h6:max-w-2xl
         prose-figure:mx-auto prose-figure:max-w-2xl
         prose-p:mx-auto prose-p:max-w-2xl
+        prose-hr:mx-auto prose-hr:max-w-2xl
+        prose-ol:mx-auto prose-ol:max-w-2xl
         prose-ul:mx-auto prose-ul:max-w-2xl
         prose-ul:list-[circle]
         prose-li:m-0
