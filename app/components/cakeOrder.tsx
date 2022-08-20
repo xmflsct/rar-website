@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { addDays, addMonths, formatISO, isEqual, parseISO } from 'date-fns'
+import { addDays, addMonths, formatISO, isBefore, isEqual, parseISO } from 'date-fns'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { DayPickerSingleProps } from 'react-day-picker'
 import { BagContext } from '~/states/bag'
@@ -13,6 +13,7 @@ type Props = {
 }
 
 const CakeOrder: React.FC<Props> = ({ cake }) => {
+  console.log(cake.deliveryCustomizations)
   const { cakeAdd, cakeCheck } = useContext(BagContext)
   const [amounts, setAmounts] = useState<{
     typeAAmount: string
@@ -20,9 +21,7 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
     typeCAmount: string
   }>({ typeAAmount: '', typeBAmount: '', typeCAmount: '' })
 
-  const [cakeCustomizations, setCakeCustomizations] = useState<
-    [string, number][]
-  >([])
+  const [cakeCustomizations, setCakeCustomizations] = useState<[string, number][]>([])
 
   const needDeliveryOptions = useRef(cake.shippingAvailable)
 
@@ -46,12 +45,9 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
       setDeliveryMinimum(tempMin)
       if (tempMin) {
         setAmounts({
-          typeAAmount:
-            parseInt(amounts.typeAAmount) < tempMin ? '' : amounts.typeAAmount,
-          typeBAmount:
-            parseInt(amounts.typeBAmount) < tempMin ? '' : amounts.typeBAmount,
-          typeCAmount:
-            parseInt(amounts.typeCAmount) < tempMin ? '' : amounts.typeCAmount
+          typeAAmount: parseInt(amounts.typeAAmount) < tempMin ? '' : amounts.typeAAmount,
+          typeBAmount: parseInt(amounts.typeBAmount) < tempMin ? '' : amounts.typeBAmount,
+          typeCAmount: parseInt(amounts.typeCAmount) < tempMin ? '' : amounts.typeCAmount
         })
       }
     }
@@ -124,16 +120,10 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
         let startingDate: Date
         let endingDate: Date
         if (Array.isArray(availability)) {
-          startingDate = parseISO(
-            availability.sort((a, b) => (a.date < b.date ? -1 : 1))[0].date
-          )
-          endingDate = parseISO(
-            availability.sort((a, b) => (a.date > b.date ? -1 : 1))[0].date
-          )
+          startingDate = parseISO(availability.sort((a, b) => (a.date < b.date ? -1 : 1))[0].date)
+          endingDate = parseISO(availability.sort((a, b) => (a.date > b.date ? -1 : 1))[0].date)
         } else {
-          startingDate = availability.after
-            ? parseISO(availability.after)
-            : addDays(new Date(), 2)
+          startingDate = availability.after ? parseISO(availability.after) : addDays(new Date(), 2)
           endingDate = availability.before
             ? parseISO(availability.before)
             : addMonths(new Date(), 1)
@@ -148,8 +138,11 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
             ...(Array.isArray(availability)
               ? [
                   (date: Date) =>
-                    availability.filter(a => isEqual(parseISO(a.date), date))
-                      .length <= 0
+                    availability.filter(
+                      a =>
+                        (a.before ? isBefore(new Date(), parseISO(a.before)) : true) &&
+                        isEqual(parseISO(a.date), date)
+                    ).length <= 0
                 ]
               : [{ before: startingDate }, { after: endingDate }])
           ]
@@ -168,46 +161,36 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
   }
 
   const renderCakeCustomizations = () => {
-    return cake.cakeCustomizationsCollection?.items.map(
-      (customization, index) => {
-        const customizationSelected = cakeCustomizations.filter(
-          c => c[0] === customization.type
-        )
-        return (
-          <Select
-            key={index}
-            required
-            name={customization.type}
-            value={
-              customizationSelected.length === 1
-                ? customizationSelected[0][1]
-                : ''
-            }
-            onChange={e => {
-              if (customizationSelected.length === 1) {
-                setCakeCustomizations(
-                  cakeCustomizations.map(c =>
-                    c[0] === customization.type
-                      ? [c[0], parseInt(e.target.value)]
-                      : c
-                  )
+    return cake.cakeCustomizationsCollection?.items.map((customization, index) => {
+      const customizationSelected = cakeCustomizations.filter(c => c[0] === customization.type)
+      return (
+        <Select
+          key={index}
+          required
+          name={customization.type}
+          value={customizationSelected.length === 1 ? customizationSelected[0][1] : ''}
+          onChange={e => {
+            if (customizationSelected.length === 1) {
+              setCakeCustomizations(
+                cakeCustomizations.map(c =>
+                  c[0] === customization.type ? [c[0], parseInt(e.target.value)] : c
                 )
-              } else {
-                setCakeCustomizations([
-                  ...cakeCustomizations,
-                  [customization.type, parseInt(e.target.value)]
-                ])
-              }
-            }}
-          >
-            <option value='' children={`${customization.type} ...`} disabled />
-            {customization.options.map((option, index) => (
-              <option key={index} value={index} children={option} />
-            ))}
-          </Select>
-        )
-      }
-    )
+              )
+            } else {
+              setCakeCustomizations([
+                ...cakeCustomizations,
+                [customization.type, parseInt(e.target.value)]
+              ])
+            }
+          }}
+        >
+          <option value='' children={`${customization.type} ...`} disabled />
+          {customization.options.map((option, index) => (
+            <option key={index} value={index} children={option} />
+          ))}
+        </Select>
+      )
+    })
   }
 
   const renderTypeOptions = (type: 'A' | 'B' | 'C') => {
@@ -258,11 +241,7 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault()
 
-    if (
-      amounts.typeAAmount.length ||
-      amounts.typeBAmount.length ||
-      amounts.typeCAmount.length
-    ) {
+    if (amounts.typeAAmount.length || amounts.typeBAmount.length || amounts.typeCAmount.length) {
       cakeAdd({
         ...cake,
         chosen: {
@@ -296,8 +275,7 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
           <div
             className={classNames(
               'grid gap-4',
-              cake.deliveryCustomizations?.pickup ||
-                cake.deliveryCustomizations?.shipping
+              cake.deliveryCustomizations?.pickup || cake.deliveryCustomizations?.shipping
                 ? 'grid-cols-2'
                 : 'grid-cols-1'
             )}
@@ -310,9 +288,7 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
       {cake.cakeCustomizationsCollection?.items.length ? (
         <div className='flex flex-col gap-2'>
           <div className='font-bold'>Customizations</div>
-          <div className='flex flex-row gap-4'>
-            {renderCakeCustomizations()}
-          </div>
+          <div className='flex flex-row gap-4'>{renderCakeCustomizations()}</div>
         </div>
       ) : null}
       <div className='flex flex-col gap-2'>
