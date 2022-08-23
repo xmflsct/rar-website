@@ -129,6 +129,12 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
             : addMonths(new Date(), 1)
         }
 
+        const maxLimit = parseInt(new Date().toLocaleString('nl-NL', {
+          timeZone: 'Europe/Amsterdam',
+          hour: '2-digit',
+          hour12: false
+        })) > 16 ? addDays(new Date(), 3) : addDays(new Date(), 2)
+
         return {
           defaultMonth: startingDate,
           fromMonth: startingDate,
@@ -144,7 +150,7 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
                         isEqual(parseISO(a.date), date)
                     ).length <= 0
                 ]
-              : [{ before: startingDate }, { after: endingDate }])
+              : [{ before: isBefore(startingDate, maxLimit) ? maxLimit: startingDate }, { after: endingDate }])
           ]
         }
       }
