@@ -150,7 +150,7 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
                         isEqual(parseISO(a.date), date)
                     ).length <= 0
                 ]
-              : [{ before: isBefore(startingDate, maxLimit) ? startingDate: maxLimit }, { after: endingDate }])
+              : [{ before: isBefore(startingDate, maxLimit) ? maxLimit: startingDate }, { after: endingDate }])
           ]
         }
       }
