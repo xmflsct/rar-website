@@ -136,7 +136,7 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
         }
 
         return {
-          defaultMonth: endingDate,
+          defaultMonth: startingDate,
           fromMonth: startingDate,
           toMonth: endingDate,
           disabled: [
