@@ -117,10 +117,16 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
         DayPickerSingleProps,
         'date' | 'setDate' | 'mode' | 'select' | 'onSelect' | 'onDayClick'
       > => {
+        const maxLimit = parseInt(new Date().toLocaleString('nl-NL', {
+          timeZone: 'Europe/Amsterdam',
+          hour: '2-digit',
+          hour12: false
+        })) > 16 ? addDays(new Date(), 3) : addDays(new Date(), 2)
+
         let startingDate: Date
         let endingDate: Date
         if (Array.isArray(availability)) {
-          startingDate = parseISO(availability.sort((a, b) => (a.date < b.date ? -1 : 1))[0].date)
+          startingDate = parseISO(availability.sort((a, b) => (a.date < b.date ? -1 : 1))[0].date).filter(date => !isBefore(startingDate, maxLimit))
           endingDate = parseISO(availability.sort((a, b) => (a.date > b.date ? -1 : 1))[0].date)
         } else {
           startingDate = availability.after ? parseISO(availability.after) : addDays(new Date(), 2)
@@ -128,12 +134,6 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
             ? parseISO(availability.before)
             : addMonths(new Date(), 1)
         }
-
-        const maxLimit = parseInt(new Date().toLocaleString('nl-NL', {
-          timeZone: 'Europe/Amsterdam',
-          hour: '2-digit',
-          hour12: false
-        })) > 16 ? addDays(new Date(), 3) : addDays(new Date(), 2)
 
         return {
           defaultMonth: startingDate,
