@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { addDays, addMonths, formatISO, isBefore, isEqual, parseISO } from 'date-fns'
+import { addDays, addMonths, formatISO, isAfter, isBefore, isEqual, parseISO } from 'date-fns'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { DayPickerSingleProps } from 'react-day-picker'
 import { BagContext } from '~/states/bag'
@@ -150,7 +150,7 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
                         isEqual(parseISO(a.date), date)
                     ).length <= 0
                 ]
-              : [{ before: isBefore(startingDate, maxLimit) ? maxLimit: startingDate }, { after: endingDate }])
+              : [{ before: isAfter(maxLimit, startingDate) ? maxLimit: startingDate }, { after: endingDate }])
           ]
         }
       }
