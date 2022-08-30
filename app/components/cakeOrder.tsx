@@ -126,7 +126,7 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
         let startingDate: Date
         let endingDate: Date
         if (Array.isArray(availability)) {
-          startingDate = parseISO(availability.sort((a, b) => (a.date < b.date ? -1 : 1))[0].date).filter(date => isAfter(maxLimit.setHours(0,0,0,0), startingDate.setHours(0,0,0,0)))
+          startingDate = parseISO(availability.sort((a, b) => (a.date < b.date ? -1 : 1)) .filter(date => isAfter(maxLimit.setHours(0,0,0,0), startingDate.setHours(0,0,0,0)))[0].date)
           endingDate = parseISO(availability.sort((a, b) => (a.date > b.date ? -1 : 1))[0].date)
         } else {
           startingDate = availability.after ? parseISO(availability.after) : addDays(new Date(), 2)
