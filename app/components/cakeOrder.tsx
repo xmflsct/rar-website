@@ -13,7 +13,6 @@ type Props = {
 }
 
 const CakeOrder: React.FC<Props> = ({ cake }) => {
-  console.log(cake.deliveryCustomizations)
   const { cakeAdd, cakeCheck } = useContext(BagContext)
   const [amounts, setAmounts] = useState<{
     typeAAmount: string
@@ -100,8 +99,12 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
           }}
         >
           <option value='' children='Pickup / Delivery ...' disabled />
-          <option value='pickup' children='Pickup in store' />
-          <option value='shipping' children='Shipping in NL (PostNL)' />
+          {cake.deliveryCustomizations?.pickup ? (
+            <option value='pickup' children='Pickup in store' />
+          ) : null}
+          {cake.deliveryCustomizations?.shipping ? (
+            <option value='shipping' children='Shipping in NL (PostNL)' />
+          ) : null}
         </Select>
       )
     }
@@ -117,17 +120,34 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
         DayPickerSingleProps,
         'date' | 'setDate' | 'mode' | 'select' | 'onSelect' | 'onDayClick'
       > => {
-        const maxLimit = parseInt(new Date().toLocaleString('nl-NL', {
-          timeZone: 'Europe/Amsterdam',
-          hour: '2-digit',
-          hour12: false
-        })) > 16 ? addDays(new Date(), 3) : addDays(new Date(), 2)
+        const maxLimit =
+          parseInt(
+            new Date().toLocaleString('nl-NL', {
+              timeZone: 'Europe/Amsterdam',
+              hour: '2-digit',
+              hour12: false
+            })
+          ) > 16
+            ? addDays(new Date(), 3)
+            : addDays(new Date(), 2)
 
         let startingDate: Date
         let endingDate: Date
         if (Array.isArray(availability)) {
-          startingDate = parseISO(availability.sort((a, b) => (a.date < b.date ? -1 : 1)).filter(({before}) => isBefore(new Date(), parseISO(before)))[0].date)
+          const getStillAvailable = availability
+            .sort((a, b) => (a.date < b.date ? -1 : 1))
+            .filter(({ before }) => (before ? isBefore(new Date(), parseISO(before)) : true))[0]
+            ?.date as string | undefined
           endingDate = parseISO(availability.sort((a, b) => (a.date > b.date ? -1 : 1))[0].date)
+          if (!getStillAvailable) {
+            return {
+              defaultMonth: endingDate,
+              fromMonth: endingDate,
+              toMonth: endingDate,
+              disabled: { after: new Date(2000, 1, 1) }
+            }
+          }
+          startingDate = parseISO(getStillAvailable)
         } else {
           startingDate = availability.after ? parseISO(availability.after) : addDays(new Date(), 2)
           endingDate = availability.before
@@ -150,7 +170,10 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
                         isEqual(parseISO(a.date), date)
                     ).length <= 0
                 ]
-              : [{ before: isAfter(maxLimit, startingDate) ? maxLimit: startingDate }, { after: endingDate }])
+              : [
+                  { before: isAfter(maxLimit, startingDate) ? maxLimit : startingDate },
+                  { after: endingDate }
+                ])
           ]
         }
       }
