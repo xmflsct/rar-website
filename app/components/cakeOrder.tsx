@@ -99,12 +99,8 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
           }}
         >
           <option value='' children='Pickup / Delivery ...' disabled />
-          {cake.deliveryCustomizations?.pickup ? (
-            <option value='pickup' children='Pickup in store' />
-          ) : null}
-          {cake.deliveryCustomizations?.shipping ? (
-            <option value='shipping' children='Shipping in NL (PostNL)' />
-          ) : null}
+          <option value='pickup' children='Pickup in store' />
+          <option value='shipping' children='Shipping in NL (PostNL)' />
         </Select>
       )
     }
