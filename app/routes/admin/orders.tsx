@@ -119,16 +119,18 @@ const PageAdminOrders: React.FC = () => {
       ...orders,
       ...sessions.map(session => {
         return {
-          receipt: session.payment_intent?.charges.data[0].receipt_number,
-          name: session.payment_intent.charges.data[0].billing_details.name,
+          receipt: session.payment_intent?.charges?.data[0].receipt_number || null,
+          name: session.payment_intent.charges?.data[0].billing_details.name || null,
           phone:
             session.customer_details?.phone ||
-            session.payment_intent.charges.data[0].metadata['Phone number'],
+            session.payment_intent.charges?.data[0].metadata['Phone number'] ||
+            'ERROR',
           email: session.customer_details?.email,
           date:
-            session.payment_intent.charges.data[0].description ||
-            session.payment_intent.charges.data[0].metadata['Pick-up date'],
-          shipping: session.payment_intent.charges.data[0].shipping,
+            session.payment_intent.charges?.data[0].description ||
+            session.payment_intent.charges?.data[0].metadata['Pick-up date'] ||
+            'ERROR',
+          shipping: session.payment_intent.charges?.data[0].shipping || null,
           items: session.line_items.data
             .map(item => ({
               ...item,
@@ -150,7 +152,7 @@ const PageAdminOrders: React.FC = () => {
               quantity: item.quantity
             })),
           metadata: {
-            ...session.payment_intent.charges.data[0].metadata,
+            ...session.payment_intent.charges?.data[0].metadata,
             ...session.metadata
           }
         }

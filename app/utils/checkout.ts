@@ -7,6 +7,8 @@ import calShipping from './calShipping'
 import { Cake, graphqlRequest, Shipping } from './contentful'
 
 export type CheckoutContent = {
+  ideal?: boolean
+  cards?: boolean
   orders: {
     pickup?: CakeOrder[]
     shipping?: CakeOrder[]
@@ -301,14 +303,14 @@ const checkout = async ({
   line_items.push({
     price_data: {
       currency: 'eur',
-      unit_amount: 0.3 * 10 * 10,
-      product_data: { name: 'Transaction fee' }
+      unit_amount: content.ideal ? 0.3 * 10 * 10 : 1 * 10 * 10,
+      product_data: { name: 'Processing fee' }
     },
     quantity: 1
   })
 
   const sessionData = {
-    payment_method_types: ['ideal'],
+    payment_method_types: content.ideal ? ['ideal', 'bancontact'] : ['card', 'bancontact', 'giropay', 'sofort'],
     mode: 'payment',
     line_items: line_items.filter(l => l),
     ...(shipping && {
