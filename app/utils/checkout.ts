@@ -31,7 +31,7 @@ type ShippingOptions = {
       amount: number
       currency: 'eur'
     }
-    metadata?: Object
+    metadata?: { label?: boolean, weight: number }
   }
 }
 
@@ -185,8 +185,8 @@ const verifyContentful = async ({
       })
     ).shippingCollection.items[0].rates
 
-    const shippingFee = calShipping({ rates, orders: orders.shipping })
-    if (!(shippingFee === parseFloat(shipping_amount || ''))) {
+    const shippingRate = calShipping({ rates, orders: orders.shipping })
+    if (!(shippingRate.fee === parseFloat(shipping_amount || ''))) {
       throw json('Shipping fee not aligned', { status: 400 })
     }
 
@@ -217,9 +217,10 @@ const verifyContentful = async ({
         type: 'fixed_amount',
         fixed_amount: {
           currency: 'eur',
-          amount: shippingFee * 10 * 10
-        }
-      }
+          amount: shippingRate.fee * 10 * 10
+        },
+        metadata: { label: shippingRate.label, weight: shippingRate.weight }
+      },
     }
   } else {
     return null
@@ -317,7 +318,7 @@ const checkout = async ({
       shipping_address_collection: {
         allowed_countries: ['NL']
       },
-      shipping_options: [shipping]
+      shipping_options: [{ ...shipping }]
     }),
     locale: 'en',
     success_url: content.success_url + '/id/{CHECKOUT_SESSION_ID}',
@@ -333,7 +334,8 @@ const checkout = async ({
       ...(content.gift_card && { 'Gift card number': content.gift_card }),
       ...(content.birthday_cake_voucher && {
         'Birthday cake voucher': content.birthday_cake_voucher
-      })
+      }),
+      ...(shipping?.shipping_rate_data.metadata?.weight && { shipping_weight: shipping?.shipping_rate_data.metadata?.weight })
     }
   }
 

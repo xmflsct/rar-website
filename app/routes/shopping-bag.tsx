@@ -124,7 +124,7 @@ const ShoppingBag = () => {
     return sum
   })
 
-  const shippingFee = calShipping({
+  const { fee: shippingFee } = calShipping({
     rates: shippingRates,
     orders: orders.shipping
   })

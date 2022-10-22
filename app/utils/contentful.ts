@@ -143,6 +143,7 @@ export type Shipping = {
     rates: {
       weight: { min: number; max: number }
       price: number
+      label?: boolean
     }[]
   }[]
 }

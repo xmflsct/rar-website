@@ -7,16 +7,19 @@ type Props = {
   orders: CakeOrder[]
 }
 
-const calShipping = ({ rates, orders }: Props): number => {
+const calShipping = ({ rates, orders }: Props): { fee: number; weight: number, label?: boolean; } => {
+  const DEFAULT = { fee: 10, weight: 500, label: true }
+
   const shippingNL = rates.filter(s => s.type === 'Netherlands')
   if (shippingNL.length !== 1) {
-    return 10
+    return DEFAULT
   }
 
-  const shippingFees: ({ fee: number; weight: number } | undefined)[] =
+  const shippingFees: ({ fee: number; weight: number; label?: boolean } | undefined)[] =
     orders.map(order => {
       if (order.chosen.delivery?.type === 'shipping') {
         let fee = 0
+        let label: boolean | undefined
         const freeAbove = order.deliveryCustomizations?.shipping?.freeAbove
         const subtotalShipping =
           (order.typeAPrice || 0) * (order.chosen.typeAAmount || 0) +
@@ -35,14 +38,15 @@ const calShipping = ({ rates, orders }: Props): number => {
             totalWeight <= rate.weight.max
           ) {
             fee = freeAbove && subtotalShipping >= freeAbove ? 0 : rate.price
+            label = rate.label
           }
         })
-        return { fee, weight: totalWeight }
+        return { fee, weight: totalWeight, label }
       }
     })
 
   const max = maxBy(shippingFees, s => s?.weight)
-  return max ? max.fee : 10
+  return max || DEFAULT
 }
 
 export default calShipping
