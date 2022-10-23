@@ -159,7 +159,7 @@ export const action: ActionFunction = async ({ context, request }) => {
           )
           return json(`Barcode: ${barcode}`, 200)
         } else {
-          return json('Shipping creation failed', 500)
+          return json(`Shipping creation failed: ${JSON.stringify(shipping)}`, 500)
         }
       }
       break

@@ -17,7 +17,7 @@ export const Customer = (context: AppLoadContext) => ({
 })
 
 export const Address = (customer_details: Stripe.Checkout.Session.CustomerDetails | null) => ({
-  Country: customer_details?.address?.country,
+  Countrycode: customer_details?.address?.country,
   City: customer_details?.address?.city,
   Zipcode: customer_details?.address?.postal_code,
   StreetHouseNrExt:
