@@ -12,6 +12,7 @@ type SessionsData = {
   data: (Stripe.Checkout.Session & {
     payment_intent: Stripe.PaymentIntent
     line_items: { data: Stripe.LineItem[] }
+    shipping_cost?: { shipping_rate?: Stripe.ShippingRate }
   })[]
 }
 export const loader = async ({ context }: LoaderArgs) => {
@@ -51,6 +52,7 @@ type Order = {
     shipping: Stripe.Charge.Shipping | null | undefined
     sessionID: Stripe.Checkout.Session['id']
     payment_intent: Stripe.PaymentIntent
+    shipping_rate?: Stripe.ShippingRate
   }
   items?: Stripe.LineItem[]
   metadata: Stripe.Metadata
@@ -115,6 +117,14 @@ const Shipping: React.FC<{ postnl: PostNL; shipping: NonNullable<Order['shipping
           {shipping.shipping.address?.city}
         </div>
       ) : null}
+      {
+        // @ts-ignore
+        (shipping.shipping_rate?.metadata.label === true ||
+          shipping.shipping_rate?.metadata.label === 'true') &&
+        !shipping.payment_intent.metadata?.shipping_tracking ? (
+          <strong className='text-red-600'>Label creation failed!</strong>
+        ) : null
+      }
       {shipping?.payment_intent.metadata?.shipping_tracking ? (
         <div>
           <span className='block'>
@@ -165,6 +175,7 @@ const PageAdminOrders: React.FC = () => {
       params.append('limit', '5')
       params.append('expand[]', 'data.payment_intent')
       params.append('expand[]', 'data.line_items')
+      params.append('expand[]', 'data.shipping_cost.shipping_rate')
       cursor.current && params.append('starting_after', cursor.current)
       url.search = params.toString()
 
@@ -221,7 +232,8 @@ const PageAdminOrders: React.FC = () => {
           shipping: {
             shipping: session.payment_intent.charges?.data[0].shipping,
             sessionID: session.id,
-            payment_intent: session.payment_intent
+            payment_intent: session.payment_intent,
+            shipping_rate: session.shipping_cost.shipping_rate
           },
           items: lineItems
             .find(i => i.id === session.id)
