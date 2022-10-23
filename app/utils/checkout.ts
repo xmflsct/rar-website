@@ -334,9 +334,9 @@ const checkout = async ({
       ...(content.gift_card && { 'Gift card number': content.gift_card }),
       ...(content.birthday_cake_voucher && {
         'Birthday cake voucher': content.birthday_cake_voucher
-      }),
-      ...(shipping?.shipping_rate_data.metadata?.weight && { shipping_weight: shipping?.shipping_rate_data.metadata?.weight })
-    }
+      })
+    },
+    expires_at: Math.floor(new Date().getTime() / 1000 + 31 * 60)
   }
 
   // @ts-ignore

@@ -42,7 +42,7 @@
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
     "autoprefixer": "^10.4.12",
-    "concurrently": "^7.4.0",
+    "concurrently": "^7.5.0",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.18",
     "stripe": "^10.15.0",

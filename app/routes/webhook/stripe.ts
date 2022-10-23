@@ -10,11 +10,11 @@ const hexStringToUint8Array = (hexString: string) => {
 
 export const action: ActionFunction = async ({ context, request }) => {
   if (request.method !== 'POST') {
-    return json(null, 405)
+    return json('Request method error', 405)
   }
 
   if (!context?.STRIPE_KEY_ADMIN || !context.WEBHOOK_STRIPE_SIGNING_SECRET) {
-    throw json(null, { status: 500 })
+    throw json('Missing environment variables', { status: 500 })
   }
 
   const signature = request.headers
@@ -25,7 +25,7 @@ export const action: ActionFunction = async ({ context, request }) => {
   const signatureV1 = signature?.find(array => array[0] === 'v1')?.[1]
 
   if (!signatureTimestamp || !signatureV1) {
-    return json(null, 403)
+    return json('No signature provided', 403)
   }
 
   const payloadRaw = await request.clone().text()
@@ -45,7 +45,7 @@ export const action: ActionFunction = async ({ context, request }) => {
   )
   const elapsed = Math.floor(Date.now() / 1000) - Number(signatureTimestamp)
   if (!verified || elapsed > 300) {
-    return json(null, 403)
+    return json('Signature verify failed', 403)
   }
 
   const payload = (await request.json()) as {
@@ -57,77 +57,78 @@ export const action: ActionFunction = async ({ context, request }) => {
 
   switch (payload.type) {
     case 'checkout.session.completed':
-      const requireShipping = payload.data.object.shipping_cost?.shipping_rate
+      const shipping_rate = payload.data.object.shipping_cost?.shipping_rate
         ? (
           await (
             await fetch(
               `https://api.stripe.com/v1/shipping_rates/${payload.data.object.shipping_cost.shipping_rate}`,
               { headers: { Authorization } }
             )
-          ).json<Stripe.ShippingRate>()
+          ).json<{ metadata: { label: false, weight?: number } | { label: true, weight: number } }>()
         ).metadata
-        : false
-      if (!requireShipping || !requireShipping.label) {
-        console.log('Shipping not required')
-        return json(null, 200)
-      }
-      console.log('Shipping required')
-      const postnlData = {
-        Customer: Customer(context),
-        Message,
-        Shipments: [
-          {
-            "Reference": payload.data.object.id,
-            Addresses: [
-              {
-                AddressType: '01',
-                Countrycode: 'NL',
-                City: payload.data.object.customer_details?.address?.city,
-                Zipcode: payload.data.object.customer_details?.address?.postal_code,
-                StreetHouseNrExt:
-                  payload.data.object.customer_details?.address?.line1 +
-                  `\n` +
-                  payload.data.object.customer_details?.address?.line2,
-                Name: payload.data.object.customer_details?.name
-              }
-            ],
-            Contacts: [
-              {
-                ContactType: '01',
-                Email: payload.data.object.customer_details?.email,
-                SMSNr: payload.data.object.customer_details?.phone
-              }
-            ],
-            Dimension: {
-              Weight: requireShipping.weight
-            },
-            ProductCodeDelivery
-          }
-        ]
-      }
+        : { label: false } as { label: false }
 
-      const shipping = await (
-        await fetch(`${context.WEBHOOK_STRIPE_POSTNL_URL}/v1/shipment`, {
-          method: 'POST',
-          headers: {
-            apikey: context.WEBHOOK_STRIPE_POSTNL_API_KEY as string,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(postnlData)
-        })
-      ).json<any>()
+      if (shipping_rate?.label !== true) {
+        return json('Shipping not required', 200)
+      } else {
+        const postnlData = {
+          Customer: Customer(context),
+          Message,
+          Shipments: [
+            {
+              "Reference": payload.data.object.id,
+              Addresses: [
+                {
+                  AddressType: '01',
+                  Countrycode: 'NL',
+                  City: payload.data.object.customer_details?.address?.city,
+                  Zipcode: payload.data.object.customer_details?.address?.postal_code,
+                  StreetHouseNrExt:
+                    payload.data.object.customer_details?.address?.line1 +
+                    (payload.data.object.customer_details?.address?.line2 ? `\n${payload.data.object.customer_details?.address?.line2}` : ''),
+                  Name: payload.data.object.customer_details?.name
+                }
+              ],
+              Contacts: [
+                {
+                  ContactType: '01',
+                  Email: payload.data.object.customer_details?.email,
+                  SMSNr: payload.data.object.customer_details?.phone
+                }
+              ],
+              Dimension: {
+                Weight: shipping_rate.weight
+              },
+              ProductCodeDelivery
+            }
+          ]
+        }
 
-      const barcode = shipping.ResponseShipments?.[0]?.Barcode
-      if (barcode) {
-        console.log('Barcode', barcode)
-        await fetch(
-          `https://api.stripe.com/v1/payment_intents/${payload.data.object.payment_intent}`,
-          {
+        const shipping = await (
+          await fetch(`${context.WEBHOOK_STRIPE_POSTNL_URL}/v1/shipment`, {
             method: 'POST',
-            headers: { Authorization, 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ 'metadata[shipping_tracking]': barcode })
-          }
-        )
+            headers: {
+              apikey: context.WEBHOOK_STRIPE_POSTNL_API_KEY as string,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postnlData)
+          })
+        ).json<any>()
+
+        const barcode = shipping.ResponseShipments?.[0]?.Barcode
+        if (barcode) {
+          await fetch(
+            `https://api.stripe.com/v1/payment_intents/${payload.data.object.payment_intent}`,
+            {
+              method: 'POST',
+              headers: { Authorization, 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: new URLSearchParams({ 'metadata[shipping_tracking]': barcode })
+            }
+          )
+          return json(`Barcode: ${barcode}`, 200)
+        } else {
+          return json('Shipping creation failed', 500)
+        }
       }
       break
   }

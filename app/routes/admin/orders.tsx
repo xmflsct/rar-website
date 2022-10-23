@@ -104,7 +104,7 @@ const Shipping: React.FC<{ postnl: PostNL; shipping: NonNullable<Order['shipping
     <>
       {shipping?.shipping ? (
         <div>
-          <strong>Address: </strong>
+          <strong>Shipping: </strong>
           {shipping.shipping.name}
           {', '}
           {shipping.shipping.address?.line1}
@@ -304,7 +304,7 @@ const PageAdminOrders: React.FC = () => {
               <td className='p-2 whitespace-nowrap' children={order.email} />
               <td className='p-2 max-w-sm'>
                 {order.pickup ? (
-                  <div>
+                  <div className={order.shipping ? 'mb-2' : undefined}>
                     <strong>Pickup: </strong>
                     {order.pickup.replace('🛍️ pickup date: ', '')}
                   </div>
