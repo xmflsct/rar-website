@@ -101,14 +101,17 @@ export type Cake = {
   typeAAvailable?: boolean
   typeAPrice?: number
   typeAUnit?: Unit
+  typeAStock?: number
   typeAMinimum?: number
   typeBAvailable?: boolean
   typeBPrice?: number
   typeBUnit?: Unit
+  typeBStock?: number
   typeBMinimum?: number
   typeCAvailable?: boolean
   typeCPrice?: number
   typeCUnit?: Unit
+  typeCStock?: number
   typeCMinimum?: number
   description?: CommonRichText
   additionalInformation?: CommonRichText
@@ -169,18 +172,21 @@ export const CAKE_DETAILS = gql`
     typeAUnit {
       unit
     }
+    typeAStock
     typeAMinimum
     typeBAvailable
     typeBPrice
     typeBUnit {
       unit
     }
+    typeBStock
     typeBMinimum
     typeCAvailable
     typeCPrice
     typeCUnit {
       unit
     }
+    typeCStock
     typeCMinimum
     description {
       json

@@ -220,45 +220,60 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
 
   const renderTypeOptions = (type: 'A' | 'B' | 'C') => {
     const available = cake[`type${type}Available`]
+    const unit = cake[`type${type}Unit`]?.unit
+    const stock = cake[`type${type}Stock`]
 
     if (!available) return
+    if (stock !== undefined && stock === 0) {
+      return (
+        <Select name={unit} value='' required={false} className='text-gray-400' disabled>
+          <option value='' children='Sold out' disabled />
+        </Select>
+      )
+    }
 
     const amount = amounts[`type${type}Amount`]
     const price = cake[`type${type}Price`]
-    const unit = cake[`type${type}Unit`]?.unit
     const minimum = cake[`type${type}Minimum`]
 
     if (price && unit) {
       return (
-        <Select
-          name={unit}
-          value={amount}
-          required={
-            amounts.typeAAmount.length === 0 &&
-            amounts.typeBAmount.length === 0 &&
-            amounts.typeCAmount.length === 0
-          }
-          onChange={e =>
-            e.target.value &&
-            setAmounts({
-              ...amounts,
-              [`type${type}Amount`]: e.target.value
-            })
-          }
-        >
-          <option value='' children={`${unit} ...`} disabled />
-          {Array(16)
-            .fill(undefined)
-            .map((_, index) =>
-              (deliveryMinimum || 1) <= index && (minimum || 1) <= index ? (
-                <option
-                  key={index}
-                  value={index}
-                  children={index === 0 ? unit : `${index} \u00d7 ${unit}`}
-                />
-              ) : null
-            )}
-        </Select>
+        <>
+          <Select
+            name={unit}
+            value={amount}
+            required={
+              amounts.typeAAmount.length === 0 &&
+              amounts.typeBAmount.length === 0 &&
+              amounts.typeCAmount.length === 0
+            }
+            onChange={e =>
+              e.target.value &&
+              setAmounts({
+                ...amounts,
+                [`type${type}Amount`]: e.target.value
+              })
+            }
+            className={amounts[`type${type}Amount`].length ? undefined : 'text-gray-400'}
+          >
+            <option
+              value=''
+              children={stock !== undefined ? `${stock} ${unit} left ...` : `${unit} ...`}
+              disabled
+            />
+            {Array(stock !== undefined ? stock + 1 : 16)
+              .fill(undefined)
+              .map((_, index) =>
+                (deliveryMinimum || 1) <= index && (minimum || 1) <= index ? (
+                  <option
+                    key={index}
+                    value={index}
+                    children={index === 0 ? unit : `${index} \u00d7 ${unit}`}
+                  />
+                ) : null
+              )}
+          </Select>
+        </>
       )
     }
   }

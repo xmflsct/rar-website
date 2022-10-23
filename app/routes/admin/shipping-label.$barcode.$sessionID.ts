@@ -1,6 +1,6 @@
 import { json, LoaderFunction } from '@remix-run/cloudflare'
 import Stripe from 'stripe'
-import { Customer, Message, ProductCodeDelivery } from '~/utils/postNL'
+import { Address, Customer, Message, ProductCodeDelivery } from '~/utils/postNL'
 
 export const loader: LoaderFunction = async ({ context, params }) => {
   if (!params.barcode || !params.sessionID) {
@@ -25,14 +25,7 @@ export const loader: LoaderFunction = async ({ context, params }) => {
         Addresses: [
           {
             AddressType: '01',
-            Countrycode: 'NL',
-            City: session.customer_details?.address?.city,
-            Zipcode: session.customer_details?.address?.postal_code,
-            StreetHouseNrExt:
-              session.customer_details?.address?.line1 +
-              `\n` +
-              session.customer_details?.address?.line2,
-            Name: session.customer_details?.name
+            ...Address(session.customer_details!)
           }
         ],
         ProductCodeDelivery

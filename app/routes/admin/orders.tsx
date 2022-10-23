@@ -94,7 +94,7 @@ const Shipping: React.FC<{ postnl: PostNL; shipping: NonNullable<Order['shipping
         if (phase) {
           return phase
         } else {
-          return 'Fetch'
+          return 'Refresh'
         }
       }
     }

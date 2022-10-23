@@ -1,4 +1,5 @@
 import { AppLoadContext } from "@remix-run/cloudflare";
+import Stripe from "stripe";
 
 export const Customer = (context: AppLoadContext) => ({
   Address: {
@@ -13,6 +14,16 @@ export const Customer = (context: AppLoadContext) => ({
   CustomerNumber: context.WEBHOOK_STRIPE_POSTNL_CUSTOMER_NUMBER,
   CollectionLocation: context.WEBHOOK_STRIPE_POSTNL_COLLECTION_LOCATION,
   Email: 'info@roundandround.nl'
+})
+
+export const Address = (customer_details: Stripe.Checkout.Session.CustomerDetails | null) => ({
+  Country: customer_details?.address?.country,
+  City: customer_details?.address?.city,
+  Zipcode: customer_details?.address?.postal_code,
+  StreetHouseNrExt:
+    customer_details?.address?.line1 +
+    (customer_details?.address?.line2 ? `\n${customer_details?.address?.line2}` : ''),
+  Name: customer_details?.name
 })
 
 export const Message = { Printertype: 'GraphicFile|PDF' }

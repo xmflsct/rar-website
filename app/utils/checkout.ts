@@ -67,12 +67,15 @@ const verifyContentful = async ({
             | 'available'
             | 'typeAAvailable'
             | 'typeAPrice'
+            | 'typeAStock'
             | 'typeAMinimum'
             | 'typeBAvailable'
             | 'typeBPrice'
+            | 'typeBStock'
             | 'typeBMinimum'
             | 'typeCAvailable'
             | 'typeCPrice'
+            | 'typeCStock'
             | 'typeCMinimum'
             | 'deliveryCustomizations'
             | 'shippingWeight'
@@ -95,12 +98,15 @@ const verifyContentful = async ({
                 available
                 typeAAvailable
                 typeAPrice
+                typeAStock
                 typeAMinimum
                 typeBAvailable
                 typeBPrice
+                typeBStock
                 typeBMinimum
                 typeCAvailable
                 typeCPrice
+                typeCStock
                 typeCMinimum
                 deliveryCustomizations
                 shippingWeight
@@ -128,6 +134,10 @@ const verifyContentful = async ({
         if (amount) {
           if (!item[`type${type}Available`]) {
             throw json('Cake availability error', { status: 400 })
+          }
+          const stock = item[`type${type}Stock`]
+          if (stock && amount > stock) {
+            throw json('Cake quantity exceeded', { status: 400 })
           }
           if (amount < (item[`type${type}Minimum`] || 1)) {
             throw json('Cake quantity error', { status: 400 })
@@ -284,7 +294,13 @@ const checkout = async ({
       price_data: {
         currency: 'eur',
         unit_amount: price * 10 * 10,
-        product_data: { name, images: [order.image?.url] }
+        product_data: {
+          name,
+          images: [order.image?.url],
+          ...(order[`type${type}Stock`] !== undefined && {
+            metadata: { contentful_id: order.sys.id, type }
+          })
+        }
       },
       quantity: amount
     }
@@ -336,7 +352,7 @@ const checkout = async ({
         'Birthday cake voucher': content.birthday_cake_voucher
       })
     },
-    expires_at: Math.floor(new Date().getTime() / 1000 + 31 * 60)
+    expires_at: Math.floor(Date.now() / 1000) + (31 * 60)
   }
 
   // @ts-ignore

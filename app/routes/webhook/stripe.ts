@@ -1,6 +1,6 @@
 import { ActionFunction, json } from '@remix-run/cloudflare'
 import Stripe from 'stripe'
-import { Customer, Message, ProductCodeDelivery } from '~/utils/postNL'
+import { Address, Customer, Message, ProductCodeDelivery } from '~/utils/postNL'
 
 const hexStringToUint8Array = (hexString: string) => {
   const bytes = new Uint8Array(Math.ceil(hexString.length / 2))
@@ -57,6 +57,43 @@ export const action: ActionFunction = async ({ context, request }) => {
 
   switch (payload.type) {
     case 'checkout.session.completed':
+      const sessionLineItems = (
+        await (
+          await fetch(`https://api.stripe.com/v1/checkout/sessions/${payload.data.object.id}/line_items?limit=50&expand[]=data.price.product`, {
+            headers: { Authorization }
+          })
+        ).json<{ data: (Stripe.LineItem & { price: Stripe.Price & { product: Stripe.Product } })[] }>()
+      ).data.map(item => ({ quantity: item.quantity, metadata: item.price.product.metadata }))
+
+      for (const lineItem of sessionLineItems) {
+        if (lineItem.metadata.contentful_id) {
+          if (!lineItem.metadata.type) {
+            console.warn('No type provided')
+          } else {
+            const entry = await (await fetch(`https://api.contentful.com/spaces/${context.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`, {
+              headers: { Authorization: `Bearer ${context.CONTENTFUL_PAT}` }
+            })).json<{ sys: { version: number }, fields: { typeAStock: { "en-GB": number }, typeBStock: { "en-GB": number }, typeCStock: { "en-GB": number } } }>()
+
+            await fetch(`https://api.contentful.com/spaces/${context.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`, {
+              method: 'PATCH',
+              headers: {
+                Authorization: `Bearer ${context.CONTENTFUL_PAT}`,
+                'Content-Type': 'application/json-patch+json',
+                'X-Contentful-Version': entry.sys.version.toString()
+              },
+              body: JSON.stringify([
+                {
+                  'op': 'replace',
+                  'path': `/fields/type${lineItem.metadata.type}Stock/en-GB`,
+                  // @ts-ignore
+                  'value': entry.fields[`type${lineItem.metadata.type}Stock`]['en-GB'] - (lineItem.quantity || 0)
+                }
+              ])
+            })
+          }
+        }
+      }
+
       const shipping_rate = payload.data.object.shipping_cost?.shipping_rate
         ? (
           await (
@@ -68,7 +105,8 @@ export const action: ActionFunction = async ({ context, request }) => {
         ).metadata
         : { label: false } as { label: false }
 
-      if (shipping_rate?.label !== true) {
+      // @ts-ignore
+      if (shipping_rate?.label !== true && shipping_rate?.label !== 'true') {
         return json('Shipping not required', 200)
       } else {
         const postnlData = {
@@ -80,13 +118,7 @@ export const action: ActionFunction = async ({ context, request }) => {
               Addresses: [
                 {
                   AddressType: '01',
-                  Countrycode: 'NL',
-                  City: payload.data.object.customer_details?.address?.city,
-                  Zipcode: payload.data.object.customer_details?.address?.postal_code,
-                  StreetHouseNrExt:
-                    payload.data.object.customer_details?.address?.line1 +
-                    (payload.data.object.customer_details?.address?.line2 ? `\n${payload.data.object.customer_details?.address?.line2}` : ''),
-                  Name: payload.data.object.customer_details?.name
+                  ...Address(payload.data.object.customer_details)
                 }
               ],
               Contacts: [
