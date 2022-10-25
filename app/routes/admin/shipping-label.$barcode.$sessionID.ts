@@ -1,6 +1,6 @@
 import { json, LoaderFunction } from '@remix-run/cloudflare'
 import Stripe from 'stripe'
-import { Address, Customer, Message, ProductCodeDelivery } from '~/utils/postNL'
+import { Address, CustomerOrderNumber, Default, ProductCodeDelivery } from '~/utils/postNL'
 
 export const loader: LoaderFunction = async ({ context, params }) => {
   if (!params.barcode || !params.sessionID) {
@@ -10,15 +10,15 @@ export const loader: LoaderFunction = async ({ context, params }) => {
   const Authorization = `Bearer ${context.STRIPE_KEY_ADMIN}`
   const session = (
     await (
-      await fetch(`https://api.stripe.com/v1/checkout/sessions/${params.sessionID}`, {
+      await fetch(`https://api.stripe.com/v1/checkout/sessions/${params.sessionID}?expand[]=payment_intent`, {
         headers: { Authorization }
       })
-    ).json<Stripe.Checkout.Session>()
+    ).json<Stripe.Checkout.Session & { payment_intent: Stripe.PaymentIntent }>()
   )
 
   const postnlData = {
-    Customer: Customer(context),
-    Message,
+    ...Default(context),
+    ...CustomerOrderNumber(session.payment_intent),
     Shipments: [
       {
         Barcode: params.barcode,

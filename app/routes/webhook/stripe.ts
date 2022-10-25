@@ -1,6 +1,6 @@
 import { ActionFunction, json } from '@remix-run/cloudflare'
 import Stripe from 'stripe'
-import { Address, Customer, Message, ProductCodeDelivery } from '~/utils/postNL'
+import { Address, CustomerOrderNumber, Default, ProductCodeDelivery } from '~/utils/postNL'
 
 const hexStringToUint8Array = (hexString: string) => {
   const bytes = new Uint8Array(Math.ceil(hexString.length / 2))
@@ -110,8 +110,7 @@ export const action: ActionFunction = async ({ context, request }) => {
         return json('Shipping not required', 200)
       } else {
         const postnlData = {
-          Customer: Customer(context),
-          Message,
+          ...Default(context),
           Shipments: [
             {
               "Reference": payload.data.object.id,
