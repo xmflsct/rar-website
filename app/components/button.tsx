@@ -10,7 +10,7 @@ const Button: React.FC<
         className,
         'flex flex-row justify-center items-center',
         'border border-neutral-500 rounded-md',
-        'px-4 py-2',
+        'p-2',
         'disabled:opacity-50'
       )}
       {...rest}

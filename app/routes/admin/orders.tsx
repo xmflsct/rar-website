@@ -91,7 +91,7 @@ const Shipping: React.FC<{ postnl: PostNL; shipping: NonNullable<Order['shipping
       return 'Loading...'
     } else {
       if (failed) {
-        return 'Try again'
+        return 'Try again later'
       } else {
         if (phase) {
           return phase

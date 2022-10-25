@@ -1,6 +1,6 @@
 import { ActionFunction, json } from '@remix-run/cloudflare'
 import Stripe from 'stripe'
-import { Address, CustomerOrderNumber, Default, ProductCodeDelivery } from '~/utils/postNL'
+import { Address, Default, ProductCodeDelivery } from '~/utils/postNL'
 
 const hexStringToUint8Array = (hexString: string) => {
   const bytes = new Uint8Array(Math.ceil(hexString.length / 2))
@@ -72,7 +72,17 @@ export const action: ActionFunction = async ({ context, request }) => {
           } else {
             const entry = await (await fetch(`https://api.contentful.com/spaces/${context.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`, {
               headers: { Authorization: `Bearer ${context.CONTENTFUL_PAT}` }
-            })).json<{ sys: { version: number }, fields: { typeAStock: { "en-GB": number }, typeBStock: { "en-GB": number }, typeCStock: { "en-GB": number } } }>()
+            })).json<{ sys: { id: string, version: number }, fields: { typeAStock?: { "en-GB": number }, typeBStock?: { "en-GB": number }, typeCStock?: { "en-GB": number } } }>()
+
+            const contentfulType = lineItem.metadata.type as 'A' | 'B' | 'C'
+            const stock = entry.fields[`type${(contentfulType)}Stock`]?.['en-GB']
+
+            if (!stock || typeof stock !== 'number') {
+              continue
+            }
+            if (stock === 0) {
+              throw json({ error: `Stock of ${entry.sys.id} is 0!` }, 500)
+            }
 
             await fetch(`https://api.contentful.com/spaces/${context.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`, {
               method: 'PATCH',
@@ -85,8 +95,7 @@ export const action: ActionFunction = async ({ context, request }) => {
                 {
                   'op': 'replace',
                   'path': `/fields/type${lineItem.metadata.type}Stock/en-GB`,
-                  // @ts-ignore
-                  'value': entry.fields[`type${lineItem.metadata.type}Stock`]['en-GB'] - (lineItem.quantity || 0)
+                  'value': stock - (lineItem.quantity || 0)
                 }
               ])
             })

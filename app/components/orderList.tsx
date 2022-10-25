@@ -42,7 +42,7 @@ const OrderList: React.FC<Props> = ({ order }) => {
       <div className='col-span-3 relative flex flex-col'>
         <Link
           to={`/cake/${order.slug}`}
-          className='text-lg font-bold underline-offset-4 hover:underline'
+          className='text-lg font-bold underline-offset-4 hover:underline pr-10'
           children={order.name}
         />
         <div className='flex-1 text-sm flex flex-col gap-2'>
