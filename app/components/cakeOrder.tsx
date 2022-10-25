@@ -223,8 +223,10 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
     const unit = cake[`type${type}Unit`]?.unit
     const stock = cake[`type${type}Stock`]
 
+    const stockDefined = stock !== (undefined || null)
+
     if (!available) return
-    if (stock !== undefined && stock === 0) {
+    if (stockDefined && stock === 0) {
       return (
         <Select name={unit} value='' required={false} className='text-gray-400' disabled>
           <option value='' children='Sold out' disabled />
@@ -258,10 +260,10 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
           >
             <option
               value=''
-              children={stock !== undefined ? `${stock} ${unit} left ...` : `${unit} ...`}
+              children={stockDefined ? `${stock} \u00d7 ${unit} left ...` : `${unit} ...`}
               disabled
             />
-            {Array(stock !== undefined ? stock + 1 : 16)
+            {Array(stockDefined ? (stock || 0) + 1 : 16)
               .fill(undefined)
               .map((_, index) =>
                 (deliveryMinimum || 1) <= index && (minimum || 1) <= index ? (
