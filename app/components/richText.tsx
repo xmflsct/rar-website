@@ -66,7 +66,7 @@ const richTextOptions = ({
             const cake = entry as Cake
             return (
               <div
-                className='not-prose border-t border-b py-4'
+                className='not-prose border-t border-b py-4 my-8'
                 children={<CakeView cake={cake} />}
               />
             )
@@ -75,7 +75,7 @@ const richTextOptions = ({
             return (
               <div className='not-prose mb-4'>
                 <h2 className='text-2xl my-4'>{entry.name}</h2>
-                <RichText content={cakesGroup.description} />
+                <RichText content={cakesGroup.description} className='mb-4' />
                 <div className='grid grid-cols-2 lg:grid-cols-3 gap-4'>
                   {cakesGroup.cakesCollection?.items?.map(cake => {
                     const typePrice = (type: 'A' | 'B' | 'C') => {
