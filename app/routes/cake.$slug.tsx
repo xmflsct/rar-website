@@ -11,6 +11,7 @@ import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async ({ context, params, request }: LoaderArgs) => {
   const data = await cacheQuery<{ cakeCollection: { items: Cake[] } }>({
+    ttlMinutes: 0,
     context,
     request,
     variables: { slug: params.slug },
@@ -26,10 +27,7 @@ export const loader = async ({ context, params, request }: LoaderArgs) => {
     `
   })
 
-  if (
-    !data?.cakeCollection?.items?.length ||
-    data.cakeCollection.items.length !== 1
-  ) {
+  if (!data?.cakeCollection?.items?.length || data.cakeCollection.items.length !== 1) {
     throw json('Not Found', { status: 404 })
   }
 
@@ -37,16 +35,10 @@ export const loader = async ({ context, params, request }: LoaderArgs) => {
   return json({ navs, cake: data.cakeCollection.items[0] })
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) => ({
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) => ({
   title: `${data.cake.name} | Round&Round Rotterdam`,
   ...(data.cake.description && {
-    description: documentToPlainTextString(
-      data.cake.description.json
-    ).substring(0, 199)
+    description: documentToPlainTextString(data.cake.description.json).substring(0, 199)
   })
 })
 export const handle = {

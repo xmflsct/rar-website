@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import { Cake } from '~/utils/contentful'
 import { full } from '~/utils/currency'
 import Button from './button'
@@ -13,6 +14,7 @@ const CakeView: React.FC<Props> = ({ cake }) => {
   const typePrice = (type: 'A' | 'B' | 'C') => {
     const price = cake[`type${type}Price`]
     const unit = cake[`type${type}Unit`]
+    const stock = cake[`type${type}Stock`]
 
     // Gift card special
     if (unit?.unit.includes('Card')) {
@@ -23,7 +25,11 @@ const CakeView: React.FC<Props> = ({ cake }) => {
       return (
         <li>
           {!cake[`type${type}Available`] ? '[In store] ' : null}
-          {full(price)} / {unit.unit}
+          <span
+            className={classNames(typeof stock === 'number' && stock === 0 ? 'line-through' : null)}
+          >
+            {full(price)} / {unit.unit}
+          </span>
         </li>
       )
     }
@@ -31,13 +37,7 @@ const CakeView: React.FC<Props> = ({ cake }) => {
 
   return (
     <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8'>
-      <Image
-        alt={cake.name}
-        image={cake.image}
-        width={432}
-        height={432}
-        behaviour='fill'
-      />
+      <Image alt={cake.name} image={cake.image} width={432} height={432} behaviour='fill' />
       <div className='flex flex-col'>
         {cake.available ? (
           <div className='text-3xl mb-4'>{cake.name}</div>
@@ -50,11 +50,7 @@ const CakeView: React.FC<Props> = ({ cake }) => {
           {typePrice('B')}
           {typePrice('C')}
         </ul>
-        {cake.available ? (
-          <CakeOrder cake={cake} />
-        ) : (
-          <Button disabled>Sold Out</Button>
-        )}
+        {cake.available ? <CakeOrder cake={cake} /> : <Button disabled>Sold Out</Button>}
       </div>
     </div>
   )

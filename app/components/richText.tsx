@@ -1,27 +1,13 @@
-import {
-  documentToReactComponents,
-  Options
-} from '@contentful/rich-text-react-renderer'
+import { documentToReactComponents, Options } from '@contentful/rich-text-react-renderer'
 import { BLOCKS, INLINES, Text } from '@contentful/rich-text-types'
 import { Link } from '@remix-run/react'
 import classNames from 'classnames'
-import {
-  Cake,
-  CakesGroup,
-  CommonImage,
-  CommonRichText
-} from '~/utils/contentful'
+import { Cake, CakesGroup, CommonImage, CommonRichText } from '~/utils/contentful'
 import { full } from '~/utils/currency'
 import CakeView from './cakeView'
 import Image from './image'
 
-const richTextOptions = ({
-  links,
-  assetWidth
-}: {
-  links: any
-  assetWidth?: number
-}): Options => {
+const richTextOptions = ({ links, assetWidth }: { links: any; assetWidth?: number }): Options => {
   const assetMap = new Map()
   if (links?.assets?.block) {
     for (const asset of links.assets.block) {
@@ -51,9 +37,7 @@ const richTextOptions = ({
               quality={85}
               className={classNames(asset.description ? 'mb-0' : '', 'mx-auto')}
             />
-            {asset.description && (
-              <figcaption className='mt-1'>{asset.description}</figcaption>
-            )}
+            {asset.description && <figcaption className='mt-1'>{asset.description}</figcaption>}
           </figure>
         )
       },
@@ -79,22 +63,25 @@ const richTextOptions = ({
                 <div className='grid grid-cols-2 lg:grid-cols-3 gap-4'>
                   {cakesGroup.cakesCollection?.items?.map(cake => {
                     const typePrice = (type: 'A' | 'B' | 'C') => {
+                      const price = cake[`type${type}Price`]
+                      const unit = cake[`type${type}Unit`]
+                      const stock = cake[`type${type}Stock`]
+
                       if (!cake[`type${type}Available`]) return
-                      if (cake[`type${type}Price`] && cake[`type${type}Unit`]) {
+                      if (price && unit) {
                         return (
-                          <li>
-                            {full(cake[`type${type}Price`]!)} /{' '}
-                            {cake[`type${type}Unit`]!.unit}
+                          <li
+                            className={classNames(
+                              typeof stock === 'number' && stock === 0 ? 'line-through' : null
+                            )}
+                          >
+                            {full(price)} / {unit.unit}
                           </li>
                         )
                       }
                     }
                     return (
-                      <Link
-                        key={cake.sys.id}
-                        to={`/cake/${cake.slug}`}
-                        className='group'
-                      >
+                      <Link key={cake.sys.id} to={`/cake/${cake.slug}`} className='group'>
                         <Image
                           alt={cake.name}
                           image={cake.image}
