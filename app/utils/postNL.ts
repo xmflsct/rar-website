@@ -33,4 +33,4 @@ export const Address = (customer_details: Stripe.Checkout.Session.CustomerDetail
   Name: customer_details?.name
 })
 
-export const ProductCodeDelivery = '2929'
+export const ProductCodeDelivery = '2928'
