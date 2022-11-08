@@ -7,32 +7,28 @@ import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async ({ context, params }: LoaderArgs) => {
   const path = params['*']
-  const { navs, pages } = await getAllPages(context)
+  const { navs, pages, daysClosedCollection } = await getAllPages(context)
 
   const matchedPages = pages.filter(page => page.slug === path)
   if (!matchedPages.length) {
     throw json('Not Found', { status: 404 })
   }
 
-  return json({ navs, page: matchedPages[0] })
+  return json({ navs, page: matchedPages[0], daysClosedCollection })
 }
 
-export const meta: MetaFunction = ({
-  data
-}: {
-  data: LoaderData<typeof loader>
-}) => ({
+export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) => ({
   title: `${data.page.name} | Round&Round Rotterdam`
 })
 
 export default () => {
-  const { navs, page } = useLoaderData<typeof loader>()
+  const { navs, page, daysClosedCollection } = useLoaderData<typeof loader>()
 
   return (
     <Layout navs={navs}>
       <div>
         <h1 className='text-3xl mx-auto max-w-2xl mb-4'>{page.name}</h1>
-        <RichText content={page.content} />
+        <RichText content={page.content} daysClosedCollection={daysClosedCollection} />
       </div>
     </Layout>
   )

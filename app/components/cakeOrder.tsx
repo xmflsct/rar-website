@@ -3,16 +3,17 @@ import { addDays, addMonths, formatISO, isAfter, isBefore, isEqual, parseISO } f
 import { useContext, useEffect, useRef, useState } from 'react'
 import { DayPickerSingleProps } from 'react-day-picker'
 import { BagContext } from '~/states/bag'
-import { Cake, DeliveryCustomization } from '~/utils/contentful'
+import { Cake, DaysClosed, DeliveryCustomization } from '~/utils/contentful'
 import Button from './button'
-import PickDay, { SHOP_CLOSED_DAYS } from './pickDay'
+import PickDay, { closedDays } from './pickDay'
 import Select from './select'
 
 type Props = {
   cake: Cake
+  daysClosedCollection: DaysClosed[]
 }
 
-const CakeOrder: React.FC<Props> = ({ cake }) => {
+const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
   const { cakeAdd, cakeCheck } = useContext(BagContext)
   const [amounts, setAmounts] = useState<{
     typeAAmount: string
@@ -156,7 +157,7 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
           fromMonth: startingDate,
           toMonth: endingDate,
           disabled: [
-            SHOP_CLOSED_DAYS,
+            ...closedDays(daysClosedCollection),
             ...(Array.isArray(availability)
               ? [
                   (date: Date) =>

@@ -10,12 +10,12 @@ import { useContext, useEffect, useState } from 'react'
 import Button from '~/components/button'
 import ExpandableField from '~/components/expandableField'
 import OrderList from '~/components/orderList'
-import PickDay, { SHOP_CLOSED_DAYS } from '~/components/pickDay'
+import PickDay, { closedDays } from '~/components/pickDay'
 import Layout from '~/layout'
 import { BagContext, CakeOrder } from '~/states/bag'
 import calShipping from '~/utils/calShipping'
 import checkout from '~/utils/checkout'
-import { cacheQuery, MaxCalendarMonth, Shipping } from '~/utils/contentful'
+import { cacheQuery, DaysClosed, MaxCalendarMonth, Shipping } from '~/utils/contentful'
 import { full } from '~/utils/currency'
 import { getAllPages } from '~/utils/kv'
 
@@ -23,12 +23,14 @@ export const loader = async ({ context, request }: LoaderArgs) => {
   const data = await cacheQuery<{
     shippingCollection: { items: Shipping[] }
     maxCalendarMonthCollection: { items: MaxCalendarMonth[] }
+    daysClosedCollection: { items: DaysClosed[] }
   }>({
     context,
     request,
     ttlMinutes: 0,
+    variables: { end_gte: new Date().toISOString() },
     query: gql`
-      query Shipping($preview: Boolean) {
+      query Shipping($preview: Boolean, $end_gte: DateTime!) {
         shippingCollection(preview: $preview, limit: 1, where: { year: 2022 }) {
           items {
             rates
@@ -39,6 +41,12 @@ export const loader = async ({ context, request }: LoaderArgs) => {
             month
           }
         }
+        daysClosedCollection(preview: $preview, where: { end_gte: $end_gte }) {
+          items {
+            start
+            end
+          }
+        }
       }
     `
   })
@@ -47,7 +55,8 @@ export const loader = async ({ context, request }: LoaderArgs) => {
   return json({
     navs,
     shippingRates: data.shippingCollection.items[0].rates,
-    maxCalendarMonth: data.maxCalendarMonthCollection.items[0].month
+    maxCalendarMonth: data.maxCalendarMonthCollection.items[0].month,
+    daysClosedCollection: data.daysClosedCollection.items
   })
 }
 
@@ -82,7 +91,8 @@ export const meta: MetaFunction = () => ({
 })
 
 const ShoppingBag = () => {
-  const { navs, shippingRates, maxCalendarMonth } = useLoaderData<typeof loader>()
+  const { navs, shippingRates, maxCalendarMonth, daysClosedCollection } =
+    useLoaderData<typeof loader>()
   const transition = useTransition()
   const { cakeOrders } = useContext(BagContext)
   const [ideal, setIdeal] = useState(true)
@@ -207,7 +217,7 @@ const ShoppingBag = () => {
                             )
                           }
                           disabled={[
-                            SHOP_CLOSED_DAYS,
+                            ...closedDays(daysClosedCollection),
                             {
                               before:
                                 parseInt(

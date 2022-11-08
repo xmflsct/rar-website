@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { Cake } from '~/utils/contentful'
+import { Cake, DaysClosed } from '~/utils/contentful'
 import { full } from '~/utils/currency'
 import Button from './button'
 import CakeOrder from './cakeOrder'
@@ -8,9 +8,10 @@ import RichText from './richText'
 
 type Props = {
   cake: Cake
+  daysClosedCollection: DaysClosed[]
 }
 
-const CakeView: React.FC<Props> = ({ cake }) => {
+const CakeView: React.FC<Props> = ({ cake, daysClosedCollection }) => {
   const typePrice = (type: 'A' | 'B' | 'C') => {
     const price = cake[`type${type}Price`]
     const unit = cake[`type${type}Unit`]
@@ -44,13 +45,17 @@ const CakeView: React.FC<Props> = ({ cake }) => {
         ) : (
           <div className='text-3xl line-through'>{cake.name}</div>
         )}
-        <RichText content={cake.description} />
+        <RichText content={cake.description} daysClosedCollection={daysClosedCollection} />
         <ul className='flex-1 text-right'>
           {typePrice('A')}
           {typePrice('B')}
           {typePrice('C')}
         </ul>
-        {cake.available ? <CakeOrder cake={cake} /> : <Button disabled>Sold Out</Button>}
+        {cake.available ? (
+          <CakeOrder cake={cake} daysClosedCollection={daysClosedCollection} />
+        ) : (
+          <Button disabled>Sold Out</Button>
+        )}
       </div>
     </div>
   )

@@ -153,6 +153,7 @@ export type Shipping = {
 }
 
 export type MaxCalendarMonth = { month: number }
+export type DaysClosed = { start: string; end: string }
 
 export type Unit = { unit: string }
 

@@ -5,22 +5,31 @@ import { gql } from 'graphql-request'
 import type { Product, WithContext } from 'schema-dts'
 import CakeView from '~/components/cakeView'
 import Layout from '~/layout'
-import { cacheQuery, Cake, CAKE_DETAILS } from '~/utils/contentful'
+import { cacheQuery, Cake, CAKE_DETAILS, DaysClosed } from '~/utils/contentful'
 import { getAllPages } from '~/utils/kv'
 import { LoaderData } from '~/utils/unwrapLoaderData'
 
 export const loader = async ({ context, params, request }: LoaderArgs) => {
-  const data = await cacheQuery<{ cakeCollection: { items: Cake[] } }>({
+  const data = await cacheQuery<{
+    cakeCollection: { items: Cake[] }
+    daysClosedCollection: { items: DaysClosed[] }
+  }>({
     ttlMinutes: 0,
     context,
     request,
-    variables: { slug: params.slug },
+    variables: { slug: params.slug, end_gte: new Date().toISOString() },
     query: gql`
       ${CAKE_DETAILS}
-      query Cake($preview: Boolean, $slug: String!) {
+      query Cake($preview: Boolean, $slug: String!, $end_gte: DateTime!) {
         cakeCollection(preview: $preview, limit: 1, where: { slug: $slug }) {
           items {
             ...CakeDetails
+          }
+        }
+        daysClosedCollection(preview: $preview, where: { end_gte: $end_gte }) {
+          items {
+            start
+            end
           }
         }
       }
@@ -32,7 +41,11 @@ export const loader = async ({ context, params, request }: LoaderArgs) => {
   }
 
   const { navs } = await getAllPages(context)
-  return json({ navs, cake: data.cakeCollection.items[0] })
+  return json({
+    navs,
+    cake: data.cakeCollection.items[0],
+    daysClosedCollection: data.daysClosedCollection.items
+  })
 }
 
 export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) => ({
@@ -59,9 +72,14 @@ export const handle = {
 }
 
 const PageCake: React.FC = () => {
-  const { navs, cake } = useLoaderData<typeof loader>()
+  const { navs, cake, daysClosedCollection } = useLoaderData<typeof loader>()
 
-  return <Layout navs={navs} children={<CakeView cake={cake} />} />
+  return (
+    <Layout
+      navs={navs}
+      children={<CakeView cake={cake} daysClosedCollection={daysClosedCollection} />}
+    />
+  )
 }
 
 export default PageCake
