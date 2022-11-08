@@ -1,8 +1,15 @@
 import { Popover, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
-import { DayPicker, DayPickerSingleProps } from 'react-day-picker'
+import { DayPicker, DayPickerSingleProps, Matcher } from 'react-day-picker'
+import { DaysClosed } from '~/utils/contentful'
 
-export const SHOP_CLOSED_DAYS = { dayOfWeek: [1, 2] }
+export const closedDays = (daysCollection: DaysClosed[]): Matcher[] =>
+  daysCollection
+    ? [
+        { dayOfWeek: [1, 2] },
+        ...daysCollection.map(days => ({ from: new Date(days.start), to: new Date(days.end) }))
+      ]
+    : [{ dayOfWeek: [1, 2] }]
 
 type Props = {
   name?: string

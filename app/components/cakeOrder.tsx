@@ -3,16 +3,17 @@ import { addDays, addMonths, formatISO, isAfter, isBefore, isEqual, parseISO } f
 import { useContext, useEffect, useRef, useState } from 'react'
 import { DayPickerSingleProps } from 'react-day-picker'
 import { BagContext } from '~/states/bag'
-import { Cake, DeliveryCustomization } from '~/utils/contentful'
+import { Cake, DaysClosed, DeliveryCustomization } from '~/utils/contentful'
 import Button from './button'
-import PickDay, { SHOP_CLOSED_DAYS } from './pickDay'
+import PickDay, { closedDays } from './pickDay'
 import Select from './select'
 
 type Props = {
   cake: Cake
+  daysClosedCollection: DaysClosed[]
 }
 
-const CakeOrder: React.FC<Props> = ({ cake }) => {
+const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
   const { cakeAdd, cakeCheck } = useContext(BagContext)
   const [amounts, setAmounts] = useState<{
     typeAAmount: string
@@ -156,7 +157,7 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
           fromMonth: startingDate,
           toMonth: endingDate,
           disabled: [
-            SHOP_CLOSED_DAYS,
+            ...closedDays(daysClosedCollection),
             ...(Array.isArray(availability)
               ? [
                   (date: Date) =>
@@ -220,45 +221,62 @@ const CakeOrder: React.FC<Props> = ({ cake }) => {
 
   const renderTypeOptions = (type: 'A' | 'B' | 'C') => {
     const available = cake[`type${type}Available`]
+    const unit = cake[`type${type}Unit`]?.unit
+    const stock = cake[`type${type}Stock`]
+
+    const stockDefined = stock !== (undefined || null)
 
     if (!available) return
+    if (stockDefined && stock === 0) {
+      return (
+        <Select name={unit} value='' required={false} className='text-gray-400' disabled>
+          <option value='' children='Sold out' disabled />
+        </Select>
+      )
+    }
 
     const amount = amounts[`type${type}Amount`]
     const price = cake[`type${type}Price`]
-    const unit = cake[`type${type}Unit`]?.unit
     const minimum = cake[`type${type}Minimum`]
 
     if (price && unit) {
       return (
-        <Select
-          name={unit}
-          value={amount}
-          required={
-            amounts.typeAAmount.length === 0 &&
-            amounts.typeBAmount.length === 0 &&
-            amounts.typeCAmount.length === 0
-          }
-          onChange={e =>
-            e.target.value &&
-            setAmounts({
-              ...amounts,
-              [`type${type}Amount`]: e.target.value
-            })
-          }
-        >
-          <option value='' children={`${unit} ...`} disabled />
-          {Array(16)
-            .fill(undefined)
-            .map((_, index) =>
-              (deliveryMinimum || 1) <= index && (minimum || 1) <= index ? (
-                <option
-                  key={index}
-                  value={index}
-                  children={index === 0 ? unit : `${index} \u00d7 ${unit}`}
-                />
-              ) : null
-            )}
-        </Select>
+        <>
+          <Select
+            name={unit}
+            value={amount}
+            required={
+              amounts.typeAAmount.length === 0 &&
+              amounts.typeBAmount.length === 0 &&
+              amounts.typeCAmount.length === 0
+            }
+            onChange={e =>
+              e.target.value &&
+              setAmounts({
+                ...amounts,
+                [`type${type}Amount`]: e.target.value
+              })
+            }
+            className={amounts[`type${type}Amount`].length ? undefined : 'text-gray-400'}
+          >
+            <option
+              value=''
+              children={stockDefined ? `${stock} \u00d7 ${unit} left ...` : `${unit} ...`}
+              disabled
+            />
+            {Array(stockDefined ? (stock || 0) + 1 : 16)
+              .fill(undefined)
+              .map((_, index) =>
+                (deliveryMinimum || 1) <= index && (minimum || 1) <= index ? (
+                  <option
+                    key={index}
+                    value={index}
+                    children={index === 0 ? unit : `${index} \u00d7 ${unit}`}
+                  />
+                ) : null
+              )}
+          </Select>
+        </>
       )
     }
   }

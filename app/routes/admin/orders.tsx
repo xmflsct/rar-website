@@ -1,5 +1,6 @@
 import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
+import classNames from 'classnames'
 import { useEffect, useRef, useState } from 'react'
 import Stripe from 'stripe'
 import Button from '~/components/button'
@@ -11,13 +12,24 @@ type SessionsData = {
   data: (Stripe.Checkout.Session & {
     payment_intent: Stripe.PaymentIntent
     line_items: { data: Stripe.LineItem[] }
+    shipping_cost?: { shipping_rate?: Stripe.ShippingRate }
   })[]
 }
-export const loader = async (props: LoaderArgs) => {
-  if (!props.context?.STRIPE_KEY_ADMIN) {
-    throw json('Stripe key missing', { status: 500 })
+export const loader = async ({ context }: LoaderArgs) => {
+  if (
+    !context?.STRIPE_KEY_ADMIN ||
+    !context.WEBHOOK_STRIPE_POSTNL_URL ||
+    !context.WEBHOOK_STRIPE_POSTNL_API_KEY
+  ) {
+    throw json(null, { status: 500 })
   } else {
-    return json(`Bearer ${props.context.STRIPE_KEY_ADMIN}`)
+    return json({
+      Authorization: `Bearer ${context.STRIPE_KEY_ADMIN}`,
+      postnl: {
+        url: `${context.WEBHOOK_STRIPE_POSTNL_URL}`,
+        apikey: `${context.WEBHOOK_STRIPE_POSTNL_API_KEY}`
+      }
+    })
   }
 }
 
@@ -25,27 +37,130 @@ export const meta: MetaFunction = () => ({
   title: 'Orders | Round&Round Rotterdam'
 })
 
+type PostNL = {
+  url: string
+  apikey: string
+}
+
+type Order = {
+  receipt: string | null
+  name: string | null
+  phone: string
+  email: string | null | undefined
+  pickup?: string
+  shipping?: {
+    shipping: Stripe.Charge.Shipping | null | undefined
+    sessionID: Stripe.Checkout.Session['id']
+    payment_intent: Stripe.PaymentIntent
+    shipping_rate?: Stripe.ShippingRate
+  }
+  items?: Stripe.LineItem[]
+  metadata: Stripe.Metadata
+}
+
+const Shipping: React.FC<{ postnl: PostNL; shipping: NonNullable<Order['shipping']> }> = ({
+  postnl,
+  shipping
+}) => {
+  const [loading, setLoading] = useState(false)
+  const [failed, setFailed] = useState(false)
+  const [phase, setPhase] = useState<string>()
+  const fetchPhase = async () => {
+    setLoading(true)
+    setFailed(false)
+    const res = await (
+      await fetch(
+        `${postnl.url}/shipment/v2/status/barcode/${shipping.payment_intent.metadata?.shipping_tracking}?detail=false&language=EN`,
+        {
+          headers: { apikey: postnl.apikey }
+        }
+      )
+    ).json<{ CurrentStatus: { Shipment: { Status: { PhaseDescription: string } } } }>()
+
+    setLoading(false)
+    if (res.CurrentStatus?.Shipment?.Status?.PhaseDescription) {
+      setFailed(false)
+      setPhase(res.CurrentStatus.Shipment.Status.PhaseDescription)
+    } else {
+      setFailed(true)
+      setPhase(undefined)
+    }
+  }
+  const buttonContent = (): string => {
+    if (loading) {
+      return 'Loading...'
+    } else {
+      if (failed) {
+        return 'Try again later'
+      } else {
+        if (phase) {
+          return phase
+        } else {
+          return 'Refresh'
+        }
+      }
+    }
+  }
+
+  return (
+    <>
+      {shipping?.shipping ? (
+        <div>
+          <strong>Shipping: </strong>
+          {shipping.shipping.name}
+          {', '}
+          {shipping.shipping.address?.line1}
+          {shipping.shipping.address?.line2 ? ' ' + shipping.shipping.address.line2 : null}
+          {', '}
+          {shipping.shipping.address?.postal_code}
+          {', '}
+          {shipping.shipping.address?.city}
+        </div>
+      ) : null}
+      {
+        // @ts-ignore
+        (shipping.shipping_rate?.metadata.label === true ||
+          shipping.shipping_rate?.metadata.label === 'true') &&
+        !shipping.payment_intent.metadata?.shipping_tracking ? (
+          <strong className='text-red-600'>Label creation failed!</strong>
+        ) : null
+      }
+      {shipping?.payment_intent.metadata?.shipping_tracking ? (
+        <div>
+          <span className='block'>
+            <strong>Label: </strong>
+            <a
+              href={`/admin/shipping-label/${shipping.payment_intent.metadata?.shipping_tracking}/${shipping.sessionID}`}
+              target='_blank'
+              className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
+              children={shipping.payment_intent.metadata?.shipping_tracking}
+            />
+          </span>
+          <span className='block'>
+            <strong>Status: </strong>
+            <span
+              className={classNames(
+                failed ? 'text-red-600' : undefined,
+                loading || phase
+                  ? undefined
+                  : 'cursor-pointer border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
+              )}
+              onClick={() => !loading && !phase && fetchPhase()}
+            >
+              {buttonContent()}
+            </span>
+          </span>
+        </div>
+      ) : null}
+    </>
+  )
+}
+
 const PageAdminOrders: React.FC = () => {
-  const Authorization = useLoaderData<typeof loader>()
+  const { Authorization, postnl } = useLoaderData<typeof loader>()
 
   const DAYS = 60 * 60 * 24 * 7
-  const [orders, setOrders] = useState<
-    {
-      receipt: string | null
-      name: string | null
-      phone: string
-      email: string | null | undefined
-      date: string
-      shipping: Stripe.Charge.Shipping | null
-      items: {
-        name: string
-        description: string | null | undefined
-        price: number
-        quantity: number | null
-      }[]
-      metadata: Stripe.Metadata
-    }[]
-  >([])
+  const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [hasMore, setHasMore] = useState<boolean>(false)
   const cursor = useRef<string>()
@@ -60,6 +175,7 @@ const PageAdminOrders: React.FC = () => {
       params.append('limit', '5')
       params.append('expand[]', 'data.payment_intent')
       params.append('expand[]', 'data.line_items')
+      params.append('expand[]', 'data.shipping_cost.shipping_rate')
       cursor.current && params.append('starting_after', cursor.current)
       url.search = params.toString()
 
@@ -80,39 +196,26 @@ const PageAdminOrders: React.FC = () => {
       )
       .sort((a, b) => {
         return (
-          b.payment_intent.charges.data[b.payment_intent.charges.data.length - 1].created -
-          a.payment_intent.charges.data[a.payment_intent.charges.data.length - 1].created
+          (b.payment_intent.charges?.data[b.payment_intent.charges.data.length - 1].created || 0) -
+          (a.payment_intent.charges?.data[a.payment_intent.charges.data.length - 1].created || 0)
         )
       })
 
-    const productIds = sessions.flatMap(session =>
-      session.line_items?.data
-        .filter(item => item.description !== 'Transaction fee')
-        .map(item => item.price?.product)
-    ) as string[]
-
-    const fetchPrices = async (ids: string[]) => {
-      const url = new URL('https://api.stripe.com/v1/prices/search')
-
-      const params = new URLSearchParams()
-      params.append('expand[]', 'data.product')
-      params.append('query', ids.map(id => `product:"${id}"`).join(' OR '))
-      url.search = params.toString()
-
-      return await (
-        await fetch(url, { headers: { Authorization } })
-      ).json<{
-        data: Stripe.Price[]
-      }>()
+    const lineItems: { id: Stripe.Checkout.Session['id']; lineItems: Stripe.LineItem[] }[] = []
+    const sessionIDs = sessions.map(item => item.id)
+    const fetchLineItems = async (id: string) => {
+      return (
+        await (
+          await fetch(`https://api.stripe.com/v1/checkout/sessions/${id}/line_items?limit=50`, {
+            headers: { Authorization }
+          })
+        ).json<{
+          data: Stripe.LineItem[]
+        }>()
+      ).data
     }
-
-    const products: Stripe.Product[] = []
-    let chunkIds: string[]
-    while (productIds.length > 0) {
-      chunkIds = productIds.splice(0, 10)
-      products.push(
-        ...(await fetchPrices(chunkIds)).data.map(price => price.product as Stripe.Product)
-      )
+    for (const id of sessionIDs) {
+      lineItems.push({ id, lineItems: await fetchLineItems(id) })
     }
 
     setOrders([
@@ -121,36 +224,26 @@ const PageAdminOrders: React.FC = () => {
         return {
           receipt: session.payment_intent?.charges?.data[0].receipt_number || null,
           name: session.payment_intent.charges?.data[0].billing_details.name || null,
-          phone:
-            session.customer_details?.phone ||
-            session.payment_intent.charges?.data[0].metadata['Phone number'] ||
-            'ERROR',
+          phone: session.customer_details?.phone || 'NOT EXIST',
           email: session.customer_details?.email,
-          date:
+          pickup:
             session.payment_intent.charges?.data[0].description ||
-            session.payment_intent.charges?.data[0].metadata['Pick-up date'] ||
-            'ERROR',
-          shipping: session.payment_intent.charges?.data[0].shipping || null,
-          items: session.line_items.data
-            .map(item => ({
-              ...item,
-              price: {
-                ...item.price,
-                product: products.find(product => product.id === item.price?.product)
-              }
-            }))
-            .filter(
+            session.payment_intent.charges?.data[0].metadata['Pick-up date'],
+          shipping: {
+            shipping: session.payment_intent.charges?.data[0].shipping,
+            sessionID: session.id,
+            payment_intent: session.payment_intent,
+            shipping_rate: session.shipping_cost.shipping_rate
+          },
+          items: lineItems
+            .find(i => i.id === session.id)
+            ?.lineItems.filter(
               item =>
                 item.description !== 'Gift Card Shipping | Shipment' &&
                 item.description !== 'Transaction fee' &&
+                item.description !== 'Processing fee' &&
                 !item.description.includes('Pick up:')
-            )
-            .map(item => ({
-              name: item.description,
-              description: item.price.product?.description,
-              price: (item.price?.unit_amount || 0) / 10 / 10,
-              quantity: item.quantity
-            })),
+            ),
           metadata: {
             ...session.payment_intent.charges?.data[0].metadata,
             ...session.metadata
@@ -211,9 +304,9 @@ const PageAdminOrders: React.FC = () => {
             <th className='p-2'>👤 Name</th>
             <th className='p-2'>📱 Phone</th>
             <th className='p-2'>📧 Email</th>
-            <th className='p-2'>Date and/or Address</th>
+            <th className='p-2'>Pickup | Shipping</th>
             <th className='p-2'>Cakes</th>
-            <th className='p-2'>Gift Card and/or Notes</th>
+            <th className='p-2'>Gift Card | Notes</th>
           </tr>
           {orders.map((order, index) => (
             <tr key={index} className='border-b border-neutral-300 hover:bg-neutral-100'>
@@ -222,25 +315,13 @@ const PageAdminOrders: React.FC = () => {
               <td className='p-2 whitespace-nowrap' children={order.phone} />
               <td className='p-2 whitespace-nowrap' children={order.email} />
               <td className='p-2 max-w-sm'>
-                {order.date ? (
-                  <div>
-                    <strong>Date: </strong>
-                    {order.date.replace('🛍️ pickup date: ', '')}
+                {order.pickup ? (
+                  <div className={order.shipping ? 'mb-2' : undefined}>
+                    <strong>Pickup: </strong>
+                    {order.pickup.replace('🛍️ pickup date: ', '')}
                   </div>
                 ) : null}
-                {order.shipping ? (
-                  <div>
-                    <strong>Address: </strong>
-                    {order.shipping.name}
-                    {', '}
-                    {order.shipping.address?.line1}
-                    {order.shipping.address?.line2 ? ' ' + order.shipping.address.line2 : null}
-                    {', '}
-                    {order.shipping.address?.postal_code}
-                    {', '}
-                    {order.shipping.address?.city}
-                  </div>
-                ) : null}
+                {order.shipping ? <Shipping postnl={postnl} shipping={order.shipping} /> : null}
               </td>
               <td className='p-2 max-w-2xl'>
                 {order.items &&
@@ -248,8 +329,6 @@ const PageAdminOrders: React.FC = () => {
                     <div key={index} className='mb-4 last:mb-0'>
                       <strong>{item.quantity}</strong>
                       {` \u00d7 `}
-                      {item.name}
-                      <br />
                       {item.description}
                     </div>
                   ))}

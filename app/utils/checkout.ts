@@ -31,7 +31,7 @@ type ShippingOptions = {
       amount: number
       currency: 'eur'
     }
-    metadata?: Object
+    metadata?: { label?: boolean, weight: number }
   }
 }
 
@@ -67,12 +67,15 @@ const verifyContentful = async ({
             | 'available'
             | 'typeAAvailable'
             | 'typeAPrice'
+            | 'typeAStock'
             | 'typeAMinimum'
             | 'typeBAvailable'
             | 'typeBPrice'
+            | 'typeBStock'
             | 'typeBMinimum'
             | 'typeCAvailable'
             | 'typeCPrice'
+            | 'typeCStock'
             | 'typeCMinimum'
             | 'deliveryCustomizations'
             | 'shippingWeight'
@@ -95,12 +98,15 @@ const verifyContentful = async ({
                 available
                 typeAAvailable
                 typeAPrice
+                typeAStock
                 typeAMinimum
                 typeBAvailable
                 typeBPrice
+                typeBStock
                 typeBMinimum
                 typeCAvailable
                 typeCPrice
+                typeCStock
                 typeCMinimum
                 deliveryCustomizations
                 shippingWeight
@@ -128,6 +134,10 @@ const verifyContentful = async ({
         if (amount) {
           if (!item[`type${type}Available`]) {
             throw json('Cake availability error', { status: 400 })
+          }
+          const stock = item[`type${type}Stock`]
+          if (stock && amount > stock) {
+            throw json('Cake quantity exceeded', { status: 400 })
           }
           if (amount < (item[`type${type}Minimum`] || 1)) {
             throw json('Cake quantity error', { status: 400 })
@@ -185,8 +195,8 @@ const verifyContentful = async ({
       })
     ).shippingCollection.items[0].rates
 
-    const shippingFee = calShipping({ rates, orders: orders.shipping })
-    if (!(shippingFee === parseFloat(shipping_amount || ''))) {
+    const shippingRate = calShipping({ rates, orders: orders.shipping })
+    if (!(shippingRate.fee === parseFloat(shipping_amount || ''))) {
       throw json('Shipping fee not aligned', { status: 400 })
     }
 
@@ -217,9 +227,10 @@ const verifyContentful = async ({
         type: 'fixed_amount',
         fixed_amount: {
           currency: 'eur',
-          amount: shippingFee * 10 * 10
-        }
-      }
+          amount: shippingRate.fee * 10 * 10
+        },
+        metadata: { label: shippingRate.label, weight: shippingRate.weight }
+      },
     }
   } else {
     return null
@@ -283,7 +294,13 @@ const checkout = async ({
       price_data: {
         currency: 'eur',
         unit_amount: price * 10 * 10,
-        product_data: { name, images: [order.image?.url] }
+        product_data: {
+          name,
+          images: [order.image?.url],
+          ...(order[`type${type}Stock`] !== undefined && {
+            metadata: { contentful_id: order.sys.id, type }
+          })
+        }
       },
       quantity: amount
     }
@@ -317,7 +334,7 @@ const checkout = async ({
       shipping_address_collection: {
         allowed_countries: ['NL']
       },
-      shipping_options: [shipping]
+      shipping_options: [{ ...shipping }]
     }),
     locale: 'en',
     success_url: content.success_url + '/id/{CHECKOUT_SESSION_ID}',
@@ -334,7 +351,8 @@ const checkout = async ({
       ...(content.birthday_cake_voucher && {
         'Birthday cake voucher': content.birthday_cake_voucher
       })
-    }
+    },
+    expires_at: Math.floor(Date.now() / 1000) + (31 * 60)
   }
 
   // @ts-ignore

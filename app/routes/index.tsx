@@ -5,9 +5,9 @@ import Layout from '~/layout'
 import { getAllPages } from '~/utils/kv'
 
 export const loader = async ({ context }: LoaderArgs) => {
-  const { navs, pages } = await getAllPages(context)
+  const { navs, pages, daysClosedCollection } = await getAllPages(context)
 
-  return json({ navs, page: pages[0] })
+  return json({ navs, page: pages[0], daysClosedCollection })
 }
 
 export const meta: MetaFunction = () => ({
@@ -15,13 +15,13 @@ export const meta: MetaFunction = () => ({
 })
 
 export default () => {
-  const { navs, page } = useLoaderData<typeof loader>()
+  const { navs, page, daysClosedCollection } = useLoaderData<typeof loader>()
 
   return (
     <Layout navs={navs}>
       <div>
         <h1 className='text-3xl mx-auto max-w-2xl mb-4'>{page.name}</h1>
-        <RichText content={page.content} />
+        <RichText content={page.content} daysClosedCollection={daysClosedCollection} />
       </div>
     </Layout>
   )

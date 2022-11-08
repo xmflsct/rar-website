@@ -1,26 +1,20 @@
-import {
-  documentToReactComponents,
-  Options
-} from '@contentful/rich-text-react-renderer'
+import { documentToReactComponents, Options } from '@contentful/rich-text-react-renderer'
 import { BLOCKS, INLINES, Text } from '@contentful/rich-text-types'
 import { Link } from '@remix-run/react'
 import classNames from 'classnames'
-import {
-  Cake,
-  CakesGroup,
-  CommonImage,
-  CommonRichText
-} from '~/utils/contentful'
+import { Cake, CakesGroup, CommonImage, CommonRichText, DaysClosed } from '~/utils/contentful'
 import { full } from '~/utils/currency'
 import CakeView from './cakeView'
 import Image from './image'
 
 const richTextOptions = ({
   links,
-  assetWidth
+  assetWidth,
+  daysClosedCollection
 }: {
   links: any
   assetWidth?: number
+  daysClosedCollection: DaysClosed[]
 }): Options => {
   const assetMap = new Map()
   if (links?.assets?.block) {
@@ -51,9 +45,7 @@ const richTextOptions = ({
               quality={85}
               className={classNames(asset.description ? 'mb-0' : '', 'mx-auto')}
             />
-            {asset.description && (
-              <figcaption className='mt-1'>{asset.description}</figcaption>
-            )}
+            {asset.description && <figcaption className='mt-1'>{asset.description}</figcaption>}
           </figure>
         )
       },
@@ -66,35 +58,42 @@ const richTextOptions = ({
             const cake = entry as Cake
             return (
               <div
-                className='not-prose border-t border-b py-4'
-                children={<CakeView cake={cake} />}
+                className='not-prose border-t border-b py-4 my-8'
+                children={<CakeView cake={cake} daysClosedCollection={daysClosedCollection} />}
               />
             )
           case 'CakesGroup':
             const cakesGroup = entry as CakesGroup
             return (
               <div className='not-prose mb-4'>
-                <h2 className='text-2xl my-4'>{entry.name}</h2>
-                <RichText content={cakesGroup.description} />
+                <h2 className='text-neutral-900 text-2xl font-bold my-4'>{entry.name}</h2>
+                <RichText
+                  content={cakesGroup.description}
+                  className='mb-4'
+                  daysClosedCollection={daysClosedCollection}
+                />
                 <div className='grid grid-cols-2 lg:grid-cols-3 gap-4'>
                   {cakesGroup.cakesCollection?.items?.map(cake => {
                     const typePrice = (type: 'A' | 'B' | 'C') => {
+                      const price = cake[`type${type}Price`]
+                      const unit = cake[`type${type}Unit`]
+                      const stock = cake[`type${type}Stock`]
+
                       if (!cake[`type${type}Available`]) return
-                      if (cake[`type${type}Price`] && cake[`type${type}Unit`]) {
+                      if (price && unit) {
                         return (
-                          <li>
-                            {full(cake[`type${type}Price`]!)} /{' '}
-                            {cake[`type${type}Unit`]!.unit}
+                          <li
+                            className={classNames(
+                              typeof stock === 'number' && stock === 0 ? 'line-through' : null
+                            )}
+                          >
+                            {full(price)} / {unit.unit}
                           </li>
                         )
                       }
                     }
                     return (
-                      <Link
-                        key={cake.sys.id}
-                        to={`/cake/${cake.slug}`}
-                        className='group'
-                      >
+                      <Link key={cake.sys.id} to={`/cake/${cake.slug}`} className='group'>
                         <Image
                           alt={cake.name}
                           image={cake.image}
@@ -142,9 +141,10 @@ type Props = {
   content?: CommonRichText
   className?: string
   assetWidth?: number
+  daysClosedCollection: DaysClosed[]
 }
 
-const RichText: React.FC<Props> = ({ content, className, assetWidth }) => {
+const RichText: React.FC<Props> = ({ content, className, assetWidth, daysClosedCollection }) => {
   if (!content?.json) return null
 
   return (
@@ -169,7 +169,7 @@ const RichText: React.FC<Props> = ({ content, className, assetWidth }) => {
       `}
       children={documentToReactComponents(
         content.json,
-        richTextOptions({ links: content.links, assetWidth })
+        richTextOptions({ links: content.links, assetWidth, daysClosedCollection })
       )}
     />
   )

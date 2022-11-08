@@ -1,6 +1,7 @@
 import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { useEffect } from 'react'
+import Stripe from 'stripe'
 import Layout from '~/layout'
 import { full } from '~/utils/currency'
 
@@ -16,14 +17,7 @@ export const loader = async (props: LoaderArgs) => {
         headers: { Authorization: `Bearer ${props.context?.STRIPE_KEY_ADMIN}` }
       }
     )
-  ).json<{
-    amount_total: number
-    payment_status: 'paid' | 'unpaid'
-    customer_details: { name: string }
-    shipping_options: { shipping_amount: number }[]
-    metadata: { [key: string]: string }
-    payment_intent: { description?: string }
-  }>()
+  ).json<Stripe.Checkout.Session & { payment_intent: Stripe.PaymentIntent }>()
 
   if (session.payment_status !== 'paid') {
     throw json('Not Paid', { status: 404 })
@@ -63,9 +57,27 @@ const PageThankYou: React.FC = () => {
     <Layout navs={[]}>
       <div className='mx-auto max-w-2xl'>
         <h1 className='mb-4 text-2xl text-center'>
-          {session.customer_details.name}, thank you for your order!
+          {session.customer_details?.name}, thank you for your order!
         </h1>
-        {session.payment_intent.description?.length && <p>{session.payment_intent.description}</p>}
+        {session.payment_intent.description?.length ? (
+          <p>{session.payment_intent.description}</p>
+        ) : null}
+        {session.payment_intent.metadata?.shipping_tracking ? (
+          <p>
+            <strong>PostNL tracking:</strong>{' '}
+            <a
+              className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
+              href={`https://jouw.postnl.nl/track-and-trace/${
+                session.payment_intent.metadata?.shipping_tracking
+              }-${
+                session.shipping_details?.address?.country
+              }-${session.shipping_details?.address?.postal_code?.replace(/\s/g, '')}`}
+              target='_blank'
+            >
+              {session.payment_intent.metadata?.shipping_tracking}
+            </a>
+          </p>
+        ) : null}
         <table className='w-full'>
           <tbody>
             <tr>
@@ -102,18 +114,18 @@ const PageThankYou: React.FC = () => {
                 Total
               </td>
               <td className='py-2 px-1 font-bold text-right'>
-                {full(session.amount_total / 10 / 10)}
+                {full(session.amount_total! / 10 / 10)}
               </td>
             </tr>
           </tbody>
         </table>
-        {Object.keys(session.metadata).length ? (
+        {session.metadata && Object.keys(session.metadata).length ? (
           <table className='mt-8 w-full'>
             <tbody>
               {Object.keys(session.metadata).map((key, index) => (
                 <tr key={index}>
                   <th className='text-left'>{key}:</th>
-                  <td>{session.metadata[key]}</td>
+                  <td>{session.metadata?.[key]}</td>
                 </tr>
               ))}
             </tbody>

@@ -101,14 +101,17 @@ export type Cake = {
   typeAAvailable?: boolean
   typeAPrice?: number
   typeAUnit?: Unit
+  typeAStock?: number
   typeAMinimum?: number
   typeBAvailable?: boolean
   typeBPrice?: number
   typeBUnit?: Unit
+  typeBStock?: number
   typeBMinimum?: number
   typeCAvailable?: boolean
   typeCPrice?: number
   typeCUnit?: Unit
+  typeCStock?: number
   typeCMinimum?: number
   description?: CommonRichText
   additionalInformation?: CommonRichText
@@ -143,11 +146,14 @@ export type Shipping = {
     rates: {
       weight: { min: number; max: number }
       price: number
+      freeAbove?: number
+      label?: boolean
     }[]
   }[]
 }
 
 export type MaxCalendarMonth = { month: number }
+export type DaysClosed = { start: string; end: string }
 
 export type Unit = { unit: string }
 
@@ -168,18 +174,21 @@ export const CAKE_DETAILS = gql`
     typeAUnit {
       unit
     }
+    typeAStock
     typeAMinimum
     typeBAvailable
     typeBPrice
     typeBUnit {
       unit
     }
+    typeBStock
     typeBMinimum
     typeCAvailable
     typeCPrice
     typeCUnit {
       unit
     }
+    typeCStock
     typeCMinimum
     description {
       json
@@ -225,6 +234,9 @@ export const PAGE_CONTENT_LINKS = gql`
               id
             }
             name
+            description {
+              json
+            }
             cakesCollection(limit: 20) {
               items {
                 ...CakeDetails
