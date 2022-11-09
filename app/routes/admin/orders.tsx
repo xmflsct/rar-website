@@ -119,8 +119,8 @@ const Shipping: React.FC<{ postnl: PostNL; shipping: NonNullable<Order['shipping
       ) : null}
       {
         // @ts-ignore
-        (shipping.shipping_rate?.metadata.label === true ||
-          shipping.shipping_rate?.metadata.label === 'true') &&
+        (shipping?.shipping_rate?.metadata.label === true ||
+          shipping?.shipping_rate?.metadata.label === 'true') &&
         !shipping.payment_intent.metadata?.shipping_tracking ? (
           <strong className='text-red-600'>Label creation failed!</strong>
         ) : null
@@ -233,7 +233,7 @@ const PageAdminOrders: React.FC = () => {
             shipping: session.payment_intent.charges?.data[0].shipping,
             sessionID: session.id,
             payment_intent: session.payment_intent,
-            shipping_rate: session.shipping_cost.shipping_rate
+            shipping_rate: session.shipping_cost?.shipping_rate
           },
           items: lineItems
             .find(i => i.id === session.id)
