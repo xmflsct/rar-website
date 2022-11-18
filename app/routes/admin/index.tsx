@@ -3,8 +3,8 @@ import Layout from '~/layout'
 import { Navigation } from '~/layout/navigation'
 
 export const adminNavs: Navigation[] = [
-  { name: 'Admin', slug: 'admin' },
-  { name: 'Orders', slug: 'admin/orders' }
+  { name: 'Admin', slug: '' },
+  { name: 'Orders', slug: 'orders' }
 ]
 
 const PageAdmin: React.FC = () => {
