@@ -1,4 +1,4 @@
-import { Link, NavLink, useMatches } from '@remix-run/react'
+import { Link, NavLink } from '@remix-run/react'
 import classNames from 'classnames'
 import logo from '~/images/logo.png'
 
@@ -13,9 +13,6 @@ type Props = {
 }
 
 const Nav: React.FC<Props> = ({ navs, toggleNav }) => {
-  const matches = useMatches()
-  const isAdmin = matches[matches.length - 1].pathname.startsWith('/admin')
-
   return (
     <header className='mt-4 mb-8'>
       <div className='flex flex-row justify-center mb-4'>
@@ -26,13 +23,13 @@ const Nav: React.FC<Props> = ({ navs, toggleNav }) => {
       <nav
         className={classNames(
           `${toggleNav ? 'flex' : 'hidden'} lg:flex`,
-          'flex-col gap-4 lg:flex-row lg:gap-0'
+          'flex-col gap-4 lg:flex-row lg:gap-0 lg:justify-between'
         )}
       >
         {navs.map((nav, index) => (
-          <div key={index} className='flex-1 flex flex-row justify-center'>
+          <div key={index} className='flex flex-row justify-center'>
             <NavLink
-              to={!isAdmin && index === 0 ? '/' : `/${nav.slug}`}
+              to={nav.slug}
               children={nav.name}
               className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
             />
