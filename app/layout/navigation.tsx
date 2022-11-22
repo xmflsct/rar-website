@@ -29,7 +29,7 @@ const Nav: React.FC<Props> = ({ navs, toggleNav }) => {
         {navs.map((nav, index) => (
           <div key={index} className='flex flex-row justify-center'>
             <NavLink
-              to={nav.slug}
+              to={`/${nav.slug}`}
               children={nav.name}
               className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
             />
