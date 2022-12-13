@@ -46,6 +46,15 @@ export default () => {
   return (
     <Layout navs={navs}>
       <div>
+        <h2 className='text-2xl mb-8'>[Shop Holiday]</h2>
+        <div>
+          <p>Dear everyone,</p>
+          <p>December 24th will be the last day we open in 2022.<br />Round & Round will be open only for order pick-up.<br />Matcha Next Door will be open normally from 12:00- 18:00 :)</p>
+          <p>From December 25th - January 03 both spaces will be closed. We will be back on January 4th Wednesday.</p>
+          <p>Merry Christmas & Happy New Year!</p>
+          <p>Love,<br />Team R&R</p>
+        </div>
+
         <h2 className='text-2xl mb-8'>[Our story starts from 2016]</h2>
 
         <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
