@@ -226,7 +226,7 @@ const ShoppingBag = () => {
                                     hour: '2-digit',
                                     hour12: false
                                   })
-                                ) > 16
+                                ) > 1
                                   ? addDays(new Date(), 3)
                                   : addDays(new Date(), 2)
                             }
