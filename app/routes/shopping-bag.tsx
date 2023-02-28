@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ActionArgs, json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
 import { Form, Link, useActionData, useLoaderData, useTransition } from '@remix-run/react'
 import { loadStripe } from '@stripe/stripe-js'
+import classNames from 'classnames'
 import { addDays, getMonth, getYear } from 'date-fns'
 import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
@@ -96,6 +97,7 @@ const ShoppingBag = () => {
   const transition = useTransition()
   const { cakeOrders } = useContext(BagContext)
   const [ideal, setIdeal] = useState(true)
+  const [paperBag, setPaperBag] = useState(true)
   const [pickup, setPickup] = useState<Date>()
   const [notes, setNotes] = useState<string>()
   const [terms, setTerms] = useState(false)
@@ -170,6 +172,9 @@ const ShoppingBag = () => {
     }
   }, [actionData])
 
+  // Only show pickup date when there are orders without specific pickup date
+  const needPickup = orders.pickup.filter(p => p.chosen.delivery?.date === undefined).length
+
   return (
     <Layout navs={navs}>
       <h1 className='text-3xl mb-4'>Shopping bag</h1>
@@ -194,7 +199,7 @@ const ShoppingBag = () => {
                 <h3 className='text-xl'>🛍️ Pickup orders</h3>
                 {
                   // Only show pickup date when there are orders without specific pickup date
-                  orders.pickup.filter(p => p.chosen.delivery?.date === undefined).length ? (
+                  needPickup ? (
                     <div
                       className={`bg-neutral-100 rounded-tr-md rounded-br-md p-4 mb-2 border-l-2 ${
                         pickup ? 'border-green-500' : 'border-red-500'
@@ -266,7 +271,7 @@ const ShoppingBag = () => {
                   onChange={e => setIdeal(e.target.value === 'on')}
                 />
                 <label className='pl-2 grow flex justify-between' onClick={() => setIdeal(true)}>
-                  <span className='font-bold'>iDeal</span>
+                  <span>iDeal</span>
                   <span>{full(0.3)}</span>
                 </label>
               </div>
@@ -278,11 +283,29 @@ const ShoppingBag = () => {
                   onChange={e => setIdeal(e.target.value !== 'on')}
                 />
                 <label className='pl-2 grow flex justify-between' onClick={() => setIdeal(false)}>
-                  <span className='font-bold'>Cards, Apply Pay, Google Pay</span>
+                  <span>Cards, Apply Pay, Google Pay</span>
                   <span>{full(1)}</span>
                 </label>
               </div>
             </fieldset>
+
+            {needPickup ? (
+              <fieldset>
+                <div className='flex'>
+                  <input
+                    type='checkbox'
+                    name={needPickup ? 'paperBag' : ''}
+                    checked={paperBag}
+                    onChange={() => setPaperBag(!paperBag)}
+                  />
+                  <label className='pl-2 grow flex justify-between' onClick={() => setIdeal(true)}>
+                    <span>I need a paper bag</span>
+                    <span>{full(0.5)}</span>
+                  </label>
+                </div>
+              </fieldset>
+            ) : null}
+
             <h2 className='text-2xl'>Summary</h2>
             <table>
               <tbody>
@@ -303,14 +326,29 @@ const ShoppingBag = () => {
                   </tr>
                 ) : null}
                 <tr>
-                  <th className='text-left pr-4 pb-2'>Processing fee</th>
-                  <td className='text-right'>{full(ideal ? 0.3 : 1)}</td>
+                  <th
+                    className={classNames('text-left pr-4', !needPickup || !paperBag ? 'pb-2' : '')}
+                  >
+                    Processing fee
+                  </th>
+                  <td className={classNames('text-right', !needPickup || !paperBag ? 'pb-2' : '')}>
+                    {full(ideal ? 0.3 : 1)}
+                  </td>
                 </tr>
+                {needPickup && paperBag ? (
+                  <tr>
+                    <th className='text-left pr-4 pb-2'>Paper bag</th>
+                    <td className='text-right pb-2'>{full(0.5)}</td>
+                  </tr>
+                ) : null}
                 <tr className='border-t'>
                   <th className='text-left pr-4 pt-2'>Total</th>
                   <td className='text-right'>
                     {full(
-                      subtotal + (orders.shipping.length ? shippingFee : 0) + (ideal ? 0.3 : 1)
+                      subtotal +
+                        (orders.shipping.length ? shippingFee : 0) +
+                        (ideal ? 0.3 : 1) +
+                        (needPickup && paperBag ? 0.5 : 0)
                     )}
                   </td>
                 </tr>
