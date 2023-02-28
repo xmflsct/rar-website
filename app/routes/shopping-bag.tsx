@@ -298,7 +298,10 @@ const ShoppingBag = () => {
                     checked={paperBag}
                     onChange={() => setPaperBag(!paperBag)}
                   />
-                  <label className='pl-2 grow flex justify-between' onClick={() => setIdeal(true)}>
+                  <label
+                    className='pl-2 grow flex justify-between'
+                    onClick={() => setPaperBag(!paperBag)}
+                  >
                     <span>I need a paper bag</span>
                     <span>{full(0.5)}</span>
                   </label>
