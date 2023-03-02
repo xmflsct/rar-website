@@ -9,6 +9,7 @@ import { Cake, graphqlRequest, Shipping } from './contentful'
 export type CheckoutContent = {
   ideal?: boolean
   cards?: boolean
+  paperBag?: boolean
   orders: {
     pickup?: CakeOrder[]
     shipping?: CakeOrder[]
@@ -325,6 +326,16 @@ const checkout = async ({
     },
     quantity: 1
   })
+
+  content.paperBag &&
+    line_items.push({
+      price_data: {
+        currency: 'eur',
+        unit_amount: 0.5 * 10 * 10,
+        product_data: { name: 'Paper bag' }
+      },
+      quantity: 1
+    })
 
   const sessionData = {
     payment_method_types: content.ideal ? ['ideal', 'bancontact'] : ['card', 'bancontact', 'giropay', 'sofort'],
