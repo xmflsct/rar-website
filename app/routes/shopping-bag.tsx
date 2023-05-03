@@ -1,6 +1,6 @@
 import { faStripe } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ActionArgs, json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
+import { ActionArgs, json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
 import { Form, Link, useActionData, useLoaderData, useTransition } from '@remix-run/react'
 import { loadStripe } from '@stripe/stripe-js'
 import classNames from 'classnames'
@@ -87,9 +87,11 @@ export const action = async ({ context, request }: ActionArgs) => {
   }
 }
 
-export const meta: MetaFunction = () => ({
-  title: `Shipping Bag | Round&Round Rotterdam`
-})
+export const meta: V2_MetaFunction = () => [
+  {
+    title: `Shopping Bag | Round&Round Rotterdam`
+  }
+]
 
 const ShoppingBag = () => {
   const { navs, shippingRates, maxCalendarMonth, daysClosedCollection } =
