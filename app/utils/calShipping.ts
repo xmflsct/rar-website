@@ -6,21 +6,17 @@ type Props = {
   orders: CakeOrder[]
 }
 
-const calShipping = ({ rates, orders }: Props): { fee: number; weight: number, label?: boolean; } => {
+const calShipping = ({
+  rates,
+  orders
+}: Props): { fee: number; weight: number; label?: boolean } => {
   let subtotal = 0
   let weight = 0
   for (const order of orders) {
     if (order.chosen.delivery?.type === 'shipping') {
-      subtotal = subtotal + (order.typeAPrice || 0) * (order.chosen.typeAAmount || 0) +
-        (order.typeBPrice || 0) * (order.chosen.typeBAmount || 0) +
-        (order.typeCPrice || 0) * (order.chosen.typeCAmount || 0)
+      subtotal = subtotal + (order[`type${order.chosen.unit}Price`] ?? 0) * order.chosen.amount
 
-      weight = weight +
-        (order.shippingWeight || 0) *
-        1.05 *
-        ((order.chosen.typeAAmount || 0) +
-          (order.chosen.typeBAmount || 0) +
-          (order.chosen.typeCAmount || 0))
+      weight = weight + (order.shippingWeight || 0) * 1.05 * order.chosen.amount
     }
   }
 
@@ -34,10 +30,7 @@ const calShipping = ({ rates, orders }: Props): { fee: number; weight: number, l
   let label = undefined
   let fee = undefined
   for (const rate of shippingNL[0].rates) {
-    if (
-      rate.weight.min <= weight &&
-      weight <= rate.weight.max
-    ) {
+    if (rate.weight.min <= weight && weight <= rate.weight.max) {
       fee = rate.freeAbove && subtotal >= rate.freeAbove ? 0 : rate.price
       label = rate.label
     }

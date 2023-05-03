@@ -1,4 +1,4 @@
-import { useTransition } from '@remix-run/react'
+import { useNavigation } from '@remix-run/react'
 import Layout from '~/layout'
 import { Navigation } from '~/layout/navigation'
 
@@ -8,14 +8,12 @@ export const adminNavs: Navigation[] = [
 ]
 
 const PageAdmin: React.FC = () => {
-  const transition = useTransition()
+  const navigation = useNavigation()
 
   return (
     <Layout navs={adminNavs}>
       <div className='text-center text-lg'>
-        {transition.state === 'loading' &&
-        transition.type === 'normalLoad' &&
-        transition.location.pathname === '/admin/orders'
+        {navigation.state === 'loading' && navigation.location.pathname === '/admin/orders'
           ? 'Please wait...'
           : null}
       </div>

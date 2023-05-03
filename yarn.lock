@@ -5657,6 +5657,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"isbot@npm:^3.6.10":
+  version: 3.6.10
+  resolution: "isbot@npm:3.6.10"
+  checksum: 85b7163444376986cbd222f6376a6bd2a7fd5ea3dd77019ef168be099b805b7e445e52a2ed69572683150174e82bfc724da280759d3bbb730c4d5a70590d72ae
+  languageName: node
+  linkType: hard
+
 "isexe@npm:^2.0.0":
   version: 2.0.0
   resolution: "isexe@npm:2.0.0"
@@ -8258,6 +8265,7 @@ __metadata:
     date-fns: ^2.30.0
     graphql: ^16.6.0
     graphql-request: ^6.0.0
+    isbot: ^3.6.10
     lodash: ^4.17.21
     npm-run-all: ^4.1.5
     postcss: ^8.4.23
