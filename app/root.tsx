@@ -8,7 +8,6 @@ import {
   ScrollRestoration,
   useLoaderData
 } from '@remix-run/react'
-import { withSentry } from '@sentry/remix'
 import BagProvider from './states/bag'
 import styles from './styles/app.css'
 
@@ -62,4 +61,4 @@ const App: React.FC = () => {
   )
 }
 
-export default withSentry(App)
+export default App
