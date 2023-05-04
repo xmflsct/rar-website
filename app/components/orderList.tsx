@@ -32,13 +32,17 @@ const OrderList: React.FC<Props> = ({ order }) => {
               )
               if (matchedCustomization === undefined) return
               return (
-                <p key={customization[0]}>{`${
-                  order.cakeCustomizationsCollection?.items[matchedCustomization].type
-                }: ${
-                  order.cakeCustomizationsCollection?.items[matchedCustomization].options[
-                    customization[1]
-                  ]
-                }`}</p>
+                <p key={customization[0]}>
+                  <span className='font-bold'>
+                    {order.cakeCustomizationsCollection?.items[matchedCustomization].type}
+                    {': '}
+                  </span>
+                  {
+                    order.cakeCustomizationsCollection?.items[matchedCustomization].options[
+                      customization[1]
+                    ]
+                  }
+                </p>
               )
             })}
           </div>

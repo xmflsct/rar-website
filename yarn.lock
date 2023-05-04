@@ -1350,31 +1350,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@contentful/rich-text-plain-text-renderer@npm:^16.0.3":
-  version: 16.0.3
-  resolution: "@contentful/rich-text-plain-text-renderer@npm:16.0.3"
+"@contentful/rich-text-plain-text-renderer@npm:^16.0.4":
+  version: 16.0.4
+  resolution: "@contentful/rich-text-plain-text-renderer@npm:16.0.4"
   dependencies:
-    "@contentful/rich-text-types": ^16.0.3
-  checksum: c8820bedf3cf863f01b371d8cd6e6322f139ff14c89d60a53c8eb3a730f61a82a5505b8a67dda01abc2d59889d46ffae94fc283041fde0ed793f1ef86bb120d7
+    "@contentful/rich-text-types": ^16.1.0
+  checksum: d1346f5e42152f474ca2408912374d5bc2ffe7fe140da18816e91cbb8081d9ff59a6be2294ee93c2eed1c5bee289381d875e68dd863588341c7ad22449afce84
   languageName: node
   linkType: hard
 
-"@contentful/rich-text-react-renderer@npm:^15.16.3":
-  version: 15.16.3
-  resolution: "@contentful/rich-text-react-renderer@npm:15.16.3"
+"@contentful/rich-text-react-renderer@npm:^15.16.4":
+  version: 15.16.4
+  resolution: "@contentful/rich-text-react-renderer@npm:15.16.4"
   dependencies:
-    "@contentful/rich-text-types": ^16.0.3
+    "@contentful/rich-text-types": ^16.1.0
   peerDependencies:
     react: ^16.8.6 || ^17.0.0 || ^18.0.0
     react-dom: ^16.8.6 || ^17.0.0 || ^18.0.0
-  checksum: f6701248712e3a11c996ad394fd4a75bbf64f5764de5f73f0a80040104f9a6ffe54545865313ac63e1b46d005ec643daf348255b83112d1578c959eb6ddd469b
+  checksum: dc7cb6b5578e3a115e0335d7cbbf1ebb5208fdd19621fb94ee51ffa6a448fd2d578f1bb0af5e5aa71d27b7ff3a5a96ce1dd1171d7c5400812e2a9ed14500d22b
   languageName: node
   linkType: hard
 
-"@contentful/rich-text-types@npm:^16.0.3":
-  version: 16.0.3
-  resolution: "@contentful/rich-text-types@npm:16.0.3"
-  checksum: 830c384ec6c5ea9d14ef867291065cbf9935a078b9ac4326db549175ddcd2efbd0f1adf980d9d9f9e9386dfed48745eeb920742230ef2e72bb2773f2c8901824
+"@contentful/rich-text-types@npm:^16.1.0":
+  version: 16.1.0
+  resolution: "@contentful/rich-text-types@npm:16.1.0"
+  checksum: 191927b41b63b4b3fb4d53edfff37ea67fd01fae538aa29c5ee2ee7d7b8060fe10eac082ed3a2ff63b2b24b5e4d4e4ad88479d8edd61f32ad218edf915fc07f4
   languageName: node
   linkType: hard
 
@@ -2625,7 +2625,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.2.2":
+"@types/react@npm:*":
   version: 18.2.2
   resolution: "@types/react@npm:18.2.2"
   dependencies:
@@ -2633,6 +2633,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: 6534fecbf898c772d0c140e7c4806cfa28095445ba5de3fbf71aec0542723a6dd994c30dce76280382f24cbef64c902b8cd5d6449b8c1062139dcac26c0d9693
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.2.5":
+  version: 18.2.5
+  resolution: "@types/react@npm:18.2.5"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: 97c4534e849edf991be0820b0911d036e794b8e2599a1544f500c769acbcb4f443ccde1a3f22298f22ce368ee7757f746e4a529e889567fc142a627698e2de39
   languageName: node
   linkType: hard
 
@@ -8242,9 +8253,9 @@ __metadata:
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
     "@cloudflare/workers-types": ^4.20230419.0
-    "@contentful/rich-text-plain-text-renderer": ^16.0.3
-    "@contentful/rich-text-react-renderer": ^15.16.3
-    "@contentful/rich-text-types": ^16.0.3
+    "@contentful/rich-text-plain-text-renderer": ^16.0.4
+    "@contentful/rich-text-react-renderer": ^15.16.4
+    "@contentful/rich-text-types": ^16.1.0
     "@fortawesome/fontawesome-svg-core": ^6.4.0
     "@fortawesome/free-brands-svg-icons": ^6.4.0
     "@fortawesome/free-solid-svg-icons": ^6.4.0
@@ -8257,7 +8268,7 @@ __metadata:
     "@stripe/stripe-js": ^1.52.1
     "@tailwindcss/typography": ^0.5.9
     "@types/lodash": ^4.14.194
-    "@types/react": ^18.2.2
+    "@types/react": ^18.2.5
     "@types/react-dom": ^18.2.3
     autoprefixer: ^10.4.14
     classnames: ^2.3.2
@@ -8273,7 +8284,7 @@ __metadata:
     react-day-picker: ^8.7.1
     react-dom: ^18.2.0
     schema-dts: ^1.1.2
-    stripe: ^12.3.0
+    stripe: ^12.4.0
     tailwindcss: ^3.3.2
     typescript: ^5.0.4
     wrangler: ^2.19.0
@@ -8841,13 +8852,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stripe@npm:^12.3.0":
-  version: 12.3.0
-  resolution: "stripe@npm:12.3.0"
+"stripe@npm:^12.4.0":
+  version: 12.4.0
+  resolution: "stripe@npm:12.4.0"
   dependencies:
     "@types/node": ">=8.1.0"
     qs: ^6.11.0
-  checksum: 5be63e233eb70163868e19f31930e5bb5ae397c3ad4edb1ee64610fa5499becaed6d443832c2a08221d7e2ee9b08324e6acea7557ea57f6b841a914897b6b3a8
+  checksum: 5976ae57186cfec53f5c0fb2b74a35a5ef7f8affe1defdf83333a8211f7ef19495dd5c30532e3007688566aee73e2061a3316f6edee8786307b70cfbeed9773e
   languageName: node
   linkType: hard
 

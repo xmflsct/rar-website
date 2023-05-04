@@ -10,9 +10,9 @@
     "start": "cross-env NODE_ENV=production npm run dev:wrangler"
   },
   "dependencies": {
-    "@contentful/rich-text-plain-text-renderer": "^16.0.3",
-    "@contentful/rich-text-react-renderer": "^15.16.3",
-    "@contentful/rich-text-types": "^16.0.3",
+    "@contentful/rich-text-plain-text-renderer": "^16.0.4",
+    "@contentful/rich-text-react-renderer": "^15.16.4",
+    "@contentful/rich-text-types": "^16.1.0",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
@@ -38,13 +38,13 @@
     "@remix-run/dev": "^1.16.0",
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash": "^4.14.194",
-    "@types/react": "^18.2.2",
+    "@types/react": "^18.2.5",
     "@types/react-dom": "^18.2.3",
     "autoprefixer": "^10.4.14",
     "cross-env": "^7.0.3",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.23",
-    "stripe": "^12.3.0",
+    "stripe": "^12.4.0",
     "tailwindcss": "^3.3.2",
     "typescript": "^5.0.4",
     "wrangler": "^2.19.0"

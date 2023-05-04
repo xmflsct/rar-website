@@ -152,36 +152,48 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
   }
 
   const renderCakeCustomizations = () => {
-    return cake.cakeCustomizationsCollection?.items.map((customization, index) => {
-      const customizationSelected = cakeCustomizations.filter(c => c[0] === customization.type)
-      return (
-        <Select
-          key={index}
-          required
-          name={customization.type}
-          value={customizationSelected.length === 1 ? customizationSelected[0][1] : ''}
-          onChange={e => {
-            if (customizationSelected.length === 1) {
-              setCakeCustomizations(
-                cakeCustomizations.map(c =>
-                  c[0] === customization.type ? [c[0], parseInt(e.target.value)] : c
-                )
-              )
-            } else {
-              setCakeCustomizations([
-                ...cakeCustomizations,
-                [customization.type, parseInt(e.target.value)]
-              ])
-            }
-          }}
-        >
-          <option value='' children={`${customization.type} ...`} disabled />
-          {customization.options.map((option, index) => (
-            <option key={index} value={index} children={option} />
-          ))}
-        </Select>
-      )
-    })
+    return (
+      <div className='flex flex-row gap-4 mb-2'>
+        {cake.cakeCustomizationsCollection?.items.map((customization, index) => {
+          const customizationSelected = cakeCustomizations.filter(c => c[0] === customization.type)
+          return (
+            <div className='flex-1'>
+              <div className='font-bold'>{customization.type}</div>
+              <Select
+                key={index}
+                required
+                name={customization.type}
+                value={customizationSelected.length === 1 ? customizationSelected[0][1] : ''}
+                onChange={e => {
+                  if (customizationSelected.length === 1) {
+                    setCakeCustomizations(
+                      cakeCustomizations.map(c =>
+                        c[0] === customization.type ? [c[0], parseInt(e.target.value)] : c
+                      )
+                    )
+                  } else {
+                    setCakeCustomizations([
+                      ...cakeCustomizations,
+                      [customization.type, parseInt(e.target.value)]
+                    ])
+                  }
+                }}
+                className={
+                  cakeCustomizations.filter(c => c[0] === customization.type).length
+                    ? undefined
+                    : 'text-gray-400'
+                }
+              >
+                <option value='' children={`${customization.type} ...`} disabled />
+                {customization.options.map((option, index) => (
+                  <option key={index} value={index} children={option} />
+                ))}
+              </Select>
+            </div>
+          )
+        })}
+      </div>
+    )
   }
 
   const availableTypes = (['C', 'B', 'A'] as ['C', 'B', 'A']).filter(type => {
@@ -209,37 +221,40 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
     }
 
     return (
-      <>
-        <Select
-          name='amount'
-          value={amount}
-          required={true}
-          onChange={e => e.target.value && setAmount(e.target.value)}
-          className={amount.length ? undefined : 'text-gray-400'}
-        >
-          <option value='' children='Amount' disabled />
-          {Array(stockDefined ? (stock || 0) + 1 : 16)
-            .fill(undefined)
-            .map((_, index) =>
-              (deliveryMinimum || 1) <= index && (minimum || 1) <= index ? (
-                <option key={index} value={index} children={index} />
-              ) : null
-            )}
-        </Select>
-        <Select
-          name='unit'
-          value={unit}
-          required={true}
-          disabled={availableTypes.length <= 1}
-          onChange={e => e.target.value && setUnit(e.target.value as 'A' | 'B' | 'C')}
-          className={availableTypes.length <= 1 ? 'appearance-none' : undefined}
-        >
-          <option value='' children='Type' disabled />
-          {availableTypes.map(type => (
-            <option key={type} value={type} children={cake[`type${type}Unit`]?.unit} />
-          ))}
-        </Select>
-      </>
+      <div className='flex flex-col mb-2'>
+        <div className='font-bold'>Order</div>
+        <div className='flex flex-col lg:flex-row gap-4'>
+          <Select
+            name='amount'
+            value={amount}
+            required={true}
+            onChange={e => e.target.value && setAmount(e.target.value)}
+            className={amount.length ? undefined : 'text-gray-400'}
+          >
+            <option value='' children='Amount' disabled />
+            {Array(stockDefined ? (stock || 0) + 1 : 16)
+              .fill(undefined)
+              .map((_, index) =>
+                (deliveryMinimum || 1) <= index && (minimum || 1) <= index ? (
+                  <option key={index} value={index} children={index} />
+                ) : null
+              )}
+          </Select>
+          <Select
+            name='unit'
+            value={unit}
+            required={true}
+            disabled={availableTypes.length <= 1}
+            onChange={e => e.target.value && setUnit(e.target.value as 'A' | 'B' | 'C')}
+            className={availableTypes.length <= 1 ? 'appearance-none' : undefined}
+          >
+            <option value='' children='Type' disabled />
+            {availableTypes.map(type => (
+              <option key={type} value={type} children={cake[`type${type}Unit`]?.unit} />
+            ))}
+          </Select>
+        </div>
+      </div>
     )
   }
 
@@ -283,16 +298,8 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
           </div>
         </div>
       ) : null}
-      <div className='flex flex-col gap-2'>
-        <div className='font-bold'>Order</div>
-        <div className='flex flex-col lg:flex-row gap-4'>{renderTypeOptions()}</div>
-      </div>
-      {cake.cakeCustomizationsCollection?.items.length ? (
-        <div className='flex flex-col gap-2'>
-          <div className='font-bold'>Customizations</div>
-          <div className='flex flex-row gap-4'>{renderCakeCustomizations()}</div>
-        </div>
-      ) : null}
+      {renderTypeOptions()}
+      {cake.cakeCustomizationsCollection?.items.length ? renderCakeCustomizations() : null}
       <Button type='submit'>Add to bag</Button>
     </form>
   )
