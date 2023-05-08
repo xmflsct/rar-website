@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useEffect, useState } from 'react'
+import { createContext, PropsWithChildren, useEffect, useRef, useState } from 'react'
 import { Cake } from '~/utils/contentful'
 
 export type CakeOrder = Omit<
@@ -6,10 +6,9 @@ export type CakeOrder = Omit<
   'availableOnline' | 'special' | 'description' | 'additionalInformation'
 > & {
   chosen: {
+    unit: 'A' | 'B' | 'C'
+    amount: number
     cakeCustomizations?: [string, number][]
-    typeAAmount?: number
-    typeBAmount?: number
-    typeCAmount?: number
     delivery?:
       | {
           type: 'pickup'
@@ -26,22 +25,18 @@ export type BagState = {
   cakeOrders: CakeOrder[]
   cakeAdd: (order: CakeOrder) => void
   cakeRemove: (order: CakeOrder) => void
-  cakeCheck: (order?: CakeOrder) => CakeOrder | null
 }
 
 const initBagState: BagState = {
   cakeOrders: [],
   cakeAdd: () => {},
-  cakeRemove: () => {},
-  cakeCheck: () => null
+  cakeRemove: () => {}
 }
 
 export const BagContext = createContext<BagState>(initBagState)
 
 const BagProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const [cakeOrders, setCakeOrders] = useState<CakeOrder[]>(
-    initBagState.cakeOrders
-  )
+  const [cakeOrders, setCakeOrders] = useState<CakeOrder[]>(initBagState.cakeOrders)
   useEffect(() => {
     const storedCakeOrders = localStorage.getItem('cakeOrders')
     if (!storedCakeOrders) return
@@ -51,20 +46,26 @@ const BagProvider: React.FC<PropsWithChildren> = ({ children }) => {
       setCakeOrders(cakeOrders)
     }
   }, [])
+  const rendered = useRef<boolean>(false)
   useEffect(() => {
-    localStorage.setItem('cakeOrders', JSON.stringify(cakeOrders))
-  }, [cakeOrders])
+    if (rendered.current) {
+      localStorage.setItem('cakeOrders', JSON.stringify(cakeOrders))
+    } else {
+      rendered.current = true
+    }
+  }, [rendered.current, cakeOrders])
 
   // sys id and delivery type defines a unique SKU
   const findCake = (order: CakeOrder): number => {
     return cakeOrders.findIndex(o => {
-      if (o.sys.id === order.sys.id) {
-        if (o.chosen.delivery?.type === order.chosen.delivery?.type) {
-          return true
-        } else {
-          return false
-        }
+      if (
+        o.sys.id === order.sys.id &&
+        o.chosen.unit === order.chosen.unit &&
+        o.chosen.delivery?.type === order.chosen.delivery?.type
+      ) {
+        return true
       }
+      return false
     })
   }
 
@@ -82,22 +83,8 @@ const BagProvider: React.FC<PropsWithChildren> = ({ children }) => {
       setCakeOrders(cakeOrders.filter((_, index) => index !== foundIndex))
     }
   }
-  const cakeCheck = (order: CakeOrder | undefined) => {
-    if (!order) return null
-    const foundIndex = findCake(order)
-    if (foundIndex >= 0) {
-      return cakeOrders[foundIndex]
-    } else {
-      return null
-    }
-  }
 
-  return (
-    <BagContext.Provider
-      value={{ cakeOrders, cakeAdd, cakeRemove, cakeCheck }}
-      children={children}
-    />
-  )
+  return <BagContext.Provider value={{ cakeOrders, cakeAdd, cakeRemove }} children={children} />
 }
 
 export default BagProvider

@@ -1,4 +1,4 @@
-import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import Image from '~/components/image'
@@ -36,9 +36,11 @@ export const loader = async ({ context, request }: LoaderArgs) => {
   return json({ navs, images })
 }
 
-export const meta: MetaFunction = () => ({
-  title: `Round&Round Rotterdam`
-})
+export const meta: V2_MetaFunction = () => [
+  {
+    title: `Round&Round Rotterdam`
+  }
+]
 
 export default () => {
   const { navs, images } = useLoaderData<typeof loader>()

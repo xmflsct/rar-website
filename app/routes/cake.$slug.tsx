@@ -1,5 +1,5 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import type { Product, WithContext } from 'schema-dts'
@@ -48,12 +48,14 @@ export const loader = async ({ context, params, request }: LoaderArgs) => {
   })
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) => ({
-  title: `${data.cake.name} | Round&Round Rotterdam`,
-  ...(data.cake.description && {
-    description: documentToPlainTextString(data.cake.description.json).substring(0, 199)
-  })
-})
+export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) => [
+  {
+    title: `${data.cake.name} | Round&Round Rotterdam`,
+    ...(data.cake.description && {
+      description: documentToPlainTextString(data.cake.description.json).substring(0, 199)
+    })
+  }
+]
 export const handle = {
   structuredData: (data: LoaderData<typeof loader>): WithContext<Product> => ({
     '@context': 'https://schema.org',

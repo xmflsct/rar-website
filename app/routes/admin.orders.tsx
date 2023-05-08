@@ -1,11 +1,11 @@
-import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import classNames from 'classnames'
 import { useEffect, useRef, useState } from 'react'
 import Stripe from 'stripe'
 import Button from '~/components/button'
 import Layout from '~/layout'
-import { adminNavs } from '.'
+import { adminNavs } from './admin._index'
 
 type SessionsData = {
   has_more: boolean
@@ -33,9 +33,11 @@ export const loader = async ({ context }: LoaderArgs) => {
   }
 }
 
-export const meta: MetaFunction = () => ({
-  title: 'Orders | Round&Round Rotterdam'
-})
+export const meta: V2_MetaFunction = () => [
+  {
+    title: 'Orders | Round&Round Rotterdam'
+  }
+]
 
 type PostNL = {
   url: string

@@ -1,32 +1,36 @@
 import type { EntryContext } from '@remix-run/cloudflare'
 import { RemixServer } from '@remix-run/react'
-import * as Sentry from '@sentry/remix'
-import * as Tracing from '@sentry/tracing'
-import { renderToString } from 'react-dom/server'
+import { renderToReadableStream } from 'react-dom/server'
 import { cached } from './utils/contentful'
 import { kved } from './utils/kv'
+import isbot from 'isbot'
 
-Sentry.init({
-  dsn: 'https://79b2ce77fbfc4511af541c7a4cf125d3@o389581.ingest.sentry.io/6617177',
-  tracesSampleRate: 0.5,
-  integrations: [new Tracing.Integrations.Apollo()]
-})
-
-export default function handleRequest(
+export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext
 ) {
-  let markup = renderToString(
-    <RemixServer context={remixContext} url={request.url} />
+  const body = await renderToReadableStream(
+    <RemixServer context={remixContext} url={request.url} />,
+    {
+      signal: request.signal,
+      onError(error: unknown) {
+        console.error(error)
+        responseStatusCode = 500
+      }
+    }
   )
+
+  if (isbot(request.headers.get('user-agent'))) {
+    await body.allReady
+  }
 
   responseHeaders.set('Content-Type', 'text/html')
   responseHeaders.set('X-Cached', `${cached}`)
   responseHeaders.set('X-KVed', `${kved}`)
 
-  return new Response('<!DOCTYPE html>' + markup, {
+  return new Response(body, {
     status: responseStatusCode,
     headers: responseHeaders
   })

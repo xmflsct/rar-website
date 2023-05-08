@@ -1,4 +1,4 @@
-import { json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import RichText from '~/components/richText'
 import Layout from '~/layout'
@@ -17,9 +17,11 @@ export const loader = async ({ context, params }: LoaderArgs) => {
   return json({ navs, page: matchedPages[0], daysClosedCollection })
 }
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) => ({
-  title: `${data.page.name} | Round&Round Rotterdam`
-})
+export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) => [
+  {
+    title: `${data.page.name} | Round&Round Rotterdam`
+  }
+]
 
 export default () => {
   const { navs, page, daysClosedCollection } = useLoaderData<typeof loader>()

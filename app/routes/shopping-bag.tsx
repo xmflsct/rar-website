@@ -1,7 +1,7 @@
 import { faStripe } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ActionArgs, json, LoaderArgs, MetaFunction } from '@remix-run/cloudflare'
-import { Form, Link, useActionData, useLoaderData, useTransition } from '@remix-run/react'
+import { ActionArgs, json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { Form, Link, useActionData, useLoaderData, useNavigation } from '@remix-run/react'
 import { loadStripe } from '@stripe/stripe-js'
 import classNames from 'classnames'
 import { addDays, getMonth, getYear } from 'date-fns'
@@ -87,14 +87,16 @@ export const action = async ({ context, request }: ActionArgs) => {
   }
 }
 
-export const meta: MetaFunction = () => ({
-  title: `Shipping Bag | Round&Round Rotterdam`
-})
+export const meta: V2_MetaFunction = () => [
+  {
+    title: `Shopping Bag | Round&Round Rotterdam`
+  }
+]
 
 const ShoppingBag = () => {
   const { navs, shippingRates, maxCalendarMonth, daysClosedCollection } =
     useLoaderData<typeof loader>()
-  const transition = useTransition()
+  const navigation = useNavigation()
   const { cakeOrders } = useContext(BagContext)
   const [ideal, setIdeal] = useState(true)
   const [paperBag, setPaperBag] = useState(true)
@@ -123,17 +125,7 @@ const ShoppingBag = () => {
   )
 
   const subtotal = sumBy(cakeOrders, order => {
-    let sum = 0
-    if (order.typeAPrice && order.chosen.typeAAmount) {
-      sum = sum + order.typeAPrice * order.chosen.typeAAmount
-    }
-    if (order.typeBPrice && order.chosen.typeBAmount) {
-      sum = sum + order.typeBPrice * order.chosen.typeBAmount
-    }
-    if (order.typeCPrice && order.chosen.typeCAmount) {
-      sum = sum + order.typeCPrice * order.chosen.typeCAmount
-    }
-    return sum
+    return (order[`type${order.chosen.unit}Price`] ?? 0) * order.chosen.amount
   })
 
   const { fee: shippingFee } = calShipping({
@@ -195,13 +187,13 @@ const ShoppingBag = () => {
           <div className='lg:col-span-3 flex flex-col gap-4'>
             <h2 className='text-2xl'>Overview</h2>
             {orders.pickup.length ? (
-              <div className='flex flex-col gap-2'>
+              <div className='flex flex-col gap-4'>
                 <h3 className='text-xl'>🛍️ Pickup orders</h3>
                 {
                   // Only show pickup date when there are orders without specific pickup date
                   needPickup ? (
                     <div
-                      className={`bg-neutral-100 rounded-tr-md rounded-br-md p-4 mb-2 border-l-2 ${
+                      className={`bg-neutral-100 rounded-tr-md rounded-br-md p-4 border-l-2 ${
                         pickup ? 'border-green-500' : 'border-red-500'
                       }`}
                     >
@@ -252,7 +244,7 @@ const ShoppingBag = () => {
               </div>
             ) : null}
             {orders.shipping.length ? (
-              <div className='flex flex-col gap-2'>
+              <div className='flex flex-col gap-4'>
                 <h3 className='text-xl'>📦 Shipping orders</h3>
                 {orders.shipping.map(order => (
                   <OrderList key={order.sys.id} order={order} />
@@ -436,10 +428,10 @@ const ShoppingBag = () => {
                 the collection day.
               </div>
             </div>
-            <Button type='submit' disabled={transition.state === ('submitting' || 'loading')}>
-              {transition.state === 'submitting'
+            <Button type='submit' disabled={navigation.state === ('submitting' || 'loading')}>
+              {navigation.state === 'submitting'
                 ? '...'
-                : transition.state === 'loading'
+                : navigation.state === 'loading'
                 ? '...'
                 : 'Checkout'}
             </Button>

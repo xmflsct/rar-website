@@ -32,7 +32,7 @@ type ShippingOptions = {
       amount: number
       currency: 'eur'
     }
-    metadata?: { label?: boolean, weight: number }
+    metadata?: { label?: boolean; weight: number }
   }
 }
 
@@ -43,10 +43,7 @@ const verifyContentful = async ({
   context: LoaderArgs['context']
   content: CheckoutContent
 }): Promise<ShippingOptions | null> => {
-  if (
-    (!orders.pickup?.length && !orders.shipping?.length) ||
-    !subtotal_amount
-  ) {
+  if ((!orders.pickup?.length && !orders.shipping?.length) || !subtotal_amount) {
     throw json('Submitted checkout content error', { status: 400 })
   }
 
@@ -88,10 +85,7 @@ const verifyContentful = async ({
         variables: { ids },
         query: gql`
           query Cakes($preview: Boolean, $ids: String) {
-            cakeCollection(
-              preview: $preview
-              where: { sys: { id_in: [$ids] } }
-            ) {
+            cakeCollection(preview: $preview, where: { sys: { id_in: [$ids] } }) {
               items {
                 sys {
                   id
@@ -130,44 +124,26 @@ const verifyContentful = async ({
         throw json('Cake not available', { status: 400 })
       }
 
-      const checkCake = (type: 'A' | 'B' | 'C') => {
-        const amount = order.chosen[`type${type}Amount`]
-        if (amount) {
-          if (!item[`type${type}Available`]) {
-            throw json('Cake availability error', { status: 400 })
-          }
-          const stock = item[`type${type}Stock`]
-          if (stock && amount > stock) {
-            throw json('Cake quantity exceeded', { status: 400 })
-          }
-          if (amount < (item[`type${type}Minimum`] || 1)) {
-            throw json('Cake quantity error', { status: 400 })
-          }
-          if (order[`type${type}Price`] !== item[`type${type}Price`]) {
-            throw json('Cake pricing error', { status: 400 })
-          }
-        }
-      }
       const order = flatOrders[objectIndex]
-      checkCake('A')
-      checkCake('B')
-      checkCake('C')
+      if (!item[`type${order.chosen.unit}Available`]) {
+        throw json('Cake availability error', { status: 400 })
+      }
+      const stock = item[`type${order.chosen.unit}Stock`]
+      if (stock && order.chosen.amount > stock) {
+        throw json('Cake quantity exceeded', { status: 400 })
+      }
+      if (order.chosen.amount < (item[`type${order.chosen.unit}Minimum`] || 1)) {
+        throw json('Cake quantity error', { status: 400 })
+      }
+      if (order[`type${order.chosen.unit}Price`] !== item[`type${order.chosen.unit}Price`]) {
+        throw json('Cake pricing error', { status: 400 })
+      }
     }
   }
 
   // Check subtotal
   const subtotal = sumBy(flatOrders, order => {
-    let sum = 0
-    if (order.chosen.typeAAmount) {
-      sum = sum + order.chosen.typeAAmount * (order.typeAPrice || 0)
-    }
-    if (order.chosen.typeBAmount) {
-      sum = sum + order.chosen.typeBAmount * (order.typeBPrice || 0)
-    }
-    if (order.chosen.typeCAmount) {
-      sum = sum + order.chosen.typeCAmount * (order.typeCPrice || 0)
-    }
-    return sum
+    return (order[`type${order.chosen.unit}Price`] ?? 0) * order.chosen.amount
   })
   if (!(subtotal === parseFloat(subtotal_amount))) {
     throw json('Subtotal not aligned', { status: 400 })
@@ -182,11 +158,7 @@ const verifyContentful = async ({
         context,
         query: gql`
           query Delivery($preview: Boolean) {
-            shippingCollection(
-              preview: $preview
-              limit: 1
-              where: { year: 2022 }
-            ) {
+            shippingCollection(preview: $preview, limit: 1, where: { year: 2022 }) {
               items {
                 rates
               }
@@ -202,8 +174,7 @@ const verifyContentful = async ({
     }
 
     const shippingDate = orders.shipping.every(
-      (val, i, arr) =>
-        val.chosen.delivery?.date === arr[0].chosen.delivery?.date
+      (val, i, arr) => val.chosen.delivery?.date === arr[0].chosen.delivery?.date
     )
 
     return {
@@ -211,16 +182,13 @@ const verifyContentful = async ({
         display_name: new Array(
           'PostNL',
           shippingDate && orders.shipping[0].chosen.delivery?.date
-            ? parseISO(orders.shipping[0].chosen.delivery?.date).toLocaleString(
-              'en-GB',
-              {
+            ? parseISO(orders.shipping[0].chosen.delivery?.date).toLocaleString('en-GB', {
                 timeZone: 'Europe/Amsterdam',
                 weekday: 'short',
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric'
-              }
-            )
+              })
             : undefined
         )
           .filter(f => f)
@@ -231,7 +199,7 @@ const verifyContentful = async ({
           amount: shippingRate.fee * 10 * 10
         },
         metadata: { label: shippingRate.label, weight: shippingRate.weight }
-      },
+      }
     }
   } else {
     return null
@@ -251,10 +219,10 @@ const checkout = async ({
 
   const shipping = await verifyContentful({ context, content })
 
-  const item = (order: CakeOrder, type: 'A' | 'B' | 'C') => {
-    const amount = order.chosen[`type${type}Amount`]
-    const price = order[`type${type}Price`]
-    const unit = order[`type${type}Unit`]
+  const item = (order: CakeOrder) => {
+    const amount = order.chosen.amount
+    const price = order[`type${order.chosen.unit}Price`]
+    const unit = order[`type${order.chosen.unit}Unit`]
 
     if (!amount || !price) return
 
@@ -263,29 +231,29 @@ const checkout = async ({
       order.chosen.delivery?.type
         ? order.chosen.delivery.date
           ? `Special ${order.chosen.delivery.type}: ${parseISO(
-            order.chosen.delivery.date
-          ).toLocaleString('en-GB', {
-            timeZone: 'Europe/Amsterdam',
-            weekday: 'short',
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-          })}`
+              order.chosen.delivery.date
+            ).toLocaleString('en-GB', {
+              timeZone: 'Europe/Amsterdam',
+              weekday: 'short',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+            })}`
           : { pickup: '🛍️', shipping: '📦' }[order.chosen.delivery.type]
         : content.pickup_date
-          ? '🛍️'
-          : undefined,
+        ? '🛍️'
+        : undefined,
       order.chosen.cakeCustomizations
         ? order.chosen.cakeCustomizations
-          .map(customization => {
-            const type = customization[0]
-            const value = order.cakeCustomizationsCollection?.items.filter(
-              c => c.type === customization[0]
-            )
-            if (!value) return
-            return `${type}: ${value[0].options[customization[1]]}`
-          })
-          .join(', ')
+            .map(customization => {
+              const type = customization[0]
+              const value = order.cakeCustomizationsCollection?.items.filter(
+                c => c.type === customization[0]
+              )
+              if (!value) return
+              return `${type}: ${value[0].options[customization[1]]}`
+            })
+            .join(', ')
         : undefined,
       unit?.unit
     )
@@ -298,8 +266,8 @@ const checkout = async ({
         product_data: {
           name,
           images: [order.image?.url],
-          ...(order[`type${type}Stock`] !== undefined && {
-            metadata: { contentful_id: order.sys.id, type }
+          ...(order[`type${order.chosen.unit}Stock`] !== undefined && {
+            metadata: { contentful_id: order.sys.id, type: order.chosen.unit }
           })
         }
       },
@@ -308,14 +276,10 @@ const checkout = async ({
   }
   let line_items: any[] = []
   content.orders.pickup?.forEach(order => {
-    line_items.push(item(order, 'A'))
-    line_items.push(item(order, 'B'))
-    line_items.push(item(order, 'C'))
+    line_items.push(item(order))
   })
   content.orders.shipping?.forEach(order => {
-    line_items.push(item(order, 'A'))
-    line_items.push(item(order, 'B'))
-    line_items.push(item(order, 'C'))
+    line_items.push(item(order))
   })
 
   line_items.push({
@@ -338,7 +302,9 @@ const checkout = async ({
     })
 
   const sessionData = {
-    payment_method_types: content.ideal ? ['ideal', 'bancontact'] : ['card', 'bancontact', 'giropay', 'sofort'],
+    payment_method_types: content.ideal
+      ? ['ideal', 'bancontact']
+      : ['card', 'bancontact', 'giropay', 'sofort'],
     mode: 'payment',
     line_items: line_items.filter(l => l),
     ...(shipping && {
@@ -363,7 +329,7 @@ const checkout = async ({
         'Birthday cake voucher': content.birthday_cake_voucher
       })
     },
-    expires_at: Math.floor(Date.now() / 1000) + (31 * 60)
+    expires_at: Math.floor(Date.now() / 1000) + 31 * 60
   }
 
   // @ts-ignore
@@ -379,8 +345,7 @@ const checkout = async ({
   const data = getPairs(sessionData)
     .map(
       // @ts-ignore
-      ([[key0, ...keysRest], value]) =>
-        `${key0}${keysRest.map(a => `[${a}]`).join('')}=${value}`
+      ([[key0, ...keysRest], value]) => `${key0}${keysRest.map(a => `[${a}]`).join('')}=${value}`
     )
     .join('&')
 
@@ -388,7 +353,8 @@ const checkout = async ({
   const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${context.STRIPE_KEY_PRIVATE}`
+      Authorization: `Bearer ${context.STRIPE_KEY_PRIVATE}`,
+      'Content-Type': 'application/x-www-form-urlencoded'
     },
     body
   })

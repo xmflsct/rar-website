@@ -1,6 +1,7 @@
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link, useMatches } from '@remix-run/react'
+import { sumBy } from 'lodash'
 import { useContext } from 'react'
 import { BagContext } from '~/states/bag'
 
@@ -15,18 +16,9 @@ const Header: React.FC<Props> = ({ toggleNav, setToggleNav }) => {
   const matches = useMatches()
   const pathname = matches[matches.length - 1].pathname
   const isAdmin = pathname.startsWith('/admin')
-  const hide =
-    pathname.startsWith('/shopping-bag') ||
-    pathname.startsWith('/thank-you/id/')
+  const hide = pathname.startsWith('/shopping-bag') || pathname.startsWith('/thank-you/id/')
 
-  let bagTotal = 0
-  for (const item of cakeOrders) {
-    bagTotal =
-      bagTotal +
-      (item.chosen.typeAAmount || 0) +
-      (item.chosen.typeBAmount || 0) +
-      (item.chosen.typeCAmount || 0)
-  }
+  const bagTotal = sumBy(cakeOrders, order => order.chosen.amount)
 
   return (
     <div className='fixed w-full'>
@@ -34,9 +26,7 @@ const Header: React.FC<Props> = ({ toggleNav, setToggleNav }) => {
         aria-label='Mobile hamburger menu'
         className='block lg:hidden p-4 bg-white/90 lg:bg-transparent'
         onClick={() => {
-          toggleNav === false &&
-            typeof window !== undefined &&
-            window.scrollTo(0, 0)
+          toggleNav === false && typeof window !== undefined && window.scrollTo(0, 0)
           setToggleNav(!toggleNav)
         }}
       >
