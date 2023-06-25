@@ -1,15 +1,74 @@
 import { Popover, Transition } from '@headlessui/react'
+import { addDays } from 'date-fns'
 import { Fragment } from 'react'
-import { DayPicker, DayPickerSingleProps, Matcher } from 'react-day-picker'
+import { DayPicker, DayPickerSingleProps, Matcher, isDateRange, isMatch } from 'react-day-picker'
 import { DaysClosed } from '~/utils/contentful'
+
+export const validDayAfter: Matcher = {
+  after:
+    parseInt(
+      new Date().toLocaleString('nl-NL', {
+        timeZone: 'Europe/Amsterdam',
+        hour: '2-digit',
+        hour12: false
+      })
+    ) > 16
+      ? addDays(new Date(), 2)
+      : addDays(new Date(), 1)
+}
+export const invalidDayBefore: Matcher = {
+  before:
+    parseInt(
+      new Date().toLocaleString('nl-NL', {
+        timeZone: 'Europe/Amsterdam',
+        hour: '2-digit',
+        hour12: false
+      })
+    ) > 16
+      ? addDays(new Date(), 3)
+      : addDays(new Date(), 2)
+}
+export const openDaysOfWeek: Matcher = { dayOfWeek: [3, 4, 5, 6, 7] }
+export const closedDaysOfWeek: Matcher = { dayOfWeek: [1, 2] }
+
+export const isDayValid = ({
+  date,
+  daysClosed
+}: {
+  date: Date
+  daysClosed?: DaysClosed[]
+}): boolean => {
+  if (!isMatch(date, [validDayAfter])) {
+    return false
+  }
+
+  if (!isMatch(date, [openDaysOfWeek])) {
+    return false
+  }
+
+  if (daysClosed?.length) {
+    for (const daysClosedRange of daysClosed) {
+      if (
+        isDateRange({
+          after: new Date(daysClosedRange.start),
+          before: new Date(daysClosedRange.end)
+        })
+      ) {
+        return false
+      }
+    }
+  }
+
+  return true
+}
 
 export const closedDays = (daysCollection: DaysClosed[]): Matcher[] =>
   daysCollection
     ? [
-        { dayOfWeek: [1, 2] },
+        closedDaysOfWeek,
         ...daysCollection.map(days => ({ from: new Date(days.start), to: new Date(days.end) }))
       ]
-    : [{ dayOfWeek: [1, 2] }]
+    : [closedDaysOfWeek]
 
 type Props = {
   name?: string
