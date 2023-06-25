@@ -1,22 +1,23 @@
 import { faStripe } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ActionArgs, json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { Dialog, Transition } from '@headlessui/react'
+import { ActionArgs, LoaderArgs, V2_MetaFunction, json } from '@remix-run/cloudflare'
 import { Form, Link, useActionData, useLoaderData, useNavigation } from '@remix-run/react'
 import { loadStripe } from '@stripe/stripe-js'
 import classNames from 'classnames'
 import { addDays, getMonth, getYear } from 'date-fns'
 import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
-import { useContext, useEffect, useState } from 'react'
+import { Fragment, useContext, useEffect, useState } from 'react'
 import Button from '~/components/button'
 import ExpandableField from '~/components/expandableField'
 import OrderList from '~/components/orderList'
-import PickDay, { closedDays } from '~/components/pickDay'
+import PickDay, { closedDays, invalidDayBefore, isDayValid } from '~/components/pickDay'
 import Layout from '~/layout'
 import { BagContext, CakeOrder } from '~/states/bag'
 import calShipping from '~/utils/calShipping'
 import checkout from '~/utils/checkout'
-import { cacheQuery, DaysClosed, MaxCalendarMonth, Shipping } from '~/utils/contentful'
+import { DaysClosed, MaxCalendarMonth, Shipping, cacheQuery } from '~/utils/contentful'
 import { full } from '~/utils/currency'
 import { getAllPages } from '~/utils/kv'
 
@@ -64,6 +65,10 @@ export const loader = async ({ context, request }: LoaderArgs) => {
 export const action = async ({ context, request }: ActionArgs) => {
   const formData = await request.formData()
   const data = Object.fromEntries(formData)
+
+  if (typeof data.pickup_date !== 'string' || !isDayValid({ date: new Date(data.pickup_date) })) {
+    return { error: 'Please select a new date' }
+  }
 
   if (!data.orders) {
     return { error: 'No data was supplied' }
@@ -148,7 +153,13 @@ const ShoppingBag = () => {
   }
 
   const actionData = useActionData()
+  const [actionError, setActionError] = useState<string | null>(null)
   useEffect(() => {
+    if (actionData?.error) {
+      setActionError(actionData.error)
+      return
+    }
+
     // @ts-ignore
     const stripePromise = loadStripe(window.ENV.STRIPE_KEY_PUBLIC)
     const redirect = async (id: string) => {
@@ -169,6 +180,48 @@ const ShoppingBag = () => {
 
   return (
     <Layout navs={navs}>
+      <Transition appear show={!!actionError} as={Fragment}>
+        <Dialog as='div' className='relative z-10' onClose={() => setActionError(null)}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black bg-opacity-25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-4 gap-4 flex flex-col items-center shadow-xl transition-all'>
+                  <Dialog.Title as='h3' className='text-lg font-bold'>
+                    {actionError}
+                  </Dialog.Title>
+                  <Button
+                    className='border-red-500 text-red-500'
+                    onClick={() => setActionError(null)}
+                  >
+                    Retry
+                  </Button>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
       <h1 className='text-3xl mb-4'>Shopping bag</h1>
       {orders.pickup.length || orders.shipping.length ? (
         <Form method='post' className='grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8'>
@@ -213,21 +266,7 @@ const ShoppingBag = () => {
                               maxCalendarMonth - 1
                             )
                           }
-                          disabled={[
-                            ...closedDays(daysClosedCollection),
-                            {
-                              before:
-                                parseInt(
-                                  new Date().toLocaleString('nl-NL', {
-                                    timeZone: 'Europe/Amsterdam',
-                                    hour: '2-digit',
-                                    hour12: false
-                                  })
-                                ) > 16
-                                  ? addDays(new Date(), 3)
-                                  : addDays(new Date(), 2)
-                            }
-                          ]}
+                          disabled={[...closedDays(daysClosedCollection), invalidDayBefore]}
                         />
                       </div>
                       <div className='text-sm mt-2 text-neutral-500'>

@@ -6,6 +6,7 @@ const Button: React.FC<
 > = ({ className, ...rest }) => {
   return (
     <button
+      type='button'
       className={classNames(
         className,
         'flex flex-row justify-center items-center',
