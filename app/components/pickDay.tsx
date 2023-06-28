@@ -28,7 +28,7 @@ export const invalidDayBefore: Matcher = {
       ? addDays(new Date(), 3)
       : addDays(new Date(), 2)
 }
-export const openDaysOfWeek: Matcher = { dayOfWeek: [3, 4, 5, 6, 7] }
+export const openDaysOfWeek: Matcher = { dayOfWeek: [0, 3, 4, 5, 6] }
 export const closedDaysOfWeek: Matcher = { dayOfWeek: [1, 2] }
 
 export const isDayValid = ({
@@ -123,6 +123,7 @@ const PickDay: React.FC<Props> = ({ name, date, setDate, ...props }) => {
                 onDayClick={() => close()}
                 fromMonth={new Date()}
                 weekStartsOn={1}
+                numberOfMonths={2}
                 {...props}
               />
             </Popover.Panel>

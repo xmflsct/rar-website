@@ -138,20 +138,6 @@ const ShoppingBag = () => {
     orders: orders.shipping
   })
 
-  const excludeDates = []
-  for (let i = 0; i < 31; i++) {
-    const weekday = new Date(2021, 10, i).getDay()
-    if (weekday === 1 || weekday === 2) {
-      excludeDates.push(new Date(2021, 10, i))
-    }
-  }
-  for (let i = 0; i < 25; i++) {
-    const weekday = new Date(2021, 11, i).getDay()
-    if (weekday === 1 || weekday === 2) {
-      excludeDates.push(new Date(2021, 11, i))
-    }
-  }
-
   const actionData = useActionData()
   const [actionError, setActionError] = useState<string | null>(null)
   useEffect(() => {
