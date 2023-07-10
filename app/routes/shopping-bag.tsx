@@ -66,19 +66,19 @@ export const action = async ({ context, request }: ActionArgs) => {
   const formData = await request.formData()
   const data = Object.fromEntries(formData)
 
-  if (typeof data.pickup_date !== 'string' || !isDayValid({ date: new Date(data.pickup_date) })) {
-    return { error: 'Please select a new date' }
+  if (typeof data.pickup_date === 'string' && !isDayValid({ date: new Date(data.pickup_date) })) {
+    return { error: 'Please select a new date', type: 'date' }
   }
 
   if (!data.orders) {
-    return { error: 'No data was supplied' }
+    return { error: 'No data was supplied', type: 'order' }
   }
 
   let parsedOrders
   try {
     parsedOrders = JSON.parse(data.orders.toString())
   } catch {
-    return { error: 'Parsing orders failed' }
+    return { error: 'Parsing orders failed', type: 'order' }
   }
 
   const res = (await checkout({
@@ -143,6 +143,9 @@ const ShoppingBag = () => {
   useEffect(() => {
     if (actionData?.error) {
       setActionError(actionData.error)
+      if (actionData.type === 'date') {
+        setPickup(undefined)
+      }
       return
     }
 
