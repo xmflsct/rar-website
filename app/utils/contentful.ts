@@ -31,7 +31,7 @@ export const graphqlRequest = async <T = unknown>({
   ).request<T>(query, { ...variables, preview })
 }
 export const cacheQuery = async <T = unknown>({
-  ttlMinutes = 60,
+  ttlMinutes = 15,
   ...rest
 }: GraphQLRequest & { request: Request; ttlMinutes?: number }): Promise<T> => {
   const queryData = async () => await graphqlRequest<T>(rest)
