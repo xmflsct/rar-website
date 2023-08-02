@@ -6,6 +6,7 @@ import Stripe from 'stripe'
 import Button from '~/components/button'
 import Layout from '~/layout'
 import { adminNavs } from './admin._index'
+import { getMyparcelAuthHeader } from '~/utils/myparcelAuthHeader'
 
 type SessionsData = {
   has_more: boolean
@@ -16,19 +17,12 @@ type SessionsData = {
   })[]
 }
 export const loader = async ({ context }: LoaderArgs) => {
-  if (
-    !context?.STRIPE_KEY_ADMIN ||
-    !context.WEBHOOK_STRIPE_POSTNL_URL ||
-    !context.WEBHOOK_STRIPE_POSTNL_API_KEY
-  ) {
+  if (!context?.STRIPE_KEY_ADMIN) {
     throw json(null, { status: 500 })
   } else {
     return json({
-      Authorization: `Bearer ${context.STRIPE_KEY_ADMIN}`,
-      postnl: {
-        url: `${context.WEBHOOK_STRIPE_POSTNL_URL}`,
-        apikey: `${context.WEBHOOK_STRIPE_POSTNL_API_KEY}`
-      }
+      stripeAuthHeader: { Authorization: `Bearer ${context.STRIPE_KEY_ADMIN}` },
+      myparcelAuthHeader: getMyparcelAuthHeader(context)
     })
   }
 }
@@ -52,7 +46,6 @@ type Order = {
   pickup?: string
   shipping?: {
     shipping: Stripe.Charge.Shipping | null | undefined
-    sessionID: Stripe.Checkout.Session['id']
     payment_intent: Stripe.PaymentIntent
     shipping_rate?: Stripe.ShippingRate
   }
@@ -60,10 +53,10 @@ type Order = {
   metadata: Stripe.Metadata
 }
 
-const Shipping: React.FC<{ postnl: PostNL; shipping: NonNullable<Order['shipping']> }> = ({
-  postnl,
-  shipping
-}) => {
+const Shipping: React.FC<{
+  myparcelAuthHeader: { Authorization: string }
+  shipping: NonNullable<Order['shipping']>
+}> = ({ myparcelAuthHeader, shipping }) => {
   const [loading, setLoading] = useState(false)
   const [failed, setFailed] = useState(false)
   const [phase, setPhase] = useState<string>()
@@ -72,17 +65,17 @@ const Shipping: React.FC<{ postnl: PostNL; shipping: NonNullable<Order['shipping
     setFailed(false)
     const res = await (
       await fetch(
-        `${postnl.url}/shipment/v2/status/barcode/${shipping.payment_intent.metadata?.shipping_tracking}?detail=false&language=EN`,
+        `	https://api.myparcel.nl/tracktraces/${shipping.payment_intent.metadata?.shipping_tracking}`,
         {
-          headers: { apikey: postnl.apikey }
+          headers: myparcelAuthHeader
         }
       )
-    ).json<{ CurrentStatus: { Shipment: { Status: { PhaseDescription: string } } } }>()
+    ).json<{ data: { tracktraces: { description: string }[] } }>()
 
     setLoading(false)
-    if (res.CurrentStatus?.Shipment?.Status?.PhaseDescription) {
+    if (res.data.tracktraces?.[0].description) {
       setFailed(false)
-      setPhase(res.CurrentStatus.Shipment.Status.PhaseDescription)
+      setPhase(res.data.tracktraces?.[0].description)
     } else {
       setFailed(true)
       setPhase(undefined)
@@ -132,7 +125,7 @@ const Shipping: React.FC<{ postnl: PostNL; shipping: NonNullable<Order['shipping
           <span className='block'>
             <strong>Label: </strong>
             <a
-              href={`/admin/shipping-label/${shipping.payment_intent.metadata?.shipping_tracking}/${shipping.sessionID}`}
+              href={`/admin/shipping-label/${shipping.payment_intent.metadata?.shipping_tracking}`}
               target='_blank'
               className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
               children={shipping.payment_intent.metadata?.shipping_tracking}
@@ -159,7 +152,7 @@ const Shipping: React.FC<{ postnl: PostNL; shipping: NonNullable<Order['shipping
 }
 
 const PageAdminOrders: React.FC = () => {
-  const { Authorization, postnl } = useLoaderData<typeof loader>()
+  const { stripeAuthHeader, myparcelAuthHeader } = useLoaderData<typeof loader>()
 
   const DAYS = 60 * 60 * 24 * 7
   const [orders, setOrders] = useState<Order[]>([])
@@ -181,7 +174,7 @@ const PageAdminOrders: React.FC = () => {
       cursor.current && params.append('starting_after', cursor.current)
       url.search = params.toString()
 
-      return await (await fetch(url, { headers: { Authorization } })).json<SessionsData>()
+      return await (await fetch(url, { headers: stripeAuthHeader })).json<SessionsData>()
     }
 
     const { data, has_more }: SessionsData = await fetchSessions()
@@ -209,7 +202,7 @@ const PageAdminOrders: React.FC = () => {
       return (
         await (
           await fetch(`https://api.stripe.com/v1/checkout/sessions/${id}/line_items?limit=50`, {
-            headers: { Authorization }
+            headers: stripeAuthHeader
           })
         ).json<{
           data: Stripe.LineItem[]
@@ -233,7 +226,6 @@ const PageAdminOrders: React.FC = () => {
             session.payment_intent.charges?.data[0].metadata['Pick-up date'],
           shipping: {
             shipping: session.payment_intent.charges?.data[0].shipping,
-            sessionID: session.id,
             payment_intent: session.payment_intent,
             shipping_rate: session.shipping_cost?.shipping_rate
           },
@@ -323,7 +315,9 @@ const PageAdminOrders: React.FC = () => {
                     {order.pickup.replace('🛍️ pickup date: ', '')}
                   </div>
                 ) : null}
-                {order.shipping ? <Shipping postnl={postnl} shipping={order.shipping} /> : null}
+                {order.shipping ? (
+                  <Shipping myparcelAuthHeader={myparcelAuthHeader} shipping={order.shipping} />
+                ) : null}
               </td>
               <td className='p-2 max-w-2xl'>
                 {order.items &&
