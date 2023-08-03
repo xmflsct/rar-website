@@ -7,7 +7,7 @@ export const loader: LoaderFunction = async ({ context, params }) => {
   }
 
   const shipmentLabel = await (
-    await fetch(`https://api.myparcel.nl/shipment_labels/${params.id}?format=a6`, {
+    await fetch(`https://api.myparcel.nl/shipment_labels/${params.id}`, {
       headers: { ...getMyparcelAuthHeader(context), Accept: 'application/pdf' }
     })
   ).blob()

@@ -61,71 +61,71 @@ export const action: ActionFunction = async ({ context, request }) => {
 
   switch (payload.type) {
     case 'checkout.session.completed':
-      // const sessionLineItems = (
-      //   await (
-      //     await fetch(
-      //       `https://api.stripe.com/v1/checkout/sessions/${payload.data.object.id}/line_items?limit=50&expand[]=data.price.product`,
-      //       {
-      //         headers: { Authorization }
-      //       }
-      //     )
-      //   ).json<{
-      //     data: (Stripe.LineItem & { price: Stripe.Price & { product: Stripe.Product } })[]
-      //   }>()
-      // ).data.map(item => ({ quantity: item.quantity, metadata: item.price.product.metadata }))
+      const sessionLineItems = (
+        await (
+          await fetch(
+            `https://api.stripe.com/v1/checkout/sessions/${payload.data.object.id}/line_items?limit=50&expand[]=data.price.product`,
+            {
+              headers: { Authorization }
+            }
+          )
+        ).json<{
+          data: (Stripe.LineItem & { price: Stripe.Price & { product: Stripe.Product } })[]
+        }>()
+      ).data.map(item => ({ quantity: item.quantity, metadata: item.price.product.metadata }))
 
-      // for (const lineItem of sessionLineItems) {
-      //   if (lineItem.metadata.contentful_id) {
-      //     if (!lineItem.metadata.type) {
-      //       console.warn('No type provided')
-      //     } else {
-      //       const entry = await (
-      //         await fetch(
-      //           `https://api.contentful.com/spaces/${context.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`,
-      //           {
-      //             headers: { Authorization: `Bearer ${context.CONTENTFUL_PAT}` }
-      //           }
-      //         )
-      //       ).json<{
-      //         sys: { id: string; version: number }
-      //         fields: {
-      //           typeAStock?: { 'en-GB': number }
-      //           typeBStock?: { 'en-GB': number }
-      //           typeCStock?: { 'en-GB': number }
-      //         }
-      //       }>()
+      for (const lineItem of sessionLineItems) {
+        if (lineItem.metadata.contentful_id) {
+          if (!lineItem.metadata.type) {
+            console.warn('No type provided')
+          } else {
+            const entry = await (
+              await fetch(
+                `https://api.contentful.com/spaces/${context.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`,
+                {
+                  headers: { Authorization: `Bearer ${context.CONTENTFUL_PAT}` }
+                }
+              )
+            ).json<{
+              sys: { id: string; version: number }
+              fields: {
+                typeAStock?: { 'en-GB': number }
+                typeBStock?: { 'en-GB': number }
+                typeCStock?: { 'en-GB': number }
+              }
+            }>()
 
-      //       const contentfulType = lineItem.metadata.type as 'A' | 'B' | 'C'
-      //       const stock = entry.fields[`type${contentfulType}Stock`]?.['en-GB']
+            const contentfulType = lineItem.metadata.type as 'A' | 'B' | 'C'
+            const stock = entry.fields[`type${contentfulType}Stock`]?.['en-GB']
 
-      //       if (!stock || typeof stock !== 'number') {
-      //         continue
-      //       }
-      //       if (stock === 0) {
-      //         throw json({ error: `Stock of ${entry.sys.id} is 0!` }, 500)
-      //       }
+            if (!stock || typeof stock !== 'number') {
+              continue
+            }
+            if (stock === 0) {
+              throw json({ error: `Stock of ${entry.sys.id} is 0!` }, 500)
+            }
 
-      //       await fetch(
-      //         `https://api.contentful.com/spaces/${context.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`,
-      //         {
-      //           method: 'PATCH',
-      //           headers: {
-      //             Authorization: `Bearer ${context.CONTENTFUL_PAT}`,
-      //             'Content-Type': 'application/json-patch+json',
-      //             'X-Contentful-Version': entry.sys.version.toString()
-      //           },
-      //           body: JSON.stringify([
-      //             {
-      //               op: 'replace',
-      //               path: `/fields/type${lineItem.metadata.type}Stock/en-GB`,
-      //               value: stock - (lineItem.quantity || 0)
-      //             }
-      //           ])
-      //         }
-      //       )
-      //     }
-      //   }
-      // }
+            await fetch(
+              `https://api.contentful.com/spaces/${context.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`,
+              {
+                method: 'PATCH',
+                headers: {
+                  Authorization: `Bearer ${context.CONTENTFUL_PAT}`,
+                  'Content-Type': 'application/json-patch+json',
+                  'X-Contentful-Version': entry.sys.version.toString()
+                },
+                body: JSON.stringify([
+                  {
+                    op: 'replace',
+                    path: `/fields/type${lineItem.metadata.type}Stock/en-GB`,
+                    value: stock - (lineItem.quantity || 0)
+                  }
+                ])
+              }
+            )
+          }
+        }
+      }
 
       const shipping_rate = payload.data.object.shipping_cost?.shipping_rate
         ? (
@@ -151,7 +151,7 @@ export const action: ActionFunction = async ({ context, request }) => {
             {
               carrier: CarrierId.PostNl,
               options: {
-                package_type: PackageTypeId.Mailbox
+                package_type: PackageTypeId.Package
               },
               recipient:
                 context?.ENVIRONMENT === 'DEVELOPMENT'
@@ -177,12 +177,7 @@ export const action: ActionFunction = async ({ context, request }) => {
                       person: payload.data.object.customer_details?.name!,
                       email: payload.data.object.customer_details?.email || undefined,
                       phone: payload.data.object.customer_details?.phone || undefined
-                    },
-              physical_properties: {
-                weight: Math.ceil(
-                  context?.ENVIRONMENT === 'DEVELOPMENT' ? 500 : shipping_rate.weight
-                )
-              }
+                    }
             }
           ]
         })

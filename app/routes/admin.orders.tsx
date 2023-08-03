@@ -33,9 +33,14 @@ export const meta: V2_MetaFunction = () => [
   }
 ]
 
-type PostNL = {
-  url: string
-  apikey: string
+type TrackTrace = {
+  shipment_id: number
+  code: string
+  description: string // Zending bezorgd
+  time: string
+  link_consumer_portal: string
+  link_tracktrace: string
+  recipient: Object
 }
 
 type Order = {
@@ -48,10 +53,20 @@ type Order = {
     shipping: Stripe.Charge.Shipping | null | undefined
     payment_intent: Stripe.PaymentIntent
     shipping_rate?: Stripe.ShippingRate
+    trackTrace?: TrackTrace
   }
   items?: Stripe.LineItem[]
   metadata: Stripe.Metadata
 }
+
+const getTrackings = async (myparcelAuthHeader: { Authorization: string }, ids: string[]) =>
+  (
+    await (
+      await fetch(`	https://api.myparcel.nl/tracktraces/${ids.join(';')}`, {
+        headers: myparcelAuthHeader
+      })
+    ).json<{ data: { tracktraces: TrackTrace[] } }>()
+  ).data.tracktraces
 
 const Shipping: React.FC<{
   myparcelAuthHeader: { Authorization: string }
@@ -59,23 +74,18 @@ const Shipping: React.FC<{
 }> = ({ myparcelAuthHeader, shipping }) => {
   const [loading, setLoading] = useState(false)
   const [failed, setFailed] = useState(false)
-  const [phase, setPhase] = useState<string>()
+  const [phase, setPhase] = useState<string | undefined>(shipping.trackTrace?.description)
   const fetchPhase = async () => {
     setLoading(true)
     setFailed(false)
-    const res = await (
-      await fetch(
-        `	https://api.myparcel.nl/tracktraces/${shipping.payment_intent.metadata?.shipping_tracking}`,
-        {
-          headers: myparcelAuthHeader
-        }
-      )
-    ).json<{ data: { tracktraces: { description: string }[] } }>()
+    const res = await getTrackings(myparcelAuthHeader, [
+      shipping.payment_intent.metadata?.shipping_tracking
+    ])
 
     setLoading(false)
-    if (res.data.tracktraces?.[0].description) {
+    if (res?.[0].description) {
       setFailed(false)
-      setPhase(res.data.tracktraces?.[0].description)
+      setPhase(res?.[0].description)
     } else {
       setFailed(true)
       setPhase(undefined)
@@ -197,7 +207,13 @@ const PageAdminOrders: React.FC = () => {
       })
 
     const lineItems: { id: Stripe.Checkout.Session['id']; lineItems: Stripe.LineItem[] }[] = []
-    const sessionIDs = sessions.map(item => item.id)
+    const shippingIds: string[] = []
+    const sessionIDs = sessions.map(item => {
+      if (item.payment_intent.metadata?.shipping_tracking) {
+        shippingIds.push(item.payment_intent.metadata?.shipping_tracking)
+      }
+      return item.id
+    })
     const fetchLineItems = async (id: string) => {
       return (
         await (
@@ -212,6 +228,9 @@ const PageAdminOrders: React.FC = () => {
     for (const id of sessionIDs) {
       lineItems.push({ id, lineItems: await fetchLineItems(id) })
     }
+    const shippingStatuses = shippingIds.length
+      ? await getTrackings(myparcelAuthHeader, shippingIds)
+      : []
 
     setOrders([
       ...orders,
@@ -227,7 +246,12 @@ const PageAdminOrders: React.FC = () => {
           shipping: {
             shipping: session.payment_intent.charges?.data[0].shipping,
             payment_intent: session.payment_intent,
-            shipping_rate: session.shipping_cost?.shipping_rate
+            shipping_rate: session.shipping_cost?.shipping_rate,
+            trackTrace: shippingStatuses.find(
+              shipping =>
+                shipping.shipment_id.toString() ===
+                session.payment_intent.metadata?.shipping_tracking
+            )
           },
           items: lineItems
             .find(i => i.id === session.id)
