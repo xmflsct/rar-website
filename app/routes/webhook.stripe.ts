@@ -180,19 +180,21 @@ export const action: ActionFunction = async ({ context, request }) => {
           ]
         })
 
-        // @ts-ignore
-        const barcode = result[0].id
+        const res = result[0] as unknown as { barcode: string; id: string }
 
-        if (barcode) {
+        if (res) {
           await fetch(
             `https://api.stripe.com/v1/payment_intents/${payload.data.object.payment_intent}`,
             {
               method: 'POST',
               headers: { Authorization, 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: new URLSearchParams({ 'metadata[shipping_tracking]': barcode.toString() })
+              body: new URLSearchParams({
+                'metadata[shipping_id]': res.id.toString(),
+                'metadata[shipping_barcode]': res.barcode
+              })
             }
           )
-          return json(`Barcode: ${barcode}`, 200)
+          return json(`Barcode: ${res.barcode}, ID: ${res.id}`, 200)
         } else {
           return json(`Shipping creation failed: ${JSON.stringify(result)}`, 500)
         }

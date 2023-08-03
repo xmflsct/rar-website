@@ -79,7 +79,7 @@ const Shipping: React.FC<{
     setLoading(true)
     setFailed(false)
     const res = await getTrackings(myparcelAuthHeader, [
-      shipping.payment_intent.metadata?.shipping_tracking
+      shipping.payment_intent.metadata?.shipping_id
     ])
 
     setLoading(false)
@@ -126,19 +126,19 @@ const Shipping: React.FC<{
         // @ts-ignore
         (shipping?.shipping_rate?.metadata.label == true ||
           shipping?.shipping_rate?.metadata.label == 'true') &&
-        !shipping.payment_intent.metadata?.shipping_tracking ? (
+        !shipping.payment_intent.metadata?.shipping_id ? (
           <strong className='text-red-600'>Label creation failed!</strong>
         ) : null
       }
-      {shipping?.payment_intent.metadata?.shipping_tracking ? (
+      {shipping?.payment_intent.metadata?.shipping_id ? (
         <div>
           <span className='block'>
             <strong>Label: </strong>
             <a
-              href={`/admin/shipping-label/${shipping.payment_intent.metadata?.shipping_tracking}`}
+              href={`/admin/shipping-label/${shipping.payment_intent.metadata?.shipping_id}`}
               target='_blank'
               className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
-              children={shipping.payment_intent.metadata?.shipping_tracking}
+              children={shipping.payment_intent.metadata?.shipping_id}
             />
           </span>
           <span className='block'>
@@ -209,8 +209,8 @@ const PageAdminOrders: React.FC = () => {
     const lineItems: { id: Stripe.Checkout.Session['id']; lineItems: Stripe.LineItem[] }[] = []
     const shippingIds: string[] = []
     const sessionIDs = sessions.map(item => {
-      if (item.payment_intent.metadata?.shipping_tracking) {
-        shippingIds.push(item.payment_intent.metadata?.shipping_tracking)
+      if (item.payment_intent.metadata?.shipping_id) {
+        shippingIds.push(item.payment_intent.metadata?.shipping_id)
       }
       return item.id
     })
@@ -249,8 +249,7 @@ const PageAdminOrders: React.FC = () => {
             shipping_rate: session.shipping_cost?.shipping_rate,
             trackTrace: shippingStatuses.find(
               shipping =>
-                shipping.shipment_id.toString() ===
-                session.payment_intent.metadata?.shipping_tracking
+                shipping.shipment_id.toString() === session.payment_intent.metadata?.shipping_id
             )
           },
           items: lineItems

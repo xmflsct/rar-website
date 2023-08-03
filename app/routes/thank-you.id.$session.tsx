@@ -64,19 +64,19 @@ const PageThankYou: React.FC = () => {
         {session.payment_intent.description?.length ? (
           <p>{session.payment_intent.description}</p>
         ) : null}
-        {session.payment_intent.metadata?.shipping_tracking ? (
+        {session.payment_intent.metadata?.shipping_barcode ? (
           <p>
             <strong>PostNL tracking:</strong>{' '}
             <a
               className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
-              href={`https://jouw.postnl.nl/track-and-trace/${
-                session.payment_intent.metadata?.shipping_tracking
-              }-${
+              href={`https://roundandround.myparcel.me/track-trace/${
+                session.payment_intent.metadata?.shipping_barcode
+              }/${session.shipping_details?.address?.postal_code?.replace(/\s/g, '')}/${
                 session.shipping_details?.address?.country
-              }-${session.shipping_details?.address?.postal_code?.replace(/\s/g, '')}`}
+              }?lang=en_GB`}
               target='_blank'
             >
-              {session.payment_intent.metadata?.shipping_tracking}
+              {session.payment_intent.metadata?.shipping_barcode}
             </a>
           </p>
         ) : null}
