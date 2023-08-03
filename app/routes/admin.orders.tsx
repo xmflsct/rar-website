@@ -124,8 +124,8 @@ const Shipping: React.FC<{
       ) : null}
       {
         // @ts-ignore
-        (shipping?.shipping_rate?.metadata.label === true ||
-          shipping?.shipping_rate?.metadata.label === 'true') &&
+        (shipping?.shipping_rate?.metadata.label == true ||
+          shipping?.shipping_rate?.metadata.label == 'true') &&
         !shipping.payment_intent.metadata?.shipping_tracking ? (
           <strong className='text-red-600'>Label creation failed!</strong>
         ) : null

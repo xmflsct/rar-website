@@ -9,7 +9,7 @@ type Props = {
 const calShipping = ({
   rates,
   orders
-}: Props): { fee: number; weight: number; label?: boolean } => {
+}: Props): { fee: number; weight: number; label?: 'true' | 'false' } => {
   let subtotal = 0
   let weight = 0
   for (const order of orders) {
@@ -20,7 +20,7 @@ const calShipping = ({
     }
   }
 
-  const DEFAULT = { fee: 6.75, weight, label: true }
+  const DEFAULT = { fee: 6.75, weight, label: 'true' } as const
 
   const shippingNL = rates.filter(s => s.type === 'Netherlands')
   if (shippingNL.length !== 1) {
@@ -32,7 +32,8 @@ const calShipping = ({
   for (const rate of shippingNL[0].rates) {
     if (rate.weight.min <= weight && weight <= rate.weight.max) {
       fee = rate.freeAbove && subtotal >= rate.freeAbove ? 0 : rate.price
-      label = rate.label
+      label =
+        typeof rate.label === 'boolean' ? (rate.label.toString() as 'true' | 'false') : rate.label
     }
   }
 

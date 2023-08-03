@@ -135,14 +135,12 @@ export const action: ActionFunction = async ({ context, request }) => {
                 { headers: { Authorization } }
               )
             ).json<{
-              metadata: { label: false; weight?: number } | { label: true; weight: number }
+              metadata: { label: 'false'; weight?: number } | { label: 'true'; weight: number }
             }>()
           ).metadata
-        : ({ label: false } as { label: false })
+        : ({ label: 'false' } as const)
 
-      if (context?.ENVIRONMENT !== 'DEVELOPMENT' && shipping_rate?.label != true) {
-        return json('Shipping not required', 200)
-      } else {
+      if (shipping_rate?.label === 'true') {
         const result = await createPrivateSdk(
           new FetchClient({ headers: getMyparcelAuthHeader(context) }),
           [new PostShipments()]
@@ -198,8 +196,12 @@ export const action: ActionFunction = async ({ context, request }) => {
         } else {
           return json(`Shipping creation failed: ${JSON.stringify(result)}`, 500)
         }
+      } else {
+        return json(
+          'Shipping not required' + ' ' + context?.ENVIRONMENT + ' ' + shipping_rate?.label,
+          200
+        )
       }
-      break
   }
 
   return json(null, 200)
