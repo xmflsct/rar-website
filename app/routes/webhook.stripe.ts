@@ -187,7 +187,9 @@ export const action: ActionFunction = async ({ context, request }) => {
           try {
             barcode = (
               await (
-                await fetch(`https://api.myparcel.nl/shipments/${id}`)
+                await fetch(`https://api.myparcel.nl/shipments/${id}`, {
+                  headers: getMyparcelAuthHeader(context)
+                })
               ).json<{
                 data: { search_results: { shipments: { barcode?: string }[] } }
               }>()
