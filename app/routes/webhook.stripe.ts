@@ -163,7 +163,7 @@ export const action: ActionFunction = async ({ context, request }) => {
                       phone: '0612345678'
                     }
                   : {
-                      cc: NETHERLANDS,
+                      cc: payload.data.object.customer_details?.address?.country!,
                       city: payload.data.object.customer_details?.address?.city!,
                       postal_code:
                         payload.data.object.customer_details?.address?.postal_code || undefined,
@@ -183,28 +183,12 @@ export const action: ActionFunction = async ({ context, request }) => {
         const id = (result[0] as unknown as { id: string }).id
 
         if (id) {
-          let barcode: string | undefined = undefined
-          try {
-            barcode = (
-              await (
-                await fetch(`https://api.myparcel.nl/shipments/${id}`, {
-                  headers: getMyparcelAuthHeader(context)
-                })
-              ).json<{
-                data: { search_results: { shipments: { barcode?: string }[] } }
-              }>()
-            ).data.search_results.shipments[0].barcode
-          } catch {}
-
           await fetch(
             `https://api.stripe.com/v1/payment_intents/${payload.data.object.payment_intent}`,
             {
               method: 'POST',
               headers: { Authorization, 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: new URLSearchParams({
-                'metadata[shipping_id]': id.toString(),
-                ...(barcode && { 'metadata[shipping_barcode]': barcode })
-              })
+              body: new URLSearchParams({ 'metadata[shipping_id]': id.toString() })
             }
           )
           return json(`Shipment: ${id}`, 200)

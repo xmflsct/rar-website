@@ -66,7 +66,7 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
         >
           <option value='' children='Pickup / Delivery ...' disabled />
           <option value='pickup' children='Pickup in store' />
-          <option value='shipping' children='Shipping in NL (PostNL)' />
+          <option value='shipping' children='Shipping (PostNL)' />
         </Select>
       )
     }

@@ -64,17 +64,8 @@ const PageThankYou: React.FC = () => {
         {session.payment_intent.description?.length ? (
           <p>{session.payment_intent.description}</p>
         ) : null}
-        {session.payment_intent.metadata?.shipping_barcode ? (
-          <p>
-            <strong>PostNL tracking:</strong>{' '}
-            <a
-              className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
-              href={`https://roundandround.myparcel.me/track-trace/${session.payment_intent.metadata?.shipping_barcode}/${session.shipping_details?.address?.postal_code}/${session.shipping_details?.address?.country}?lang=en_GB`}
-              target='_blank'
-            >
-              {session.payment_intent.metadata?.shipping_barcode}
-            </a>
-          </p>
+        {session.payment_intent.metadata?.shipping_id ? (
+          <p>You will receive an email with the tracking code when the packages is sent.</p>
         ) : null}
         <table className='w-full'>
           <tbody>

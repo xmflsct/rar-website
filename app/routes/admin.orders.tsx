@@ -112,14 +112,13 @@ const Shipping: React.FC<{
       {shipping?.shipping ? (
         <div>
           <strong>Shipping: </strong>
-          {shipping.shipping.name}
-          {', '}
-          {shipping.shipping.address?.line1}
-          {shipping.shipping.address?.line2 ? ' ' + shipping.shipping.address.line2 : null}
-          {', '}
-          {shipping.shipping.address?.postal_code}
-          {', '}
-          {shipping.shipping.address?.city}
+          {[
+            shipping.shipping.name,
+            [shipping.shipping.address?.line1, shipping.shipping.address?.line2].join(' '),
+            shipping.shipping.address?.postal_code,
+            shipping.shipping.address?.city,
+            shipping.shipping.address?.country !== 'NL' ? shipping.shipping.address?.country : null
+          ].join(', ')}
         </div>
       ) : null}
       {
