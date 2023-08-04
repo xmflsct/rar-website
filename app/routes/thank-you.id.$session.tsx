@@ -69,11 +69,7 @@ const PageThankYou: React.FC = () => {
             <strong>PostNL tracking:</strong>{' '}
             <a
               className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
-              href={`https://roundandround.myparcel.me/track-trace/${
-                session.payment_intent.metadata?.shipping_barcode
-              }/${session.shipping_details?.address?.postal_code?.replace(/\s/g, '')}/${
-                session.shipping_details?.address?.country
-              }?lang=en_GB`}
+              href={`https://roundandround.myparcel.me/track-trace/${session.payment_intent.metadata?.shipping_barcode}/${session.shipping_details?.address?.postal_code}/${session.shipping_details?.address?.country}?lang=en_GB`}
               target='_blank'
             >
               {session.payment_intent.metadata?.shipping_barcode}
