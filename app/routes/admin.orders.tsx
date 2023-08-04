@@ -118,7 +118,9 @@ const Shipping: React.FC<{
             shipping.shipping.address?.postal_code,
             shipping.shipping.address?.city,
             shipping.shipping.address?.country !== 'NL' ? shipping.shipping.address?.country : null
-          ].join(', ')}
+          ]
+            .filter(info => !!info)
+            .join(', ')}
         </div>
       ) : null}
       {
