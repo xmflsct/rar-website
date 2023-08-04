@@ -180,21 +180,32 @@ export const action: ActionFunction = async ({ context, request }) => {
           ]
         })
 
-        const res = result[0] as unknown as { barcode: string; id: string }
+        const id = (result[0] as unknown as { id: string }).id
 
-        if (res) {
+        if (id) {
+          let barcode: string | undefined = undefined
+          try {
+            barcode = (
+              await (
+                await fetch(`https://api.myparcel.nl/shipments/${id}`)
+              ).json<{
+                data: { search_results: { shipments: { barcode?: string }[] } }
+              }>()
+            ).data.search_results.shipments[0].barcode
+          } catch {}
+
           await fetch(
             `https://api.stripe.com/v1/payment_intents/${payload.data.object.payment_intent}`,
             {
               method: 'POST',
               headers: { Authorization, 'Content-Type': 'application/x-www-form-urlencoded' },
               body: new URLSearchParams({
-                'metadata[shipping_id]': res.id.toString(),
-                'metadata[shipping_barcode]': res.barcode
+                'metadata[shipping_id]': id.toString(),
+                ...(barcode && { 'metadata[shipping_barcode]': barcode })
               })
             }
           )
-          return json(`Shipmeng: ${JSON.stringify(res)}`, 200)
+          return json(`Shipment: ${id}`, 200)
         } else {
           return json(`Shipping creation failed: ${JSON.stringify(result)}`, 500)
         }
