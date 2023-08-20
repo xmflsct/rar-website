@@ -5,6 +5,7 @@ import { FetchClient, PostShipments, createPrivateSdk } from '@myparcel/sdk'
 import { ActionFunction, json } from '@remix-run/cloudflare'
 import Stripe from 'stripe'
 import { getMyparcelAuthHeader } from '~/utils/myparcelAuthHeader'
+import { getStripeHeaders } from '~/utils/stripeHeaders'
 
 const hexStringToUint8Array = (hexString: string) => {
   const bytes = new Uint8Array(Math.ceil(hexString.length / 2))
@@ -57,7 +58,7 @@ export const action: ActionFunction = async ({ context, request }) => {
     type: Stripe.Event['type']
   }
 
-  const Authorization = `Bearer ${context.STRIPE_KEY_ADMIN}`
+  const stripeHeaders = getStripeHeaders(context.STRIPE_KEY_ADMIN)
 
   switch (payload.type) {
     case 'checkout.session.completed':
@@ -65,9 +66,7 @@ export const action: ActionFunction = async ({ context, request }) => {
         await (
           await fetch(
             `https://api.stripe.com/v1/checkout/sessions/${payload.data.object.id}/line_items?limit=50&expand[]=data.price.product`,
-            {
-              headers: { Authorization }
-            }
+            { headers: stripeHeaders }
           )
         ).json<{
           data: (Stripe.LineItem & { price: Stripe.Price & { product: Stripe.Product } })[]
@@ -132,7 +131,7 @@ export const action: ActionFunction = async ({ context, request }) => {
             await (
               await fetch(
                 `https://api.stripe.com/v1/shipping_rates/${payload.data.object.shipping_cost.shipping_rate}`,
-                { headers: { Authorization } }
+                { headers: stripeHeaders }
               )
             ).json<{
               metadata: { label: 'false'; weight?: number } | { label: 'true'; weight: number }
@@ -187,7 +186,7 @@ export const action: ActionFunction = async ({ context, request }) => {
             `https://api.stripe.com/v1/payment_intents/${payload.data.object.payment_intent}`,
             {
               method: 'POST',
-              headers: { Authorization, 'Content-Type': 'application/x-www-form-urlencoded' },
+              headers: { ...stripeHeaders, 'Content-Type': 'application/x-www-form-urlencoded' },
               body: new URLSearchParams({ 'metadata[shipping_id]': id.toString() })
             }
           )

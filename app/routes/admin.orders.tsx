@@ -5,8 +5,9 @@ import { useEffect, useRef, useState } from 'react'
 import Stripe from 'stripe'
 import Button from '~/components/button'
 import Layout from '~/layout'
-import { adminNavs } from './admin._index'
 import { getMyparcelAuthHeader } from '~/utils/myparcelAuthHeader'
+import { getStripeHeaders } from '~/utils/stripeHeaders'
+import { adminNavs } from './admin._index'
 
 type SessionsData = {
   has_more: boolean
@@ -21,7 +22,7 @@ export const loader = async ({ context }: LoaderArgs) => {
     throw json(null, { status: 500 })
   } else {
     return json({
-      stripeAuthHeader: { Authorization: `Bearer ${context.STRIPE_KEY_ADMIN}` },
+      stripeHeaders: getStripeHeaders(context.STRIPE_KEY_ADMIN),
       myparcelAuthHeader: getMyparcelAuthHeader(context)
     })
   }
@@ -163,7 +164,7 @@ const Shipping: React.FC<{
 }
 
 const PageAdminOrders: React.FC = () => {
-  const { stripeAuthHeader, myparcelAuthHeader } = useLoaderData<typeof loader>()
+  const { stripeHeaders, myparcelAuthHeader } = useLoaderData<typeof loader>()
 
   const DAYS = 60 * 60 * 24 * 7
   const [orders, setOrders] = useState<Order[]>([])
@@ -186,7 +187,7 @@ const PageAdminOrders: React.FC = () => {
       cursor.current && params.append('starting_after', cursor.current)
       url.search = params.toString()
 
-      return await (await fetch(url, { headers: stripeAuthHeader })).json<SessionsData>()
+      return await (await fetch(url, { headers: stripeHeaders })).json<SessionsData>()
     }
 
     const { data, has_more }: SessionsData = await fetchSessions()
@@ -217,7 +218,7 @@ const PageAdminOrders: React.FC = () => {
       return (
         await (
           await fetch(`https://api.stripe.com/v1/checkout/sessions/${id}/line_items?limit=50`, {
-            headers: stripeAuthHeader
+            headers: stripeHeaders
           })
         ).json<{
           data: Stripe.LineItem[]

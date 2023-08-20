@@ -7,6 +7,7 @@ import { CakeOrder } from '~/states/bag'
 import calShipping from './calShipping'
 import { Cake, graphqlRequest, Shipping } from './contentful'
 import { getReadableDeliveryDate } from './readableDeliveryDate'
+import { getStripeHeaders } from './stripeHeaders'
 
 export type CheckoutContent = {
   ideal?: boolean
@@ -350,7 +351,7 @@ const checkout = async ({
   const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${context.STRIPE_KEY_PRIVATE}`,
+      ...getStripeHeaders(context.STRIPE_KEY_PRIVATE),
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     body

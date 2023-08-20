@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import Stripe from 'stripe'
 import Layout from '~/layout'
 import { full } from '~/utils/currency'
+import { getStripeHeaders } from '~/utils/stripeHeaders'
 
 export const loader = async (props: LoaderArgs) => {
   if (!props.params.session) {
@@ -13,9 +14,7 @@ export const loader = async (props: LoaderArgs) => {
   const session = await (
     await fetch(
       `https://api.stripe.com/v1/checkout/sessions/${props.params.session}?expand[]=payment_intent`,
-      {
-        headers: { Authorization: `Bearer ${props.context?.STRIPE_KEY_ADMIN}` }
-      }
+      { headers: getStripeHeaders(props.context?.STRIPE_KEY_ADMIN) }
     )
   ).json<Stripe.Checkout.Session & { payment_intent: Stripe.PaymentIntent }>()
 
@@ -26,9 +25,7 @@ export const loader = async (props: LoaderArgs) => {
   const line_items = await (
     await fetch(
       `https://api.stripe.com/v1/checkout/sessions/${props.params.session}/line_items?limit=100`,
-      {
-        headers: { Authorization: `Bearer ${props.context?.STRIPE_KEY_ADMIN}` }
-      }
+      { headers: getStripeHeaders(props.context?.STRIPE_KEY_ADMIN) }
     )
   ).json<{
     data: {
