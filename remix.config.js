@@ -1,7 +1,6 @@
 /** @type {import('@remix-run/dev').AppConfig} */
 module.exports = {
   server: './server.ts',
-  devServerBroadcastDelay: 1000,
   ignoredRouteFiles: ['**/.*'],
   serverBuildPath: 'functions/[[path]].js',
   serverConditions: ['worker'],
@@ -15,7 +14,8 @@ module.exports = {
     v2_meta: true,
     v2_normalizeFormMethod: true,
     v2_routeConvention: true,
-    v2_headers: true
+    v2_headers: true,
+    v2_dev: true
   },
   serverNodeBuiltinsPolyfill: {}
 }
