@@ -2,10 +2,71 @@ import { CarrierId, PackageTypeId } from '@myparcel/constants'
 // @ts-ignore
 import { NETHERLANDS } from '@myparcel/constants/countries'
 import { FetchClient, PostShipments, createPrivateSdk } from '@myparcel/sdk'
-import { ActionFunction, json } from '@remix-run/cloudflare'
+import { ActionFunction, AppLoadContext, json } from '@remix-run/cloudflare'
 import Stripe from 'stripe'
 import { getMyparcelAuthHeader } from '~/utils/myparcelAuthHeader'
 import { getStripeHeaders } from '~/utils/stripeHeaders'
+
+export const createShipment = async ({
+  context,
+  customer_details,
+  payment_intent
+}: {
+  context: AppLoadContext
+  customer_details: Stripe.Checkout.Session.CustomerDetails
+  payment_intent: string
+}): Promise<{ ok: true; id: string } | { ok: false }> => {
+  const stripeHeaders = getStripeHeaders(context.STRIPE_KEY_ADMIN)
+
+  const result = await createPrivateSdk(
+    new FetchClient({ headers: getMyparcelAuthHeader(context) }),
+    [new PostShipments()]
+  ).postShipments({
+    body: [
+      {
+        carrier: CarrierId.PostNl,
+        options: {
+          package_type: PackageTypeId.Package
+        },
+        recipient:
+          context?.ENVIRONMENT === 'DEVELOPMENT'
+            ? {
+                cc: NETHERLANDS,
+                city: 'Rotterdam',
+                postal_code: '3011PG',
+                street: 'Hoogstraat 55A',
+                person: 'Round Test',
+                email: 'no-reply@roundandround.nl',
+                phone: '0612345678'
+              }
+            : {
+                cc: customer_details?.address?.country!,
+                city: customer_details?.address?.city!,
+                postal_code: customer_details?.address?.postal_code || undefined,
+                street:
+                  customer_details?.address?.line1 +
+                  (customer_details?.address?.line2 ? `\n${customer_details?.address?.line2}` : ''),
+                person: customer_details?.name!,
+                email: customer_details?.email || undefined,
+                phone: customer_details?.phone || undefined
+              }
+      }
+    ]
+  })
+
+  const id = (result[0] as unknown as { id: string }).id
+
+  if (id) {
+    await fetch(`https://api.stripe.com/v1/payment_intents/${payment_intent}`, {
+      method: 'POST',
+      headers: { ...stripeHeaders, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ 'metadata[shipping_id]': id.toString() })
+    })
+    return { ok: true, id }
+  } else {
+    return { ok: false }
+  }
+}
 
 const hexStringToUint8Array = (hexString: string) => {
   const bytes = new Uint8Array(Math.ceil(hexString.length / 2))
@@ -140,59 +201,16 @@ export const action: ActionFunction = async ({ context, request }) => {
         : ({ label: 'false' } as const)
 
       if (shipping_rate?.label === 'true') {
-        const result = await createPrivateSdk(
-          new FetchClient({ headers: getMyparcelAuthHeader(context) }),
-          [new PostShipments()]
-        ).postShipments({
-          body: [
-            {
-              carrier: CarrierId.PostNl,
-              options: {
-                package_type: PackageTypeId.Package
-              },
-              recipient:
-                context?.ENVIRONMENT === 'DEVELOPMENT'
-                  ? {
-                      cc: NETHERLANDS,
-                      city: 'Rotterdam',
-                      postal_code: '3011PG',
-                      street: 'Hoogstraat 55A',
-                      person: 'Round Test',
-                      email: 'no-reply@roundandround.nl',
-                      phone: '0612345678'
-                    }
-                  : {
-                      cc: payload.data.object.customer_details?.address?.country!,
-                      city: payload.data.object.customer_details?.address?.city!,
-                      postal_code:
-                        payload.data.object.customer_details?.address?.postal_code || undefined,
-                      street:
-                        payload.data.object.customer_details?.address?.line1 +
-                        (payload.data.object.customer_details?.address?.line2
-                          ? `\n${payload.data.object.customer_details?.address?.line2}`
-                          : ''),
-                      person: payload.data.object.customer_details?.name!,
-                      email: payload.data.object.customer_details?.email || undefined,
-                      phone: payload.data.object.customer_details?.phone || undefined
-                    }
-            }
-          ]
+        const resShipment = await createShipment({
+          context,
+          customer_details: payload.data.object.customer_details!,
+          payment_intent: payload.data.object.payment_intent as string
         })
 
-        const id = (result[0] as unknown as { id: string }).id
-
-        if (id) {
-          await fetch(
-            `https://api.stripe.com/v1/payment_intents/${payload.data.object.payment_intent}`,
-            {
-              method: 'POST',
-              headers: { ...stripeHeaders, 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: new URLSearchParams({ 'metadata[shipping_id]': id.toString() })
-            }
-          )
-          return json(`Shipment: ${id}`, 200)
+        if (resShipment.ok) {
+          return json(`Shipment: ${resShipment.id}`, 200)
         } else {
-          return json(`Shipping creation failed: ${JSON.stringify(result)}`, 500)
+          return json('Shipping creation failed', 500)
         }
       } else {
         return json(

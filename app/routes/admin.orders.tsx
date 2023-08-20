@@ -1,5 +1,5 @@
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
+import { ActionArgs, json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { useFetcher, useLoaderData } from '@remix-run/react'
 import classNames from 'classnames'
 import { useEffect, useRef, useState } from 'react'
 import Stripe from 'stripe'
@@ -8,6 +8,7 @@ import Layout from '~/layout'
 import { getMyparcelAuthHeader } from '~/utils/myparcelAuthHeader'
 import { getStripeHeaders } from '~/utils/stripeHeaders'
 import { adminNavs } from './admin._index'
+import { createShipment } from './webhook.stripe'
 
 type SessionsData = {
   has_more: boolean
@@ -25,6 +26,24 @@ export const loader = async ({ context }: LoaderArgs) => {
       stripeHeaders: getStripeHeaders(context.STRIPE_KEY_ADMIN),
       myparcelAuthHeader: getMyparcelAuthHeader(context)
     })
+  }
+}
+
+export const action = async ({ context, request }: ActionArgs) => {
+  const formData = await request.formData()
+  const action = formData.get('action')?.toString()
+  const data = JSON.parse(formData.get('data')?.toString() || '')
+
+  switch (action) {
+    case 'createShipment':
+      const resShipment = await createShipment({ context, ...data })
+      if (resShipment.ok) {
+        return json({ ok: true, id: resShipment.id }, 200)
+      } else {
+        return json({ ok: false }, 500)
+      }
+    default:
+      return json({ ok: false, error: 'How did you get here?' }, { status: 400 })
   }
 }
 
@@ -55,6 +74,7 @@ type Order = {
     payment_intent: Stripe.PaymentIntent
     shipping_rate?: Stripe.ShippingRate
     trackTrace?: TrackTrace
+    internal: { customer_details: Stripe.Checkout.Session.CustomerDetails; payment_intent: string }
   }
   items?: Stripe.LineItem[]
   metadata: Stripe.Metadata
@@ -72,7 +92,11 @@ const getTrackings = async (myparcelAuthHeader: { Authorization: string }, ids: 
 const Shipping: React.FC<{
   myparcelAuthHeader: { Authorization: string }
   shipping: NonNullable<Order['shipping']>
-}> = ({ myparcelAuthHeader, shipping }) => {
+  customer_details: Stripe.Checkout.Session.CustomerDetails
+  payment_intent: string
+}> = ({ myparcelAuthHeader, shipping, ...rest }) => {
+  const fetcher = useFetcher()
+
   const [loading, setLoading] = useState(false)
   const [failed, setFailed] = useState(false)
   const [phase, setPhase] = useState<string | undefined>(shipping.trackTrace?.description)
@@ -108,6 +132,12 @@ const Shipping: React.FC<{
     }
   }
 
+  useEffect(() => {
+    if (fetcher.state === 'loading') {
+      fetchPhase()
+    }
+  }, [fetcher.state])
+
   return (
     <>
       {shipping?.shipping ? (
@@ -129,7 +159,17 @@ const Shipping: React.FC<{
         (shipping?.shipping_rate?.metadata.label == true ||
           shipping?.shipping_rate?.metadata.label == 'true') &&
         !shipping.payment_intent.metadata?.shipping_id ? (
-          <strong className='text-red-600'>Label creation failed!</strong>
+          <fetcher.Form method='post' action='/admin/orders' className='flex gap-1 items-middle'>
+            <strong className='text-red-600'>Label creation failed!</strong>
+            <input name='action' value='createShipment' hidden />
+            <input name='data' value={JSON.stringify({ ...rest })} hidden />
+            <button
+              type='submit'
+              className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
+            >
+              Retry
+            </button>
+          </fetcher.Form>
         ) : null
       }
       {shipping?.payment_intent.metadata?.shipping_id ? (
@@ -250,7 +290,11 @@ const PageAdminOrders: React.FC = () => {
             trackTrace: shippingStatuses.find(
               shipping =>
                 shipping.shipment_id.toString() === session.payment_intent.metadata?.shipping_id
-            )
+            ),
+            internal: {
+              customer_details: session.customer_details!,
+              payment_intent: session.payment_intent.id
+            }
           },
           items: lineItems
             .find(i => i.id === session.id)
@@ -339,7 +383,11 @@ const PageAdminOrders: React.FC = () => {
                   </div>
                 ) : null}
                 {order.shipping ? (
-                  <Shipping myparcelAuthHeader={myparcelAuthHeader} shipping={order.shipping} />
+                  <Shipping
+                    myparcelAuthHeader={myparcelAuthHeader}
+                    shipping={order.shipping}
+                    {...order.shipping.internal}
+                  />
                 ) : null}
               </td>
               <td className='p-2 max-w-2xl'>
