@@ -32,7 +32,7 @@ export const loader = async ({ context }: LoaderArgs) => {
 export const action = async ({ context, request }: ActionArgs) => {
   const formData = await request.formData()
   const action = formData.get('action')?.toString()
-  const data = JSON.parse(formData.get('data')?.toString() || '')
+  const data = JSON.parse(formData.get('data')?.toString() || '{}')
 
   switch (action) {
     case 'createShipment':
@@ -40,7 +40,7 @@ export const action = async ({ context, request }: ActionArgs) => {
       if (resShipment.ok) {
         return json({ ok: true, id: resShipment.id }, 200)
       } else {
-        return json({ ok: false }, 200)
+        return json({ ok: false, error: resShipment.error }, 200)
       }
     default:
       return json({ ok: false, error: 'How did you get here?' }, { status: 400 })
@@ -104,7 +104,7 @@ const Shipping: React.FC<{
     setLoading(true)
     setFailed(false)
     const res = await getTrackings(myparcelAuthHeader, [
-      shipping.payment_intent.metadata?.shipping_id
+      shipping.payment_intent.metadata?.shipping_id || createId
     ])
 
     setLoading(false)
@@ -132,11 +132,19 @@ const Shipping: React.FC<{
     }
   }
 
+  const [createId, setCreateId] = useState<string>('')
+  const [createError, setCreateError] = useState<string>()
+
   useEffect(() => {
     if (fetcher.state === 'loading') {
-      fetchPhase()
+      if (fetcher.data?.id?.length) {
+        setCreateId(fetcher.data.id)
+        fetchPhase()
+      } else {
+        setCreateError(fetcher.data?.error)
+      }
     }
-  }, [fetcher.state])
+  }, [fetcher.state, fetcher.data])
 
   return (
     <>
@@ -158,29 +166,57 @@ const Shipping: React.FC<{
         // @ts-ignore
         (shipping?.shipping_rate?.metadata.label == true ||
           shipping?.shipping_rate?.metadata.label == 'true') &&
-        !shipping.payment_intent.metadata?.shipping_id ? (
+        !(shipping.payment_intent.metadata?.shipping_id || createId.length) ? (
           <fetcher.Form method='post' action='/admin/orders' className='flex gap-1 items-middle'>
             <strong className='text-red-600'>Label creation failed!</strong>
-            <input name='action' value='createShipment' hidden />
-            <input name='data' value={JSON.stringify({ ...rest })} hidden />
+            <input name='action' value='createShipment' readOnly hidden />
+            <input name='data' value={JSON.stringify({ ...rest })} readOnly hidden />
             <button
               type='submit'
-              className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
+              disabled={fetcher.state === 'submitting'}
+              className={classNames(
+                'border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid transition-opacity',
+                fetcher.state === 'submitting' ? 'opacity-30' : ''
+              )}
             >
               Retry
             </button>
           </fetcher.Form>
         ) : null
       }
-      {shipping?.payment_intent.metadata?.shipping_id ? (
+      {createError?.length ? (
+        <div
+          className='bg-red-100 border border-red-400 text-red-700 p-2 rounded relative mt-1'
+          role='alert'
+        >
+          <span className='pr-2'>{createError}</span>
+          <button
+            className='absolute top-0 bottom-0 right-0 px-4 py-3'
+            onClick={() => setCreateError(undefined)}
+          >
+            <svg
+              className='fill-current h-6 w-6 text-red-500'
+              role='button'
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox='0 0 20 20'
+            >
+              <title>Dismiss</title>
+              <path d='M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z' />
+            </svg>
+          </button>
+        </div>
+      ) : null}
+      {shipping?.payment_intent.metadata?.shipping_id || createId.length ? (
         <div>
           <span className='block'>
             <strong>Label: </strong>
             <a
-              href={`/admin/shipping-label/${shipping.payment_intent.metadata?.shipping_id}`}
+              href={`/admin/shipping-label/${
+                shipping.payment_intent.metadata?.shipping_id || createId
+              }`}
               target='_blank'
               className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
-              children={shipping.payment_intent.metadata?.shipping_id}
+              children={shipping.payment_intent.metadata?.shipping_id || createId}
             />
           </span>
           <span className='block'>
