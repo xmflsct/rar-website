@@ -40,7 +40,7 @@ export const action = async ({ context, request }: ActionArgs) => {
       if (resShipment.ok) {
         return json({ ok: true, id: resShipment.id }, 200)
       } else {
-        return json({ ok: false }, 500)
+        return json({ ok: false }, 200)
       }
     default:
       return json({ ok: false, error: 'How did you get here?' }, { status: 400 })
