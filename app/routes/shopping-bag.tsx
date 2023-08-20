@@ -109,7 +109,7 @@ const ShoppingBag = () => {
   const { cakeOrders } = useContext(BagContext)
   const [ideal, setIdeal] = useState(true)
   const [paperBag, setPaperBag] = useState(true)
-  const [countryCode, setCountryCode] = useState<string>('NLD')
+  const [countryCode, setCountryCode] = useState<string>('')
   const [pickup, setPickup] = useState<Date>()
   const [notes, setNotes] = useState<string>()
   const [terms, setTerms] = useState(false)
@@ -325,6 +325,7 @@ const ShoppingBag = () => {
                   required
                   onChange={e => setCountryCode(e.target.value)}
                 >
+                  <option value='' children='' disabled />
                   {shippingRates
                     .flatMap(rate => rate.countryCode)
                     .map(countryCode => (

@@ -11,7 +11,7 @@ import { getMyparcelAuthHeader } from '~/utils/myparcelAuthHeader'
 type SessionsData = {
   has_more: boolean
   data: (Stripe.Checkout.Session & {
-    payment_intent: Stripe.PaymentIntent
+    payment_intent: Stripe.PaymentIntent & { latest_charge: Stripe.Charge }
     line_items: { data: Stripe.LineItem[] }
     shipping_cost?: { shipping_rate?: Stripe.ShippingRate }
   })[]
@@ -180,6 +180,7 @@ const PageAdminOrders: React.FC = () => {
       const params = new URLSearchParams()
       params.append('limit', '5')
       params.append('expand[]', 'data.payment_intent')
+      params.append('expand[]', 'data.payment_intent.latest_charge')
       params.append('expand[]', 'data.line_items')
       params.append('expand[]', 'data.shipping_cost.shipping_rate')
       cursor.current && params.append('starting_after', cursor.current)
@@ -201,10 +202,7 @@ const PageAdminOrders: React.FC = () => {
           session.payment_intent.created >= Date.now() / 1000 - DAYS
       )
       .sort((a, b) => {
-        return (
-          (b.payment_intent.charges?.data[b.payment_intent.charges.data.length - 1].created || 0) -
-          (a.payment_intent.charges?.data[a.payment_intent.charges.data.length - 1].created || 0)
-        )
+        return b.payment_intent.latest_charge.created - a.payment_intent.latest_charge.created
       })
 
     const lineItems: { id: Stripe.Checkout.Session['id']; lineItems: Stripe.LineItem[] }[] = []
@@ -237,15 +235,15 @@ const PageAdminOrders: React.FC = () => {
       ...orders,
       ...sessions.map(session => {
         return {
-          receipt: session.payment_intent?.charges?.data[0].receipt_number || null,
-          name: session.payment_intent.charges?.data[0].billing_details.name || null,
+          receipt: session.payment_intent.latest_charge.receipt_number || null,
+          name: session.payment_intent.latest_charge.billing_details.name || null,
           phone: session.customer_details?.phone || 'NOT EXIST',
           email: session.customer_details?.email,
           pickup:
-            session.payment_intent.charges?.data[0].description ||
-            session.payment_intent.charges?.data[0].metadata['Pick-up date'],
+            session.payment_intent.latest_charge.description ||
+            session.payment_intent.latest_charge.metadata['Pick-up date'],
           shipping: {
-            shipping: session.payment_intent.charges?.data[0].shipping,
+            shipping: session.payment_intent.latest_charge.shipping,
             payment_intent: session.payment_intent,
             shipping_rate: session.shipping_cost?.shipping_rate,
             trackTrace: shippingStatuses.find(
@@ -263,7 +261,7 @@ const PageAdminOrders: React.FC = () => {
                 !item.description.includes('Pick up:')
             ),
           metadata: {
-            ...session.payment_intent.charges?.data[0].metadata,
+            ...session.payment_intent.latest_charge.metadata,
             ...session.metadata
           }
         }
