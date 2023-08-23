@@ -1,5 +1,14 @@
 import classNames from 'classnames'
-import { addDays, addMonths, formatISO, isAfter, isBefore, isEqual, parseISO } from 'date-fns'
+import {
+  addDays,
+  addMonths,
+  formatISO,
+  getMonth,
+  isAfter,
+  isBefore,
+  isEqual,
+  parseISO
+} from 'date-fns'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { DayPickerSingleProps } from 'react-day-picker'
 import { BagContext } from '~/states/bag'
@@ -95,6 +104,7 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
 
         let startingDate: Date
         let endingDate: Date
+        let numberOfMonths = 2
         if (Array.isArray(availability)) {
           const getStillAvailable = availability
             .sort((a, b) => (a.date < b.date ? -1 : 1))
@@ -117,12 +127,18 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
             : addMonths(new Date(), 1)
         }
 
+        const diffMonths = getMonth(endingDate) - getMonth(startingDate)
+        numberOfMonths = Math.min(2, diffMonths + 1)
+
         return {
           defaultMonth: startingDate,
           fromMonth: startingDate,
           toMonth: endingDate,
+          numberOfMonths,
           disabled: [
-            ...closedDays(daysClosedCollection),
+            ...(!Array.isArray(availability) || !availability.map(a => a.date).length
+              ? closedDays(daysClosedCollection)
+              : []),
             ...(Array.isArray(availability)
               ? [
                   (date: Date) =>
@@ -272,7 +288,7 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
             delivery !== '' && {
               delivery: {
                 type: delivery,
-                date: deliveryDate ? formatISO(deliveryDate) : undefined
+                date: deliveryDate ? formatISO(deliveryDate, { representation: 'date' }) : undefined
               }
             })
         }

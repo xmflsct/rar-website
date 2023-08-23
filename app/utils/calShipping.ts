@@ -11,18 +11,17 @@ const calShipping = ({
   rates,
   orders,
   countryCode = 'NLD'
-}: Props): { fee: number; weight: number; label?: 'true' | 'false' } => {
+}: Props): { fee?: number; weight: number; label?: 'true' | 'false' } => {
   let subtotal = 0
   let weight = 0
   for (const order of orders) {
+    subtotal = subtotal + (order[`type${order.chosen.unit}Price`] ?? 0) * order.chosen.amount
     if (order.chosen.delivery?.type === 'shipping') {
-      subtotal = subtotal + (order[`type${order.chosen.unit}Price`] ?? 0) * order.chosen.amount
-
       weight = weight + (order.shippingWeight || 0) * 1.05 * order.chosen.amount
     }
   }
 
-  const DEFAULT = { fee: 6.75, weight, label: 'true' } as const
+  const DEFAULT = { fee: undefined, weight, label: 'true' } as const
 
   const countryMatchedRate = rates.filter(s => s.countryCode.includes(countryCode))
   if (countryMatchedRate.length !== 1) {

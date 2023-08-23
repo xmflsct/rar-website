@@ -1,5 +1,5 @@
 import { json, LoaderArgs } from '@remix-run/cloudflare'
-import { parseISO } from 'date-fns'
+import { isAfter, isBefore, isSameDay, parse, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
 import countries from 'i18n-iso-countries'
 import { sumBy } from 'lodash'
@@ -142,6 +142,36 @@ const verifyContentful = async ({
       if (order[`type${order.chosen.unit}Price`] !== item[`type${order.chosen.unit}Price`]) {
         throw json('Cake pricing error', { status: 400 })
       }
+
+      if (!!order.chosen.delivery?.date) {
+        const chosenDate = order.chosen.delivery?.date
+
+        const delivery = item.deliveryCustomizations?.[order.chosen.delivery.type]
+        if (Array.isArray(delivery?.availability)) {
+          const matchedAvailability = delivery?.availability.find(a =>
+            isSameDay(parseISO(chosenDate), parseISO(a.date))
+          )
+          if (!matchedAvailability) {
+            throw json('Chosen date not exist', { status: 400 })
+          }
+
+          if (
+            matchedAvailability.before &&
+            !isBefore(parseISO(chosenDate), parseISO(matchedAvailability.before))
+          ) {
+            throw json('Date range error array', { status: 400 })
+          }
+        } else {
+          if (
+            (delivery?.availability.after &&
+              !isAfter(parseISO(chosenDate), parseISO(delivery?.availability.after))) ||
+            (delivery?.availability.before &&
+              !isBefore(parseISO(chosenDate), parseISO(delivery?.availability.before)))
+          ) {
+            throw json('Date range error', { status: 400 })
+          }
+        }
+      }
     }
   }
 
@@ -172,7 +202,11 @@ const verifyContentful = async ({
       })
     ).shippingCollection.items[0].rates
 
-    const shippingRate = calShipping({ rates, orders: orders.shipping, countryCode })
+    const shippingRate = calShipping({
+      rates,
+      orders: [...(orders.pickup || []), ...orders.shipping],
+      countryCode
+    })
     if (!(shippingRate.fee === parseFloat(shipping_amount || ''))) {
       throw json('Shipping fee not aligned', { status: 400 })
     }

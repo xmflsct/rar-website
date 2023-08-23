@@ -140,7 +140,7 @@ const ShoppingBag = () => {
 
   const { fee: shippingFee } = calShipping({
     rates: shippingRates,
-    orders: orders.shipping,
+    orders: [...orders.pickup, ...orders.shipping],
     countryCode
   })
 
@@ -369,7 +369,7 @@ const ShoppingBag = () => {
                   <tr>
                     <th className='text-left pr-4'>Shipping fee</th>
                     <td className='text-right'>
-                      {shippingFee === 0 ? 'Free' : full(shippingFee)}
+                      {shippingFee === 0 ? 'Free' : shippingFee ? full(shippingFee) : '-'}
                       <input name='shipping_amount' type='hidden' value={shippingFee} />
                     </td>
                   </tr>
@@ -395,7 +395,7 @@ const ShoppingBag = () => {
                   <td className='text-right'>
                     {full(
                       subtotal +
-                        (orders.shipping.length ? shippingFee : 0) +
+                        (orders.shipping.length ? shippingFee ?? 0 : 0) +
                         (ideal ? 0.3 : 1) +
                         (needPickup && paperBag ? 0.5 : 0)
                     )}

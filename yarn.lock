@@ -1723,10 +1723,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:^4.20230814.0":
-  version: 4.20230814.0
-  resolution: "@cloudflare/workers-types@npm:4.20230814.0"
-  checksum: 782b0def59d58ef83088a662aa9260b3c3ef911daa9ca443612047c524f29709810ac3b5fdd16eb5de7767beeb69b3331e12dedd085c0039159d1e4cf862f36b
+"@cloudflare/workers-types@npm:^4.20230821.0":
+  version: 4.20230821.0
+  resolution: "@cloudflare/workers-types@npm:4.20230821.0"
+  checksum: d2fa03fe17c591dbb5a8711c77eef7c79e9a130221f603c51cc41089187294eb4d6cbb8a5584e21e30c4364dd6b13f16ddac176a819c37b85396a9a756347742
   languageName: node
   linkType: hard
 
@@ -2835,14 +2835,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.2.20":
-  version: 18.2.20
-  resolution: "@types/react@npm:18.2.20"
+"@types/react@npm:^18.2.21":
+  version: 18.2.21
+  resolution: "@types/react@npm:18.2.21"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 30f699c60e5e4bfef273ce64d320651cdd60f5c6a08361c6c7eca8cebcccda1ac953d2ee57c9f321b5ae87f8a62c72b6d35ca42df0e261d337849952daab2141
+  checksum: ffed203bfe7aad772b8286f7953305c9181ac3a8f27d3f5400fbbc2a8e27ca8e5bbff818ee014f39ca0d19d2b3bb154e5bdbec7e232c6f80b59069375aa78349
   languageName: node
   linkType: hard
 
@@ -8484,7 +8484,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@cloudflare/workers-types": ^4.20230814.0
+    "@cloudflare/workers-types": ^4.20230821.0
     "@contentful/rich-text-plain-text-renderer": ^16.0.6
     "@contentful/rich-text-react-renderer": ^15.17.1
     "@contentful/rich-text-types": ^16.2.1
@@ -8502,7 +8502,7 @@ __metadata:
     "@stripe/stripe-js": ^2.1.0
     "@tailwindcss/typography": ^0.5.9
     "@types/lodash": ^4.14.197
-    "@types/react": ^18.2.20
+    "@types/react": ^18.2.21
     "@types/react-dom": ^18.2.7
     autoprefixer: ^10.4.15
     classnames: ^2.3.2
