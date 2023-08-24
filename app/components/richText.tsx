@@ -2,7 +2,14 @@ import { documentToReactComponents, Options } from '@contentful/rich-text-react-
 import { BLOCKS, INLINES, Text } from '@contentful/rich-text-types'
 import { Link } from '@remix-run/react'
 import classNames from 'classnames'
-import { Cake, CakesGroup, CommonImage, CommonRichText, DaysClosed } from '~/utils/contentful'
+import {
+  Cake,
+  CakesGroup,
+  CommonImage,
+  CommonRichText,
+  DaysClosed,
+  InternalAssetsGrid
+} from '~/utils/contentful'
 import { full } from '~/utils/currency'
 import CakeView from './cakeView'
 import Image from './image'
@@ -19,14 +26,14 @@ const richTextOptions = ({
   const assetMap = new Map()
   if (links?.assets?.block) {
     for (const asset of links.assets.block) {
-      assetMap.set(asset.sys.id, asset)
+      assetMap.set(asset.sys?.id, asset)
     }
   }
 
   const entryMap = new Map()
   if (links?.entries?.block) {
     for (const entry of links.entries?.block) {
-      entryMap.set(entry.sys.id, entry)
+      entryMap.set(entry.sys?.id, entry)
     }
   }
 
@@ -120,6 +127,42 @@ const richTextOptions = ({
                     )
                   })}
                 </div>
+              </div>
+            )
+          case 'InternalAssetsGrid':
+            const grid = entry as InternalAssetsGrid
+            const columns = (col: NonNullable<InternalAssetsGrid['columnsLarge']> = 1) =>
+              ({
+                1: 'grid-cols-1',
+                2: 'grid-cols-2',
+                3: 'grid-cols-3',
+                4: 'grid-cols-4',
+                5: 'grid-cols-5',
+                6: 'grid-cols-6'
+              }[col])
+            return (
+              <div
+                className={classNames(
+                  'grid gap-4',
+                  columns(grid.columnsSmall),
+                  `md:${columns(grid.columnsMedium)}`,
+                  `lg:${columns(grid.columnsLarge)}`
+                )}
+              >
+                {grid.assetsCollection?.items.map((asset, index) => (
+                  <figure key={index} className='my-0 lg:my-auto'>
+                    <Image
+                      alt={asset.title}
+                      image={asset}
+                      width={assetWidth || 432}
+                      quality={85}
+                      className={classNames(asset.description ? 'mb-0' : '', 'mx-auto')}
+                    />
+                    {asset.description && (
+                      <figcaption className='mt-1'>{asset.description}</figcaption>
+                    )}
+                  </figure>
+                ))}
               </div>
             )
           default:

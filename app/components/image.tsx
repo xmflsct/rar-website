@@ -158,7 +158,7 @@ const Image: React.FC<Props> = ({
         alt={alt || image.title}
         decoding={decoding}
         loading={eager ? 'eager' : 'lazy'}
-        className='mx-auto'
+        className='my-0 mx-auto'
       />
     </picture>
   )

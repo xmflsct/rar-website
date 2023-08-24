@@ -4,35 +4,49 @@ import { Shipping } from './contentful'
 type Props = {
   rates: Shipping['rates']
   orders: CakeOrder[]
+  countryCode?: string
 }
 
 const calShipping = ({
   rates,
-  orders
-}: Props): { fee: number; weight: number; label?: boolean } => {
+  orders,
+  countryCode = 'NLD'
+}: Props): { fee?: number; weight: number; label?: 'true' | 'false' } => {
   let subtotal = 0
   let weight = 0
   for (const order of orders) {
+    subtotal = subtotal + (order[`type${order.chosen.unit}Price`] ?? 0) * order.chosen.amount
     if (order.chosen.delivery?.type === 'shipping') {
-      subtotal = subtotal + (order[`type${order.chosen.unit}Price`] ?? 0) * order.chosen.amount
-
       weight = weight + (order.shippingWeight || 0) * 1.05 * order.chosen.amount
     }
   }
 
-  const DEFAULT = { fee: 6.75, weight, label: true }
+  const DEFAULT = { fee: undefined, weight, label: 'true' } as const
 
-  const shippingNL = rates.filter(s => s.type === 'Netherlands')
-  if (shippingNL.length !== 1) {
+  const countryMatchedRate = rates.filter(s => s.countryCode.includes(countryCode))
+  if (countryMatchedRate.length !== 1) {
     return DEFAULT
   }
 
   let label = undefined
   let fee = undefined
-  for (const rate of shippingNL[0].rates) {
+  for (const rate of countryMatchedRate[0].rates) {
     if (rate.weight.min <= weight && weight <= rate.weight.max) {
-      fee = rate.freeAbove && subtotal >= rate.freeAbove ? 0 : rate.price
-      label = rate.label
+      const orderFreeAbove = orders
+        .filter(order => order.deliveryCustomizations?.shipping?.freeAbove)
+        .sort(
+          (a, b) =>
+            (b.deliveryCustomizations?.shipping?.freeAbove || 0) -
+            (a.deliveryCustomizations?.shipping?.freeAbove || 0)
+        )[0]
+      if (orderFreeAbove?.deliveryCustomizations?.shipping?.freeAbove) {
+        fee =
+          subtotal >= orderFreeAbove.deliveryCustomizations?.shipping?.freeAbove ? 0 : rate.price
+      } else if (rate.freeAbove) {
+        fee = subtotal >= rate.freeAbove ? 0 : rate.price
+      }
+      label =
+        typeof rate.label === 'boolean' ? (rate.label.toString() as 'true' | 'false') : rate.label
     }
   }
 

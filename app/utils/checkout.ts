@@ -1,14 +1,18 @@
 import { json, LoaderArgs } from '@remix-run/cloudflare'
-import { parseISO } from 'date-fns'
+import { isAfter, isBefore, isSameDay, parse, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
+import countries from 'i18n-iso-countries'
 import { sumBy } from 'lodash'
 import { CakeOrder } from '~/states/bag'
 import calShipping from './calShipping'
 import { Cake, graphqlRequest, Shipping } from './contentful'
+import { getReadableDeliveryDate } from './readableDeliveryDate'
+import { getStripeHeaders } from './stripeHeaders'
 
 export type CheckoutContent = {
   ideal?: boolean
   cards?: boolean
+  countryCode?: string
   paperBag?: boolean
   orders: {
     pickup?: CakeOrder[]
@@ -32,13 +36,13 @@ type ShippingOptions = {
       amount: number
       currency: 'eur'
     }
-    metadata?: { label?: boolean; weight: number }
+    metadata?: { label?: 'true' | 'false'; weight: number }
   }
 }
 
 const verifyContentful = async ({
   context,
-  content: { orders, subtotal_amount, shipping_amount }
+  content: { orders, subtotal_amount, shipping_amount, countryCode }
 }: {
   context: LoaderArgs['context']
   content: CheckoutContent
@@ -138,6 +142,36 @@ const verifyContentful = async ({
       if (order[`type${order.chosen.unit}Price`] !== item[`type${order.chosen.unit}Price`]) {
         throw json('Cake pricing error', { status: 400 })
       }
+
+      if (!!order.chosen.delivery?.date) {
+        const chosenDate = order.chosen.delivery?.date
+
+        const delivery = item.deliveryCustomizations?.[order.chosen.delivery.type]
+        if (Array.isArray(delivery?.availability)) {
+          const matchedAvailability = delivery?.availability.find(a =>
+            isSameDay(parseISO(chosenDate), parseISO(a.date))
+          )
+          if (!matchedAvailability) {
+            throw json('Chosen date not exist', { status: 400 })
+          }
+
+          if (
+            matchedAvailability.before &&
+            !isBefore(parseISO(chosenDate), parseISO(matchedAvailability.before))
+          ) {
+            throw json('Date range error array', { status: 400 })
+          }
+        } else {
+          if (
+            (delivery?.availability.after &&
+              !isAfter(parseISO(chosenDate), parseISO(delivery?.availability.after))) ||
+            (delivery?.availability.before &&
+              !isBefore(parseISO(chosenDate), parseISO(delivery?.availability.before)))
+          ) {
+            throw json('Date range error', { status: 400 })
+          }
+        }
+      }
     }
   }
 
@@ -158,7 +192,7 @@ const verifyContentful = async ({
         context,
         query: gql`
           query Delivery($preview: Boolean) {
-            shippingCollection(preview: $preview, limit: 1, where: { year: 2022 }) {
+            shippingCollection(preview: $preview, limit: 1, where: { year: 2023 }) {
               items {
                 rates
               }
@@ -168,7 +202,11 @@ const verifyContentful = async ({
       })
     ).shippingCollection.items[0].rates
 
-    const shippingRate = calShipping({ rates, orders: orders.shipping })
+    const shippingRate = calShipping({
+      rates,
+      orders: [...(orders.pickup || []), ...orders.shipping],
+      countryCode
+    })
     if (!(shippingRate.fee === parseFloat(shipping_amount || ''))) {
       throw json('Shipping fee not aligned', { status: 400 })
     }
@@ -230,15 +268,7 @@ const checkout = async ({
       order.name,
       order.chosen.delivery?.type
         ? order.chosen.delivery.date
-          ? `Special ${order.chosen.delivery.type}: ${parseISO(
-              order.chosen.delivery.date
-            ).toLocaleString('en-GB', {
-              timeZone: 'Europe/Amsterdam',
-              weekday: 'short',
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            })}`
+          ? getReadableDeliveryDate(order)
           : { pickup: '🛍️', shipping: '📦' }[order.chosen.delivery.type]
         : content.pickup_date
         ? '🛍️'
@@ -304,12 +334,14 @@ const checkout = async ({
   const sessionData = {
     payment_method_types: content.ideal
       ? ['ideal', 'bancontact']
-      : ['card', 'bancontact', 'giropay', 'sofort'],
+      : ['card', 'bancontact', 'giropay', 'eps'],
     mode: 'payment',
     line_items: line_items.filter(l => l),
     ...(shipping && {
       shipping_address_collection: {
-        allowed_countries: ['NL']
+        allowed_countries: [
+          content.countryCode ? countries.alpha3ToAlpha2(content.countryCode) : 'NLD'
+        ]
       },
       shipping_options: [{ ...shipping }]
     }),
@@ -353,7 +385,7 @@ const checkout = async ({
   const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${context.STRIPE_KEY_PRIVATE}`,
+      ...getStripeHeaders(context.STRIPE_KEY_PRIVATE),
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     body

@@ -1,11 +1,11 @@
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link } from '@remix-run/react'
-import { parseISO } from 'date-fns'
 import { useContext } from 'react'
 import Image from '~/components/image'
 import { BagContext, CakeOrder } from '~/states/bag'
 import { full } from '~/utils/currency'
+import { getReadableDeliveryDate } from '~/utils/readableDeliveryDate'
 import Button from './button'
 
 type Props = {
@@ -47,15 +47,7 @@ const OrderList: React.FC<Props> = ({ order }) => {
             })}
           </div>
           {order.chosen.delivery?.type && order.chosen.delivery.date && (
-            <p>{`Special ${order.chosen.delivery.type}: ${parseISO(
-              order.chosen.delivery.date
-            ).toLocaleString('en-GB', {
-              timeZone: 'Europe/Amsterdam',
-              weekday: 'short',
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            })}`}</p>
+            <p>{getReadableDeliveryDate(order)}</p>
           )}
         </div>
         <div>

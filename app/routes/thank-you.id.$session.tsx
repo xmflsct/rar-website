@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import Stripe from 'stripe'
 import Layout from '~/layout'
 import { full } from '~/utils/currency'
+import { getStripeHeaders } from '~/utils/stripeHeaders'
 
 export const loader = async (props: LoaderArgs) => {
   if (!props.params.session) {
@@ -13,9 +14,7 @@ export const loader = async (props: LoaderArgs) => {
   const session = await (
     await fetch(
       `https://api.stripe.com/v1/checkout/sessions/${props.params.session}?expand[]=payment_intent`,
-      {
-        headers: { Authorization: `Bearer ${props.context?.STRIPE_KEY_ADMIN}` }
-      }
+      { headers: getStripeHeaders(props.context?.STRIPE_KEY_ADMIN) }
     )
   ).json<Stripe.Checkout.Session & { payment_intent: Stripe.PaymentIntent }>()
 
@@ -26,9 +25,7 @@ export const loader = async (props: LoaderArgs) => {
   const line_items = await (
     await fetch(
       `https://api.stripe.com/v1/checkout/sessions/${props.params.session}/line_items?limit=100`,
-      {
-        headers: { Authorization: `Bearer ${props.context?.STRIPE_KEY_ADMIN}` }
-      }
+      { headers: getStripeHeaders(props.context?.STRIPE_KEY_ADMIN) }
     )
   ).json<{
     data: {
@@ -64,21 +61,8 @@ const PageThankYou: React.FC = () => {
         {session.payment_intent.description?.length ? (
           <p>{session.payment_intent.description}</p>
         ) : null}
-        {session.payment_intent.metadata?.shipping_tracking ? (
-          <p>
-            <strong>PostNL tracking:</strong>{' '}
-            <a
-              className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
-              href={`https://jouw.postnl.nl/track-and-trace/${
-                session.payment_intent.metadata?.shipping_tracking
-              }-${
-                session.shipping_details?.address?.country
-              }-${session.shipping_details?.address?.postal_code?.replace(/\s/g, '')}`}
-              target='_blank'
-            >
-              {session.payment_intent.metadata?.shipping_tracking}
-            </a>
-          </p>
+        {session.payment_intent.metadata?.shipping_id ? (
+          <p>You will receive an email with the tracking code when the packages is sent.</p>
         ) : null}
         <table className='w-full'>
           <tbody>

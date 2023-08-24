@@ -7,12 +7,14 @@ import { loadStripe } from '@stripe/stripe-js'
 import classNames from 'classnames'
 import { addDays, getMonth, getYear } from 'date-fns'
 import { gql } from 'graphql-request'
+import countries from 'i18n-iso-countries'
 import { sumBy } from 'lodash'
 import { Fragment, useContext, useEffect, useState } from 'react'
 import Button from '~/components/button'
 import ExpandableField from '~/components/expandableField'
 import OrderList from '~/components/orderList'
 import PickDay, { closedDays, invalidDayBefore, isDayValid } from '~/components/pickDay'
+import Select from '~/components/select'
 import Layout from '~/layout'
 import { BagContext, CakeOrder } from '~/states/bag'
 import calShipping from '~/utils/calShipping'
@@ -20,6 +22,8 @@ import checkout from '~/utils/checkout'
 import { DaysClosed, MaxCalendarMonth, Shipping, cacheQuery } from '~/utils/contentful'
 import { full } from '~/utils/currency'
 import { getAllPages } from '~/utils/kv'
+
+countries.registerLocale(require('i18n-iso-countries/langs/en.json'))
 
 export const loader = async ({ context, request }: LoaderArgs) => {
   const data = await cacheQuery<{
@@ -33,7 +37,7 @@ export const loader = async ({ context, request }: LoaderArgs) => {
     variables: { end_gte: new Date().toISOString() },
     query: gql`
       query Shipping($preview: Boolean, $end_gte: DateTime!) {
-        shippingCollection(preview: $preview, limit: 1, where: { year: 2022 }) {
+        shippingCollection(preview: $preview, limit: 1, where: { year: 2023 }) {
           items {
             rates
           }
@@ -105,6 +109,7 @@ const ShoppingBag = () => {
   const { cakeOrders } = useContext(BagContext)
   const [ideal, setIdeal] = useState(true)
   const [paperBag, setPaperBag] = useState(true)
+  const [countryCode, setCountryCode] = useState<string>('')
   const [pickup, setPickup] = useState<Date>()
   const [notes, setNotes] = useState<string>()
   const [terms, setTerms] = useState(false)
@@ -135,7 +140,8 @@ const ShoppingBag = () => {
 
   const { fee: shippingFee } = calShipping({
     rates: shippingRates,
-    orders: orders.shipping
+    orders: [...orders.pickup, ...orders.shipping],
+    countryCode
   })
 
   const actionData = useActionData()
@@ -280,6 +286,7 @@ const ShoppingBag = () => {
               </div>
             ) : null}
           </div>
+
           <div className='lg:col-span-2 flex flex-col gap-4'>
             <fieldset>
               <h3 className='text-xl mb-2'>Processing fee</h3>
@@ -308,6 +315,25 @@ const ShoppingBag = () => {
                 </label>
               </div>
             </fieldset>
+
+            {orders.shipping.length ? (
+              <fieldset>
+                <h3 className='text-xl mb-2'>Ship to</h3>
+                <Select
+                  name='countryCode'
+                  value={countryCode}
+                  required
+                  onChange={e => setCountryCode(e.target.value)}
+                >
+                  <option value='' children='' disabled />
+                  {shippingRates
+                    .flatMap(rate => rate.countryCode)
+                    .map(countryCode => (
+                      <option value={countryCode} children={countries.getName(countryCode, 'en')} />
+                    ))}
+                </Select>
+              </fieldset>
+            ) : null}
 
             {needPickup ? (
               <fieldset>
@@ -343,7 +369,7 @@ const ShoppingBag = () => {
                   <tr>
                     <th className='text-left pr-4'>Shipping fee</th>
                     <td className='text-right'>
-                      {shippingFee === 0 ? 'Free' : full(shippingFee)}
+                      {shippingFee === 0 ? 'Free' : shippingFee ? full(shippingFee) : '-'}
                       <input name='shipping_amount' type='hidden' value={shippingFee} />
                     </td>
                   </tr>
@@ -369,7 +395,7 @@ const ShoppingBag = () => {
                   <td className='text-right'>
                     {full(
                       subtotal +
-                        (orders.shipping.length ? shippingFee : 0) +
+                        (orders.shipping.length ? shippingFee ?? 0 : 0) +
                         (ideal ? 0.3 : 1) +
                         (needPickup && paperBag ? 0.5 : 0)
                     )}

@@ -1,6 +1,81 @@
-import { ActionFunction, json } from '@remix-run/cloudflare'
+import { CarrierId, PackageTypeId } from '@myparcel/constants'
+// @ts-ignore
+import { NETHERLANDS } from '@myparcel/constants/countries'
+import { FetchClient, PostShipments, createPrivateSdk } from '@myparcel/sdk'
+import { ActionFunction, AppLoadContext, json } from '@remix-run/cloudflare'
 import Stripe from 'stripe'
-import { Address, Default, ProductCodeDelivery } from '~/utils/postNL'
+import { getMyparcelAuthHeader } from '~/utils/myparcelAuthHeader'
+import { getStripeHeaders } from '~/utils/stripeHeaders'
+
+export const createShipment = async ({
+  context,
+  customer_details,
+  payment_intent
+}: {
+  context: AppLoadContext
+  customer_details: Stripe.Checkout.Session.CustomerDetails
+  payment_intent: string
+}): Promise<{ ok: true; id: string } | { ok: false; error: string }> => {
+  let error: string = ''
+
+  const stripeHeaders = getStripeHeaders(context.STRIPE_KEY_ADMIN)
+
+  const result = await createPrivateSdk(
+    new FetchClient({ headers: getMyparcelAuthHeader(context) }),
+    [new PostShipments()]
+  )
+    .postShipments({
+      body: [
+        {
+          carrier: CarrierId.PostNl,
+          options: {
+            package_type: PackageTypeId.Package
+          },
+          recipient:
+            context?.ENVIRONMENT === 'DEVELOPMENT'
+              ? {
+                  cc: NETHERLANDS,
+                  city: 'Rotterdam',
+                  postal_code: '3011PG',
+                  street: 'Hoogstraat 55A',
+                  person: 'Round Test',
+                  email: 'no-reply@roundandround.nl',
+                  phone: '0612345678'
+                }
+              : {
+                  cc: customer_details?.address?.country!,
+                  city: customer_details?.address?.city!,
+                  postal_code: customer_details?.address?.postal_code || undefined,
+                  street:
+                    customer_details?.address?.line1 +
+                    (customer_details?.address?.line2
+                      ? `\n${customer_details?.address?.line2}`
+                      : ''),
+                  person: customer_details?.name!,
+                  email: customer_details?.email || undefined,
+                  phone: customer_details?.phone || undefined
+                }
+        }
+      ]
+    })
+    .catch(err => {
+      error = err.message
+      return err
+    })
+
+  const id = (result[0] as unknown as { id: string })?.id
+
+  if (id) {
+    await fetch(`https://api.stripe.com/v1/payment_intents/${payment_intent}`, {
+      method: 'POST',
+      headers: { ...stripeHeaders, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ 'metadata[shipping_id]': id.toString() })
+    })
+    return { ok: true, id }
+  } else {
+    return { ok: false, error }
+  }
+}
 
 const hexStringToUint8Array = (hexString: string) => {
   const bytes = new Uint8Array(Math.ceil(hexString.length / 2))
@@ -28,7 +103,7 @@ export const action: ActionFunction = async ({ context, request }) => {
     return json('No signature provided', 403)
   }
 
-  const payloadRaw = await request.clone().text()
+  const payloadRaw = await request.text()
 
   const encoder = new TextEncoder()
   const verified = await crypto.subtle.verify(
@@ -48,21 +123,24 @@ export const action: ActionFunction = async ({ context, request }) => {
     return json('Signature verify failed', 403)
   }
 
-  const payload = (await request.json()) as {
+  const payload = JSON.parse(payloadRaw) as {
     data: { object: Stripe.Checkout.Session }
     type: Stripe.Event['type']
   }
 
-  const Authorization = `Bearer ${context.STRIPE_KEY_ADMIN}`
+  const stripeHeaders = getStripeHeaders(context.STRIPE_KEY_ADMIN)
 
   switch (payload.type) {
     case 'checkout.session.completed':
       const sessionLineItems = (
         await (
-          await fetch(`https://api.stripe.com/v1/checkout/sessions/${payload.data.object.id}/line_items?limit=50&expand[]=data.price.product`, {
-            headers: { Authorization }
-          })
-        ).json<{ data: (Stripe.LineItem & { price: Stripe.Price & { product: Stripe.Product } })[] }>()
+          await fetch(
+            `https://api.stripe.com/v1/checkout/sessions/${payload.data.object.id}/line_items?limit=50&expand[]=data.price.product`,
+            { headers: stripeHeaders }
+          )
+        ).json<{
+          data: (Stripe.LineItem & { price: Stripe.Price & { product: Stripe.Product } })[]
+        }>()
       ).data.map(item => ({ quantity: item.quantity, metadata: item.price.product.metadata }))
 
       for (const lineItem of sessionLineItems) {
@@ -70,12 +148,24 @@ export const action: ActionFunction = async ({ context, request }) => {
           if (!lineItem.metadata.type) {
             console.warn('No type provided')
           } else {
-            const entry = await (await fetch(`https://api.contentful.com/spaces/${context.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`, {
-              headers: { Authorization: `Bearer ${context.CONTENTFUL_PAT}` }
-            })).json<{ sys: { id: string, version: number }, fields: { typeAStock?: { "en-GB": number }, typeBStock?: { "en-GB": number }, typeCStock?: { "en-GB": number } } }>()
+            const entry = await (
+              await fetch(
+                `https://api.contentful.com/spaces/${context.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`,
+                {
+                  headers: { Authorization: `Bearer ${context.CONTENTFUL_PAT}` }
+                }
+              )
+            ).json<{
+              sys: { id: string; version: number }
+              fields: {
+                typeAStock?: { 'en-GB': number }
+                typeBStock?: { 'en-GB': number }
+                typeCStock?: { 'en-GB': number }
+              }
+            }>()
 
             const contentfulType = lineItem.metadata.type as 'A' | 'B' | 'C'
-            const stock = entry.fields[`type${(contentfulType)}Stock`]?.['en-GB']
+            const stock = entry.fields[`type${contentfulType}Stock`]?.['en-GB']
 
             if (!stock || typeof stock !== 'number') {
               continue
@@ -84,93 +174,59 @@ export const action: ActionFunction = async ({ context, request }) => {
               throw json({ error: `Stock of ${entry.sys.id} is 0!` }, 500)
             }
 
-            await fetch(`https://api.contentful.com/spaces/${context.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`, {
-              method: 'PATCH',
-              headers: {
-                Authorization: `Bearer ${context.CONTENTFUL_PAT}`,
-                'Content-Type': 'application/json-patch+json',
-                'X-Contentful-Version': entry.sys.version.toString()
-              },
-              body: JSON.stringify([
-                {
-                  'op': 'replace',
-                  'path': `/fields/type${lineItem.metadata.type}Stock/en-GB`,
-                  'value': stock - (lineItem.quantity || 0)
-                }
-              ])
-            })
+            await fetch(
+              `https://api.contentful.com/spaces/${context.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`,
+              {
+                method: 'PATCH',
+                headers: {
+                  Authorization: `Bearer ${context.CONTENTFUL_PAT}`,
+                  'Content-Type': 'application/json-patch+json',
+                  'X-Contentful-Version': entry.sys.version.toString()
+                },
+                body: JSON.stringify([
+                  {
+                    op: 'replace',
+                    path: `/fields/type${lineItem.metadata.type}Stock/en-GB`,
+                    value: stock - (lineItem.quantity || 0)
+                  }
+                ])
+              }
+            )
           }
         }
       }
 
       const shipping_rate = payload.data.object.shipping_cost?.shipping_rate
         ? (
-          await (
-            await fetch(
-              `https://api.stripe.com/v1/shipping_rates/${payload.data.object.shipping_cost.shipping_rate}`,
-              { headers: { Authorization } }
-            )
-          ).json<{ metadata: { label: false, weight?: number } | { label: true, weight: number } }>()
-        ).metadata
-        : { label: false } as { label: false }
+            await (
+              await fetch(
+                `https://api.stripe.com/v1/shipping_rates/${payload.data.object.shipping_cost.shipping_rate}`,
+                { headers: stripeHeaders }
+              )
+            ).json<{
+              metadata: { label: 'false'; weight?: number } | { label: 'true'; weight: number }
+            }>()
+          ).metadata
+        : ({ label: 'false' } as const)
 
-      // @ts-ignore
-      if (shipping_rate?.label !== true && shipping_rate?.label !== 'true') {
-        return json('Shipping not required', 200)
-      } else {
-        const postnlData = {
-          ...Default(context),
-          Shipments: [
-            {
-              "Reference": payload.data.object.id,
-              Addresses: [
-                {
-                  AddressType: '01',
-                  ...Address(payload.data.object.customer_details)
-                }
-              ],
-              Contacts: [
-                {
-                  ContactType: '01',
-                  Email: payload.data.object.customer_details?.email,
-                  SMSNr: payload.data.object.customer_details?.phone
-                }
-              ],
-              Dimension: {
-                Weight: shipping_rate.weight
-              },
-              ProductCodeDelivery
-            }
-          ]
-        }
+      if (shipping_rate?.label === 'true') {
+        const resShipment = await createShipment({
+          context,
+          customer_details: payload.data.object.customer_details!,
+          payment_intent: payload.data.object.payment_intent as string
+        })
 
-        const shipping = await (
-          await fetch(`${context.WEBHOOK_STRIPE_POSTNL_URL}/v1/shipment`, {
-            method: 'POST',
-            headers: {
-              apikey: context.WEBHOOK_STRIPE_POSTNL_API_KEY as string,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(postnlData)
-          })
-        ).json<any>()
-
-        const barcode = shipping.ResponseShipments?.[0]?.Barcode
-        if (barcode) {
-          await fetch(
-            `https://api.stripe.com/v1/payment_intents/${payload.data.object.payment_intent}`,
-            {
-              method: 'POST',
-              headers: { Authorization, 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: new URLSearchParams({ 'metadata[shipping_tracking]': barcode })
-            }
-          )
-          return json(`Barcode: ${barcode}`, 200)
+        if (resShipment.ok) {
+          return json(`Shipment: ${resShipment.id}`, 200)
         } else {
-          return json(`Shipping creation failed: ${JSON.stringify(shipping)}`, 500)
+          return json('Shipping creation failed', 500)
         }
+      } else {
+        return json(
+          'Shipping not required' + ' ' + context?.ENVIRONMENT + ' ' + shipping_rate?.label,
+          200
+        )
       }
-      break
   }
 
   return json(null, 200)

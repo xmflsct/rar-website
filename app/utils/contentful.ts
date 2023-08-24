@@ -82,6 +82,16 @@ export type Page = {
   content: CommonRichText
 }
 
+export type InternalAssetsGrid = {
+  sys: { id: string }
+  columnsLarge?: 1 | 2 | 3 | 4 | 5 | 6
+  columnsMedium?: 1 | 2 | 3 | 4 | 5 | 6
+  columnsSmall?: 1 | 2 | 3 | 4 | 5 | 6
+  assetsCollection?: {
+    items: CommonImage[]
+  }
+}
+
 export type CakesGroup = {
   sys: { id: string }
   name?: string
@@ -221,6 +231,20 @@ export const PAGE_CONTENT_LINKS = gql`
       }
       entries {
         block {
+          ... on InternalAssetsGrid {
+            __typename
+            sys {
+              id
+            }
+            columnsLarge
+            columnsMedium
+            columnsSmall
+            assetsCollection(limit: 20) {
+              items {
+                url
+              }
+            }
+          }
           ... on Cake {
             __typename
             sys {
