@@ -49,7 +49,7 @@ export const createShipment = async ({
                   street:
                     customer_details?.address?.line1 +
                     (customer_details?.address?.line2
-                      ? `\n${customer_details?.address?.line2}`
+                      ? ` ${customer_details?.address?.line2}`
                       : ''),
                   person: customer_details?.name!,
                   email: customer_details?.email || undefined,
