@@ -136,13 +136,17 @@ const Shipping: React.FC<{
   const [createError, setCreateError] = useState<string>()
 
   useEffect(() => {
-    if (fetcher.data?.id?.length) {
-      setCreateId(fetcher.data.id)
-      fetchPhase()
-    } else {
-      setCreateError(fetcher.data?.error)
+    if (fetcher.state === 'loading') {
+      if (fetcher.data?.id) {
+        setCreateId(fetcher.data.id.toString())
+      } else {
+        setCreateError(fetcher.data?.error)
+      }
     }
-  }, [fetcher.data])
+  }, [fetcher.state, fetcher.data])
+  useEffect(() => {
+    fetchPhase()
+  }, [createId])
 
   return (
     <>
