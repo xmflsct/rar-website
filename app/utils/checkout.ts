@@ -1,4 +1,4 @@
-import { json, LoaderArgs } from '@remix-run/cloudflare'
+import { json, LoaderFunctionArgs } from '@remix-run/cloudflare'
 import { isAfter, isBefore, isSameDay, parse, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
 import countries from 'i18n-iso-countries'
@@ -44,7 +44,7 @@ const verifyContentful = async ({
   context,
   content: { orders, subtotal_amount, shipping_amount, countryCode }
 }: {
-  context: LoaderArgs['context']
+  context: LoaderFunctionArgs['context']
   content: CheckoutContent
 }): Promise<ShippingOptions | null> => {
   if ((!orders.pickup?.length && !orders.shipping?.length) || !subtotal_amount) {
@@ -248,7 +248,7 @@ const checkout = async ({
   context,
   content
 }: {
-  context: LoaderArgs['context']
+  context: LoaderFunctionArgs['context']
   content: CheckoutContent
 }) => {
   if (!context?.STRIPE_KEY_PRIVATE) {

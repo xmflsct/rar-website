@@ -29,7 +29,8 @@ export const createShipment = async ({
         {
           carrier: CarrierId.PostNl,
           options: {
-            package_type: PackageTypeId.Package
+            package_type: PackageTypeId.Package,
+            delivery_type: null
           },
           recipient:
             context?.ENVIRONMENT === 'DEVELOPMENT'

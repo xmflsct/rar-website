@@ -1,9 +1,9 @@
-import { LoaderArgs } from '@remix-run/cloudflare'
+import { LoaderFunctionArgs } from '@remix-run/cloudflare'
 import { gql } from 'graphql-request'
 import { cacheQuery, Cake } from '~/utils/contentful'
 import { getAllPages } from '~/utils/kv'
 
-export const loader = async ({ context, request }: LoaderArgs) => {
+export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const {
     cakeCollection: { items: cakes }
   } = await cacheQuery<{

@@ -1,11 +1,13 @@
 node_modules
 
+/.wrangler
 /.cache
 /functions/_assets
 /functions/\[\[path\]\].js
 /functions/\[\[path\]\].js.map
 /functions/metafile.js.json
 /functions/metafile.server.json
+/functions/version.txt
 /public/build
 .env
 .mf

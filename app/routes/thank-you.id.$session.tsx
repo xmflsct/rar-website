@@ -1,4 +1,4 @@
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { useEffect } from 'react'
 import Stripe from 'stripe'
@@ -6,7 +6,7 @@ import Layout from '~/layout'
 import { full } from '~/utils/currency'
 import { getStripeHeaders } from '~/utils/stripeHeaders'
 
-export const loader = async (props: LoaderArgs) => {
+export const loader = async (props: LoaderFunctionArgs) => {
   if (!props.params.session) {
     throw json('Not Found', { status: 404 })
   }
@@ -39,7 +39,7 @@ export const loader = async (props: LoaderArgs) => {
   return json({ session, line_items })
 }
 
-export const meta: V2_MetaFunction = () => [
+export const meta: MetaFunction = () => [
   {
     title: `Thank you for your order!`
   }

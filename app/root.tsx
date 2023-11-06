@@ -1,4 +1,4 @@
-import { json, LoaderArgs } from '@remix-run/cloudflare'
+import { json, LoaderFunctionArgs } from '@remix-run/cloudflare'
 import {
   Links,
   LiveReload,
@@ -11,7 +11,7 @@ import {
 import BagProvider from './states/bag'
 import styles from './styles/app.css'
 
-export const loader = async ({ context }: LoaderArgs) => {
+export const loader = async ({ context }: LoaderFunctionArgs) => {
   if (!context?.STRIPE_KEY_PUBLIC) {
     throw json('Stripe public key missing', { status: 500 })
   }

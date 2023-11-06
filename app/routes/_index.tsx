@@ -1,4 +1,4 @@
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import Image from '~/components/image'
@@ -6,7 +6,7 @@ import Layout from '~/layout'
 import { cacheQuery, CommonImage } from '~/utils/contentful'
 import { getAllPages } from '~/utils/kv'
 
-export const loader = async ({ context, request }: LoaderArgs) => {
+export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const { navs } = await getAllPages(context)
 
   const images = await cacheQuery<{
@@ -36,7 +36,7 @@ export const loader = async ({ context, request }: LoaderArgs) => {
   return json({ navs, images })
 }
 
-export const meta: V2_MetaFunction = () => [
+export const meta: MetaFunction = () => [
   {
     title: `Round&Round Rotterdam`
   }

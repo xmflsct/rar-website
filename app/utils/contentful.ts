@@ -1,9 +1,9 @@
 import { Document } from '@contentful/rich-text-types'
-import { json, LoaderArgs } from '@remix-run/cloudflare'
+import { json, LoaderFunctionArgs } from '@remix-run/cloudflare'
 import { gql, GraphQLClient, RequestDocument, Variables } from 'graphql-request'
 
 type GraphQLRequest = {
-  context: LoaderArgs['context']
+  context: LoaderFunctionArgs['context']
   query: RequestDocument
   variables?: Variables
 }

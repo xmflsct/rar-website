@@ -1,7 +1,7 @@
 import { faStripe } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Dialog, Transition } from '@headlessui/react'
-import { ActionArgs, LoaderArgs, V2_MetaFunction, json } from '@remix-run/cloudflare'
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json } from '@remix-run/cloudflare'
 import { Form, Link, useActionData, useLoaderData, useNavigation } from '@remix-run/react'
 import { loadStripe } from '@stripe/stripe-js'
 import classNames from 'classnames'
@@ -25,7 +25,7 @@ import { getAllPages } from '~/utils/kv'
 
 countries.registerLocale(require('i18n-iso-countries/langs/en.json'))
 
-export const loader = async ({ context, request }: LoaderArgs) => {
+export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const data = await cacheQuery<{
     shippingCollection: { items: Shipping[] }
     maxCalendarMonthCollection: { items: MaxCalendarMonth[] }
@@ -66,7 +66,7 @@ export const loader = async ({ context, request }: LoaderArgs) => {
   })
 }
 
-export const action = async ({ context, request }: ActionArgs) => {
+export const action = async ({ context, request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const data = Object.fromEntries(formData)
 
@@ -96,7 +96,7 @@ export const action = async ({ context, request }: ActionArgs) => {
   }
 }
 
-export const meta: V2_MetaFunction = () => [
+export const meta: MetaFunction = () => [
   {
     title: `Shopping Bag | Round&Round Rotterdam`
   }
