@@ -2,6 +2,7 @@ import { documentToReactComponents, Options } from '@contentful/rich-text-react-
 import { BLOCKS, INLINES, Text } from '@contentful/rich-text-types'
 import { Link } from '@remix-run/react'
 import classNames from 'classnames'
+import { cakeAvailable } from '~/utils/cakeAvailable'
 import {
   Cake,
   CakesGroup,
@@ -109,7 +110,7 @@ const richTextOptions = ({
                           behaviour='fill'
                           className='group-hover:opacity-50'
                         />
-                        {cake.available ? (
+                        {cakeAvailable(cake) ? (
                           <p className='my-1 font-bold underline-offset-4 group-hover:underline'>
                             {cake.name}
                           </p>

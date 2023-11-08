@@ -5,6 +5,7 @@ import Button from './button'
 import CakeOrder from './cakeOrder'
 import Image from './image'
 import RichText from './richText'
+import { cakeAvailable } from '~/utils/cakeAvailable'
 
 type Props = {
   cake: Cake
@@ -36,11 +37,13 @@ const CakeView: React.FC<Props> = ({ cake, daysClosedCollection }) => {
     }
   }
 
+  const available = cakeAvailable(cake)
+
   return (
     <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8'>
       <Image alt={cake.name} image={cake.image} width={432} height={432} behaviour='fill' />
       <div className='flex flex-col'>
-        {cake.available ? (
+        {available ? (
           <div className='text-3xl mb-4'>{cake.name}</div>
         ) : (
           <div className='text-3xl line-through'>{cake.name}</div>
@@ -51,10 +54,12 @@ const CakeView: React.FC<Props> = ({ cake, daysClosedCollection }) => {
           {typePrice('B')}
           {typePrice('C')}
         </ul>
-        {cake.available ? (
+        {available ? (
           <CakeOrder cake={cake} daysClosedCollection={daysClosedCollection} />
         ) : (
-          <Button disabled>Sold Out</Button>
+          <Button disabled className='mt-4'>
+            Not available
+          </Button>
         )}
       </div>
     </div>

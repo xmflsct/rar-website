@@ -8,6 +8,7 @@ import calShipping from './calShipping'
 import { Cake, graphqlRequest, Shipping } from './contentful'
 import { getReadableDeliveryDate } from './readableDeliveryDate'
 import { getStripeHeaders } from './stripeHeaders'
+import { cakeAvailable } from './cakeAvailable'
 
 export type CheckoutContent = {
   ideal?: boolean
@@ -48,18 +49,13 @@ const verifyContentful = async ({
   content: CheckoutContent
 }): Promise<ShippingOptions | null> => {
   if ((!orders.pickup?.length && !orders.shipping?.length) || !subtotal_amount) {
-    throw json('Submitted checkout content error', { status: 400 })
+    throw 'Submitted checkout content error'
   }
 
   const flatOrders = [...(orders.pickup || []), ...(orders.shipping || [])]
 
   // Check cakes
-  const tempIds: string[] = []
-  let ids: string | undefined = undefined
-  flatOrders?.forEach(order => tempIds.push(`"${order.sys.id}"`))
-  tempIds.length && (ids = tempIds.join(','))
-
-  if (ids?.length) {
+  if (flatOrders?.length) {
     const items = (
       await graphqlRequest<{
         cakeCollection: {
@@ -79,6 +75,8 @@ const verifyContentful = async ({
             | 'typeCPrice'
             | 'typeCStock'
             | 'typeCMinimum'
+            | 'notAvailableStart'
+            | 'notAvailableEnd'
             | 'deliveryCustomizations'
             | 'shippingWeight'
             | 'shippingAvailable'
@@ -86,10 +84,10 @@ const verifyContentful = async ({
         }
       }>({
         context,
-        variables: { ids },
+        variables: { ids: flatOrders.map(b => b.sys.id) },
         query: gql`
-          query Cakes($preview: Boolean, $ids: String) {
-            cakeCollection(preview: $preview, where: { sys: { id_in: [$ids] } }) {
+          query Cakes($preview: Boolean, $ids: [String]) {
+            cakeCollection(preview: $preview, where: { sys: { id_in: $ids } }) {
               items {
                 sys {
                   id
@@ -107,6 +105,8 @@ const verifyContentful = async ({
                 typeCPrice
                 typeCStock
                 typeCMinimum
+                notAvailableStart
+                notAvailableEnd
                 deliveryCustomizations
                 shippingWeight
                 shippingAvailable
@@ -117,30 +117,32 @@ const verifyContentful = async ({
       })
     ).cakeCollection.items
 
+    if (flatOrders.length !== items.length) throw 'Some cake not found'
+
     for (const item of items) {
       const objectIndex = flatOrders.findIndex(i => i.sys.id === item.sys.id)
 
       if (objectIndex < 0) {
-        throw json('Cake not found', { status: 400 })
+        throw 'Cake not found'
       }
 
-      if (!item.available) {
-        throw json('Cake not available', { status: 400 })
+      if (!cakeAvailable(item)) {
+        throw 'Some cake not available'
       }
 
       const order = flatOrders[objectIndex]
       if (!item[`type${order.chosen.unit}Available`]) {
-        throw json('Cake availability error', { status: 400 })
+        throw 'Cake availability error'
       }
       const stock = item[`type${order.chosen.unit}Stock`]
       if (stock && order.chosen.amount > stock) {
-        throw json('Cake quantity exceeded', { status: 400 })
+        throw 'Cake quantity exceeded'
       }
       if (order.chosen.amount < (item[`type${order.chosen.unit}Minimum`] || 1)) {
-        throw json('Cake quantity error', { status: 400 })
+        throw 'Cake quantity error'
       }
       if (order[`type${order.chosen.unit}Price`] !== item[`type${order.chosen.unit}Price`]) {
-        throw json('Cake pricing error', { status: 400 })
+        throw 'Cake pricing error'
       }
 
       if (!!order.chosen.delivery?.date) {
@@ -152,14 +154,14 @@ const verifyContentful = async ({
             isSameDay(parseISO(chosenDate), parseISO(a.date))
           )
           if (!matchedAvailability) {
-            throw json('Chosen date not exist', { status: 400 })
+            throw 'Chosen date not exist'
           }
 
           if (
             matchedAvailability.before &&
             !isBefore(parseISO(chosenDate), parseISO(matchedAvailability.before))
           ) {
-            throw json('Date range error array', { status: 400 })
+            throw 'Date range error array'
           }
         } else {
           if (
@@ -168,7 +170,7 @@ const verifyContentful = async ({
             (delivery?.availability.before &&
               !isBefore(parseISO(chosenDate), parseISO(delivery?.availability.before)))
           ) {
-            throw json('Date range error', { status: 400 })
+            throw 'Date range error'
           }
         }
       }
@@ -180,7 +182,7 @@ const verifyContentful = async ({
     return (order[`type${order.chosen.unit}Price`] ?? 0) * order.chosen.amount
   })
   if (!(subtotal === parseFloat(subtotal_amount))) {
-    throw json('Subtotal not aligned', { status: 400 })
+    throw 'Subtotal not aligned'
   }
 
   // Check delivery
@@ -208,7 +210,7 @@ const verifyContentful = async ({
       countryCode
     })
     if (!(shippingRate.fee === parseFloat(shipping_amount || ''))) {
-      throw json('Shipping fee not aligned', { status: 400 })
+      throw 'Shipping fee not aligned'
     }
 
     const shippingDate = orders.shipping.every(
@@ -255,7 +257,13 @@ const checkout = async ({
     throw new Error('Missing stripe private key')
   }
 
-  const shipping = await verifyContentful({ context, content })
+  let shipping: ShippingOptions | null
+  try {
+    shipping = await verifyContentful({ context, content })
+  } catch (error) {
+    console.log('error', error)
+    return json({ error })
+  }
 
   const item = (order: CakeOrder) => {
     const amount = order.chosen.amount

@@ -92,7 +92,7 @@ export const action = async ({ context, request }: ActionFunctionArgs) => {
   if (res?.id) {
     return res.id
   } else {
-    return null
+    return res
   }
 }
 

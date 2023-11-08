@@ -26,7 +26,7 @@ export const graphqlRequest = async <T = unknown>({
     {
       fetch,
       headers: { Authorization: `Bearer ${context.CONTENTFUL_KEY}` },
-      errorPolicy: preview ? 'none' : 'ignore'
+      errorPolicy: preview ? 'none' : 'ignore',
     }
   ).request<T>(query, { ...variables, preview })
 }
@@ -123,6 +123,8 @@ export type Cake = {
   typeCUnit?: Unit
   typeCStock?: number
   typeCMinimum?: number
+  notAvailableStart?: string // Date
+  notAvailableEnd?: string // Date
   description?: CommonRichText
   additionalInformation?: CommonRichText
   cakeCustomizationsCollection?: {
@@ -200,6 +202,8 @@ export const CAKE_DETAILS = gql`
     }
     typeCStock
     typeCMinimum
+    notAvailableStart
+    notAvailableEnd
     description {
       json
     }
