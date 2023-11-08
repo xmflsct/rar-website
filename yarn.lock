@@ -1268,7 +1268,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/cloudflare-pages@npm:2.2.0":
+"@remix-run/cloudflare-pages@npm:^2.2.0":
   version: 2.2.0
   resolution: "@remix-run/cloudflare-pages@npm:2.2.0"
   dependencies:
@@ -1283,7 +1283,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/cloudflare@npm:2.2.0":
+"@remix-run/cloudflare@npm:2.2.0, @remix-run/cloudflare@npm:^2.2.0":
   version: 2.2.0
   resolution: "@remix-run/cloudflare@npm:2.2.0"
   dependencies:
@@ -1397,7 +1397,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/react@npm:2.2.0":
+"@remix-run/react@npm:^2.2.0":
   version: 2.2.0
   resolution: "@remix-run/react@npm:2.2.0"
   dependencies:
@@ -1565,10 +1565,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.14.200":
-  version: 4.14.200
-  resolution: "@types/lodash@npm:4.14.200"
-  checksum: 6471f8bb5da692a6ecf03a8da4935bfbc341e67ee9bcb4f5730bfacff0c367232548f0a01e8ac5ea18c6fe78fb085d502494e33ccb47a7ee87cbdee03b47d00d
+"@types/lodash@npm:^4.14.201":
+  version: 4.14.201
+  resolution: "@types/lodash@npm:4.14.201"
+  checksum: 484be655298e9b2dc2d218ea934071b2ea31e4a531c561dd220dbda65237e8d08c20dc2d457ac24f29be7fe167415bf7bb9360ea0d80bdb8b0f0ec8d8db92fae
   languageName: node
   linkType: hard
 
@@ -1620,16 +1620,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.2.14":
-  version: 18.2.14
-  resolution: "@types/react-dom@npm:18.2.14"
+"@types/react-dom@npm:^18.2.15":
+  version: 18.2.15
+  resolution: "@types/react-dom@npm:18.2.15"
   dependencies:
     "@types/react": "*"
-  checksum: 890289c70d1966c168037637c09cacefe6205bdd27a33252144a6b432595a2943775ac1a1accac0beddaeb67f8fdf721e076acb1adc990b08e51c3d9fd4e780c
+  checksum: 8e9631600c21ff561328e38a951d1991b3b3b20f538af4c0efbd1327c883a5573a63f50e1b945c34fa51b114b30e1ca5e62317bd54f21e063d6697b4be843a03
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.2.36":
+"@types/react@npm:*":
   version: 18.2.36
   resolution: "@types/react@npm:18.2.36"
   dependencies:
@@ -1637,6 +1637,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: 561fab294117983f3d245a63730bcffb423fc2a1b0f27d20c870abc5d980bc206a74f741cb11b5170fcdf0e747ac05448369cd930fbf345f74ed567f8fef3a9e
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.2.37":
+  version: 18.2.37
+  resolution: "@types/react@npm:18.2.37"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: 2d2599f1a09e4f678509161fea8baeaf76d21deee460f4f3ccc1ca431ebe85f896d7d0b906127de17e97ed57240cec61955eb97d0b5d9cbf4e97fd6620b1acdb
   languageName: node
   linkType: hard
 
@@ -6538,15 +6549,15 @@ __metadata:
     "@headlessui/react": ^1.7.17
     "@myparcel/constants": ^1.1.1
     "@myparcel/sdk": ^3.3.1
-    "@remix-run/cloudflare": 2.2.0
-    "@remix-run/cloudflare-pages": 2.2.0
+    "@remix-run/cloudflare": ^2.2.0
+    "@remix-run/cloudflare-pages": ^2.2.0
     "@remix-run/dev": 2.2.0
-    "@remix-run/react": 2.2.0
+    "@remix-run/react": ^2.2.0
     "@stripe/stripe-js": ^2.1.11
     "@tailwindcss/typography": ^0.5.10
-    "@types/lodash": ^4.14.200
-    "@types/react": ^18.2.36
-    "@types/react-dom": ^18.2.14
+    "@types/lodash": ^4.14.201
+    "@types/react": ^18.2.37
+    "@types/react-dom": ^18.2.15
     autoprefixer: ^10.4.16
     classnames: ^2.3.2
     cross-env: ^7.0.3
