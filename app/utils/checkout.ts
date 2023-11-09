@@ -8,7 +8,6 @@ import calShipping from './calShipping'
 import { Cake, graphqlRequest, Shipping } from './contentful'
 import { getReadableDeliveryDate } from './readableDeliveryDate'
 import { getStripeHeaders } from './stripeHeaders'
-import { cakeAvailable } from './cakeAvailable'
 
 export type CheckoutContent = {
   ideal?: boolean
@@ -75,8 +74,8 @@ const verifyContentful = async ({
             | 'typeCPrice'
             | 'typeCStock'
             | 'typeCMinimum'
-            | 'notAvailableStart'
-            | 'notAvailableEnd'
+            | 'pickupNotAvailableStart'
+            | 'pickupNotAvailableEnd'
             | 'deliveryCustomizations'
             | 'shippingWeight'
             | 'shippingAvailable'
@@ -105,8 +104,8 @@ const verifyContentful = async ({
                 typeCPrice
                 typeCStock
                 typeCMinimum
-                notAvailableStart
-                notAvailableEnd
+                pickupNotAvailableStart
+                pickupNotAvailableEnd
                 deliveryCustomizations
                 shippingWeight
                 shippingAvailable
@@ -126,10 +125,6 @@ const verifyContentful = async ({
         throw 'Cake not found'
       }
 
-      if (!cakeAvailable(item)) {
-        throw 'Some cake not available'
-      }
-
       const order = flatOrders[objectIndex]
       if (!item[`type${order.chosen.unit}Available`]) {
         throw 'Cake availability error'
@@ -143,6 +138,15 @@ const verifyContentful = async ({
       }
       if (order[`type${order.chosen.unit}Price`] !== item[`type${order.chosen.unit}Price`]) {
         throw 'Cake pricing error'
+      }
+
+      if (order.pickupNotAvailableStart || order.pickupNotAvailableEnd) {
+        if (
+          isAfter(new Date(), parseISO(order.pickupNotAvailableStart || '2999-01-01')) ||
+          isBefore(new Date(), parseISO(order.pickupNotAvailableEnd || '1900-01-01'))
+        ) {
+          throw 'Pickup date not available'
+        }
       }
 
       if (!!order.chosen.delivery?.date) {

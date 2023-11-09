@@ -5,7 +5,7 @@ import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json } from '@rem
 import { Form, Link, useActionData, useLoaderData, useNavigation } from '@remix-run/react'
 import { loadStripe } from '@stripe/stripe-js'
 import classNames from 'classnames'
-import { addDays, getMonth, getYear } from 'date-fns'
+import { addDays, getMonth, getYear, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
 import countries from 'i18n-iso-countries'
 import { sumBy } from 'lodash'
@@ -22,6 +22,7 @@ import checkout from '~/utils/checkout'
 import { DaysClosed, MaxCalendarMonth, Shipping, cacheQuery } from '~/utils/contentful'
 import { full } from '~/utils/currency'
 import { getAllPages } from '~/utils/kv'
+import { correctPickup } from '~/utils/pickup'
 
 countries.registerLocale(require('i18n-iso-countries/langs/en.json'))
 
@@ -261,7 +262,22 @@ const ShoppingBag = () => {
                               maxCalendarMonth - 1
                             )
                           }
-                          disabled={[...closedDays(daysClosedCollection), invalidDayBefore]}
+                          disabled={[
+                            ...closedDays(daysClosedCollection),
+                            invalidDayBefore,
+                            ...orders.pickup.map(order => {
+                              const dates = correctPickup(order)
+
+                              if (dates.start && dates.end) {
+                                return { from: parseISO(dates.start), to: parseISO(dates.end) }
+                              }
+                              if (dates.start || dates.end) {
+                                return { from: parseISO(dates.start || dates.end || '') }
+                              }
+
+                              return []
+                            })
+                          ]}
                         />
                       </div>
                       <div className='text-sm mt-2 text-neutral-500'>
