@@ -2,7 +2,6 @@ node_modules
 
 /.wrangler
 /.cache
-/functions/_assets
 /functions/\[\[path\]\].js
 /functions/\[\[path\]\].js.map
 /functions/metafile.js.json
@@ -10,10 +9,9 @@ node_modules
 /functions/version.txt
 /public/build
 .env
-.mf
 /app/styles
 
-# yarn 3
+# yarn 4
 .pnp.*
 .yarn/*
 !.yarn/patches
