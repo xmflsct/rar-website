@@ -1,11 +1,11 @@
 import { faStripe } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Dialog, Transition } from '@headlessui/react'
-import { ActionArgs, LoaderArgs, V2_MetaFunction, json } from '@remix-run/cloudflare'
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json } from '@remix-run/cloudflare'
 import { Form, Link, useActionData, useLoaderData, useNavigation } from '@remix-run/react'
 import { loadStripe } from '@stripe/stripe-js'
 import classNames from 'classnames'
-import { addDays, getMonth, getYear } from 'date-fns'
+import { addDays, getMonth, getYear, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
 import countries from 'i18n-iso-countries'
 import { sumBy } from 'lodash'
@@ -22,10 +22,11 @@ import checkout from '~/utils/checkout'
 import { DaysClosed, MaxCalendarMonth, Shipping, cacheQuery } from '~/utils/contentful'
 import { full } from '~/utils/currency'
 import { getAllPages } from '~/utils/kv'
+import { correctPickup } from '~/utils/pickup'
 
 countries.registerLocale(require('i18n-iso-countries/langs/en.json'))
 
-export const loader = async ({ context, request }: LoaderArgs) => {
+export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const data = await cacheQuery<{
     shippingCollection: { items: Shipping[] }
     maxCalendarMonthCollection: { items: MaxCalendarMonth[] }
@@ -66,7 +67,7 @@ export const loader = async ({ context, request }: LoaderArgs) => {
   })
 }
 
-export const action = async ({ context, request }: ActionArgs) => {
+export const action = async ({ context, request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const data = Object.fromEntries(formData)
 
@@ -92,11 +93,11 @@ export const action = async ({ context, request }: ActionArgs) => {
   if (res?.id) {
     return res.id
   } else {
-    return null
+    return res
   }
 }
 
-export const meta: V2_MetaFunction = () => [
+export const meta: MetaFunction = () => [
   {
     title: `Shopping Bag | Round&Round Rotterdam`
   }
@@ -261,7 +262,22 @@ const ShoppingBag = () => {
                               maxCalendarMonth - 1
                             )
                           }
-                          disabled={[...closedDays(daysClosedCollection), invalidDayBefore]}
+                          disabled={[
+                            ...closedDays(daysClosedCollection),
+                            invalidDayBefore,
+                            ...orders.pickup.map(order => {
+                              const dates = correctPickup(order)
+
+                              if (dates.start && dates.end) {
+                                return { from: parseISO(dates.start), to: parseISO(dates.end) }
+                              }
+                              if (dates.start || dates.end) {
+                                return { from: parseISO(dates.start || dates.end || '') }
+                              }
+
+                              return []
+                            })
+                          ]}
                         />
                       </div>
                       <div className='text-sm mt-2 text-neutral-500'>

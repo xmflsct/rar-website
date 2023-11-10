@@ -27,6 +27,8 @@ export type BagState = {
   cakeRemove: (order: CakeOrder) => void
 }
 
+const VERSION = '20231109'
+
 const initBagState: BagState = {
   cakeOrders: [],
   cakeAdd: () => {},
@@ -38,6 +40,17 @@ export const BagContext = createContext<BagState>(initBagState)
 const BagProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [cakeOrders, setCakeOrders] = useState<CakeOrder[]>(initBagState.cakeOrders)
   useEffect(() => {
+    const NOW = `${new Date().getFullYear()}${('0' + (new Date().getMonth() + 1)).slice(-2)}${(
+      '0' + new Date().getDate()
+    ).slice(-2)}`
+    const VERSION_LOCAL = localStorage.getItem('version') || NOW
+    if (VERSION_LOCAL < VERSION) {
+      localStorage.removeItem('cakeOrders')
+      localStorage.setItem('version', VERSION)
+    } else {
+      localStorage.setItem('version', VERSION)
+    }
+
     const storedCakeOrders = localStorage.getItem('cakeOrders')
     if (!storedCakeOrders) return
 

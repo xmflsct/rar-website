@@ -1,4 +1,4 @@
-import { ActionArgs, json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { ActionFunctionArgs, json, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useFetcher, useLoaderData } from '@remix-run/react'
 import classNames from 'classnames'
 import { useEffect, useRef, useState } from 'react'
@@ -18,7 +18,7 @@ type SessionsData = {
     shipping_cost?: { shipping_rate?: Stripe.ShippingRate }
   })[]
 }
-export const loader = async ({ context }: LoaderArgs) => {
+export const loader = async ({ context }: LoaderFunctionArgs) => {
   if (!context?.STRIPE_KEY_ADMIN) {
     throw json(null, { status: 500 })
   } else {
@@ -29,7 +29,7 @@ export const loader = async ({ context }: LoaderArgs) => {
   }
 }
 
-export const action = async ({ context, request }: ActionArgs) => {
+export const action = async ({ context, request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const action = formData.get('action')?.toString()
   const data = JSON.parse(formData.get('data')?.toString() || '{}')
@@ -47,7 +47,7 @@ export const action = async ({ context, request }: ActionArgs) => {
   }
 }
 
-export const meta: V2_MetaFunction = () => [
+export const meta: MetaFunction = () => [
   {
     title: 'Orders | Round&Round Rotterdam'
   }

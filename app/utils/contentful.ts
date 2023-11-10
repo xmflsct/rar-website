@@ -1,9 +1,9 @@
 import { Document } from '@contentful/rich-text-types'
-import { json, LoaderArgs } from '@remix-run/cloudflare'
+import { json, LoaderFunctionArgs } from '@remix-run/cloudflare'
 import { gql, GraphQLClient, RequestDocument, Variables } from 'graphql-request'
 
 type GraphQLRequest = {
-  context: LoaderArgs['context']
+  context: LoaderFunctionArgs['context']
   query: RequestDocument
   variables?: Variables
 }
@@ -128,6 +128,8 @@ export type Cake = {
   cakeCustomizationsCollection?: {
     items: CakeCustomization[]
   }
+  pickupNotAvailableStart?: string // Date
+  pickupNotAvailableEnd?: string // Date
   deliveryCustomizations?: {
     pickup?: { minimum?: number; availability: DeliveryCustomization }
     shipping?: {
@@ -212,6 +214,8 @@ export const CAKE_DETAILS = gql`
         options
       }
     }
+    pickupNotAvailableStart
+    pickupNotAvailableEnd
     deliveryCustomizations
     shippingWeight
     shippingAvailable

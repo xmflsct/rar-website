@@ -1,4 +1,4 @@
-import { LoaderArgs } from '@remix-run/cloudflare'
+import { LoaderFunctionArgs } from '@remix-run/cloudflare'
 import { gql } from 'graphql-request'
 import { Navigation } from '~/layout/navigation'
 import { DaysClosed, graphqlRequest, Page, PAGE_CONTENT_LINKS } from './contentful'
@@ -6,7 +6,7 @@ import { DaysClosed, graphqlRequest, Page, PAGE_CONTENT_LINKS } from './contentf
 export let kved: boolean | undefined = undefined
 
 const getAllPages = async (
-  context: LoaderArgs['context']
+  context: LoaderFunctionArgs['context']
 ): Promise<{
   navs: Navigation[]
   pages: Page[]

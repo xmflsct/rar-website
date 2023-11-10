@@ -1,5 +1,5 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderArgs, V2_MetaFunction } from '@remix-run/cloudflare'
+import { json, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import type { Product, WithContext } from 'schema-dts'
@@ -7,9 +7,8 @@ import CakeView from '~/components/cakeView'
 import Layout from '~/layout'
 import { cacheQuery, Cake, CAKE_DETAILS, DaysClosed } from '~/utils/contentful'
 import { getAllPages } from '~/utils/kv'
-import { LoaderData } from '~/utils/unwrapLoaderData'
 
-export const loader = async ({ context, params, request }: LoaderArgs) => {
+export const loader = async ({ context, params, request }: LoaderFunctionArgs) => {
   const data = await cacheQuery<{
     cakeCollection: { items: Cake[] }
     daysClosedCollection: { items: DaysClosed[] }
@@ -48,30 +47,40 @@ export const loader = async ({ context, params, request }: LoaderArgs) => {
   })
 }
 
-export const meta: V2_MetaFunction = ({ data }: { data: LoaderData<typeof loader> }) => [
-  {
-    title: `${data.cake.name} | Round&Round Rotterdam`,
-    ...(data.cake.description && {
-      description: documentToPlainTextString(data.cake.description.json).substring(0, 199)
-    })
-  }
-]
-export const handle = {
-  structuredData: (data: LoaderData<typeof loader>): WithContext<Product> => ({
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: data.cake.name,
-    image: data.cake.image?.url,
-    offers: {
-      '@type': 'Offer',
-      price:
-        (data.cake.typeCAvailable ? data.cake.typeCPrice : 0) ||
-        (data.cake.typeBAvailable ? data.cake.typeBPrice : 0) ||
-        (data.cake.typeAAvailable ? data.cake.typeAPrice : 0),
-      priceCurrency: 'EUR'
-    }
-  })
-}
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
+  data
+    ? [
+        {
+          title: `${data.cake.name} | Round&Round Rotterdam`
+        },
+        {
+          property: 'og:title',
+          content: data.cake.name
+        },
+        data.cake.description
+          ? {
+              name: 'description',
+              content: documentToPlainTextString(data.cake.description.json).substring(0, 199)
+            }
+          : {},
+        {
+          'script:ld+json': {
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: data.cake.name,
+            image: data.cake.image?.url,
+            offers: {
+              '@type': 'Offer',
+              price:
+                (data.cake.typeCAvailable ? data.cake.typeCPrice : 0) ||
+                (data.cake.typeBAvailable ? data.cake.typeBPrice : 0) ||
+                (data.cake.typeAAvailable ? data.cake.typeAPrice : 0),
+              priceCurrency: 'EUR'
+            }
+          } as WithContext<Product>
+        }
+      ]
+    : []
 
 const PageCake: React.FC = () => {
   const { navs, cake, daysClosedCollection } = useLoaderData<typeof loader>()

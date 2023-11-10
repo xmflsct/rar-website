@@ -7,6 +7,7 @@ import { BagContext, CakeOrder } from '~/states/bag'
 import { full } from '~/utils/currency'
 import { getReadableDeliveryDate } from '~/utils/readableDeliveryDate'
 import Button from './button'
+import { PickupNotAvailable } from './cakeView'
 
 type Props = {
   order: CakeOrder
@@ -25,6 +26,7 @@ const OrderList: React.FC<Props> = ({ order }) => {
           children={order.name}
         />
         <div className='flex-1 text-sm flex flex-col gap-2'>
+          <PickupNotAvailable cake={order} />
           <div>
             {order.chosen.cakeCustomizations?.map(customization => {
               const matchedCustomization = order.cakeCustomizationsCollection?.items.findIndex(

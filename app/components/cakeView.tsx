@@ -1,6 +1,8 @@
 import classNames from 'classnames'
+import { format, parseISO } from 'date-fns'
 import { Cake, DaysClosed } from '~/utils/contentful'
 import { full } from '~/utils/currency'
+import { correctPickup } from '~/utils/pickup'
 import Button from './button'
 import CakeOrder from './cakeOrder'
 import Image from './image'
@@ -9,6 +11,39 @@ import RichText from './richText'
 type Props = {
   cake: Cake
   daysClosedCollection: DaysClosed[]
+}
+
+export const PickupNotAvailable = ({
+  cake
+}: {
+  cake: Pick<Cake, 'pickupNotAvailableStart' | 'pickupNotAvailableEnd'>
+}) => {
+  const dates = correctPickup(cake)
+  if (dates.start && dates.end) {
+    return (
+      <p className='mt-2 text-sm'>
+        Pickup not available between{' '}
+        <span className='font-semibold'>{format(parseISO(dates.start), 'PP')}</span> -{' '}
+        <span className='font-semibold'>{format(parseISO(dates.end), 'PP')}</span>
+      </p>
+    )
+  }
+  if (dates.start) {
+    return (
+      <p className='mt-2 text-sm'>
+        Pickup not available after{' '}
+        <span className='font-semibold'>{format(parseISO(dates.start), 'PP')}</span>
+      </p>
+    )
+  }
+  if (dates.end) {
+    return (
+      <p className='mt-2 text-sm'>
+        Pickup not available before{' '}
+        <span className='font-semibold'>{format(parseISO(dates.end), 'PP')}</span>
+      </p>
+    )
+  }
 }
 
 const CakeView: React.FC<Props> = ({ cake, daysClosedCollection }) => {
@@ -52,9 +87,14 @@ const CakeView: React.FC<Props> = ({ cake, daysClosedCollection }) => {
           {typePrice('C')}
         </ul>
         {cake.available ? (
-          <CakeOrder cake={cake} daysClosedCollection={daysClosedCollection} />
+          <>
+            <CakeOrder cake={cake} daysClosedCollection={daysClosedCollection} />
+            <PickupNotAvailable cake={cake} />
+          </>
         ) : (
-          <Button disabled>Sold Out</Button>
+          <Button disabled className='mt-4'>
+            Not available
+          </Button>
         )}
       </div>
     </div>
