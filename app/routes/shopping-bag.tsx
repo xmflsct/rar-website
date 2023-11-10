@@ -268,14 +268,8 @@ const ShoppingBag = () => {
                             ...orders.pickup.map(order => {
                               const dates = correctPickup(order)
 
-                              if (dates.start && dates.end) {
-                                return { from: parseISO(dates.start), to: parseISO(dates.end) }
-                              }
-                              if (dates.start) {
-                                return { from: parseISO(dates.start) }
-                              }
-                              if (dates.end) {
-                                return { to: parseISO(dates.end) }
+                              if (dates.start || dates.end) {
+                                return { from: parseISO(dates.start || '1900-01-01'), to: parseISO(dates.end || '2999-01-01') }
                               }
 
                               return []
