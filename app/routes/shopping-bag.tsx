@@ -271,8 +271,11 @@ const ShoppingBag = () => {
                               if (dates.start && dates.end) {
                                 return { from: parseISO(dates.start), to: parseISO(dates.end) }
                               }
-                              if (dates.start || dates.end) {
-                                return { from: parseISO(dates.start || dates.end || '') }
+                              if (dates.start) {
+                                return { from: parseISO(dates.start) }
+                              }
+                              if (dates.end) {
+                                return { to: parseISO(dates.end) }
                               }
 
                               return []
