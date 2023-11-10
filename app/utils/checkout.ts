@@ -8,6 +8,7 @@ import calShipping from './calShipping'
 import { Cake, graphqlRequest, Shipping } from './contentful'
 import { getReadableDeliveryDate } from './readableDeliveryDate'
 import { getStripeHeaders } from './stripeHeaders'
+import { correctPickup } from './pickup'
 
 export type CheckoutContent = {
   ideal?: boolean
@@ -42,7 +43,7 @@ type ShippingOptions = {
 
 const verifyContentful = async ({
   context,
-  content: { orders, subtotal_amount, shipping_amount, countryCode }
+  content: { orders, subtotal_amount, shipping_amount, countryCode, pickup_date }
 }: {
   context: LoaderFunctionArgs['context']
   content: CheckoutContent
@@ -140,11 +141,21 @@ const verifyContentful = async ({
         throw 'Cake pricing error'
       }
 
-      if (order.pickupNotAvailableStart || order.pickupNotAvailableEnd) {
-        if (
-          isAfter(new Date(), parseISO(order.pickupNotAvailableStart || '2999-01-01')) ||
-          isBefore(new Date(), parseISO(order.pickupNotAvailableEnd || '1900-01-01'))
-        ) {
+      if (pickup_date && (order.pickupNotAvailableStart || order.pickupNotAvailableEnd)) {
+        const dates = correctPickup(order)
+        if (dates.start && dates.end) {
+          if (
+            isAfter(parseISO(dates.start), parseISO(pickup_date)) &&
+            isBefore(parseISO(dates.end), parseISO(pickup_date))
+          ) {
+            throw 'Pickup date not available'
+          }
+        }
+
+        if (dates.start && isAfter(parseISO(dates.start), parseISO(pickup_date))) {
+          throw 'Pickup date not available'
+        }
+        if (dates.end && isBefore(parseISO(dates.end), parseISO(pickup_date))) {
           throw 'Pickup date not available'
         }
       }
