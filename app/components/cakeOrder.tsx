@@ -27,9 +27,6 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
 
   const [unit, setUnit] = useState<'A' | 'B' | 'C' | undefined>(undefined)
   const [amount, setAmount] = useState<string>('')
-  useEffect(() => {
-    setAmount('')
-  }, [unit])
 
   const [cakeCustomizations, setCakeCustomizations] = useState<[string, number][]>([])
 
@@ -223,6 +220,18 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
   useEffect(() => {
     setUnit(availableTypes[0])
   }, [])
+  useEffect(() => {
+    const minimum = unit ? cake[`type${unit}Minimum`] : undefined
+    const stock = unit ? cake[`type${unit}Stock`] : undefined
+    const stockDefined = stock !== (undefined || null)
+
+    if (stockDefined && (stock === 0 || (stock && stock < parseInt(amount)))) {
+      setAmount('')
+    }
+    if (minimum && minimum > parseInt(amount)) {
+      setAmount('')
+    }
+  }, [unit, amount])
   const renderTypeOptions = () => {
     const minimum = unit ? cake[`type${unit}Minimum`] : undefined
     const stock = unit ? cake[`type${unit}Stock`] : undefined
