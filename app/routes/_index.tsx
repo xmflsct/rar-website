@@ -48,7 +48,7 @@ export default () => {
   return (
     <Layout navs={navs}>
       <div>
-        <h3>>Holiday Schedule</h3>
+        <h3>Holiday Schedule</h3>
 
         <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
           <div>
