@@ -44,6 +44,8 @@ const calShipping = ({
           subtotal >= orderFreeAbove.deliveryCustomizations?.shipping?.freeAbove ? 0 : rate.price
       } else if (rate.freeAbove) {
         fee = subtotal >= rate.freeAbove ? 0 : rate.price
+      } else {
+        fee = rate.price
       }
       label =
         typeof rate.label === 'boolean' ? (rate.label.toString() as 'true' | 'false') : rate.label
