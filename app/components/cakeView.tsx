@@ -86,6 +86,15 @@ const CakeView: React.FC<Props> = ({ cake, daysClosedCollection }) => {
           {typePrice('B')}
           {typePrice('C')}
         </ul>
+        {cake.additionalInformation && (
+          <div className='mt-8 md:mt-4'>
+            <RichText
+              className='prose-sm'
+              content={cake.additionalInformation}
+              daysClosedCollection={daysClosedCollection}
+            />
+          </div>
+        )}
         {cake.available ? (
           <>
             <CakeOrder cake={cake} daysClosedCollection={daysClosedCollection} />
