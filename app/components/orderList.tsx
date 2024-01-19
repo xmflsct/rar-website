@@ -39,11 +39,11 @@ const OrderList: React.FC<Props> = ({ order }) => {
                     {order.cakeCustomizationsCollection?.items[matchedCustomization].type}
                     {': '}
                   </span>
-                  {
-                    order.cakeCustomizationsCollection?.items[matchedCustomization].options[
-                      customization[1]
-                    ]
-                  }
+                  {customization[1] === -1
+                    ? `Custom "${customization[2]}"`
+                    : order.cakeCustomizationsCollection?.items[matchedCustomization].options[
+                        customization[1]
+                      ]}
                 </p>
               )
             })}

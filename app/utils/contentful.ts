@@ -148,6 +148,8 @@ export type DeliveryCustomization =
 export type CakeCustomization = {
   type: string
   options: string[]
+  customAllow?: boolean
+  customMaxLength?: number // Default to 30
 }
 
 export type Shipping = {
@@ -212,6 +214,8 @@ export const CAKE_DETAILS = gql`
       items {
         type
         options
+        customAllow
+        customMaxLength
       }
     }
     pickupNotAvailableStart
