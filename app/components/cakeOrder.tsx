@@ -169,10 +169,11 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
       <div className='flex flex-row gap-4 mb-2'>
         {cake.cakeCustomizationsCollection?.items.map((customization, index) => {
           const selectedIndex = cakeCustomizations.findIndex(c => c[0] === customization.type)
+          const maxLength = customization.customMaxLength || 30
           return (
             <div className='flex-1'>
               <div className='font-bold'>{customization.type}</div>
-              <div className='flex flex-col lg:flex-row gap-2'>
+              <div className='flex flex-row gap-2'>
                 <Select
                   key={index}
                   required
@@ -205,20 +206,36 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
                   {!!customization.customAllow ? <option value={-1} children='Custom' /> : null}
                 </Select>
                 {selectedIndex > -1 && cakeCustomizations[selectedIndex][1] === -1 ? (
-                  <input
-                    name='custom'
-                    type='text'
-                    className='grow ml-1 border-b border-neutral-500 bg-transparent'
-                    onChange={({ target: { value } }) => {
-                      if (selectedIndex > -1) {
-                        setCakeCustomizations(
-                          cakeCustomizations.map(c =>
-                            c[0] === customization.type ? [c[0], c[1], value] : c
+                  <div className='grow flex flex-row'>
+                    <input
+                      name='custom'
+                      autoFocus
+                      required
+                      type='text'
+                      className='grow border-b border-neutral-500 bg-transparent'
+                      value={selectedIndex > -1 ? cakeCustomizations[selectedIndex][2] : ''}
+                      onChange={({ target: { value } }) => {
+                        if (
+                          selectedIndex > -1 &&
+                          new TextEncoder().encode(value).length <= maxLength
+                        ) {
+                          setCakeCustomizations(
+                            cakeCustomizations.map(c =>
+                              c[0] === customization.type ? [c[0], c[1], value] : c
+                            )
                           )
-                        )
-                      }
-                    }}
-                  />
+                        }
+                      }}
+                    />
+                    <input
+                      className='border-b border-neutral-500 bg-transparent text-sm text-neutral-500 text-center'
+                      readOnly
+                      value={`${
+                        new TextEncoder().encode(cakeCustomizations[selectedIndex][2]).length || 0
+                      } / ${maxLength}`}
+                      size={7}
+                    />
+                  </div>
                 ) : null}
               </div>
             </div>
