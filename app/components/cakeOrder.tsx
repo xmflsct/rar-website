@@ -28,7 +28,7 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
   const [unit, setUnit] = useState<'A' | 'B' | 'C' | undefined>(undefined)
   const [amount, setAmount] = useState<string>('')
 
-  const [cakeCustomizations, setCakeCustomizations] = useState<[string, number][]>([])
+  const [cakeCustomizations, setCakeCustomizations] = useState<[string, number, string?][]>([])
 
   const needDeliveryOptions = useRef(cake.shippingAvailable)
 
@@ -168,40 +168,59 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
     return (
       <div className='flex flex-row gap-4 mb-2'>
         {cake.cakeCustomizationsCollection?.items.map((customization, index) => {
-          const customizationSelected = cakeCustomizations.filter(c => c[0] === customization.type)
+          const selectedIndex = cakeCustomizations.findIndex(c => c[0] === customization.type)
           return (
             <div className='flex-1'>
               <div className='font-bold'>{customization.type}</div>
-              <Select
-                key={index}
-                required
-                name={customization.type}
-                value={customizationSelected.length === 1 ? customizationSelected[0][1] : ''}
-                onChange={e => {
-                  if (customizationSelected.length === 1) {
-                    setCakeCustomizations(
-                      cakeCustomizations.map(c =>
-                        c[0] === customization.type ? [c[0], parseInt(e.target.value)] : c
+              <div className='flex flex-col lg:flex-row gap-2'>
+                <Select
+                  key={index}
+                  required
+                  name={customization.type}
+                  value={selectedIndex > -1 ? cakeCustomizations[selectedIndex][1] : ''}
+                  onChange={e => {
+                    if (selectedIndex > -1) {
+                      setCakeCustomizations(
+                        cakeCustomizations.map(c =>
+                          c[0] === customization.type ? [c[0], parseInt(e.target.value)] : c
+                        )
                       )
-                    )
-                  } else {
-                    setCakeCustomizations([
-                      ...cakeCustomizations,
-                      [customization.type, parseInt(e.target.value)]
-                    ])
+                    } else {
+                      setCakeCustomizations([
+                        ...cakeCustomizations,
+                        [customization.type, parseInt(e.target.value)]
+                      ])
+                    }
+                  }}
+                  className={
+                    cakeCustomizations.filter(c => c[0] === customization.type).length
+                      ? undefined
+                      : 'text-gray-400'
                   }
-                }}
-                className={
-                  cakeCustomizations.filter(c => c[0] === customization.type).length
-                    ? undefined
-                    : 'text-gray-400'
-                }
-              >
-                <option value='' children={`${customization.type} ...`} disabled />
-                {customization.options.map((option, index) => (
-                  <option key={index} value={index} children={option} />
-                ))}
-              </Select>
+                >
+                  <option value='' children={`${customization.type} ...`} disabled />
+                  {customization.options.map((option, index) => (
+                    <option key={index} value={index} children={option} />
+                  ))}
+                  {!!customization.customAllow ? <option value={-1} children='Custom' /> : null}
+                </Select>
+                {selectedIndex > -1 && cakeCustomizations[selectedIndex][1] === -1 ? (
+                  <input
+                    name='custom'
+                    type='text'
+                    className='grow ml-1 border-b border-neutral-500 bg-transparent'
+                    onChange={({ target: { value } }) => {
+                      if (selectedIndex > -1) {
+                        setCakeCustomizations(
+                          cakeCustomizations.map(c =>
+                            c[0] === customization.type ? [c[0], c[1], value] : c
+                          )
+                        )
+                      }
+                    }}
+                  />
+                ) : null}
+              </div>
             </div>
           )
         })}

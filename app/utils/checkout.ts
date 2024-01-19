@@ -302,7 +302,11 @@ const checkout = async ({
                 c => c.type === customization[0]
               )
               if (!value) return
-              return `${type}: ${value[0].options[customization[1]]}`
+              return `${type}: ${
+                customization[1] === -1
+                  ? `Custom "${customization[2]}"`
+                  : value[0].options[customization[1]]
+              }`
             })
             .join(', ')
         : undefined,
@@ -316,6 +320,7 @@ const checkout = async ({
         unit_amount: price * 10 * 10,
         product_data: {
           name,
+          description: name,
           images: [order.image?.url],
           ...(order[`type${order.chosen.unit}Stock`] !== undefined && {
             metadata: { contentful_id: order.sys.id, type: order.chosen.unit }

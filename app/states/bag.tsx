@@ -8,7 +8,7 @@ export type CakeOrder = Omit<
   chosen: {
     unit: 'A' | 'B' | 'C'
     amount: number
-    cakeCustomizations?: [string, number][]
+    cakeCustomizations?: [string, number, string?][]
     delivery?:
       | {
           type: 'pickup'
