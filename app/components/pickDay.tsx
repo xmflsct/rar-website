@@ -4,7 +4,7 @@ import { Fragment } from 'react'
 import { DayPicker, DayPickerSingleProps, Matcher, isDateRange, isMatch } from 'react-day-picker'
 import { DaysClosed } from '~/utils/contentful'
 
-export const validDayAfter: Matcher = {
+export const validDayAfter = (): Matcher => ({
   after:
     parseInt(
       new Date().toLocaleString('nl-NL', {
@@ -15,8 +15,8 @@ export const validDayAfter: Matcher = {
     ) > 16
       ? addDays(new Date(), 2)
       : addDays(new Date(), 1)
-}
-export const invalidDayBefore: Matcher = {
+})
+export const invalidDayBefore = (): Matcher => ({
   before:
     parseInt(
       new Date().toLocaleString('nl-NL', {
@@ -27,7 +27,7 @@ export const invalidDayBefore: Matcher = {
     ) > 16
       ? addDays(new Date(), 3)
       : addDays(new Date(), 2)
-}
+})
 export const openDaysOfWeek: Matcher = { dayOfWeek: [0, 3, 4, 5, 6] }
 export const closedDaysOfWeek: Matcher = { dayOfWeek: [1, 2] }
 
@@ -38,7 +38,7 @@ export const isDayValid = ({
   date: Date
   daysClosed?: DaysClosed[]
 }): boolean => {
-  if (!isMatch(date, [validDayAfter])) {
+  if (!isMatch(date, [validDayAfter()])) {
     return false
   }
 

@@ -264,7 +264,7 @@ const ShoppingBag = () => {
                           }
                           disabled={[
                             ...closedDays(daysClosedCollection),
-                            invalidDayBefore,
+                            invalidDayBefore(),
                             ...orders.pickup.map(order => {
                               const dates = correctPickup(order)
 
