@@ -126,7 +126,7 @@ export type Cake = {
   description?: CommonRichText
   additionalInformation?: CommonRichText
   cakeCustomizationsCollection?: {
-    items: CakeCustomization[]
+    items: (CakeCustomization | null)[]
   }
   pickupNotAvailableStart?: string // Date
   pickupNotAvailableEnd?: string // Date
