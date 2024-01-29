@@ -168,6 +168,8 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
     return (
       <div className='flex flex-row gap-4 mb-2'>
         {cake.cakeCustomizationsCollection?.items.map((customization, index) => {
+          if (!customization) return null
+
           const selectedIndex = cakeCustomizations.findIndex(c => c[0] === customization.type)
           const maxLength = customization.customMaxLength || 30
           return (
