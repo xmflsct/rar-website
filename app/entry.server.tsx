@@ -1,9 +1,9 @@
+import { Request } from '@cloudflare/workers-types'
 import type { EntryContext } from '@remix-run/cloudflare'
 import { RemixServer } from '@remix-run/react'
 import { renderToReadableStream } from 'react-dom/server'
 import { cached } from './utils/contentful'
 import { kved } from './utils/kv'
-import isbot from 'isbot'
 
 export default async function handleRequest(
   request: Request,
@@ -14,7 +14,6 @@ export default async function handleRequest(
   const body = await renderToReadableStream(
     <RemixServer context={remixContext} url={request.url} />,
     {
-      signal: request.signal,
       onError(error: unknown) {
         console.error(error)
         responseStatusCode = 500
@@ -22,7 +21,7 @@ export default async function handleRequest(
     }
   )
 
-  if (isbot(request.headers.get('user-agent'))) {
+  if ((request.cf?.botManagement as any)?.verified_bot) {
     await body.allReady
   }
 

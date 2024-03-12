@@ -1,14 +1,14 @@
 import { json, LoaderFunctionArgs } from '@remix-run/cloudflare'
-import { isAfter, isBefore, isSameDay, parse, parseISO } from 'date-fns'
+import { isAfter, isBefore, isSameDay, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
 import countries from 'i18n-iso-countries'
 import { sumBy } from 'lodash'
 import { CakeOrder } from '~/states/bag'
 import calShipping from './calShipping'
 import { Cake, graphqlRequest, Shipping } from './contentful'
+import { correctPickup } from './pickup'
 import { getReadableDeliveryDate } from './readableDeliveryDate'
 import { getStripeHeaders } from './stripeHeaders'
-import { correctPickup } from './pickup'
 
 export type CheckoutContent = {
   ideal?: boolean

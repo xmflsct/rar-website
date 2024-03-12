@@ -8,7 +8,7 @@ export type Navigation = {
 }
 
 type Props = {
-  navs: Navigation[]
+  navs?: Navigation[]
   toggleNav: boolean
 }
 
@@ -26,7 +26,7 @@ const Nav: React.FC<Props> = ({ navs, toggleNav }) => {
           'flex-col gap-4 lg:flex-row lg:gap-0 lg:justify-between'
         )}
       >
-        {navs.map((nav, index) => (
+        {navs?.map((nav, index) => (
           <div key={index} className='flex flex-row justify-center'>
             <NavLink
               to={`/${nav.slug}`}
