@@ -8,14 +8,15 @@
     "lib": [
       "DOM",
       "DOM.Iterable",
-      "ES2019"
+      "ES2022"
     ],
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
-    "target": "ES2019",
+    "target": "ES2022",
     "strict": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
@@ -25,6 +26,9 @@
         "./app/*"
       ]
     },
+    "types": [
+      "@cloudflare/workers-types/experimental"
+    ],
     "skipLibCheck": true,
     // Remix takes care of building everything in `remix build`.
     "noEmit": true

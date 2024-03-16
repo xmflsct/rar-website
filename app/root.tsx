@@ -1,13 +1,16 @@
 import { json, LoaderFunctionArgs } from '@remix-run/cloudflare'
 import {
+  isRouteErrorResponse,
   Links,
   LiveReload,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData
+  useRouteError,
+  useRouteLoaderData
 } from '@remix-run/react'
+import LayoutUI from '~/layout'
 import BagProvider from './states/bag'
 import styles from './styles/app.css'
 
@@ -24,8 +27,9 @@ export const links = () => {
   return [{ rel: 'stylesheet', href: styles }]
 }
 
-const App: React.FC = () => {
-  const data = useLoaderData<typeof loader>()
+export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const data = useRouteLoaderData<typeof loader>('root')
+  const error = useRouteError()
 
   return (
     <html lang='en' className='h-full scroll-smooth'>
@@ -35,9 +39,11 @@ const App: React.FC = () => {
         <Meta />
         <Links />
         <script
-          dangerouslySetInnerHTML={{
-            __html: `window.ENV = ${JSON.stringify(data.ENV)}`
-          }}
+          dangerouslySetInnerHTML={
+            data && {
+              __html: `window.ENV = ${JSON.stringify(data.ENV)}`
+            }
+          }
         />
         <script
           dangerouslySetInnerHTML={{
@@ -46,14 +52,33 @@ const App: React.FC = () => {
         />
       </head>
       <body className='h-full'>
-        <BagProvider>
-          <Outlet />
-        </BagProvider>
+        {children}
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
       </body>
     </html>
+  )
+}
+
+export const ErrorBoundary = () => {
+  const error = useRouteError()
+
+  return (
+    <LayoutUI>
+      <h1 className='text-3xl text-center mb-4'>
+        {isRouteErrorResponse(error) ? error.status + ' ' + error.statusText : 'Unknown Error'}
+      </h1>
+      <p className='text-xl text-center'>Please contact us directly</p>
+    </LayoutUI>
+  )
+}
+
+const App: React.FC = () => {
+  return (
+    <BagProvider>
+      <Outlet />
+    </BagProvider>
   )
 }
 

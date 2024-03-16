@@ -6,7 +6,7 @@ import Header from './header'
 import Nav, { Navigation } from './navigation'
 
 type Props = {
-  navs: Navigation[]
+  navs?: Navigation[]
 }
 const Layout: React.FC<PropsWithChildren & Props> = ({ children, navs }) => {
   const matches = useMatches()
@@ -18,10 +18,7 @@ const Layout: React.FC<PropsWithChildren & Props> = ({ children, navs }) => {
     <>
       <Header toggleNav={toggleNav} setToggleNav={setToggleNav} />
       <div
-        className={classNames(
-          'h-full flex flex-col',
-          !isAdmin ? 'max-w-4xl mx-4 lg:mx-auto' : ''
-        )}
+        className={classNames('h-full flex flex-col', !isAdmin ? 'max-w-4xl mx-4 lg:mx-auto' : '')}
       >
         <Nav navs={navs} toggleNav={toggleNav} />
         <main className='flex-1' children={children} />

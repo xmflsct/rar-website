@@ -26,7 +26,7 @@ export const graphqlRequest = async <T = unknown>({
     {
       fetch,
       headers: { Authorization: `Bearer ${context.CONTENTFUL_KEY}` },
-      errorPolicy: preview ? 'none' : 'ignore'
+      errorPolicy: 'ignore'
     }
   ).request<T>(query, { ...variables, preview })
 }
