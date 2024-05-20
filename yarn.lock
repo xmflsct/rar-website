@@ -424,6 +424,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cloudflare/pages-plugin-sentry@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "@cloudflare/pages-plugin-sentry@npm:1.1.3"
+  checksum: 10/9b1abc165e8ec59665235089590f2354f5384d27173c2aa8e4b8ddd663fc198e37e188dca3c569fb300498d755703f3b30c43819f7e5634cfb21f32978e765fa
+  languageName: node
+  linkType: hard
+
 "@cloudflare/workerd-darwin-64@npm:1.20240314.0":
   version: 1.20240314.0
   resolution: "@cloudflare/workerd-darwin-64@npm:1.20240314.0"
@@ -6442,6 +6449,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "rar-website@workspace:."
   dependencies:
+    "@cloudflare/pages-plugin-sentry": "npm:^1.1.3"
     "@cloudflare/workers-types": "npm:^4.20240314.0"
     "@contentful/rich-text-plain-text-renderer": "npm:^16.0.13"
     "@contentful/rich-text-react-renderer": "npm:^15.19.6"
