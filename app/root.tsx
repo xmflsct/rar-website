@@ -66,10 +66,12 @@ export const ErrorBoundary = () => {
 
   return (
     <LayoutUI>
-      <h1 className='text-3xl text-center mb-4'>
-        {isRouteErrorResponse(error) ? error.status + ' ' + error.statusText : 'Unknown Error'}
-      </h1>
-      <p className='text-xl text-center'>Please contact us directly</p>
+      {isRouteErrorResponse(error) ? (
+        <>
+          <h1 className='text-3xl text-center mb-4'>{error.status + ' ' + error.statusText}</h1>
+          <p className='text-xl text-center'>Please contact us directly</p>
+        </>
+      ) : undefined}
     </LayoutUI>
   )
 }

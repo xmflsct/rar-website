@@ -27,7 +27,7 @@ export type BagState = {
   cakeRemove: (order: CakeOrder) => void
 }
 
-const VERSION = '20231109'
+const VERSION = '20240605'
 
 const initBagState: BagState = {
   cakeOrders: [],

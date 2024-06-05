@@ -46,7 +46,7 @@ export const createShipment = async ({
               : {
                   cc: customer_details?.address?.country!,
                   city: customer_details?.address?.city!,
-                  postal_code: customer_details?.address?.postal_code || undefined,
+                  postal_code: customer_details?.address?.postal_code || '',
                   street:
                     customer_details?.address?.line1 +
                     (customer_details?.address?.line2

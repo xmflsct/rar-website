@@ -299,13 +299,13 @@ const checkout = async ({
             .map(customization => {
               const type = customization[0]
               const value = order.cakeCustomizationsCollection?.items.filter(
-                c => c.type === customization[0]
+                c => c?.type === customization[0]
               )
               if (!value) return
               return `${type}: ${
                 customization[1] === -1
                   ? `Custom "${customization[2]}"`
-                  : value[0].options[customization[1]]
+                  : value[0]?.options[customization[1]]
               }`
             })
             .join(', ')
