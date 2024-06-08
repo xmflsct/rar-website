@@ -420,7 +420,7 @@ const PageAdminOrders: React.FC = () => {
                     {order.pickup.replace('🛍️ pickup date: ', '')}
                   </div>
                 ) : null}
-                {order.shipping ? (
+                {order.shipping?.shipping ? (
                   <Shipping
                     myparcelAuthHeader={myparcelAuthHeader}
                     shipping={order.shipping}
