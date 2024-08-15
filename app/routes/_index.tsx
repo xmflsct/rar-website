@@ -55,6 +55,7 @@ export default () => {
   return (
     <Layout navs={navs}>
       <div>
+        <h2 className='text-2xl my-8'>[Order our beloved Mooncakes]</h2>
         <Link to='/full-moon-box'>
           <Image width={440} image={images.mooncake} />
         </Link>
