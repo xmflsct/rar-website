@@ -1,5 +1,5 @@
 import { json, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
+import { Link, useLoaderData } from '@remix-run/react'
 import { gql } from 'graphql-request'
 import Image from '~/components/image'
 import Layout from '~/layout'
@@ -10,6 +10,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const { navs } = await getAllPages(context)
 
   const images = await cacheQuery<{
+    mooncake: CommonImage
     left: CommonImage
     right: CommonImage
   }>({
@@ -17,6 +18,12 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
     request,
     query: gql`
       query Images($preview: Boolean) {
+        mooncake: asset(preview: $preview, id: "5ZNSJ5McjyJeAYxDGWXAXm") {
+          title
+          description
+          contentType
+          url
+        }
         left: asset(preview: $preview, id: "61lqEfYQpWFMG7JHYZr8qP") {
           title
           description
@@ -48,6 +55,10 @@ export default () => {
   return (
     <Layout navs={navs}>
       <div>
+        <Link to='/full-moon-box'>
+          <Image width={440} image={images.mooncake} />
+        </Link>
+
         <h2 className='text-2xl my-8'>[Our story starts from 2016]</h2>
 
         <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
