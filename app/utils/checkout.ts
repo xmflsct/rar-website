@@ -172,16 +172,16 @@ const verifyContentful = async ({
 
           if (
             matchedAvailability.before &&
-            !isBefore(parseISO(chosenDate), parseISO(matchedAvailability.before))
+            !isBefore(new Date(), parseISO(matchedAvailability.before))
           ) {
             throw 'Date range error array'
           }
         } else {
           if (
             (delivery?.availability.after &&
-              !isAfter(parseISO(chosenDate), parseISO(delivery?.availability.after))) ||
+              !isAfter(new Date(), parseISO(delivery?.availability.after))) ||
             (delivery?.availability.before &&
-              !isBefore(parseISO(chosenDate), parseISO(delivery?.availability.before)))
+              !isBefore(new Date(), parseISO(delivery?.availability.before)))
           ) {
             throw 'Date range error'
           }
