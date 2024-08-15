@@ -39,7 +39,7 @@ export const createShipment = async ({
                   city: 'Rotterdam',
                   postal_code: '3011PG',
                   street: 'Hoogstraat 55A',
-                  person: 'Round Test',
+                  person: '[TEST] Round',
                   email: 'no-reply@roundandround.nl',
                   phone: '0612345678'
                 }
