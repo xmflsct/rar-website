@@ -1,5 +1,5 @@
 import { json, LoaderFunctionArgs } from '@remix-run/cloudflare'
-import { isAfter, isBefore, isSameDay, parseISO } from 'date-fns'
+import { isAfter, isBefore, isEqual, isSameDay, parse, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
 import countries from 'i18n-iso-countries'
 import { sumBy } from 'lodash'
@@ -178,10 +178,12 @@ const verifyContentful = async ({
           }
         } else {
           if (
-            (delivery?.availability.after &&
-              !isAfter(chosenDate, parseISO(delivery?.availability.after))) ||
-            (delivery?.availability.before &&
-              !isBefore(chosenDate, parseISO(delivery?.availability.before)))
+            (delivery?.availability.after
+              ? !isAfter(chosenDate, parseISO(delivery?.availability.after))
+              : true) &&
+            (delivery?.availability.before
+              ? !isBefore(chosenDate, parseISO(delivery?.availability.before))
+              : true)
           ) {
             throw 'Date range error'
           }
