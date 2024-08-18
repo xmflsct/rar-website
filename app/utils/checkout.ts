@@ -179,9 +179,9 @@ const verifyContentful = async ({
         } else {
           if (
             (delivery?.availability.after &&
-              !isAfter(new Date(), parseISO(delivery?.availability.after))) ||
+              !isAfter(chosenDate, parseISO(delivery?.availability.after))) ||
             (delivery?.availability.before &&
-              !isBefore(new Date(), parseISO(delivery?.availability.before)))
+              !isBefore(chosenDate, parseISO(delivery?.availability.before)))
           ) {
             throw 'Date range error'
           }
