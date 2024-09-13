@@ -108,7 +108,6 @@ const ShoppingBag = () => {
     useLoaderData<typeof loader>()
   const navigation = useNavigation()
   const { cakeOrders } = useContext(BagContext)
-  const [ideal, setIdeal] = useState(true)
   const [paperBag, setPaperBag] = useState(true)
   const [countryCode, setCountryCode] = useState<string>('')
   const [pickup, setPickup] = useState<Date>()
@@ -269,7 +268,10 @@ const ShoppingBag = () => {
                               const dates = correctPickup(order)
 
                               if (dates.start || dates.end) {
-                                return { from: parseISO(dates.start || '1900-01-01'), to: parseISO(dates.end || '2999-01-01') }
+                                return {
+                                  from: parseISO(dates.start || '1900-01-01'),
+                                  to: parseISO(dates.end || '2999-01-01')
+                                }
                               }
 
                               return []
@@ -301,34 +303,6 @@ const ShoppingBag = () => {
           </div>
 
           <div className='lg:col-span-2 flex flex-col gap-4'>
-            <fieldset>
-              <h3 className='text-xl mb-2'>Processing fee</h3>
-              <div className='flex'>
-                <input
-                  type='radio'
-                  name='ideal'
-                  checked={ideal}
-                  onChange={e => setIdeal(e.target.value === 'on')}
-                />
-                <label className='pl-2 grow flex justify-between' onClick={() => setIdeal(true)}>
-                  <span>iDeal</span>
-                  <span>{full(0.3)}</span>
-                </label>
-              </div>
-              <div className='flex'>
-                <input
-                  type='radio'
-                  name='cards'
-                  checked={!ideal}
-                  onChange={e => setIdeal(e.target.value !== 'on')}
-                />
-                <label className='pl-2 grow flex justify-between' onClick={() => setIdeal(false)}>
-                  <span>Cards, Apply Pay, Google Pay</span>
-                  <span>{full(1)}</span>
-                </label>
-              </div>
-            </fieldset>
-
             {orders.shipping.length ? (
               <fieldset>
                 <h3 className='text-xl mb-2'>Ship to</h3>
@@ -387,16 +361,6 @@ const ShoppingBag = () => {
                     </td>
                   </tr>
                 ) : null}
-                <tr>
-                  <th
-                    className={classNames('text-left pr-4', !needPickup || !paperBag ? 'pb-2' : '')}
-                  >
-                    Processing fee
-                  </th>
-                  <td className={classNames('text-right', !needPickup || !paperBag ? 'pb-2' : '')}>
-                    {full(ideal ? 0.3 : 1)}
-                  </td>
-                </tr>
                 {needPickup && paperBag ? (
                   <tr>
                     <th className='text-left pr-4 pb-2'>Paper bag</th>
@@ -409,7 +373,6 @@ const ShoppingBag = () => {
                     {full(
                       subtotal +
                         (orders.shipping.length ? shippingFee ?? 0 : 0) +
-                        (ideal ? 0.3 : 1) +
                         (needPickup && paperBag ? 0.5 : 0)
                     )}
                   </td>

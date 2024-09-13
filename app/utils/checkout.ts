@@ -11,7 +11,6 @@ import { getReadableDeliveryDate } from './readableDeliveryDate'
 import { getStripeHeaders } from './stripeHeaders'
 
 export type CheckoutContent = {
-  ideal?: boolean
   cards?: boolean
   countryCode?: string
   paperBag?: boolean
@@ -340,15 +339,6 @@ const checkout = async ({
     line_items.push(item(order))
   })
 
-  line_items.push({
-    price_data: {
-      currency: 'eur',
-      unit_amount: content.ideal ? 0.3 * 10 * 10 : 1 * 10 * 10,
-      product_data: { name: 'Processing fee' }
-    },
-    quantity: 1
-  })
-
   content.paperBag &&
     line_items.push({
       price_data: {
@@ -360,9 +350,7 @@ const checkout = async ({
     })
 
   const sessionData = {
-    payment_method_types: content.ideal
-      ? ['ideal', 'bancontact']
-      : ['card', 'bancontact', 'giropay', 'eps'],
+    payment_method_types: ['ideal', 'card', 'bancontact', 'giropay', 'eps'],
     mode: 'payment',
     line_items: line_items.filter(l => l),
     ...(shipping && {
