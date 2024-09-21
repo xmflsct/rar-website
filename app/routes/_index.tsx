@@ -55,11 +55,6 @@ export default () => {
   return (
     <Layout navs={navs}>
       <div>
-        <h2 className='text-2xl my-8'>[Order our beloved Mooncakes]</h2>
-        <Link to='/full-moon-box'>
-          <Image width={440} image={images.mooncake} />
-        </Link>
-
         <h2 className='text-2xl my-8'>[Our story starts from 2016]</h2>
 
         <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
