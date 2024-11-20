@@ -51,10 +51,9 @@ export const isDayValid = ({
   date: Date
   daysClosed?: DaysClosed[]
 }): boolean => {
-  if (!!exceptionalOpenDays.length && isMatch(date, exceptionalOpenDays)) return true
-
   if (!isMatch(date, [validDayAfter()])) return false
 
+  if (!!exceptionalOpenDays.length && isMatch(date, exceptionalOpenDays)) return true
   if (!isMatch(date, [openDaysOfWeek])) return false
 
   if (daysClosed?.length) {
