@@ -1,5 +1,5 @@
 import { Popover, Transition } from '@headlessui/react'
-import { addDays } from 'date-fns'
+import { addDays, getDay, isSameDay } from 'date-fns'
 import { Fragment } from 'react'
 import { DayPicker, DayPickerSingleProps, Matcher, isDateRange, isMatch } from 'react-day-picker'
 import { DaysClosed } from '~/utils/contentful'
@@ -28,8 +28,21 @@ export const invalidDayBefore = (): Matcher => ({
       ? addDays(new Date(), 3)
       : addDays(new Date(), 2)
 })
-export const openDaysOfWeek: Matcher = { dayOfWeek: [0, 3, 4, 5, 6] }
-export const closedDaysOfWeek: Matcher = { dayOfWeek: [1, 2] }
+const openDaysOfWeek: Matcher = { dayOfWeek: [0, 3, 4, 5, 6] }
+const exceptionalOpenDays: Date[] = [new Date(2024, 11, 23), new Date(2024, 11, 24)]
+const closedDaysOfWeek: () => Matcher[] = () => {
+  if (!exceptionalOpenDays.length) return [{ dayOfWeek: [1, 2] }]
+
+  const days = []
+  for (let i = -6; i < 84; i++) {
+    const day = addDays(new Date(), i)
+    if (exceptionalOpenDays.find(d => isSameDay(d, day))) continue
+    if (getDay(day) == 1 || getDay(day) == 2) {
+      days.push(day)
+    }
+  }
+  return days
+}
 
 export const isDayValid = ({
   date,
@@ -38,13 +51,11 @@ export const isDayValid = ({
   date: Date
   daysClosed?: DaysClosed[]
 }): boolean => {
-  if (!isMatch(date, [validDayAfter()])) {
-    return false
-  }
+  if (!!exceptionalOpenDays.length && isMatch(date, exceptionalOpenDays)) return true
 
-  if (!isMatch(date, [openDaysOfWeek])) {
-    return false
-  }
+  if (!isMatch(date, [validDayAfter()])) return false
+
+  if (!isMatch(date, [openDaysOfWeek])) return false
 
   if (daysClosed?.length) {
     for (const daysClosedRange of daysClosed) {
@@ -65,10 +76,10 @@ export const isDayValid = ({
 export const closedDays = (daysCollection: DaysClosed[]): Matcher[] =>
   daysCollection
     ? [
-        closedDaysOfWeek,
+        ...closedDaysOfWeek(),
         ...daysCollection.map(days => ({ from: new Date(days.start), to: new Date(days.end) }))
       ]
-    : [closedDaysOfWeek]
+    : closedDaysOfWeek()
 
 type Props = {
   name?: string
