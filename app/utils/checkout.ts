@@ -116,6 +116,10 @@ const verifyContentful = async ({
       })
     ).cakeCollection.items
 
+    if (items.length === 0 || items.length !== flatOrders.length) {
+      throw 'Cake not found'
+    }
+
     for (const item of items) {
       const objectIndex = flatOrders.findIndex(i => i.sys.id === item.sys.id)
 
