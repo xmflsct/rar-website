@@ -29,6 +29,11 @@ const richTextOptions = ({
       assetMap.set(asset.sys?.id, asset)
     }
   }
+  if (links?.assets?.hyperlink) {
+    for (const asset of links.assets.hyperlink) {
+      assetMap.set(asset.sys?.id, asset)
+    }
+  }
 
   const entryMap = new Map()
   if (links?.entries?.block) {
@@ -172,6 +177,16 @@ const richTextOptions = ({
       [INLINES.HYPERLINK]: node => {
         return (
           <a href={node.data.uri} target='_blank' rel='noopener noreferrer'>
+            {(node.content[0] as Text).value}
+          </a>
+        )
+      },
+      [INLINES.ASSET_HYPERLINK]: node => {
+        const asset = assetMap.get(node.data.target.sys.id)
+        if (!asset) return
+
+        return (
+          <a href={asset.url} target='_blank' rel='noopener noreferrer'>
             {(node.content[0] as Text).value}
           </a>
         )
