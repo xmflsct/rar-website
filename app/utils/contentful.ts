@@ -236,6 +236,12 @@ export const PAGE_CONTENT_LINKS = gql`
           }
           url
         }
+        hyperlink {
+          sys {
+            id
+          }
+          url
+        }
       }
       entries {
         block {
