@@ -58,6 +58,13 @@ const PageThankYou: React.FC = () => {
         <h1 className='mb-4 text-2xl text-center'>
           {session.customer_details?.name}, thank you for your order!
         </h1>
+        <p>
+          You will receive a confirmation email. Please pick up your order with the receipt
+          number in the email.
+        </p>
+        <p className='mt-4 mb-8'>
+          If you cannot find the email in your inbox, please check your spam folder.
+        </p>
         {session.payment_intent.description?.length ? (
           <p>{session.payment_intent.description}</p>
         ) : null}
