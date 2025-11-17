@@ -29,7 +29,7 @@ export const invalidDayBefore = (): Matcher => ({
       : addDays(new Date(), 2)
 })
 const openDaysOfWeek: Matcher = { dayOfWeek: [0, 3, 4, 5, 6] }
-const exceptionalOpenDays: Date[] = [new Date(2024, 11, 23), new Date(2024, 11, 24)]
+const exceptionalOpenDays: Date[] = [new Date(2025, 11, 23)]
 const closedDaysOfWeek: () => Matcher[] = () => {
   if (!exceptionalOpenDays.length) return [{ dayOfWeek: [1, 2] }]
 
