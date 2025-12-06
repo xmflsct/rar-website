@@ -24,7 +24,7 @@ const getAllPages = async (
       query: gql`
         ${PAGE_CONTENT_LINKS}
         query Pages($preview: Boolean, $end_gte: DateTime!) {
-          pages: pageCollection(preview: $preview, limit: 8, order: priority_ASC) {
+          pages: pageCollection(preview: $preview, limit: 6, order: priority_ASC) {
             items {
               sys {
                 publishedAt

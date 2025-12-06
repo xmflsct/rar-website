@@ -68,7 +68,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) =>
             '@context': 'https://schema.org',
             '@type': 'Product',
             name: data.cake.name,
-            image: data.cake.image?.url,
+            image: data.cake.image?.url || data.cake.imagesCollection?.items[0]?.url,
             offers: {
               '@type': 'Offer',
               price:
