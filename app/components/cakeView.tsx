@@ -73,14 +73,16 @@ const CakeView: React.FC<Props> = ({ cake, daysClosedCollection }) => {
 
   return (
     <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8'>
-      {!!cake.imagesCollection?.items.length ? (
-        <Image alt={cake.name} image={cake.image} width={432} height={432} behaviour='fill' />
-      ) : (
-        cake.imagesCollection.items.map(image => (
-          <Image alt={cake.name} image={image} width={432} height={432} behaviour='fill' />
-        ))
-      )}
-      <div className='flex flex-col'>
+      <div className='grid grid-cols-1 gap-4'>
+        {!!cake.imagesCollection?.items.length ? (
+          <Image alt={cake.name} image={cake.image} width={432} height={432} behaviour='fill' />
+        ) : (
+          cake.imagesCollection.items.map(image => (
+            <Image alt={cake.name} image={image} width={432} height={432} behaviour='fill' />
+          ))
+        )}
+      </div>
+      <div>
         {cake.available ? (
           <div className='text-3xl mb-4'>{cake.name}</div>
         ) : (
