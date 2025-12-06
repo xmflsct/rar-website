@@ -104,6 +104,9 @@ export type CakesGroup = {
 export type Cake = {
   sys: { id: string; publishedAt: string }
   image?: CommonImage
+  imagesCollection: {
+    items: (CommonImage | undefined)[]
+  }
   name: string
   slug: string
   available: boolean
@@ -178,6 +181,11 @@ export const CAKE_DETAILS = gql`
     }
     image {
       url
+    }
+    imagesCollection {
+      items {
+        url
+      }
     }
     name
     slug
