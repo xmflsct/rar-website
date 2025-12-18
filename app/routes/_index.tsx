@@ -55,19 +55,18 @@ export default () => {
   return (
     <Layout navs={navs}>
       <div>
-        {/* <h3 className='font-bold text-lg mb-2'>Holiday Schedule</h3>
+        <h3 className='font-bold text-lg mb-2'>Holiday Hours:</h3>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
           <div>
             <p>
-              <b>Holiday Close:</b> Dec 25 - Jan 02
+              <b>Round & Round:</b> Pick up only on Dec 23 & 24; Closed from Dec 25 to Jan 1st. Open again for sit-in on January 2nd. Pre-order is available again from Jan 3rd.
             </p>
             <p>
-              <b>Open again:</b> Jan 03
+              <b>Matcha Next Door:</b> Please check the information on matchanextdoor.nl
             </p>
-            <p>Merry Christmas & Happy New Year!</p>
           </div>
         </div>
-        <hr className='mt-4' /> */}
+        <hr className='mt-4' />
 
         <h2 className='text-2xl my-8'>[Our story starts from 2016]</h2>
 
