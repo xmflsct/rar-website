@@ -3,4 +3,4 @@
 @import 'tailwindcss/utilities';
 
 @import '@fortawesome/fontawesome-svg-core/styles';
-@import 'react-day-picker/dist/style';
+@import 'react-day-picker/src/style.css';
