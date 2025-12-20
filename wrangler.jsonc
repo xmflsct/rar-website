@@ -1,0 +1,16 @@
+{
+    "name": "rar-website",
+    "compatibility_date": "2025-12-20",
+    "compatibility_flags": [
+        "nodejs_compat"
+    ],
+    "main": "build/server/index.js",
+    "assets": {
+        "directory": "./public"
+    },
+    "kv_namespaces": [
+        {
+            "binding": "RAR_WEBSITE"
+        }
+    ]
+}

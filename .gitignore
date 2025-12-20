@@ -2,13 +2,10 @@ node_modules
 
 /.wrangler
 /.cache
-/functions/\[\[path\]\].js
-/functions/\[\[path\]\].js.map
-/functions/metafile.js.json
-/functions/metafile.server.json
-/functions/version.txt
+/build/server
 /public/build
 .env
+.dev.vars
 /app/styles
 
 # yarn 4

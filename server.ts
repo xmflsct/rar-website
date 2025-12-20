@@ -1,8 +1,17 @@
-import { createPagesFunctionHandler } from '@remix-run/cloudflare-pages'
+import { createRequestHandler, logDevReady } from '@remix-run/cloudflare'
 import * as build from '@remix-run/dev/server-build'
 
-export const onRequest = createPagesFunctionHandler({
-  build,
-  getLoadContext: context => context.env,
-  mode: process.env.NODE_ENV
-})
+if (process.env.NODE_ENV === 'development') {
+  logDevReady(build)
+}
+
+const handleRequest = createRequestHandler(build, process.env.NODE_ENV)
+
+export default {
+  async fetch(request: Request, env: Record<string, unknown>, ctx: ExecutionContext) {
+    return handleRequest(request, {
+      ...env,
+      waitUntil: ctx.waitUntil.bind(ctx),
+    })
+  },
+}

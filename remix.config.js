@@ -2,7 +2,7 @@
 module.exports = {
   server: './server.ts',
   ignoredRouteFiles: ['**/.*'],
-  serverBuildPath: 'functions/[[path]].js',
+  serverBuildPath: 'build/server/index.js',
   serverConditions: ['worker'],
   serverMainFields: ['browser', 'module', 'main'],
   serverModuleFormat: 'esm',
