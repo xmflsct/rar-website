@@ -11,30 +11,14 @@ export default defineConfig({
         tailwindcss(),
         tsconfigPaths()
     ],
-
-    // Development server configuration
     server: {
         port: 5173,
         strictPort: true,
         open: false
     },
-
-    // Build configuration
     build: {
-        // Generate source maps for production debugging
-        sourcemap: true,
-        // Optimize chunk splitting
-        rollupOptions: {
-            output: {
-                manualChunks: {
-                    // Vendor chunk for large dependencies
-                    vendor: ["react", "react-dom", "react-router"]
-                }
-            }
-        }
+        sourcemap: false,
     },
-
-    // Optimize dependency pre-bundling
     optimizeDeps: {
         include: [
             "react",

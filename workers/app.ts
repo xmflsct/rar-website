@@ -11,7 +11,8 @@ declare global {
         CONTENTFUL_PAT: string;
         WEBHOOK_STRIPE_SIGNING_SECRET: string;
         WEBHOOK_STRIPE_MYPARCEL_KEY: string;
-        RAR_WEBSITE: KVNamespace;
+        RAR_WEBSITE?: KVNamespace;
+        RAR_WEBSITE_PREVIEW?: KVNamespace;
     }
 }
 

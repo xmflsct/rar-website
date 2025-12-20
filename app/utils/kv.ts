@@ -51,7 +51,7 @@ const getAllPages = async (
       `
     })
 
-  const KV = env?.RAR_WEBSITE as KVNamespace | undefined
+  const KV = preview ? env?.RAR_WEBSITE_PREVIEW : env?.RAR_WEBSITE as KVNamespace | undefined
   let data:
     | {
       pages: {
@@ -64,7 +64,7 @@ const getAllPages = async (
     | null
     | undefined
 
-  if (KV === undefined || preview) {
+  if (KV === undefined) {
     kved = false
     data = await request()
   } else {
