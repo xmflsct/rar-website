@@ -4,11 +4,11 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "react-router dev",
     "build": "react-router build",
-    "start": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "typecheck": "react-router typegen && tsc"
+    "deploy": "yarn build && yarn wrangler deploy",
+    "cf-typegen": "wrangler types",
+    "typecheck": "yarn cf-typegen && react-router typegen && tsc"
   },
   "dependencies": {
     "@contentful/rich-text-plain-text-renderer": "^17.1.6",

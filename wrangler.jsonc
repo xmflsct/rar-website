@@ -1,6 +1,7 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "rar-website",
+	"main": "./workers/app.ts",
 	"compatibility_date": "2025-12-17",
 	"placement": {
 		"mode": "smart"
@@ -10,17 +11,24 @@
 	},
 	"kv_namespaces": [
 		{
-			"binding": "RAR_WEBSITE_PREVIEW"
+			"binding": "RAR_WEBSITE"
 		}
 	],
+	"vars": {
+		"ENVIRONMENT": "PRODUCTION",
+		"CONTENTFUL_SPACE": "u0x1afixkalo",
+		"SENTRY_DSN": "https://79b2ce77fbfc4511af541c7a4cf125d3@o389581.ingest.us.sentry.io/6617177"
+	},
 	"env": {
 		"preview": {
-			"name": "rar-website-preview",
 			"kv_namespaces": [
 				{
 					"binding": "RAR_WEBSITE_PREVIEW"
 				}
-			]
+			],
+			"vars": {
+				"ENVIRONMENT": "PREVIEW"
+			}
 		}
 	}
 }
