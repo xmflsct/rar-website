@@ -1,6 +1,6 @@
 import { documentToReactComponents, Options } from '@contentful/rich-text-react-renderer'
 import { BLOCKS, INLINES, Text } from '@contentful/rich-text-types'
-import { Link } from '@remix-run/react'
+import { Link } from 'react-router'
 import classNames from 'classnames'
 import {
   Cake,
@@ -137,14 +137,14 @@ const richTextOptions = ({
           case 'InternalAssetsGrid':
             const grid = entry as InternalAssetsGrid
             const columns = (col: NonNullable<InternalAssetsGrid['columnsLarge']> = 1) =>
-              ({
-                1: 'grid-cols-1',
-                2: 'grid-cols-2',
-                3: 'grid-cols-3',
-                4: 'grid-cols-4',
-                5: 'grid-cols-5',
-                6: 'grid-cols-6'
-              }[col])
+            ({
+              1: 'grid-cols-1',
+              2: 'grid-cols-2',
+              3: 'grid-cols-3',
+              4: 'grid-cols-4',
+              5: 'grid-cols-5',
+              6: 'grid-cols-6'
+            }[col])
             return (
               <div
                 className={classNames(

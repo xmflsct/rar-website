@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
+import type { LoaderFunctionArgs, MetaFunction } from 'react-router'
+import { useLoaderData, data } from 'react-router'
 import { useEffect } from 'react'
 import Stripe from 'stripe'
 import Layout from '~/layout'
@@ -8,24 +8,25 @@ import { getStripeHeaders } from '~/utils/stripeHeaders'
 
 export const loader = async (props: LoaderFunctionArgs) => {
   if (!props.params.session) {
-    throw json('Not Found', { status: 404 })
+    throw data('Not Found', { status: 404 })
   }
 
+  const env = (props.context as any)?.cloudflare?.env
   const session = await (
     await fetch(
       `https://api.stripe.com/v1/checkout/sessions/${props.params.session}?expand[]=payment_intent`,
-      { headers: getStripeHeaders(props.context?.STRIPE_KEY_ADMIN) }
+      { headers: getStripeHeaders(env?.STRIPE_KEY_ADMIN) }
     )
   ).json<Stripe.Checkout.Session & { payment_intent: Stripe.PaymentIntent }>()
 
   if (session.payment_status !== 'paid') {
-    throw json('Not Paid', { status: 404 })
+    throw data('Not Paid', { status: 404 })
   }
 
   const line_items = await (
     await fetch(
       `https://api.stripe.com/v1/checkout/sessions/${props.params.session}/line_items?limit=100`,
-      { headers: getStripeHeaders(props.context?.STRIPE_KEY_ADMIN) }
+      { headers: getStripeHeaders(env?.STRIPE_KEY_ADMIN) }
     )
   ).json<{
     data: {
@@ -36,7 +37,7 @@ export const loader = async (props: LoaderFunctionArgs) => {
     }[]
   }>()
 
-  return json({ session, line_items })
+  return data({ session, line_items })
 }
 
 export const meta: MetaFunction = () => [

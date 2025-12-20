@@ -1,6 +1,6 @@
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Link } from '@remix-run/react'
+import { Link } from 'react-router'
 import { useContext } from 'react'
 import Image from '~/components/image'
 import { BagContext, CakeOrder } from '~/states/bag'
@@ -42,8 +42,8 @@ const OrderList: React.FC<Props> = ({ order }) => {
                   {customization[1] === -1
                     ? `Custom "${customization[2]}"`
                     : order.cakeCustomizationsCollection?.items[matchedCustomization].options[
-                        customization[1]
-                      ]}
+                    customization[1]
+                    ]}
                 </p>
               )
             })}

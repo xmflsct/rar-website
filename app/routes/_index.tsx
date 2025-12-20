@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { Link, useLoaderData } from '@remix-run/react'
+import type { LoaderFunctionArgs, MetaFunction } from 'react-router'
+import { Link, useLoaderData, data } from 'react-router'
 import { gql } from 'graphql-request'
 import Image from '~/components/image'
 import Layout from '~/layout'
@@ -40,7 +40,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
     `
   })
 
-  return json({ navs, images })
+  return data({ navs, images })
 }
 
 export const meta: MetaFunction = () => [

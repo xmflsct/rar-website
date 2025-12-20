@@ -1,5 +1,6 @@
 import { Document } from '@contentful/rich-text-types'
-import { json, LoaderFunctionArgs } from '@remix-run/cloudflare'
+import type { LoaderFunctionArgs } from 'react-router'
+import { data } from 'react-router'
 import { gql, GraphQLClient, RequestDocument, Variables } from 'graphql-request'
 
 type GraphQLRequest = {
@@ -8,6 +9,8 @@ type GraphQLRequest = {
   variables?: Variables
 }
 
+const getEnv = (context: LoaderFunctionArgs['context']) => (context as any)?.cloudflare?.env
+
 export let cached: boolean | undefined = undefined
 
 export const graphqlRequest = async <T = unknown>({
@@ -15,17 +18,18 @@ export const graphqlRequest = async <T = unknown>({
   query,
   variables
 }: GraphQLRequest) => {
-  if (!context?.CONTENTFUL_SPACE || !context.CONTENTFUL_KEY) {
-    throw json('Missing Contentful config', { status: 500 })
+  const env = getEnv(context)
+  if (!env?.CONTENTFUL_SPACE || !env.CONTENTFUL_KEY) {
+    throw data('Missing Contentful config', { status: 500 })
   }
 
-  const preview = context.ENVIRONMENT !== 'PRODUCTION'
+  const preview = env.ENVIRONMENT !== 'PRODUCTION'
 
   return new GraphQLClient(
-    `https://graphql.contentful.com/content/v1/spaces/${context.CONTENTFUL_SPACE}/environments/master`,
+    `https://graphql.contentful.com/content/v1/spaces/${env.CONTENTFUL_SPACE}/environments/master`,
     {
       fetch,
-      headers: { Authorization: `Bearer ${context.CONTENTFUL_KEY}` },
+      headers: { Authorization: `Bearer ${env.CONTENTFUL_KEY}` },
       errorPolicy: 'ignore'
     }
   ).request<T>(query, { ...variables, preview })
@@ -36,7 +40,8 @@ export const cacheQuery = async <T = unknown>({
 }: GraphQLRequest & { request: Request; ttlMinutes?: number }): Promise<T> => {
   const queryData = async () => await graphqlRequest<T>(rest)
 
-  const preview = rest.context?.ENVIRONMENT !== 'PRODUCTION'
+  const env = getEnv(rest.context)
+  const preview = env?.ENVIRONMENT !== 'PRODUCTION'
   if (!ttlMinutes || preview) {
     return await queryData()
   }
@@ -53,7 +58,7 @@ export const cacheQuery = async <T = unknown>({
     cached = false
     const queryResponse = await queryData()
     if (!queryResponse) {
-      throw json('Not Found', { status: 500 })
+      throw data('Not Found', { status: 500 })
     }
     const cacheResponse = new Response(JSON.stringify(queryResponse), {
       headers: { 'Cache-Control': `s-maxage=${ttlMinutes * 60}` }

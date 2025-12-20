@@ -1,6 +1,6 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { json, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
+import type { LoaderFunctionArgs, MetaFunction } from 'react-router'
+import { useLoaderData, data } from 'react-router'
 import { gql } from 'graphql-request'
 import type { Product, WithContext } from 'schema-dts'
 import CakeView from '~/components/cakeView'
@@ -9,7 +9,7 @@ import { cacheQuery, Cake, CAKE_DETAILS, DaysClosed } from '~/utils/contentful'
 import { getAllPages } from '~/utils/kv'
 
 export const loader = async ({ context, params, request }: LoaderFunctionArgs) => {
-  const data = await cacheQuery<{
+  const cakeData = await cacheQuery<{
     cakeCollection: { items: Cake[] }
     daysClosedCollection: { items: DaysClosed[] }
   }>({
@@ -35,51 +35,51 @@ export const loader = async ({ context, params, request }: LoaderFunctionArgs) =
     `
   })
 
-  if (!data?.cakeCollection?.items?.length || data.cakeCollection.items.length !== 1) {
-    throw json('Not Found', { status: 404 })
+  if (!cakeData?.cakeCollection?.items?.length || cakeData.cakeCollection.items.length !== 1) {
+    throw data('Not Found', { status: 404 })
   }
 
   const { navs } = await getAllPages(context)
-  return json({
+  return data({
     navs,
-    cake: data.cakeCollection.items[0],
-    daysClosedCollection: data.daysClosedCollection.items
+    cake: cakeData.cakeCollection.items[0],
+    daysClosedCollection: cakeData.daysClosedCollection.items
   })
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) =>
-  data
+export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) =>
+  loaderData
     ? [
-        {
-          title: `${data.cake.name} | Round&Round Rotterdam`
-        },
-        {
-          property: 'og:title',
-          content: data.cake.name
-        },
-        data.cake.description
-          ? {
-              name: 'description',
-              content: documentToPlainTextString(data.cake.description.json).substring(0, 199)
-            }
-          : {},
-        {
-          'script:ld+json': {
-            '@context': 'https://schema.org',
-            '@type': 'Product',
-            name: data.cake.name,
-            image: data.cake.image?.url || data.cake.imagesCollection?.items[0]?.url,
-            offers: {
-              '@type': 'Offer',
-              price:
-                (data.cake.typeCAvailable ? data.cake.typeCPrice : 0) ||
-                (data.cake.typeBAvailable ? data.cake.typeBPrice : 0) ||
-                (data.cake.typeAAvailable ? data.cake.typeAPrice : 0),
-              priceCurrency: 'EUR'
-            }
-          } as WithContext<Product>
+      {
+        title: `${loaderData.cake.name} | Round&Round Rotterdam`
+      },
+      {
+        property: 'og:title',
+        content: loaderData.cake.name
+      },
+      loaderData.cake.description
+        ? {
+          name: 'description',
+          content: documentToPlainTextString(loaderData.cake.description.json).substring(0, 199)
         }
-      ]
+        : {},
+      {
+        'script:ld+json': {
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: loaderData.cake.name,
+          image: loaderData.cake.image?.url || loaderData.cake.imagesCollection?.items[0]?.url,
+          offers: {
+            '@type': 'Offer',
+            price:
+              (loaderData.cake.typeCAvailable ? loaderData.cake.typeCPrice : 0) ||
+              (loaderData.cake.typeBAvailable ? loaderData.cake.typeBPrice : 0) ||
+              (loaderData.cake.typeAAvailable ? loaderData.cake.typeAPrice : 0),
+            priceCurrency: 'EUR'
+          }
+        } as WithContext<Product>
+      }
+    ]
     : []
 
 const PageCake: React.FC = () => {

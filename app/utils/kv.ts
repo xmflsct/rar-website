@@ -1,9 +1,11 @@
-import { LoaderFunctionArgs } from '@remix-run/cloudflare'
+import type { LoaderFunctionArgs } from 'react-router'
 import { gql } from 'graphql-request'
 import { Navigation } from '~/layout/navigation'
 import { DaysClosed, graphqlRequest, Page, PAGE_CONTENT_LINKS } from './contentful'
 
 export let kved: boolean | undefined = undefined
+
+const getEnv = (context: LoaderFunctionArgs['context']) => (context as any)?.cloudflare?.env
 
 const getAllPages = async (
   context: LoaderFunctionArgs['context']
@@ -12,7 +14,8 @@ const getAllPages = async (
   pages: Page[]
   daysClosedCollection: DaysClosed[]
 }> => {
-  const preview = context?.ENVIRONMENT !== 'PRODUCTION'
+  const env = getEnv(context)
+  const preview = env?.ENVIRONMENT !== 'PRODUCTION'
 
   const request = async () =>
     await graphqlRequest<{
@@ -48,16 +51,16 @@ const getAllPages = async (
       `
     })
 
-  const KV = context?.RAR_WEBSITE as KVNamespace | undefined
+  const KV = env?.RAR_WEBSITE as KVNamespace | undefined
   let data:
     | {
-        pages: {
-          items: Page[]
-        }
-        daysClosedCollection: {
-          items: DaysClosed[]
-        }
+      pages: {
+        items: Page[]
       }
+      daysClosedCollection: {
+        items: DaysClosed[]
+      }
+    }
     | null
     | undefined
 

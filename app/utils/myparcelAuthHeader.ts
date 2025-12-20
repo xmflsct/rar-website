@@ -1,9 +1,11 @@
-import { AppLoadContext, json } from '@remix-run/cloudflare'
+import type { AppLoadContext } from 'react-router'
+import { data } from 'react-router'
 
 export const getMyparcelAuthHeader = (context?: AppLoadContext): { Authorization: string } => {
-  const myparcelKey = context?.WEBHOOK_STRIPE_MYPARCEL_KEY
+  const env = (context as any)?.cloudflare?.env
+  const myparcelKey = env?.WEBHOOK_STRIPE_MYPARCEL_KEY
   if (!myparcelKey) {
-    throw json('Missing MyParcel key', { status: 500 })
+    throw data('Missing MyParcel key', { status: 500 })
   }
   return {
     Authorization: `bearer ${btoa(myparcelKey as string)}`

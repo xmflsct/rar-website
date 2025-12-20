@@ -1,25 +1,26 @@
-import { json, LoaderFunctionArgs } from '@remix-run/cloudflare'
+import type { LoaderFunctionArgs } from 'react-router'
 import {
   isRouteErrorResponse,
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   useRouteError,
-  useRouteLoaderData
-} from '@remix-run/react'
+  useRouteLoaderData,
+  data
+} from 'react-router'
 import LayoutUI from '~/layout'
 import BagProvider from './states/bag'
-import styles from './styles/app.css'
+import styles from './styles/app.css?url'
 
 export const loader = async ({ context }: LoaderFunctionArgs) => {
-  if (!context?.STRIPE_KEY_PUBLIC) {
-    throw json('Stripe public key missing', { status: 500 })
+  const env = (context as any)?.cloudflare?.env
+  if (!env?.STRIPE_KEY_PUBLIC) {
+    throw data('Stripe public key missing', { status: 500 })
   }
-  return json({
-    ENV: { STRIPE_KEY_PUBLIC: context?.STRIPE_KEY_PUBLIC }
+  return data({
+    ENV: { STRIPE_KEY_PUBLIC: env?.STRIPE_KEY_PUBLIC }
   })
 }
 
@@ -47,7 +48,7 @@ export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(d) {var config = {kitId: 'ahl7mep',scriptTimeout: 3000,async: true},h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)})(document);`
+            __html: `(function(d) {var config = {kitId: 'ahl7mep',scriptTimeout: 3000,async: true},h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\\bwf-loading\\b/g,"")+\" wf-inactive\";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)})(document);`
           }}
         />
       </head>
@@ -55,7 +56,6 @@ export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
         {children}
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
       </body>
     </html>
   )

@@ -1,16 +1,18 @@
 {
+    "$schema": "https://json.schemastore.org/wrangler",
     "name": "rar-website",
-    "compatibility_date": "2025-12-20",
-    "main": "build/server/index.js",
+    // Use a stable compatibility date
+    "compatibility_date": "2025-12-17",
+    "main": "./workers/app.ts",
+    // Smart placement for optimal performance
     "placement": {
         "mode": "smart"
     },
+    // Enable observability/logging
     "observability": {
         "enabled": true
     },
-    "assets": {
-        "directory": "./public"
-    },
+    // KV Namespace bindings
     "kv_namespaces": [
         {
             "binding": "RAR_WEBSITE"

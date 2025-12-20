@@ -1,9 +1,10 @@
-import { json, LoaderFunction } from '@remix-run/cloudflare'
+import type { LoaderFunction } from 'react-router'
+import { data } from 'react-router'
 import { getMyparcelAuthHeader } from '~/utils/myparcelAuthHeader'
 
 export const loader: LoaderFunction = async ({ context, params }) => {
   if (!params.id) {
-    return json(null, 404)
+    return data(null, { status: 404 })
   }
 
   const shipmentLabel = await (
@@ -13,7 +14,7 @@ export const loader: LoaderFunction = async ({ context, params }) => {
   ).blob()
 
   if (!shipmentLabel) {
-    return json('Cannot retrieve label PDF', 500)
+    return data('Cannot retrieve label PDF', { status: 500 })
   }
 
   return new Response(shipmentLabel, {

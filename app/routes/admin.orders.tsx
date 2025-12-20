@@ -1,5 +1,5 @@
-import { ActionFunctionArgs, json, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useFetcher, useLoaderData } from '@remix-run/react'
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router'
+import { useFetcher, useLoaderData, data } from 'react-router'
 import classNames from 'classnames'
 import { useEffect, useRef, useState } from 'react'
 import Stripe from 'stripe'
@@ -19,11 +19,12 @@ type SessionsData = {
   })[]
 }
 export const loader = async ({ context }: LoaderFunctionArgs) => {
-  if (!context?.STRIPE_KEY_ADMIN) {
-    throw json(null, { status: 500 })
+  const env = (context as any)?.cloudflare?.env
+  if (!env?.STRIPE_KEY_ADMIN) {
+    throw data(null, { status: 500 })
   } else {
-    return json({
-      stripeHeaders: getStripeHeaders(context.STRIPE_KEY_ADMIN),
+    return data({
+      stripeHeaders: getStripeHeaders(env.STRIPE_KEY_ADMIN),
       myparcelAuthHeader: getMyparcelAuthHeader(context)
     })
   }
@@ -32,18 +33,18 @@ export const loader = async ({ context }: LoaderFunctionArgs) => {
 export const action = async ({ context, request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const action = formData.get('action')?.toString()
-  const data = JSON.parse(formData.get('data')?.toString() || '{}')
+  const formDataJson = JSON.parse(formData.get('data')?.toString() || '{}')
 
   switch (action) {
     case 'createShipment':
-      const resShipment = await createShipment({ context, ...data })
+      const resShipment = await createShipment({ context, ...formDataJson })
       if (resShipment.ok) {
-        return json({ ok: true, id: resShipment.id }, 200)
+        return data({ ok: true, id: resShipment.id })
       } else {
-        return json({ ok: false, error: resShipment.error }, 200)
+        return data({ ok: false, error: resShipment.error })
       }
     default:
-      return json({ ok: false, error: 'How did you get here?' }, { status: 400 })
+      return data({ ok: false, error: 'How did you get here?' }, { status: 400 })
   }
 }
 
@@ -137,10 +138,10 @@ const Shipping: React.FC<{
 
   useEffect(() => {
     if (fetcher.state === 'loading') {
-      if (fetcher.data?.id) {
-        setCreateId(fetcher.data.id.toString())
+      if ((fetcher.data as any)?.id) {
+        setCreateId((fetcher.data as any).id.toString())
       } else {
-        setCreateError(fetcher.data?.error)
+        setCreateError((fetcher.data as any)?.error)
       }
     }
   }, [fetcher.state, fetcher.data])
@@ -168,7 +169,7 @@ const Shipping: React.FC<{
         // @ts-ignore
         (shipping?.shipping_rate?.metadata.label == true ||
           shipping?.shipping_rate?.metadata.label == 'true') &&
-        !(shipping.payment_intent.metadata?.shipping_id || createId.length) ? (
+          !(shipping.payment_intent.metadata?.shipping_id || createId.length) ? (
           <fetcher.Form method='post' action='/admin/orders' className='flex gap-1 items-middle'>
             <strong className='text-red-600'>Label creation failed!</strong>
             <input name='action' value='createShipment' readOnly hidden />
@@ -213,9 +214,8 @@ const Shipping: React.FC<{
           <span className='block'>
             <strong>Label: </strong>
             <a
-              href={`/admin/shipping-label/${
-                shipping.payment_intent.metadata?.shipping_id || createId
-              }`}
+              href={`/admin/shipping-label/${shipping.payment_intent.metadata?.shipping_id || createId
+                }`}
               target='_blank'
               className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
               children={shipping.payment_intent.metadata?.shipping_id || createId}

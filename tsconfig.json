@@ -1,36 +1,60 @@
 {
   "include": [
-    "remix.env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
+    ".react-router/types/**/*",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "workers/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "build",
+    ".react-router",
+    ".wrangler",
+    ".cache"
   ],
   "compilerOptions": {
+    // Language and Environment
     "lib": [
       "DOM",
       "DOM.Iterable",
       "ES2022"
     ],
-    "isolatedModules": true,
-    "esModuleInterop": true,
+    "target": "ES2022",
     "jsx": "react-jsx",
+    // Module Resolution
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
-    "target": "ES2022",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": false,
+    // Type Checking - Strict
     "strict": true,
-    "allowJs": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
+    "exactOptionalPropertyTypes": false,
+    // Output
+    "noEmit": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    // Path Aliases
     "baseUrl": ".",
     "paths": {
       "~/*": [
         "./app/*"
       ]
     },
-    "types": [
-      "@cloudflare/workers-types/experimental"
+    "rootDirs": [
+      ".",
+      "./.react-router/types"
     ],
-    "skipLibCheck": true,
-    // Remix takes care of building everything in `remix build`.
-    "noEmit": true
+    // Type Definitions
+    "types": [
+      "@cloudflare/workers-types/experimental",
+      "vite/client"
+    ]
   }
 }

@@ -1,4 +1,4 @@
-import { Link, NavLink } from '@remix-run/react'
+import { Link, NavLink } from 'react-router'
 import classNames from 'classnames'
 import logo from '~/images/logo.png'
 
