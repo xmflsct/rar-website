@@ -3,7 +3,6 @@ import { createRequestHandler } from "react-router";
 declare global {
     interface CloudflareEnvironment {
         ENVIRONMENT: string;
-        STRIPE_KEY_PUBLIC: string;
         STRIPE_KEY_PRIVATE: string;
         STRIPE_KEY_ADMIN: string;
         CONTENTFUL_SPACE: string;

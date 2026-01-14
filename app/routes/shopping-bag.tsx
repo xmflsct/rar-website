@@ -2,8 +2,7 @@ import { faStripe } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Dialog, Transition } from '@headlessui/react'
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router'
-import { Form, Link, useActionData, useLoaderData, useNavigation, data } from 'react-router'
-import { loadStripe } from '@stripe/stripe-js'
+import { Form, Link, useActionData, useLoaderData, useNavigation, data, redirect } from 'react-router'
 import { addDays, getMonth, getYear, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
@@ -86,8 +85,8 @@ export const action = async ({ context, request }: ActionFunctionArgs) => {
     context,
     content: { ...formDataObject, orders: parsedOrders }
   })) as any
-  if (res?.id) {
-    return res.id
+  if (res?.url) {
+    return redirect(res.url)
   } else {
     return res
   }
@@ -151,17 +150,9 @@ const ShoppingBag = () => {
       return
     }
 
-    // @ts-ignore
-    const stripePromise = loadStripe(window.ENV.STRIPE_KEY_PUBLIC)
-    const redirect = async (id: string) => {
-      const stripe = await stripePromise
-      return await stripe?.redirectToCheckout({ sessionId: id })
-    }
     if (actionData) {
       if (typeof actionData !== 'string') {
         console.warn(actionData)
-      } else {
-        redirect(actionData)
       }
     }
   }, [actionData])

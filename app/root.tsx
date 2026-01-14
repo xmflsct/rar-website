@@ -1,4 +1,3 @@
-import type { LoaderFunctionArgs } from 'react-router'
 import {
   isRouteErrorResponse,
   Links,
@@ -7,31 +6,16 @@ import {
   Scripts,
   ScrollRestoration,
   useRouteError,
-  useRouteLoaderData,
-  data
 } from 'react-router'
 import LayoutUI from '~/layout'
 import BagProvider from './states/bag'
 import styles from './styles/app.css?url'
-
-export const loader = async ({ context }: LoaderFunctionArgs) => {
-  const env = (context as any)?.cloudflare?.env
-  if (!env?.STRIPE_KEY_PUBLIC) {
-    throw data('Stripe public key missing', { status: 500 })
-  }
-  return data({
-    ENV: { STRIPE_KEY_PUBLIC: env?.STRIPE_KEY_PUBLIC }
-  })
-}
 
 export const links = () => {
   return [{ rel: 'stylesheet', href: styles }]
 }
 
 export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const data = useRouteLoaderData<typeof loader>('root')
-  const error = useRouteError()
-
   return (
     <html lang='en' className='h-full scroll-smooth'>
       <head>
@@ -39,13 +23,6 @@ export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
         <meta name='viewport' content='width=device-width,initial-scale=1' />
         <Meta />
         <Links />
-        <script
-          dangerouslySetInnerHTML={
-            data && {
-              __html: `window.ENV = ${JSON.stringify(data.ENV)}`
-            }
-          }
-        />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(d) {var config = {kitId: 'ahl7mep',scriptTimeout: 3000,async: true},h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\\bwf-loading\\b/g,"")+\" wf-inactive\";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)})(document);`

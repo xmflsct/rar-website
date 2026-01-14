@@ -1980,13 +1980,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stripe/stripe-js@npm:^8.6.0":
-  version: 8.6.0
-  resolution: "@stripe/stripe-js@npm:8.6.0"
-  checksum: 10/14562d17ca1e26066343f891c4c8dc4c376bcc46bee475e9d1c490ae3728bc5c2075c8985c07f900749865fe876872a4c472be72afc59f09cbe7f2e7f6d65ec2
-  languageName: node
-  linkType: hard
-
 "@swc/helpers@npm:^0.5.0":
   version: 0.5.17
   resolution: "@swc/helpers@npm:0.5.17"
@@ -2554,13 +2547,6 @@ __metadata:
   version: 2.1.2
   resolution: "detect-libc@npm:2.1.2"
   checksum: 10/b736c8d97d5d46164c0d1bed53eb4e6a3b1d8530d460211e2d52f1c552875e706c58a5376854e4e54f8b828c9cada58c855288c968522eb93ac7696d65970766
-  languageName: node
-  linkType: hard
-
-"diacritics@npm:1.3.0":
-  version: 1.3.0
-  resolution: "diacritics@npm:1.3.0"
-  checksum: 10/c5a7d6843a3569f1c5aaf643d2e01aaaf695dd369d0f7868300a1c637b91157fe89cf78aa2e87224042d7f4fc87ab39d20aadb7e006c25e0a7c6a2ef92972e74
   languageName: node
   linkType: hard
 
@@ -3152,15 +3138,6 @@ __metadata:
     agent-base: "npm:^7.1.2"
     debug: "npm:4"
   checksum: 10/784b628cbd55b25542a9d85033bdfd03d4eda630fb8b3c9477959367f3be95dc476ed2ecbb9836c359c7c698027fc7b45723a302324433590f45d6c1706e8c13
-  languageName: node
-  linkType: hard
-
-"i18n-iso-countries@npm:^7.14.0":
-  version: 7.14.0
-  resolution: "i18n-iso-countries@npm:7.14.0"
-  dependencies:
-    diacritics: "npm:1.3.0"
-  checksum: 10/e042ad6f7d608f76ad1b014b3cb3581e5ebdca952bd9fb1436f6d6ce5c419b8c9414c4388cfeb47234ed0d41b37f1ae3186be4d6e15836d30b2d73c546e3bffe
   languageName: node
   linkType: hard
 
@@ -3800,7 +3777,6 @@ __metadata:
     "@react-router/dev": "npm:^7.1.3"
     "@react-router/fs-routes": "npm:^7.1.3"
     "@sentry/react": "npm:^10.32.1"
-    "@stripe/stripe-js": "npm:^8.6.0"
     "@tailwindcss/typography": "npm:^0.5.19"
     "@tailwindcss/vite": "npm:^4.0.0"
     "@types/lodash": "npm:^4.17.21"
@@ -3810,7 +3786,6 @@ __metadata:
     date-fns: "npm:^4.1.0"
     graphql: "npm:^16.12.0"
     graphql-request: "npm:^7.4.0"
-    i18n-iso-countries: "npm:^7.14.0"
     lodash: "npm:^4.17.21"
     react: "npm:^18.3.1"
     react-day-picker: "npm:^9.13.0"
