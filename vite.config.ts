@@ -6,7 +6,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
     plugins: [
-        cloudflare(),
+        cloudflare({ viteEnvironment: { name: "ssr" } }),
         reactRouter(),
         tailwindcss(),
         tsconfigPaths()
@@ -17,10 +17,7 @@ export default defineConfig({
         open: false
     },
     build: {
-        sourcemap: false,
-        commonjsOptions: {
-            ignoreDynamicRequires: true
-        }
+        sourcemap: false
     },
     optimizeDeps: {
         include: [
@@ -29,14 +26,7 @@ export default defineConfig({
             "react-router",
             "classnames",
             "lodash",
-            "date-fns",
-            "i18n-iso-countries"
+            "date-fns"
         ]
-    },
-    ssr: {
-        noExternal: ["i18n-iso-countries", "diacritics"],
-        optimizeDeps: {
-            include: ["i18n-iso-countries"]
-        }
     }
 });
