@@ -18,6 +18,9 @@ export default defineConfig({
     },
     build: {
         sourcemap: false,
+        commonjsOptions: {
+            ignoreDynamicRequires: true
+        }
     },
     optimizeDeps: {
         include: [
@@ -26,7 +29,13 @@ export default defineConfig({
             "react-router",
             "classnames",
             "lodash",
-            "date-fns"
+            "date-fns",
+            "i18n-iso-countries"
         ]
+    },
+    ssr: {
+        optimizeDeps: {
+            include: ["i18n-iso-countries"]
+        }
     }
 });
