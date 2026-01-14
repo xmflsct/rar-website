@@ -164,7 +164,7 @@ export type Shipping = {
   year: number
   rates: {
     type: string
-    countryCode: string[]
+    countries: { code: string; name: string }[]
     rates: {
       weight: { min: number; max: number }
       price: number

@@ -1,8 +1,8 @@
-import type { LoaderFunction } from 'react-router'
+import type { LoaderFunctionArgs } from 'react-router'
 import { data } from 'react-router'
 import { getMyparcelAuthHeader } from '~/utils/myparcelAuthHeader'
 
-export const loader: LoaderFunction = async ({ context, params }) => {
+export const loader = async ({ context, params }: LoaderFunctionArgs) => {
   if (!params.id) {
     return data(null, { status: 404 })
   }

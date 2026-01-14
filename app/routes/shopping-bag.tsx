@@ -6,7 +6,6 @@ import { Form, Link, useActionData, useLoaderData, useNavigation, data } from 'r
 import { loadStripe } from '@stripe/stripe-js'
 import { addDays, getMonth, getYear, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
-import countries from 'i18n-iso-countries'
 import { sumBy } from 'lodash'
 import { Fragment, useContext, useEffect, useState } from 'react'
 import Button from '~/components/button'
@@ -22,10 +21,6 @@ import { DaysClosed, MaxCalendarMonth, Shipping, cacheQuery } from '~/utils/cont
 import { full } from '~/utils/currency'
 import { getAllPages } from '~/utils/kv'
 import { correctPickup } from '~/utils/pickup'
-
-import countriesEn from 'i18n-iso-countries/langs/en.json'
-
-countries.registerLocale(countriesEn)
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const loaderData = await cacheQuery<{
@@ -314,9 +309,9 @@ const ShoppingBag = () => {
                 >
                   <option value='' children='' disabled />
                   {shippingRates
-                    .flatMap(rate => rate.countryCode)
-                    .map(countryCode => (
-                      <option value={countryCode} children={countries.getName(countryCode, 'en')} />
+                    .flatMap(rate => rate.countries)
+                    .map(country => (
+                      <option key={country.code} value={country.code} children={country.name} />
                     ))}
                 </Select>
               </fieldset>

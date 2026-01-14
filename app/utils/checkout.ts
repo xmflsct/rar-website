@@ -1,8 +1,7 @@
 import type { LoaderFunctionArgs } from 'react-router'
 import { data } from 'react-router'
-import { isAfter, isBefore, isEqual, isSameDay, parse, parseISO } from 'date-fns'
+import { isAfter, isBefore, isSameDay, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
-import countries from 'i18n-iso-countries'
 import { sumBy } from 'lodash'
 import { CakeOrder } from '~/states/bag'
 import calShipping from './calShipping'
@@ -312,8 +311,8 @@ const checkout = async ({
             )
             if (!value) return
             return `${type}: ${customization[1] === -1
-                ? `Custom "${customization[2]}"`
-                : value[0]?.options[customization[1]]
+              ? `Custom "${customization[2]}"`
+              : value[0]?.options[customization[1]]
               }`
           })
           .join(', ')
@@ -363,7 +362,7 @@ const checkout = async ({
     ...(shipping && {
       shipping_address_collection: {
         allowed_countries: [
-          content.countryCode ? countries.alpha3ToAlpha2(content.countryCode) : 'NLD'
+          content.countryCode || 'NLD'
         ]
       },
       shipping_options: [{ ...shipping }]
