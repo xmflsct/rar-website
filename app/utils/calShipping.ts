@@ -23,7 +23,7 @@ const calShipping = ({
 
   const DEFAULT = { fee: undefined, weight, label: 'true' } as const
 
-  const countryMatchedRate = rates.filter(s => s.countryCode.includes(countryCode))
+  const countryMatchedRate = rates.filter(s => s.countries.some(country => country.code === countryCode))
   if (countryMatchedRate.length !== 1) {
     return DEFAULT
   }

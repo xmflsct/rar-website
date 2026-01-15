@@ -1,6 +1,6 @@
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Link, useMatches } from '@remix-run/react'
+import { Link, useMatches } from 'react-router'
 import { sumBy } from 'lodash'
 import { useContext } from 'react'
 import { BagContext } from '~/states/bag'

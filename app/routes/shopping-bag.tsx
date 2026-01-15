@@ -1,12 +1,10 @@
 import { faStripe } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Dialog, Transition } from '@headlessui/react'
-import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json } from '@remix-run/cloudflare'
-import { Form, Link, useActionData, useLoaderData, useNavigation } from '@remix-run/react'
-import { loadStripe } from '@stripe/stripe-js'
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router'
+import { Form, Link, useActionData, useLoaderData, useNavigation, data, redirect } from 'react-router'
 import { addDays, getMonth, getYear, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
-import countries from 'i18n-iso-countries'
 import { sumBy } from 'lodash'
 import { Fragment, useContext, useEffect, useState } from 'react'
 import Button from '~/components/button'
@@ -23,10 +21,8 @@ import { full } from '~/utils/currency'
 import { getAllPages } from '~/utils/kv'
 import { correctPickup } from '~/utils/pickup'
 
-countries.registerLocale(require('i18n-iso-countries/langs/en.json'))
-
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
-  const data = await cacheQuery<{
+  const loaderData = await cacheQuery<{
     shippingCollection: { items: Shipping[] }
     maxCalendarMonthCollection: { items: MaxCalendarMonth[] }
     daysClosedCollection: { items: DaysClosed[] }
@@ -58,39 +54,39 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   })
 
   const { navs } = await getAllPages(context)
-  return json({
+  return data({
     navs,
-    shippingRates: data.shippingCollection.items[0].rates,
-    maxCalendarMonth: data.maxCalendarMonthCollection.items[0].month,
-    daysClosedCollection: data.daysClosedCollection.items
+    shippingRates: loaderData.shippingCollection.items[0].rates,
+    maxCalendarMonth: loaderData.maxCalendarMonthCollection.items[0].month,
+    daysClosedCollection: loaderData.daysClosedCollection.items
   })
 }
 
 export const action = async ({ context, request }: ActionFunctionArgs) => {
   const formData = await request.formData()
-  const data = Object.fromEntries(formData)
+  const formDataObject = Object.fromEntries(formData)
 
-  if (typeof data.pickup_date === 'string' && !isDayValid({ date: new Date(data.pickup_date) })) {
+  if (typeof formDataObject.pickup_date === 'string' && !isDayValid({ date: new Date(formDataObject.pickup_date) })) {
     return { error: 'Please select a new date', type: 'date' }
   }
 
-  if (!data.orders) {
+  if (!formDataObject.orders) {
     return { error: 'No data was supplied', type: 'order' }
   }
 
   let parsedOrders
   try {
-    parsedOrders = JSON.parse(data.orders.toString())
+    parsedOrders = JSON.parse(formDataObject.orders.toString())
   } catch {
     return { error: 'Parsing orders failed', type: 'order' }
   }
 
   const res = (await checkout({
     context,
-    content: { ...data, orders: parsedOrders }
+    content: { ...formDataObject, orders: parsedOrders }
   })) as any
-  if (res?.id) {
-    return res.id
+  if (res?.url) {
+    return redirect(res.url)
   } else {
     return res
   }
@@ -146,25 +142,17 @@ const ShoppingBag = () => {
   const actionData = useActionData()
   const [actionError, setActionError] = useState<string | null>(null)
   useEffect(() => {
-    if (actionData?.error) {
-      setActionError(actionData.error)
-      if (actionData.type === 'date') {
+    if ((actionData as any)?.error) {
+      setActionError((actionData as any).error)
+      if ((actionData as any).type === 'date') {
         setPickup(undefined)
       }
       return
     }
 
-    // @ts-ignore
-    const stripePromise = loadStripe(window.ENV.STRIPE_KEY_PUBLIC)
-    const redirect = async (id: string) => {
-      const stripe = await stripePromise
-      return await stripe?.redirectToCheckout({ sessionId: id })
-    }
     if (actionData) {
       if (typeof actionData !== 'string') {
         console.warn(actionData)
-      } else {
-        redirect(actionData)
       }
     }
   }, [actionData])
@@ -240,9 +228,8 @@ const ShoppingBag = () => {
                   // Only show pickup date when there are orders without specific pickup date
                   needPickup ? (
                     <div
-                      className={`bg-neutral-100 rounded-tr-md rounded-br-md p-4 border-l-2 ${
-                        pickup ? 'border-green-500' : 'border-red-500'
-                      }`}
+                      className={`bg-neutral-100 rounded-tr-md rounded-br-md p-4 border-l-2 ${pickup ? 'border-green-500' : 'border-red-500'
+                        }`}
                     >
                       <div className='flex flex-row items-center'>
                         <div>Pickup date: </div>
@@ -256,7 +243,7 @@ const ShoppingBag = () => {
                           toMonth={
                             new Date(
                               getYear(new Date()) +
-                                (maxCalendarMonth >= getMonth(new Date()) ? 0 : 1),
+                              (maxCalendarMonth >= getMonth(new Date()) ? 0 : 1),
                               maxCalendarMonth - 1
                             )
                           }
@@ -313,9 +300,9 @@ const ShoppingBag = () => {
                 >
                   <option value='' children='' disabled />
                   {shippingRates
-                    .flatMap(rate => rate.countryCode)
-                    .map(countryCode => (
-                      <option value={countryCode} children={countries.getName(countryCode, 'en')} />
+                    .flatMap(rate => rate.countries)
+                    .map(country => (
+                      <option key={country.code} value={country.code} children={country.name} />
                     ))}
                 </Select>
               </fieldset>
@@ -371,8 +358,8 @@ const ShoppingBag = () => {
                   <td className='text-right'>
                     {full(
                       subtotal +
-                        (orders.shipping.length ? shippingFee ?? 0 : 0) +
-                        (needPickup && paperBag ? 0.5 : 0)
+                      (orders.shipping.length ? shippingFee ?? 0 : 0) +
+                      (needPickup && paperBag ? 0.5 : 0)
                     )}
                   </td>
                 </tr>
@@ -461,8 +448,8 @@ const ShoppingBag = () => {
               {navigation.state === 'submitting'
                 ? '...'
                 : navigation.state === 'loading'
-                ? '...'
-                : 'Checkout'}
+                  ? '...'
+                  : 'Checkout'}
             </Button>
             <div className='mt-4 text-sm'>
               <div className='flex flex-row items-center'>

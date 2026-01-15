@@ -1,6 +1,5 @@
-import { Request } from '@cloudflare/workers-types'
-import type { EntryContext } from '@remix-run/cloudflare'
-import { RemixServer } from '@remix-run/react'
+import type { EntryContext } from 'react-router'
+import { ServerRouter } from 'react-router'
 import { renderToReadableStream } from 'react-dom/server'
 import { cached } from './utils/contentful'
 import { kved } from './utils/kv'
@@ -9,10 +8,10 @@ export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  entryContext: EntryContext
 ) {
   const body = await renderToReadableStream(
-    <RemixServer context={remixContext} url={request.url} />,
+    <ServerRouter context={entryContext} url={request.url} />,
     {
       onError(error: unknown) {
         console.error(error)

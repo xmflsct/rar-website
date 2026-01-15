@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs } from '@remix-run/cloudflare'
+import type { LoaderFunctionArgs } from 'react-router'
 import { gql } from 'graphql-request'
 import { cacheQuery, Cake } from '~/utils/contentful'
 import { getAllPages } from '~/utils/kv'
@@ -30,32 +30,31 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const content = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       ${pages.map(
-        (page, index) => `
-          ${
-            index === 0
-              ? `<url>
+    (page, index) => `
+          ${index === 0
+        ? `<url>
                   <loc>https://roundandround.nl</loc>
                   <lastmod>${page.sys.publishedAt}</lastmod>
                   <priority>0.8</priority>
                 </url>`
-              : ''
-          }
+        : ''
+      }
           <url>
             <loc>https://roundandround.nl/${page.slug}</loc>
             <lastmod>${page.sys.publishedAt}</lastmod>
             <priority>0.6</priority>
           </url>
         `
-      )}
+  )}
       ${cakes.map(
-        cake => `
+    cake => `
       <url>
         <loc>https://roundandround.nl/cake/${cake.slug}</loc>
         <lastmod>${cake.sys.publishedAt}</lastmod>
         <priority>0.8</priority>
       </url>
       `
-      )}
+  )}
     </urlset>
   `
 

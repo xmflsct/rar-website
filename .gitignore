@@ -1,17 +1,25 @@
+# Dependencies
 node_modules
 
-/.wrangler
-/.cache
-/functions/\[\[path\]\].js
-/functions/\[\[path\]\].js.map
-/functions/metafile.js.json
-/functions/metafile.server.json
-/functions/version.txt
-/public/build
-.env
-/app/styles
+# Build outputs
+/build
+/dist
 
-# yarn 4
+# Cloudflare
+/.wrangler
+
+# Vite
+/.cache
+
+# React Router
+/.react-router
+
+# Environment files
+.env
+.env.*
+.dev.vars
+
+# Yarn 4
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -19,3 +27,21 @@ node_modules
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# IDE
+.idea
+*.swp
+*.swo
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

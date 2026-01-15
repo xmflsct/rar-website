@@ -1,7 +1,7 @@
-import { json, LoaderFunctionArgs } from '@remix-run/cloudflare'
-import { isAfter, isBefore, isEqual, isSameDay, parse, parseISO } from 'date-fns'
+import type { LoaderFunctionArgs } from 'react-router'
+import { data } from 'react-router'
+import { isAfter, isBefore, isSameDay, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
-import countries from 'i18n-iso-countries'
 import { sumBy } from 'lodash'
 import { CakeOrder } from '~/states/bag'
 import calShipping from './calShipping'
@@ -9,6 +9,8 @@ import { Cake, graphqlRequest, Shipping } from './contentful'
 import { correctPickup } from './pickup'
 import { getReadableDeliveryDate } from './readableDeliveryDate'
 import { getStripeHeaders } from './stripeHeaders'
+
+const getEnv = (context: LoaderFunctionArgs['context']) => (context as any)?.cloudflare?.env
 
 export type CheckoutContent = {
   cards?: boolean
@@ -241,12 +243,12 @@ const verifyContentful = async ({
           'PostNL',
           shippingDate && orders.shipping[0].chosen.delivery?.date
             ? parseISO(orders.shipping[0].chosen.delivery?.date).toLocaleString('en-GB', {
-                timeZone: 'Europe/Amsterdam',
-                weekday: 'short',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-              })
+              timeZone: 'Europe/Amsterdam',
+              weekday: 'short',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+            })
             : undefined
         )
           .filter(f => f)
@@ -271,7 +273,8 @@ const checkout = async ({
   context: LoaderFunctionArgs['context']
   content: CheckoutContent
 }) => {
-  if (!context?.STRIPE_KEY_PRIVATE) {
+  const env = getEnv(context)
+  if (!env?.STRIPE_KEY_PRIVATE) {
     throw new Error('Missing stripe private key')
   }
 
@@ -280,7 +283,7 @@ const checkout = async ({
     shipping = await verifyContentful({ context, content })
   } catch (error) {
     console.log('error', error)
-    return json({ error })
+    return data({ error })
   }
 
   const item = (order: CakeOrder) => {
@@ -297,23 +300,22 @@ const checkout = async ({
           ? getReadableDeliveryDate(order)
           : { pickup: '🛍️', shipping: '📦' }[order.chosen.delivery.type]
         : content.pickup_date
-        ? '🛍️'
-        : undefined,
+          ? '🛍️'
+          : undefined,
       order.chosen.cakeCustomizations
         ? order.chosen.cakeCustomizations
-            .map(customization => {
-              const type = customization[0]
-              const value = order.cakeCustomizationsCollection?.items.filter(
-                c => c?.type === customization[0]
-              )
-              if (!value) return
-              return `${type}: ${
-                customization[1] === -1
-                  ? `Custom "${customization[2]}"`
-                  : value[0]?.options[customization[1]]
+          .map(customization => {
+            const type = customization[0]
+            const value = order.cakeCustomizationsCollection?.items.filter(
+              c => c?.type === customization[0]
+            )
+            if (!value) return
+            return `${type}: ${customization[1] === -1
+              ? `Custom "${customization[2]}"`
+              : value[0]?.options[customization[1]]
               }`
-            })
-            .join(', ')
+          })
+          .join(', ')
         : undefined,
       unit?.unit
     )
@@ -360,7 +362,7 @@ const checkout = async ({
     ...(shipping && {
       shipping_address_collection: {
         allowed_countries: [
-          content.countryCode ? countries.alpha3ToAlpha2(content.countryCode) : 'NLD'
+          content.countryCode || 'NLD'
         ]
       },
       shipping_options: [{ ...shipping }]
@@ -394,25 +396,25 @@ const checkout = async ({
       else pairs.push([[...keys, key], value])
       return pairs
     }, [])
-  const data = getPairs(sessionData)
+  const sessionDataPairs = getPairs(sessionData)
     .map(
       // @ts-ignore
       ([[key0, ...keysRest], value]) => `${key0}${keysRest.map(a => `[${a}]`).join('')}=${value}`
     )
     .join('&')
 
-  const body = new URLSearchParams(data)
+  const body = new URLSearchParams(sessionDataPairs)
   const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
     headers: {
-      ...getStripeHeaders(context.STRIPE_KEY_PRIVATE),
+      ...getStripeHeaders(env.STRIPE_KEY_PRIVATE),
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     body
   })
   const result = await res.json()
   if ((result as any)?.error) {
-    throw json((result as any).error, { status: 500 })
+    throw data((result as any).error, { status: 500 })
   }
   return result
 }

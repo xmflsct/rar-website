@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
+import type { LoaderFunctionArgs, MetaFunction } from 'react-router'
+import { useLoaderData, data } from 'react-router'
 import RichText from '~/components/richText'
 import Layout from '~/layout'
 import { getAllPages } from '~/utils/kv'
@@ -10,19 +10,19 @@ export const loader = async ({ context, params }: LoaderFunctionArgs) => {
 
   const matchedPages = pages.filter(page => page.slug === path)
   if (!matchedPages.length) {
-    throw json('Not Found', { status: 404 })
+    throw data('Not Found', { status: 404 })
   }
 
-  return json({ navs, page: matchedPages[0], daysClosedCollection })
+  return data({ navs, page: matchedPages[0], daysClosedCollection })
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) =>
   data
     ? [
-        {
-          title: `${data.page.name} | Round&Round Rotterdam`
-        }
-      ]
+      {
+        title: `${data.page.name} | Round&Round Rotterdam`
+      }
+    ]
     : []
 
 export default () => {

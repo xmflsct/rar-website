@@ -2,7 +2,8 @@ import { CarrierId, PackageTypeId } from '@myparcel/constants'
 // @ts-ignore
 import { NETHERLANDS } from '@myparcel/constants/countries'
 import { FetchClient, PostShipments, createPrivateSdk } from '@myparcel/sdk'
-import { ActionFunction, AppLoadContext, json } from '@remix-run/cloudflare'
+import type { ActionFunction, AppLoadContext } from 'react-router'
+import { data } from 'react-router'
 import Stripe from 'stripe'
 import { getMyparcelAuthHeader } from '~/utils/myparcelAuthHeader'
 import { getStripeHeaders } from '~/utils/stripeHeaders'
@@ -18,7 +19,8 @@ export const createShipment = async ({
 }): Promise<{ ok: true; id: string } | { ok: false; error: string }> => {
   let error: string = ''
 
-  const stripeHeaders = getStripeHeaders(context.STRIPE_KEY_ADMIN)
+  const env = (context as any)?.cloudflare?.env
+  const stripeHeaders = getStripeHeaders(env?.STRIPE_KEY_ADMIN)
 
   const result = await createPrivateSdk(
     new FetchClient({ headers: getMyparcelAuthHeader(context) }),
@@ -33,29 +35,29 @@ export const createShipment = async ({
             delivery_type: null
           },
           recipient:
-            context?.ENVIRONMENT === 'DEVELOPMENT'
+            env?.ENVIRONMENT === 'DEVELOPMENT'
               ? {
-                  cc: NETHERLANDS,
-                  city: 'Rotterdam',
-                  postal_code: '3011PG',
-                  street: 'Hoogstraat 55A',
-                  person: '[TEST] Round',
-                  email: 'no-reply@roundandround.nl',
-                  phone: '0612345678'
-                }
+                cc: NETHERLANDS,
+                city: 'Rotterdam',
+                postal_code: '3011PG',
+                street: 'Hoogstraat 55A',
+                person: '[TEST] Round',
+                email: 'no-reply@roundandround.nl',
+                phone: '0612345678'
+              }
               : {
-                  cc: customer_details?.address?.country!,
-                  city: customer_details?.address?.city!,
-                  postal_code: customer_details?.address?.postal_code || '',
-                  street:
-                    customer_details?.address?.line1 +
-                    (customer_details?.address?.line2
-                      ? ` ${customer_details?.address?.line2}`
-                      : ''),
-                  person: customer_details?.name!,
-                  email: customer_details?.email || undefined,
-                  phone: customer_details?.phone || undefined
-                }
+                cc: customer_details?.address?.country!,
+                city: customer_details?.address?.city!,
+                postal_code: customer_details?.address?.postal_code || '',
+                street:
+                  customer_details?.address?.line1 +
+                  (customer_details?.address?.line2
+                    ? ` ${customer_details?.address?.line2}`
+                    : ''),
+                person: customer_details?.name!,
+                email: customer_details?.email || undefined,
+                phone: customer_details?.phone || undefined
+              }
         }
       ]
     })
@@ -86,11 +88,12 @@ const hexStringToUint8Array = (hexString: string) => {
 
 export const action: ActionFunction = async ({ context, request }) => {
   if (request.method !== 'POST') {
-    return json('Request method error', 405)
+    return data('Request method error', { status: 405 })
   }
 
-  if (!context?.STRIPE_KEY_ADMIN || !context.WEBHOOK_STRIPE_SIGNING_SECRET) {
-    throw json('Missing environment variables', { status: 500 })
+  const env = (context as any)?.cloudflare?.env
+  if (!env?.STRIPE_KEY_ADMIN || !env.WEBHOOK_STRIPE_SIGNING_SECRET) {
+    throw data('Missing environment variables', { status: 500 })
   }
 
   const signature = request.headers
@@ -101,7 +104,7 @@ export const action: ActionFunction = async ({ context, request }) => {
   const signatureV1 = signature?.find(array => array[0] === 'v1')?.[1]
 
   if (!signatureTimestamp || !signatureV1) {
-    return json('No signature provided', 403)
+    return data('No signature provided', { status: 403 })
   }
 
   const payloadRaw = await request.text()
@@ -111,7 +114,7 @@ export const action: ActionFunction = async ({ context, request }) => {
     'HMAC',
     await crypto.subtle.importKey(
       'raw',
-      encoder.encode(context.WEBHOOK_STRIPE_SIGNING_SECRET as string),
+      encoder.encode(env.WEBHOOK_STRIPE_SIGNING_SECRET as string),
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['verify']
@@ -121,7 +124,7 @@ export const action: ActionFunction = async ({ context, request }) => {
   )
   const elapsed = Math.floor(Date.now() / 1000) - Number(signatureTimestamp)
   if (!verified || elapsed > 300) {
-    return json('Signature verify failed', 403)
+    return data('Signature verify failed', { status: 403 })
   }
 
   const payload = JSON.parse(payloadRaw) as {
@@ -129,7 +132,7 @@ export const action: ActionFunction = async ({ context, request }) => {
     type: Stripe.Event['type']
   }
 
-  const stripeHeaders = getStripeHeaders(context.STRIPE_KEY_ADMIN)
+  const stripeHeaders = getStripeHeaders(env.STRIPE_KEY_ADMIN)
 
   switch (payload.type) {
     case 'checkout.session.completed':
@@ -151,9 +154,9 @@ export const action: ActionFunction = async ({ context, request }) => {
           } else {
             const entry = await (
               await fetch(
-                `https://api.contentful.com/spaces/${context.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`,
+                `https://api.contentful.com/spaces/${env.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`,
                 {
-                  headers: { Authorization: `Bearer ${context.CONTENTFUL_PAT}` }
+                  headers: { Authorization: `Bearer ${env.CONTENTFUL_PAT}` }
                 }
               )
             ).json<{
@@ -172,15 +175,15 @@ export const action: ActionFunction = async ({ context, request }) => {
               continue
             }
             if (stock === 0) {
-              throw json({ error: `Stock of ${entry.sys.id} is 0!` }, 500)
+              throw data({ error: `Stock of ${entry.sys.id} is 0!` }, { status: 500 })
             }
 
             await fetch(
-              `https://api.contentful.com/spaces/${context.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`,
+              `https://api.contentful.com/spaces/${env.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`,
               {
                 method: 'PATCH',
                 headers: {
-                  Authorization: `Bearer ${context.CONTENTFUL_PAT}`,
+                  Authorization: `Bearer ${env.CONTENTFUL_PAT}`,
                   'Content-Type': 'application/json-patch+json',
                   'X-Contentful-Version': entry.sys.version.toString()
                 },
@@ -199,15 +202,15 @@ export const action: ActionFunction = async ({ context, request }) => {
 
       const shipping_rate = payload.data.object.shipping_cost?.shipping_rate
         ? (
-            await (
-              await fetch(
-                `https://api.stripe.com/v1/shipping_rates/${payload.data.object.shipping_cost.shipping_rate}`,
-                { headers: stripeHeaders }
-              )
-            ).json<{
-              metadata: { label: 'false'; weight?: number } | { label: 'true'; weight: number }
-            }>()
-          ).metadata
+          await (
+            await fetch(
+              `https://api.stripe.com/v1/shipping_rates/${payload.data.object.shipping_cost.shipping_rate}`,
+              { headers: stripeHeaders }
+            )
+          ).json<{
+            metadata: { label: 'false'; weight?: number } | { label: 'true'; weight: number }
+          }>()
+        ).metadata
         : ({ label: 'false' } as const)
 
       if (shipping_rate?.label === 'true') {
@@ -218,17 +221,16 @@ export const action: ActionFunction = async ({ context, request }) => {
         })
 
         if (resShipment.ok) {
-          return json(`Shipment: ${resShipment.id}`, 200)
+          return data(`Shipment: ${resShipment.id}`)
         } else {
-          return json('Shipping creation failed', 500)
+          return data('Shipping creation failed', { status: 500 })
         }
       } else {
-        return json(
-          'Shipping not required' + ' ' + context?.ENVIRONMENT + ' ' + shipping_rate?.label,
-          200
+        return data(
+          'Shipping not required' + ' ' + env?.ENVIRONMENT + ' ' + shipping_rate?.label
         )
       }
   }
 
-  return json(null, 200)
+  return data(null)
 }
