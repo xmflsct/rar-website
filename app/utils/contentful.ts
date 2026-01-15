@@ -19,6 +19,63 @@ export const graphqlRequest = async <T = unknown>({
   variables
 }: GraphQLRequest) => {
   const env = getEnv(context)
+
+  if ((process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') && (env?.MOCK_CONTENTFUL || process.env.MOCK_CONTENTFUL)) {
+    console.warn('Mocking Contentful request due to missing config in test/dev environment')
+
+    const queryString = typeof query === 'string' ? query : query?.loc?.source?.body || '';
+    if (queryString.includes('query Cake')) {
+      return {
+          cakeCollection: {
+            items: [{
+              sys: { id: 'test-cake-id', publishedAt: '2023-01-01' },
+              name: 'Matcha Crepe',
+              slug: 'matcha-crepe',
+              available: true,
+              highlight: false,
+              typeAAvailable: true,
+              typeAPrice: 50,
+              typeAUnit: { unit: 'Whole' },
+              typeAStock: 10,
+              typeAMinimum: 1,
+              imagesCollection: { items: [{ url: 'http://example.com/image.jpg' }] },
+              description: { json: { nodeType: 'document', data: {}, content: [] } },
+              cakeCustomizationsCollection: { items: [] },
+              deliveryCustomizations: { pickup: { availability: { after: '2023-01-01', before: '2024-01-01' } } },
+              shippingAvailable: true
+            }]
+          },
+          daysClosedCollection: { items: [] }
+      } as T;
+    }
+    if (queryString.includes('query Shipping')) {
+      return {
+          shippingCollection: { items: [{ rates: [{ type: 'standard', countries: [{code: 'NL', name: 'Netherlands'}], rates: [{weight: {min:0, max:100}, price: 5}] }] }] },
+          maxCalendarMonthCollection: { items: [{ month: 12 }] },
+          daysClosedCollection: { items: [] }
+      } as T;
+    }
+    if (queryString.includes('query Pages')) {
+      return {
+        pages: {
+            items: [
+              { name: 'Home', slug: '', sys: { publishedAt: '2023-01-01' } },
+              { name: 'Cakes', slug: 'cakes', sys: { publishedAt: '2023-01-01' } }
+            ]
+          },
+          daysClosedCollection: { items: [] }
+      } as T;
+    }
+    if (queryString.includes('query Images')) {
+        return {
+            mooncake: { url: 'http://example.com/img.jpg', title: 'img' },
+            left: { url: 'http://example.com/img.jpg', title: 'img' },
+            right: { url: 'http://example.com/img.jpg', title: 'img' }
+        } as T;
+    }
+    return {} as T
+  }
+
   if (!env?.CONTENTFUL_SPACE || !env.CONTENTFUL_KEY) {
     throw data('Missing Contentful config', { status: 500 })
   }

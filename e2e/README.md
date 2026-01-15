@@ -4,9 +4,8 @@ This project uses [Playwright](https://playwright.dev/) for end-to-end testing.
 
 ## Prerequisites
 
-1.  **Environment Variables**: You must have the necessary environment variables set up to run the application (Contentful, Stripe, etc.).
-2.  **Running Server**: The test assumes the application is running at `http://localhost:8788`. You can start it using `yarn dev`.
-3.  **Browsers**: Ensure Playwright browsers are installed:
+1.  **Environment Variables**: The test runs with mocked environment variables (`MOCK_CONTENTFUL=true`).
+2.  **Browsers**: Ensure Playwright browsers are installed:
     ```bash
     yarn playwright install
     ```
@@ -20,15 +19,16 @@ yarn test:e2e
 ```
 
 The script will:
-1.  Open the application.
+1.  Open the application (automatically started by Playwright).
 2.  Navigate to the `matcha-crepe` cake page.
 3.  Add the cake to the bag.
 4.  Proceed to checkout.
 5.  Fill in the order details.
-6.  Simulate a payment with Stripe.
-7.  Verify the confirmation page.
+6.  Simulate a payment via Stripe redirection.
+7.  Verify the redirection to Stripe.
 
 ## Notes
 
--   The test assumes a cake with slug `matcha-crepe` exists.
--   The test assumes the local server is running on port 8788. You can configure this in `playwright.config.ts`.
+-   The test assumes a cake with slug `matcha-crepe` exists (mocked).
+-   The test assumes the local server runs on port 5173.
+-   **Confirmation Page**: The test flow stops at the Stripe redirection. We mock the server-side Stripe session verification by intercepting the checkout POST request, but simulating a full return to the confirmation page (`/thank-you/:session_id`) requires valid Stripe API interactions which are mocked at the network level but complex to fully simulate without a real backend session.
