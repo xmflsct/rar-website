@@ -8,7 +8,8 @@
     "build": "vite build",
     "deploy": "yarn build && yarn wrangler deploy",
     "cf-typegen": "wrangler types",
-    "typecheck": "yarn cf-typegen && react-router typegen && tsc"
+    "typecheck": "yarn cf-typegen && react-router typegen && tsc",
+    "test:e2e": "node e2e/e2e-test.js"
   },
   "dependencies": {
     "@contentful/rich-text-plain-text-renderer": "^17.1.6",
@@ -35,6 +36,7 @@
     "schema-dts": "^1.1.5"
   },
   "devDependencies": {
+    "agent-browser": "0.5.0",
     "@cloudflare/vite-plugin": "^1.0.7",
     "@cloudflare/workers-types": "4.20251218.0",
     "@react-router/dev": "^7.1.3",

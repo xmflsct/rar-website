@@ -2262,6 +2262,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"agent-browser@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "agent-browser@npm:0.5.0"
+  dependencies:
+    playwright-core: "npm:^1.57.0"
+    ws: "npm:^8.19.0"
+    zod: "npm:^3.22.4"
+  bin:
+    agent-browser: bin/agent-browser
+  checksum: 10/2750e9965751642fbdf0f046d3a36374d2f810854dd7294dba4f57415c3f6b9acabd7a50c39cb0e66e30380213739ff1ec7afed42f8dee10b57f3879da454cbe
+  languageName: node
+  linkType: hard
+
 "arg@npm:^5.0.1":
   version: 5.0.2
   resolution: "arg@npm:5.0.2"
@@ -3701,6 +3714,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"playwright-core@npm:^1.57.0":
+  version: 1.57.0
+  resolution: "playwright-core@npm:1.57.0"
+  bin:
+    playwright-core: cli.js
+  checksum: 10/ec066602f0196f036006caee14a30d0a57533a76673bb9a0c609ef56e21decf018f0e8d402ba2fb18251393be6a1c9e193c83266f1670fe50838c5340e220de0
+  languageName: node
+  linkType: hard
+
 "postcss-selector-parser@npm:6.0.10":
   version: 6.0.10
   resolution: "postcss-selector-parser@npm:6.0.10"
@@ -3782,6 +3804,7 @@ __metadata:
     "@types/lodash": "npm:^4.17.21"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
+    agent-browser: "npm:^0.5.0"
     classnames: "npm:^2.5.1"
     date-fns: "npm:^4.1.0"
     graphql: "npm:^16.12.0"
@@ -4588,6 +4611,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ws@npm:^8.19.0":
+  version: 8.19.0
+  resolution: "ws@npm:8.19.0"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10/26e4901e93abaf73af9f26a93707c95b4845e91a7a347ec8c569e6e9be7f9df066f6c2b817b2d685544e208207898a750b78461e6e8d810c11a370771450c31b
+  languageName: node
+  linkType: hard
+
 "yallist@npm:^3.0.2":
   version: 3.1.1
   resolution: "yallist@npm:3.1.1"
@@ -4636,5 +4674,12 @@ __metadata:
   version: 3.22.3
   resolution: "zod@npm:3.22.3"
   checksum: 10/3aad6e6b61ddceaeb887dccc5f747903e619b09dfd208f6dc30eef15edf3942b8e6cd97a08e080c9c8723575446941edb823a8881c512e00e8dd3085f20659cc
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.22.4":
+  version: 3.25.76
+  resolution: "zod@npm:3.25.76"
+  checksum: 10/f0c963ec40cd96858451d1690404d603d36507c1fc9682f2dae59ab38b578687d542708a7fdbf645f77926f78c9ed558f57c3d3aa226c285f798df0c4da16995
   languageName: node
   linkType: hard
