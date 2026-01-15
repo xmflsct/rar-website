@@ -83,7 +83,16 @@ export const action = async ({ context, request }: ActionFunctionArgs) => {
 
   const res = (await checkout({
     context,
-    content: { ...formDataObject, orders: parsedOrders }
+    content: {
+      ...formDataObject,
+      orders: parsedOrders,
+      subtotal_amount: formDataObject.subtotal_amount
+        ? parseFloat(formDataObject.subtotal_amount.toString())
+        : undefined,
+      shipping_amount: formDataObject.shipping_amount
+        ? parseFloat(formDataObject.shipping_amount.toString())
+        : undefined
+    }
   })) as any
   if (res?.url) {
     return redirect(res.url)

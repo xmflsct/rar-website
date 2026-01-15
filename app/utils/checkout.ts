@@ -24,8 +24,8 @@ export type CheckoutContent = {
   notes?: string
   gift_card?: string
   birthday_cake_voucher?: string
-  subtotal_amount?: string // Should be float
-  shipping_amount?: string // Should be float
+  subtotal_amount?: number // Should be float
+  shipping_amount?: number // Should be float
   success_url?: string
   cancel_url?: string
 }
@@ -49,7 +49,7 @@ const verifyContentful = async ({
   context: LoaderFunctionArgs['context']
   content: CheckoutContent
 }): Promise<ShippingOptions | null> => {
-  if ((!orders.pickup?.length && !orders.shipping?.length) || !subtotal_amount) {
+  if ((!orders.pickup?.length && !orders.shipping?.length) || subtotal_amount === undefined) {
     throw 'Submitted checkout content error'
   }
 
@@ -201,7 +201,7 @@ const verifyContentful = async ({
   const subtotal = sumBy(flatOrders, order => {
     return (order[`type${order.chosen.unit}Price`] ?? 0) * order.chosen.amount
   })
-  if (!(subtotal === parseFloat(subtotal_amount))) {
+  if (subtotal !== subtotal_amount) {
     throw 'Subtotal not aligned'
   }
 
@@ -229,7 +229,7 @@ const verifyContentful = async ({
       orders: [...(orders.pickup || []), ...orders.shipping],
       countryCode
     })
-    if (!(shippingRate.fee === parseFloat(shipping_amount || ''))) {
+    if (typeof shippingRate.fee !== 'number' || shippingRate.fee !== shipping_amount) {
       throw 'Shipping fee not aligned'
     }
 
