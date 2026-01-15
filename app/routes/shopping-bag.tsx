@@ -81,9 +81,13 @@ export const action = async ({ context, request }: ActionFunctionArgs) => {
     return { error: 'Parsing orders failed', type: 'order' }
   }
 
+  const shipping_amount = formDataObject.shipping_amount
+    ? parseFloat(formDataObject.shipping_amount.toString())
+    : undefined
+
   const res = (await checkout({
     context,
-    content: { ...formDataObject, orders: parsedOrders }
+    content: { ...formDataObject, orders: parsedOrders, shipping_amount }
   })) as any
   if (res?.url) {
     return redirect(res.url)

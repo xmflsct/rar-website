@@ -25,7 +25,7 @@ export type CheckoutContent = {
   gift_card?: string
   birthday_cake_voucher?: string
   subtotal_amount?: string // Should be float
-  shipping_amount?: string // Should be float
+  shipping_amount?: number
   success_url?: string
   cancel_url?: string
 }
@@ -229,7 +229,7 @@ const verifyContentful = async ({
       orders: [...(orders.pickup || []), ...orders.shipping],
       countryCode
     })
-    if (!(shippingRate.fee === parseFloat(shipping_amount || ''))) {
+    if (shippingRate.fee === undefined || shippingRate.fee !== shipping_amount) {
       throw 'Shipping fee not aligned'
     }
 
