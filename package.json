@@ -9,7 +9,7 @@
     "deploy": "yarn build && yarn wrangler deploy",
     "cf-typegen": "wrangler types",
     "typecheck": "yarn cf-typegen && react-router typegen && tsc",
-    "test:e2e": "MOCK_CONTENTFUL=true CONTENTFUL_SPACE=test CONTENTFUL_KEY=test playwright test"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@contentful/rich-text-plain-text-renderer": "^17.1.6",

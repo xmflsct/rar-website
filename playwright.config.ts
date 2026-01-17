@@ -31,7 +31,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'MOCK_CONTENTFUL=true CONTENTFUL_SPACE=test CONTENTFUL_KEY=test yarn dev',
+    command: 'yarn dev',
     url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
   },
