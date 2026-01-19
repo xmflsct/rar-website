@@ -1,49 +1,36 @@
 import { Popover, Transition } from '@headlessui/react'
-import { addDays, getDay, isSameDay } from 'date-fns'
 import { Fragment } from 'react'
 import { DayPicker, DayPickerSingleProps, Matcher, isDateRange, isMatch } from 'react-day-picker'
 import { DaysClosed } from '~/utils/contentful'
+import {
+  getValidDayAfterMatcher,
+  getEarliestAvailableMatcher,
+  getClosedWeekdayDates,
+  EXCEPTIONAL_OPEN_DAYS
+} from '~/utils/dateHelpers'
 
-export const validDayAfter = (): Matcher => ({
-  after:
-    parseInt(
-      new Date().toLocaleString('nl-NL', {
-        timeZone: 'Europe/Amsterdam',
-        hour: '2-digit',
-        hour12: false
-      })
-    ) > 16
-      ? addDays(new Date(), 2)
-      : addDays(new Date(), 1)
-})
-export const invalidDayBefore = (): Matcher => ({
-  before:
-    parseInt(
-      new Date().toLocaleString('nl-NL', {
-        timeZone: 'Europe/Amsterdam',
-        hour: '2-digit',
-        hour12: false
-      })
-    ) > 16
-      ? addDays(new Date(), 3)
-      : addDays(new Date(), 2)
-})
+/**
+ * Matcher for valid days (after minimum lead time)
+ * Used to check if a date matches the "valid after" rule
+ */
+export const validDayAfter = (): Matcher => getValidDayAfterMatcher()
+
+/**
+ * Matcher to disable days before minimum lead time
+ */
+export const invalidDayBefore = (): Matcher => getEarliestAvailableMatcher()
+
+/** Days when shop is open (Wed-Sun) */
 const openDaysOfWeek: Matcher = { dayOfWeek: [0, 3, 4, 5, 6] }
-const exceptionalOpenDays: Date[] = [new Date(2025, 11, 23)]
-const closedDaysOfWeek: () => Matcher[] = () => {
-  if (!exceptionalOpenDays.length) return [{ dayOfWeek: [1, 2] }]
 
-  const days = []
-  for (let i = -6; i < 84; i++) {
-    const day = addDays(new Date(), i)
-    if (exceptionalOpenDays.find(d => isSameDay(d, day))) continue
-    if (getDay(day) == 1 || getDay(day) == 2) {
-      days.push(day)
-    }
-  }
-  return days
-}
+/**
+ * Get closed weekdays as individual dates, respecting exceptional open days
+ */
+const closedDaysOfWeek = (): Matcher[] => getClosedWeekdayDates()
 
+/**
+ * Check if a specific date is valid for ordering
+ */
 export const isDayValid = ({
   date,
   daysClosed
@@ -51,11 +38,16 @@ export const isDayValid = ({
   date: Date
   daysClosed?: DaysClosed[]
 }): boolean => {
+  // Use validDayAfter to check minimum lead time
   if (!isMatch(date, [validDayAfter()])) return false
 
-  if (!!exceptionalOpenDays.length && isMatch(date, exceptionalOpenDays)) return true
+  // Check exceptional open days first
+  if (EXCEPTIONAL_OPEN_DAYS.length && isMatch(date, EXCEPTIONAL_OPEN_DAYS)) return true
+
+  // Check if shop is normally open
   if (!isMatch(date, [openDaysOfWeek])) return false
 
+  // Check closed date ranges
   if (daysClosed?.length) {
     for (const daysClosedRange of daysClosed) {
       if (
@@ -72,6 +64,9 @@ export const isDayValid = ({
   return true
 }
 
+/**
+ * Get all matchers for disabled days in the date picker
+ */
 export const closedDays = (daysCollection: DaysClosed[]): Matcher[] =>
   daysCollection
     ? [

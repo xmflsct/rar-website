@@ -77,8 +77,8 @@ const CakeView: React.FC<Props> = ({ cake, daysClosedCollection }) => {
         {!cake.imagesCollection?.items.length ? (
           <Image alt={cake.name} image={cake.image} width={432} height={432} behaviour='fill' />
         ) : (
-          cake.imagesCollection.items.map(image => (
-            <Image alt={cake.name} image={image} width={432} height={432} behaviour='fill' />
+          cake.imagesCollection.items.map((image, index) => (
+            <Image key={index} alt={cake.name} image={image} width={432} height={432} behaviour='fill' />
           ))
         )}
       </div>
