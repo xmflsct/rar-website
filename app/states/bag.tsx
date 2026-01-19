@@ -1,5 +1,6 @@
 import { createContext, PropsWithChildren, useEffect, useRef, useState } from 'react'
 import { Cake } from '~/utils/contentful'
+import { getDateVersionString } from '~/utils/dateHelpers'
 
 export type CakeOrder = Omit<
   Cake,
@@ -40,9 +41,7 @@ export const BagContext = createContext<BagState>(initBagState)
 const BagProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [cakeOrders, setCakeOrders] = useState<CakeOrder[]>(initBagState.cakeOrders)
   useEffect(() => {
-    const NOW = `${new Date().getFullYear()}${('0' + (new Date().getMonth() + 1)).slice(-2)}${(
-      '0' + new Date().getDate()
-    ).slice(-2)}`
+    const NOW = getDateVersionString()
     const VERSION_LOCAL = localStorage.getItem('version') || NOW
     if (VERSION_LOCAL < VERSION) {
       localStorage.removeItem('cakeOrders')
