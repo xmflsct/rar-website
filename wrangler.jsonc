@@ -20,6 +20,16 @@
 		"CONTENTFUL_SPACE": "u0x1afixkalo",
 		"SENTRY_DSN": "https://79b2ce77fbfc4511af541c7a4cf125d3@o389581.ingest.us.sentry.io/6617177"
 	},
+	"routes": [
+		{
+			"pattern": "roundandround.nl",
+			"custom_domain": true
+		},
+		{
+			"pattern": "www.roundandround.nl",
+			"custom_domain": true
+		}
+	],
 	"env": {
 		"preview": {
 			"name": "rar-website-preview",
@@ -33,7 +43,13 @@
 				"ENVIRONMENT": "PREVIEW",
 				"CONTENTFUL_SPACE": "u0x1afixkalo",
 				"SENTRY_DSN": "https://79b2ce77fbfc4511af541c7a4cf125d3@o389581.ingest.us.sentry.io/6617177"
-			}
+			},
+			"routes": [
+				{
+					"pattern": "preview.roundandround.nl",
+					"custom_domain": true
+				}
+			]
 		}
 	}
 }

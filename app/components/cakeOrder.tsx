@@ -13,6 +13,7 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { DayPickerSingleProps } from 'react-day-picker'
 import { BagContext } from '~/states/bag'
 import { Cake, DaysClosed, DeliveryCustomization } from '~/utils/contentful'
+import { getMinimumOrderDate } from '~/utils/dateHelpers'
 import Button from './button'
 import PickDay, { closedDays } from './pickDay'
 import Select from './select'
@@ -88,16 +89,8 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
         DayPickerSingleProps,
         'date' | 'setDate' | 'mode' | 'select' | 'onSelect' | 'onDayClick'
       > => {
-        const maxLimit =
-          parseInt(
-            new Date().toLocaleString('nl-NL', {
-              timeZone: 'Europe/Amsterdam',
-              hour: '2-digit',
-              hour12: false
-            })
-          ) > 16
-            ? addDays(new Date(), 3)
-            : addDays(new Date(), 2)
+        // Get minimum order date based on current time in Amsterdam
+        const maxLimit = getMinimumOrderDate()
 
         let startingDate: Date
         let endingDate: Date
@@ -173,7 +166,7 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
           const selectedIndex = cakeCustomizations.findIndex(c => c[0] === customization.type)
           const maxLength = customization.customMaxLength || 30
           return (
-            <div className='flex-1'>
+            <div key={index} className='flex-1'>
               <div className='font-bold'>{customization.type}</div>
               <div className='flex flex-row gap-2'>
                 <Select

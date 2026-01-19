@@ -6,6 +6,7 @@ import { sumBy } from 'lodash'
 import { CakeOrder } from '~/states/bag'
 import calShipping from './calShipping'
 import { Cake, graphqlRequest, Shipping } from './contentful'
+import { formatDateForDisplay } from './dateHelpers'
 import { correctPickup } from './pickup'
 import { getReadableDeliveryDate } from './readableDeliveryDate'
 import { getStripeHeaders } from './stripeHeaders'
@@ -242,13 +243,7 @@ const verifyContentful = async ({
         display_name: new Array(
           'PostNL',
           shippingDate && orders.shipping[0].chosen.delivery?.date
-            ? parseISO(orders.shipping[0].chosen.delivery?.date).toLocaleString('en-GB', {
-              timeZone: 'Europe/Amsterdam',
-              weekday: 'short',
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            })
+            ? formatDateForDisplay(orders.shipping[0].chosen.delivery?.date)
             : undefined
         )
           .filter(f => f)
