@@ -1,4 +1,5 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
+import { useEffect } from 'react'
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router'
 import { useLoaderData, data } from 'react-router'
 import { gql } from 'graphql-request'
@@ -7,6 +8,7 @@ import CakeView from '~/components/cakeView'
 import Layout from '~/layout'
 import { cacheQuery, Cake, CAKE_DETAILS, DaysClosed } from '~/utils/contentful'
 import { getAllPages } from '~/utils/kv'
+import { trackViewProduct } from '~/utils/umami'
 
 export const loader = async ({ context, params, request }: LoaderFunctionArgs) => {
   const cakeData = await cacheQuery<{
@@ -84,6 +86,20 @@ export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) =>
 
 const PageCake: React.FC = () => {
   const { navs, cake, daysClosedCollection } = useLoaderData<typeof loader>()
+
+  // Track product view for Umami analytics
+  useEffect(() => {
+    const price =
+      (cake.typeCAvailable ? cake.typeCPrice : 0) ||
+      (cake.typeBAvailable ? cake.typeBPrice : 0) ||
+      (cake.typeAAvailable ? cake.typeAPrice : 0) ||
+      0
+    trackViewProduct({
+      name: cake.name,
+      slug: cake.slug,
+      price
+    })
+  }, [cake.name, cake.slug])
 
   return (
     <Layout

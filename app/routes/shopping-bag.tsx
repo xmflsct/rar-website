@@ -6,7 +6,7 @@ import { Form, Link, useActionData, useLoaderData, useNavigation, data, redirect
 import { addDays, getMonth, getYear, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
-import { Fragment, useContext, useEffect, useState } from 'react'
+import { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import Button from '~/components/button'
 import ExpandableField from '~/components/expandableField'
 import OrderList from '~/components/orderList'
@@ -20,6 +20,7 @@ import { DaysClosed, MaxCalendarMonth, Shipping, cacheQuery } from '~/utils/cont
 import { full } from '~/utils/currency'
 import { getAllPages } from '~/utils/kv'
 import { correctPickup } from '~/utils/pickup'
+import { trackViewCart, trackBeginCheckout } from '~/utils/umami'
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const loaderData = await cacheQuery<{
@@ -141,6 +142,8 @@ const ShoppingBag = () => {
 
   const actionData = useActionData()
   const [actionError, setActionError] = useState<string | null>(null)
+  const hasTrackedCart = useRef(false)
+  
   useEffect(() => {
     if ((actionData as any)?.error) {
       setActionError((actionData as any).error)
@@ -156,6 +159,24 @@ const ShoppingBag = () => {
       }
     }
   }, [actionData])
+
+  // Track view_cart event when shopping bag is viewed with items
+  useEffect(() => {
+    if (cakeOrders.length > 0 && !hasTrackedCart.current) {
+      hasTrackedCart.current = true
+      trackViewCart({
+        itemsCount: cakeOrders.length,
+        cartTotal: subtotal
+      })
+    }
+  }, [cakeOrders.length, subtotal])
+
+  // Track begin_checkout when form is submitted
+  useEffect(() => {
+    if (navigation.state === 'submitting') {
+      trackBeginCheckout(subtotal)
+    }
+  }, [navigation.state, subtotal])
 
   // Only show pickup date when there are orders without specific pickup date
   const needPickup = orders.pickup.filter(p => p.chosen.delivery?.date === undefined).length

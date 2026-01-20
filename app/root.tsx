@@ -12,7 +12,19 @@ import BagProvider from './states/bag'
 import styles from './styles/app.css?url'
 
 export const links = () => {
-  return [{ rel: 'stylesheet', href: styles }]
+  return [
+    { rel: 'stylesheet', href: styles },
+    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+    {
+      rel: 'preconnect',
+      href: 'https://fonts.gstatic.com',
+      crossOrigin: 'anonymous',
+    },
+    {
+      rel: 'stylesheet',
+      href: 'https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap',
+    },
+  ]
 }
 
 export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
@@ -24,10 +36,9 @@ export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
         <Meta />
         <Links />
         <script
-          suppressHydrationWarning
-          dangerouslySetInnerHTML={{
-            __html: `(function(d) {var config = {kitId: 'ahl7mep',scriptTimeout: 3000,async: true},h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\\bwf-loading\\b/g,"")+\" wf-inactive\";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)})(document);`
-          }}
+          defer
+          src="https://views.xmflsct.com/script.js"
+          data-website-id="a23e6701-b0ae-4a67-8830-59cb54fc4b09"
         />
       </head>
       <body className='h-full'>

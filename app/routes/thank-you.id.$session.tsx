@@ -1,10 +1,11 @@
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router'
-import { useLoaderData, data } from 'react-router'
-import { useEffect } from 'react'
+import { useLoaderData, data, useParams } from 'react-router'
+import { useEffect, useRef } from 'react'
 import Stripe from 'stripe'
 import Layout from '~/layout'
 import { full } from '~/utils/currency'
 import { getStripeHeaders } from '~/utils/stripeHeaders'
+import { trackPurchase } from '~/utils/umami'
 
 export const loader = async (props: LoaderFunctionArgs) => {
   if (!props.params.session) {
@@ -48,10 +49,23 @@ export const meta: MetaFunction = () => [
 
 const PageThankYou: React.FC = () => {
   const { session, line_items } = useLoaderData<typeof loader>()
+  const params = useParams()
+  const hasTrackedPurchase = useRef(false)
 
   useEffect(() => {
+    // Clear the shopping cart
     localStorage.setItem('cakeOrders', JSON.stringify([]))
-  }, [])
+    
+    // Track purchase event with revenue attribution (only once)
+    if (!hasTrackedPurchase.current && session.amount_total) {
+      hasTrackedPurchase.current = true
+      trackPurchase({
+        orderId: params.session || session.id,
+        revenue: session.amount_total / 100, // Convert cents to euros
+        itemsCount: line_items?.data?.length || 0
+      })
+    }
+  }, [session, line_items, params.session])
 
   return (
     <Layout navs={[]}>
