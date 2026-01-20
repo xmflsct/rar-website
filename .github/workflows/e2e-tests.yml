@@ -26,17 +26,14 @@ jobs:
         with:
           node-version-file: '.nvmrc'
 
-      - name: Enable Corepack
-        run: corepack enable
-
       - name: Install dependencies
-        run: yarn install --immutable
+        run: npm ci
 
       - name: Install Playwright browsers
-        run: yarn playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium
 
       - name: Run E2E tests
-        run: yarn test:e2e
+        run: npm run test:e2e
         env:
           CI: true
           CONTENTFUL_KEY: ${{ secrets.CONTENTFUL_KEY }}

@@ -24,11 +24,8 @@ jobs:
         with:
           node-version-file: '.nvmrc'
 
-      - name: Enable Corepack
-        run: corepack enable
-
       - name: Install dependencies
-        run: yarn install --immutable
+        run: npm ci
 
       - name: Run unit tests
-        run: yarn test
+        run: npm run test
