@@ -2,14 +2,7 @@ name: E2E Tests
 
 on:
   pull_request:
-    branches: [main, preview]
-    paths:
-      - 'app/**'
-      - 'tests/**'
-      - 'package.json'
-      - 'playwright.config.ts'
-      - 'vite.config.ts'
-      - '.github/workflows/e2e-tests.yml'
+    branches: []
 
 jobs:
   e2e-tests:

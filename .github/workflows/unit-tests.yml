@@ -3,12 +3,6 @@ name: Unit Tests
 on:
   pull_request:
     branches: [main, preview]
-    paths:
-      - 'app/**'
-      - 'package.json'
-      - 'vitest.config.ts'
-      - 'tsconfig.json'
-      - '.github/workflows/unit-tests.yml'
 
 jobs:
   unit-tests:
