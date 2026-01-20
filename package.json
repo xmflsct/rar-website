@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "deploy": "npm run build && npm run wrangler deploy",
     "cf-typegen": "wrangler types",
     "typecheck": "npm run cf-typegen && react-router typegen && tsc",
     "test": "vitest run",
