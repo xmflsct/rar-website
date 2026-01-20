@@ -7,7 +7,11 @@
 		"mode": "smart"
 	},
 	"observability": {
-		"enabled": true
+		"enabled": true,
+		"traces": {
+			"enabled": true,
+			"head_sampling_rate": 0.1
+		}
 	},
 	"kv_namespaces": [
 		{
