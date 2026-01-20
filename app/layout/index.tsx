@@ -10,7 +10,7 @@ type Props = {
 }
 const Layout: React.FC<PropsWithChildren & Props> = ({ children, navs }) => {
   const matches = useMatches()
-  const isAdmin = matches[matches.length - 1].pathname.startsWith('/admin')
+  const isAdmin = matches[matches.length - 1]?.pathname?.startsWith('/admin') ?? false
 
   const [toggleNav, setToggleNav] = useState(false)
 
