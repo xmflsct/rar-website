@@ -35,6 +35,11 @@ export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
         <meta name='viewport' content='width=device-width,initial-scale=1' />
         <Meta />
         <Links />
+        <script
+          defer
+          src="https://views.xmflsct.com/script.js"
+          data-website-id="a23e6701-b0ae-4a67-8830-59cb54fc4b09"
+        />
       </head>
       <body className='h-full'>
         {children}

@@ -17,6 +17,7 @@ import { getMinimumOrderDate } from '~/utils/dateHelpers'
 import Button from './button'
 import PickDay, { closedDays } from './pickDay'
 import Select from './select'
+import { trackAddToCart } from '~/utils/umami'
 
 type Props = {
   cake: Cake
@@ -318,12 +319,15 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
     e.preventDefault()
 
     if (unit && amount.length) {
+      const price = cake[`type${unit}Price`] ?? 0
+      const quantity = parseInt(amount)
+      
       cakeAdd({
         ...cake,
         chosen: {
           ...(cakeCustomizations.length && { cakeCustomizations }),
           unit,
-          amount: parseInt(amount),
+          amount: quantity,
           ...(needDeliveryOptions.current &&
             delivery !== '' && {
               delivery: {
@@ -332,6 +336,13 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
               }
             })
         }
+      })
+
+      // Track add to cart event for Umami analytics
+      trackAddToCart({
+        name: cake.name,
+        price,
+        quantity
       })
     }
   }
