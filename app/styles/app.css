@@ -5,7 +5,7 @@
 /* Tailwind v4 CSS-based configuration */
 @theme {
     /* Typography */
-    --font-sans: 'fot-tsukuardgothic-std', sans-serif;
+    --font-sans: 'Zen Maru Gothic', sans-serif;
 
     /* Colors */
     --color-transparent: transparent;
