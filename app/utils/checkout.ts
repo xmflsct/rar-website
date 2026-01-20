@@ -13,6 +13,21 @@ import { getStripeHeaders } from './stripeHeaders'
 
 const getEnv = (context: LoaderFunctionArgs['context']) => (context as any)?.cloudflare?.env
 
+// Mapping from 3-letter (ISO 3166-1 alpha-3) to 2-letter (ISO 3166-1 alpha-2) country codes
+// Stripe requires 2-letter codes, but the frontend uses 3-letter codes
+const countryCode3To2: Record<string, string> = {
+  NLD: 'NL',
+  BEL: 'BE',
+  DEU: 'DE',
+  FRA: 'FR',
+  LUX: 'LU',
+  DNK: 'DK',
+  ITA: 'IT',
+  AUT: 'AT',
+  ESP: 'ES',
+  SWE: 'SE',
+}
+
 export type CheckoutContent = {
   cards?: boolean
   countryCode?: string
@@ -357,7 +372,7 @@ const checkout = async ({
     ...(shipping && {
       shipping_address_collection: {
         allowed_countries: [
-          content.countryCode || 'NLD'
+          countryCode3To2[content.countryCode || 'NLD'] || 'NL'
         ]
       },
       shipping_options: [{ ...shipping }]
