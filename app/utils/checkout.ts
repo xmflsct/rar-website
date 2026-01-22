@@ -396,20 +396,25 @@ const checkout = async ({
     expires_at: Math.floor(Date.now() / 1000) + 31 * 60
   }
 
-  // @ts-ignore
-  const getPairs = (sessionData, keys = []) =>
-    Object.entries(sessionData).reduce((pairs, [key, value]) => {
-      if (typeof value === 'object')
-        // @ts-ignore
+  const getPairs = (
+    sessionData: Record<string, any>,
+    keys: string[] = []
+  ): [string[], any][] =>
+    Object.entries(sessionData).reduce<[string[], any][]>((pairs, [key, value]) => {
+      if (typeof value === 'object' && value !== null) {
         pairs.push(...getPairs(value, [...keys, key]))
-      // @ts-ignore
-      else pairs.push([[...keys, key], value])
+      } else {
+        pairs.push([[...keys, key], value])
+      }
       return pairs
     }, [])
   const sessionDataPairs = getPairs(sessionData)
     .map(
-      // @ts-ignore
-      ([[key0, ...keysRest], value]) => `${key0}${keysRest.map(a => `[${a}]`).join('')}=${value}`
+      ([keys, value]) =>
+        `${keys[0]}${keys
+          .slice(1)
+          .map(a => `[${a}]`)
+          .join('')}=${value}`
     )
     .join('&')
 
