@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router'
-import { Link, useLoaderData, data } from 'react-router'
+import { useLoaderData, data } from 'react-router'
 import { gql } from 'graphql-request'
 import Image from '~/components/image'
 import Layout from '~/layout'

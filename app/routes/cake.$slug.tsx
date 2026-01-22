@@ -50,7 +50,7 @@ export const loader = async ({ context, params, request }: LoaderFunctionArgs) =
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) =>
-  loaderData
+  loaderData?.cake
     ? [
       {
         title: `${loaderData.cake.name} | Round&Round Rotterdam`
@@ -85,7 +85,24 @@ export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) =>
     : []
 
 const PageCake: React.FC = () => {
-  const { navs, cake, daysClosedCollection } = useLoaderData<typeof loader>()
+  const loaderData = useLoaderData<typeof loader>()
+  const navs = loaderData.navs
+  const cake = loaderData.cake!
+  const daysClosedCollection = loaderData.daysClosedCollection
+
+  // Track product view for Umami analytics
+  useEffect(() => {
+    const price =
+      (cake.typeCAvailable ? cake.typeCPrice : 0) ||
+      (cake.typeBAvailable ? cake.typeBPrice : 0) ||
+      (cake.typeAAvailable ? cake.typeAPrice : 0) ||
+      0
+    trackViewProduct({
+      name: cake.name,
+      slug: cake.slug,
+      price
+    })
+  }, [cake.name, cake.slug])
 
   // Track product view for Umami analytics
   useEffect(() => {

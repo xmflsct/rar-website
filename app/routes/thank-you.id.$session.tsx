@@ -113,7 +113,7 @@ const PageThankYou: React.FC = () => {
                   Shipping
                 </td>
                 <td className='py-2 px-1 text-right'>
-                  {full(session.shipping_options[0].shipping_amount / 10 / 10)}
+                  {full((session.shipping_options[0]?.shipping_amount ?? 0) / 10 / 10)}
                 </td>
               </tr>
             ) : null}

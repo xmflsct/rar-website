@@ -30,18 +30,18 @@ const OrderList: React.FC<Props> = ({ order }) => {
           <div>
             {order.chosen.cakeCustomizations?.map(customization => {
               const matchedCustomization = order.cakeCustomizationsCollection?.items.findIndex(
-                i => i.type === customization[0]
+                i => i?.type === customization[0]
               )
-              if (matchedCustomization === undefined) return
+              if (matchedCustomization === undefined || matchedCustomization === -1) return
               return (
                 <p key={customization[0]}>
                   <span className='font-bold'>
-                    {order.cakeCustomizationsCollection?.items[matchedCustomization].type}
+                    {order.cakeCustomizationsCollection?.items[matchedCustomization]?.type}
                     {': '}
                   </span>
                   {customization[1] === -1
                     ? `Custom "${customization[2]}"`
-                    : order.cakeCustomizationsCollection?.items[matchedCustomization].options[
+                    : order.cakeCustomizationsCollection?.items[matchedCustomization]?.options[
                     customization[1]
                     ]}
                 </p>
