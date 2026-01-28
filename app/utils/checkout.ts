@@ -276,6 +276,20 @@ const verifyContentful = async ({
   }
 }
 
+export const getPairs = (
+  sessionData: any,
+  keys: string[] = []
+): [string[], any][] =>
+  Object.entries(sessionData).reduce<[string[], any][]>(
+    (pairs, [key, value]) => {
+      if (value !== null && typeof value === 'object')
+        pairs.push(...getPairs(value, [...keys, key]))
+      else pairs.push([[...keys, key], value])
+      return pairs
+    },
+    []
+  )
+
 const checkout = async ({
   context,
   content
@@ -396,20 +410,10 @@ const checkout = async ({
     expires_at: Math.floor(Date.now() / 1000) + 31 * 60
   }
 
-  // @ts-ignore
-  const getPairs = (sessionData, keys = []) =>
-    Object.entries(sessionData).reduce((pairs, [key, value]) => {
-      if (typeof value === 'object')
-        // @ts-ignore
-        pairs.push(...getPairs(value, [...keys, key]))
-      // @ts-ignore
-      else pairs.push([[...keys, key], value])
-      return pairs
-    }, [])
   const sessionDataPairs = getPairs(sessionData)
     .map(
-      // @ts-ignore
-      ([[key0, ...keysRest], value]) => `${key0}${keysRest.map(a => `[${a}]`).join('')}=${value}`
+      ([[key0, ...keysRest], value]) =>
+        `${key0}${keysRest.map(a => `[${a}]`).join('')}=${value}`
     )
     .join('&')
 
