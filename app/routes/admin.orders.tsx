@@ -303,9 +303,13 @@ const PageAdminOrders: React.FC = () => {
         }>()
       ).data
     }
-    for (const id of sessionIDs) {
-      lineItems.push({ id, lineItems: await fetchLineItems(id) })
-    }
+    const fetchedItems = await Promise.all(
+      sessionIDs.map(async id => ({
+        id,
+        lineItems: await fetchLineItems(id)
+      }))
+    )
+    lineItems.push(...fetchedItems)
     const shippingStatuses = shippingIds.length
       ? await getTrackings(myparcelAuthHeader, shippingIds)
       : []
