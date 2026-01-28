@@ -48,6 +48,8 @@
 				"CONTENTFUL_SPACE": "u0x1afixkalo",
 				"SENTRY_DSN": "https://79b2ce77fbfc4511af541c7a4cf125d3@o389581.ingest.us.sentry.io/6617177"
 			},
+			"workers_dev": false,
+			"preview_urls": true,
 			"routes": [
 				{
 					"pattern": "preview.roundandround.nl",

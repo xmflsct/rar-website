@@ -17,7 +17,7 @@ export const loader = async ({ context, params }: LoaderFunctionArgs) => {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) =>
-  data
+  data?.page
     ? [
       {
         title: `${data.page.name} | Round&Round Rotterdam`
@@ -26,7 +26,10 @@ export const meta: MetaFunction<typeof loader> = ({ data }) =>
     : []
 
 export default () => {
-  const { navs, page, daysClosedCollection } = useLoaderData<typeof loader>()
+  const loaderData = useLoaderData<typeof loader>()
+  const navs = loaderData.navs
+  const page = loaderData.page!
+  const daysClosedCollection = loaderData.daysClosedCollection
 
   return (
     <Layout navs={navs}>
