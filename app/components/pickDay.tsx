@@ -1,6 +1,6 @@
 import { Popover, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
-import { DayPicker, DayPickerSingleProps, Matcher, isDateRange, isMatch } from 'react-day-picker'
+import { DayPicker, DayPickerProps, Matcher, isDateRange, isMatch } from 'react-day-picker'
 import { DaysClosed } from '~/utils/contentful'
 import {
   getValidDayAfterMatcher,
@@ -79,7 +79,7 @@ type Props = {
   name?: string
   date?: Date
   setDate: React.Dispatch<React.SetStateAction<Date | undefined>>
-} & Omit<DayPickerSingleProps, 'mode' | 'select' | 'onSelect' | 'onDayClick'>
+} & Omit<DayPickerProps, 'mode' | 'selected' | 'onSelect' | 'onDayClick'>
 
 const PickDay: React.FC<Props> = ({ name, date, setDate, ...props }) => {
   const handleDaySelect = (date: Date | undefined) => {

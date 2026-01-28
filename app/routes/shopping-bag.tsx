@@ -57,8 +57,8 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const { navs } = await getAllPages(context)
   return data({
     navs,
-    shippingRates: loaderData.shippingCollection.items[0].rates,
-    maxCalendarMonth: loaderData.maxCalendarMonthCollection.items[0].month,
+    shippingRates: loaderData.shippingCollection.items[0]!.rates,
+    maxCalendarMonth: loaderData.maxCalendarMonthCollection.items[0]!.month,
     daysClosedCollection: loaderData.daysClosedCollection.items
   })
 }
@@ -258,7 +258,6 @@ const ShoppingBag = () => {
                           name='pickup_date'
                           date={pickup}
                           setDate={setPickup}
-                          required
                           defaultMonth={addDays(new Date(), 2)}
                           fromMonth={addDays(new Date(), 2)}
                           toMonth={
@@ -465,7 +464,7 @@ const ShoppingBag = () => {
                 the collection day.
               </div>
             </div>
-            <Button type='submit' disabled={navigation.state === ('submitting' || 'loading')}>
+            <Button type='submit' disabled={navigation.state === 'submitting' || navigation.state === 'loading'}>
               {navigation.state === 'submitting'
                 ? '...'
                 : navigation.state === 'loading'
