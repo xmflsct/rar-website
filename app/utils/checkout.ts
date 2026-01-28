@@ -397,15 +397,24 @@ const checkout = async ({
   }
 
   // @ts-ignore
-  const getPairs = (sessionData, keys = []) =>
-    Object.entries(sessionData).reduce((pairs, [key, value]) => {
-      if (typeof value === 'object')
-        // @ts-ignore
-        pairs.push(...getPairs(value, [...keys, key]))
-      // @ts-ignore
-      else pairs.push([[...keys, key], value])
-      return pairs
-    }, [])
+  const getPairs = sessionData => {
+    const acc: any[] = []
+    // @ts-ignore
+    const recurse = (data, keys) => {
+      Object.entries(data).forEach(([key, value]) => {
+        if (value && typeof value === 'object') {
+          keys.push(key)
+          recurse(value, keys)
+          keys.pop()
+        } else {
+          // @ts-ignore
+          acc.push([[...keys, key], value])
+        }
+      })
+    }
+    recurse(sessionData, [])
+    return acc
+  }
   const sessionDataPairs = getPairs(sessionData)
     .map(
       // @ts-ignore
