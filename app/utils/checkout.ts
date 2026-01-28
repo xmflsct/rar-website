@@ -152,7 +152,6 @@ const verifyContentful = async ({
         throw 'Cake not found'
       }
 
-      const order = flatOrders[objectIndex]!
       if (!item[`type${order.chosen.unit}Available`]) {
         throw 'Cake availability error'
       }
@@ -167,8 +166,8 @@ const verifyContentful = async ({
         throw 'Cake pricing error'
       }
 
-      if (pickup_date && (order.pickupNotAvailableStart || order.pickupNotAvailableEnd)) {
-        const dates = correctPickup(order)
+      if (pickup_date && (item.pickupNotAvailableStart || item.pickupNotAvailableEnd)) {
+        const dates = correctPickup(item)
         if (dates.start && dates.end) {
           if (
             isAfter(parseISO(dates.start), parseISO(pickup_date)) &&
