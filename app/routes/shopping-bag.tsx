@@ -6,7 +6,7 @@ import { Form, Link, useActionData, useLoaderData, useNavigation, data, redirect
 import { addDays, getMonth, getYear, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
-import { Fragment, useContext, useEffect, useRef, useState } from 'react'
+import { Fragment, useContext, useEffect, useRef, useState, useMemo } from 'react'
 import Button from '~/components/button'
 import ExpandableField from '~/components/expandableField'
 import OrderList from '~/components/orderList'
@@ -111,23 +111,46 @@ const ShoppingBag = () => {
   const [terms, setTerms] = useState(false)
 
   // Conditions
-  let hasBirthdayCake = false
+  const { orders, hasBirthdayCake } = useMemo(() => {
+    let hasBirthdayCake = false
 
-  const orders = cakeOrders.reduce(
-    (final: { pickup: CakeOrder[]; shipping: CakeOrder[] }, current) => {
-      if (current.chosen.delivery?.type === 'shipping') {
-        final.shipping.push(current)
-      } else {
-        final.pickup.push(current)
-      }
+    const orders = cakeOrders.reduce(
+      (final: { pickup: CakeOrder[]; shipping: CakeOrder[] }, current) => {
+        if (current.chosen.delivery?.type === 'shipping') {
+          final.shipping.push(current)
+        } else {
+          final.pickup.push(current)
+        }
 
-      if (current.slug.includes('birthday-cake')) {
-        hasBirthdayCake = true
-      }
+        if (current.slug.includes('birthday-cake')) {
+          hasBirthdayCake = true
+        }
 
-      return final
-    },
-    { pickup: [], shipping: [] }
+        return final
+      },
+      { pickup: [], shipping: [] }
+    )
+    return { orders, hasBirthdayCake }
+  }, [cakeOrders])
+
+  const disabledDates = useMemo(
+    () => [
+      ...closedDays(daysClosedCollection),
+      invalidDayBefore(),
+      ...orders.pickup.map(order => {
+        const dates = correctPickup(order)
+
+        if (dates.start || dates.end) {
+          return {
+            from: parseISO(dates.start || '1900-01-01'),
+            to: parseISO(dates.end || '2999-01-01')
+          }
+        }
+
+        return []
+      })
+    ],
+    [daysClosedCollection, orders]
   )
 
   const subtotal = sumBy(cakeOrders, order => {
@@ -268,22 +291,7 @@ const ShoppingBag = () => {
                               maxCalendarMonth - 1
                             )
                           }
-                          disabled={[
-                            ...closedDays(daysClosedCollection),
-                            invalidDayBefore(),
-                            ...orders.pickup.map(order => {
-                              const dates = correctPickup(order)
-
-                              if (dates.start || dates.end) {
-                                return {
-                                  from: parseISO(dates.start || '1900-01-01'),
-                                  to: parseISO(dates.end || '2999-01-01')
-                                }
-                              }
-
-                              return []
-                            })
-                          ]}
+                          disabled={disabledDates}
                         />
                       </div>
                       <div className='text-sm mt-2 text-neutral-500'>
