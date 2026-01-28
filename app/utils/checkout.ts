@@ -138,10 +138,17 @@ const verifyContentful = async ({
       throw 'Cake not found'
     }
 
-    for (const item of items) {
-      const objectIndex = flatOrders.findIndex(i => i.sys.id === item.sys.id)
+    const flatOrdersMap = new Map<string, CakeOrder>()
+    for (const order of flatOrders) {
+      if (!flatOrdersMap.has(order.sys.id)) {
+        flatOrdersMap.set(order.sys.id, order)
+      }
+    }
 
-      if (objectIndex < 0) {
+    for (const item of items) {
+      const order = flatOrdersMap.get(item.sys.id)
+
+      if (!order) {
         throw 'Cake not found'
       }
 
