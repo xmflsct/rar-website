@@ -30,15 +30,17 @@ const calShipping = ({
 
   let label = undefined
   let fee = undefined
+
+  const orderFreeAbove = orders
+    .filter(order => order.deliveryCustomizations?.shipping?.freeAbove)
+    .sort(
+      (a, b) =>
+        (b.deliveryCustomizations?.shipping?.freeAbove || 0) -
+        (a.deliveryCustomizations?.shipping?.freeAbove || 0)
+    )[0]
+
   for (const rate of countryMatchedRate[0].rates) {
     if (rate.weight.min <= weight && weight <= rate.weight.max) {
-      const orderFreeAbove = orders
-        .filter(order => order.deliveryCustomizations?.shipping?.freeAbove)
-        .sort(
-          (a, b) =>
-            (b.deliveryCustomizations?.shipping?.freeAbove || 0) -
-            (a.deliveryCustomizations?.shipping?.freeAbove || 0)
-        )[0]
       if (orderFreeAbove?.deliveryCustomizations?.shipping?.freeAbove) {
         fee =
           subtotal >= orderFreeAbove.deliveryCustomizations?.shipping?.freeAbove ? 0 : rate.price
