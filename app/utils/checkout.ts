@@ -138,14 +138,21 @@ const verifyContentful = async ({
       throw 'Cake not found'
     }
 
-    for (const item of items) {
-      const objectIndex = flatOrders.findIndex(i => i.sys.id === item.sys.id)
+    const flatOrdersMap = new Map<string, CakeOrder>()
+    for (const order of flatOrders) {
+      if (!flatOrdersMap.has(order.sys.id)) {
+        flatOrdersMap.set(order.sys.id, order)
+      }
+    }
 
-      if (objectIndex < 0) {
+    for (const item of items) {
+      const order = flatOrdersMap.get(item.sys.id)
+
+      if (!order) {
         throw 'Cake not found'
       }
 
-      const order = flatOrders[objectIndex]
+      const order = flatOrders[objectIndex]!
       if (!item[`type${order.chosen.unit}Available`]) {
         throw 'Cake availability error'
       }
@@ -238,7 +245,7 @@ const verifyContentful = async ({
           }
         `
       })
-    ).shippingCollection.items[0].rates
+    ).shippingCollection.items[0]!.rates
 
     const shippingRate = calShipping({
       rates,
@@ -250,15 +257,15 @@ const verifyContentful = async ({
     }
 
     const shippingDate = orders.shipping.every(
-      (val, i, arr) => val.chosen.delivery?.date === arr[0].chosen.delivery?.date
+      (val, _i, arr) => val.chosen.delivery?.date === arr[0]?.chosen.delivery?.date
     )
 
     return {
       shipping_rate_data: {
         display_name: new Array(
           'PostNL',
-          shippingDate && orders.shipping[0].chosen.delivery?.date
-            ? formatDateForDisplay(orders.shipping[0].chosen.delivery?.date)
+          shippingDate && orders.shipping[0]?.chosen.delivery?.date
+            ? formatDateForDisplay(orders.shipping[0]?.chosen.delivery?.date)
             : undefined
         )
           .filter(f => f)
