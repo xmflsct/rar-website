@@ -14,7 +14,7 @@ const Header: React.FC<Props> = ({ toggleNav, setToggleNav }) => {
   const { cakeOrders } = useContext(BagContext)
 
   const matches = useMatches()
-  const pathname = matches[matches.length - 1].pathname
+  const pathname = matches[matches.length - 1]?.pathname ?? ''
   const isAdmin = pathname.startsWith('/admin')
   const hide = pathname.startsWith('/shopping-bag') || pathname.startsWith('/thank-you/id/')
 

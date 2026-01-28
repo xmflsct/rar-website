@@ -145,7 +145,7 @@ const verifyContentful = async ({
         throw 'Cake not found'
       }
 
-      const order = flatOrders[objectIndex]
+      const order = flatOrders[objectIndex]!
       if (!item[`type${order.chosen.unit}Available`]) {
         throw 'Cake availability error'
       }
@@ -238,7 +238,7 @@ const verifyContentful = async ({
           }
         `
       })
-    ).shippingCollection.items[0].rates
+    ).shippingCollection.items[0]!.rates
 
     const shippingRate = calShipping({
       rates,
@@ -250,15 +250,15 @@ const verifyContentful = async ({
     }
 
     const shippingDate = orders.shipping.every(
-      (val, i, arr) => val.chosen.delivery?.date === arr[0].chosen.delivery?.date
+      (val, _i, arr) => val.chosen.delivery?.date === arr[0]?.chosen.delivery?.date
     )
 
     return {
       shipping_rate_data: {
         display_name: new Array(
           'PostNL',
-          shippingDate && orders.shipping[0].chosen.delivery?.date
-            ? formatDateForDisplay(orders.shipping[0].chosen.delivery?.date)
+          shippingDate && orders.shipping[0]?.chosen.delivery?.date
+            ? formatDateForDisplay(orders.shipping[0]?.chosen.delivery?.date)
             : undefined
         )
           .filter(f => f)
@@ -417,8 +417,11 @@ const checkout = async ({
   }
   const sessionDataPairs = getPairs(sessionData)
     .map(
-      // @ts-ignore
-      ([[key0, ...keysRest], value]) => `${key0}${keysRest.map(a => `[${a}]`).join('')}=${value}`
+      ([keys, value]) =>
+        `${keys[0]}${keys
+          .slice(1)
+          .map(a => `[${a}]`)
+          .join('')}=${value}`
     )
     .join('&')
 

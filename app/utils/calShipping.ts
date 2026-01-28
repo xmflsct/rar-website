@@ -30,7 +30,7 @@ const calShipping = ({
 
   let label = undefined
   let fee = undefined
-  for (const rate of countryMatchedRate[0].rates) {
+  for (const rate of countryMatchedRate[0]!.rates) {
     if (rate.weight.min <= weight && weight <= rate.weight.max) {
       const orderFreeAbove = orders
         .filter(order => order.deliveryCustomizations?.shipping?.freeAbove)

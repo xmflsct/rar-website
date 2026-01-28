@@ -1,10 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import {
   SHOP_CUTOFF_HOUR,
   SHOP_CLOSED_DAYS,
   MIN_LEAD_TIME_BEFORE_CUTOFF,
   MIN_LEAD_TIME_AFTER_CUTOFF,
-  EXCEPTIONAL_OPEN_DAYS,
   getAmsterdamHour,
   isPastCutoff,
   getMinimumOrderDate,
@@ -17,14 +16,6 @@ import {
   getDateVersionString
 } from './dateHelpers'
 import { addDays } from 'date-fns'
-
-// Helper to create a date at a specific hour in Amsterdam timezone
-// Note: This is approximate since we can't easily control timezone in tests
-const createDateWithHour = (hour: number): Date => {
-  const date = new Date()
-  date.setHours(hour, 0, 0, 0)
-  return date
-}
 
 describe('dateHelpers', () => {
   describe('Constants', () => {
@@ -66,7 +57,6 @@ describe('dateHelpers', () => {
 
     it('should return at least 2 days from now', () => {
       const minDate = getMinimumOrderDate()
-      const twoDaysFromNow = addDays(new Date(), 2)
       // Due to time of day variations, just check it's at least 1.5 days away
       const diffMs = minDate.getTime() - new Date().getTime()
       const diffDays = diffMs / (1000 * 60 * 60 * 24)
