@@ -174,6 +174,20 @@ const PageCake: React.FC = () => {
     })
   }, [cake.name, cake.slug])
 
+  // Track product view for Umami analytics
+  useEffect(() => {
+    const price =
+      (cake.typeCAvailable ? cake.typeCPrice : 0) ||
+      (cake.typeBAvailable ? cake.typeBPrice : 0) ||
+      (cake.typeAAvailable ? cake.typeAPrice : 0) ||
+      0
+    trackViewProduct({
+      name: cake.name,
+      slug: cake.slug,
+      price
+    })
+  }, [cake.name, cake.slug])
+
   return (
     <Layout
       navs={navs}
