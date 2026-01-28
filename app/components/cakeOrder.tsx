@@ -10,7 +10,7 @@ import {
   parseISO
 } from 'date-fns'
 import { useContext, useEffect, useRef, useState } from 'react'
-import { DayPickerSingleProps } from 'react-day-picker'
+import { DayPickerProps } from 'react-day-picker'
 import { BagContext } from '~/states/bag'
 import { Cake, DaysClosed, DeliveryCustomization } from '~/utils/contentful'
 import { getMinimumOrderDate } from '~/utils/dateHelpers'
@@ -87,8 +87,8 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
       const renderAvailability = (
         availability: DeliveryCustomization
       ): Omit<
-        DayPickerSingleProps,
-        'date' | 'setDate' | 'mode' | 'select' | 'onSelect' | 'onDayClick'
+        DayPickerProps,
+        'mode' | 'selected' | 'onSelect' | 'onDayClick'
       > => {
         // Get minimum order date based on current time in Amsterdam
         const maxLimit = getMinimumOrderDate()
@@ -101,7 +101,7 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
             .sort((a, b) => (a.date < b.date ? -1 : 1))
             .filter(({ before }) => (before ? isBefore(new Date(), parseISO(before)) : true))[0]
             ?.date as string | undefined
-          endingDate = parseISO(availability.sort((a, b) => (a.date > b.date ? -1 : 1))[0].date)
+          endingDate = parseISO(availability.sort((a, b) => (a.date > b.date ? -1 : 1))[0]!.date)
           if (!getStillAvailable) {
             return {
               defaultMonth: endingDate,
@@ -174,7 +174,7 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
                   key={index}
                   required
                   name={customization.type}
-                  value={selectedIndex > -1 ? cakeCustomizations[selectedIndex][1] : ''}
+                  value={selectedIndex > -1 ? cakeCustomizations[selectedIndex]![1] : ''}
                   onChange={e => {
                     if (selectedIndex > -1) {
                       setCakeCustomizations(
@@ -201,7 +201,7 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
                   ))}
                   {!!customization.customAllow ? <option value={-1} children='Custom' /> : null}
                 </Select>
-                {selectedIndex > -1 && cakeCustomizations[selectedIndex][1] === -1 ? (
+                {selectedIndex > -1 && cakeCustomizations[selectedIndex]![1] === -1 ? (
                   <div className='grow flex flex-row'>
                     <input
                       name='custom'
@@ -209,7 +209,7 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
                       required
                       type='text'
                       className='grow border-b border-neutral-500 bg-transparent'
-                      value={selectedIndex > -1 ? cakeCustomizations[selectedIndex][2] : ''}
+                      value={selectedIndex > -1 ? cakeCustomizations[selectedIndex]![2] : ''}
                       onChange={({ target: { value } }) => {
                         if (
                           selectedIndex > -1 &&
@@ -227,7 +227,7 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
                       className='border-b border-neutral-500 bg-transparent text-sm text-neutral-500 text-center'
                       readOnly
                       value={`${
-                        new TextEncoder().encode(cakeCustomizations[selectedIndex][2]).length || 0
+                        new TextEncoder().encode(cakeCustomizations[selectedIndex]![2]).length || 0
                       } / ${maxLength}`}
                       size={7}
                     />
@@ -255,7 +255,7 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
   useEffect(() => {
     const minimum = unit ? cake[`type${unit}Minimum`] : undefined
     const stock = unit ? cake[`type${unit}Stock`] : undefined
-    const stockDefined = stock !== (undefined || null)
+    const stockDefined = stock !== undefined && stock !== null
 
     if (stockDefined && (stock === 0 || (stock && stock < parseInt(amount)))) {
       setAmount('')
@@ -267,7 +267,7 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
   const renderTypeOptions = () => {
     const minimum = unit ? cake[`type${unit}Minimum`] : undefined
     const stock = unit ? cake[`type${unit}Stock`] : undefined
-    const stockDefined = stock !== (undefined || null)
+    const stockDefined = stock !== undefined && stock !== null
 
     if (stockDefined && stock === 0) {
       return (

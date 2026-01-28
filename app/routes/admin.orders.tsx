@@ -109,9 +109,9 @@ const Shipping: React.FC<{
     ])
 
     setLoading(false)
-    if (res?.[0].description) {
+    if (res?.[0]?.description) {
       setFailed(false)
-      setPhase(res?.[0].description)
+      setPhase(res[0].description)
     } else {
       setFailed(true)
       setPhase(undefined)
@@ -271,7 +271,7 @@ const PageAdminOrders: React.FC = () => {
     const { data, has_more }: SessionsData = await fetchSessions()
 
     setHasMore(has_more)
-    cursor.current = data[data.length - 1].id
+    cursor.current = data[data.length - 1]?.id
 
     const sessions = data
       .filter(
@@ -345,7 +345,7 @@ const PageAdminOrders: React.FC = () => {
                 item.description !== 'Gift Card Shipping | Shipment' &&
                 item.description !== 'Transaction fee' &&
                 item.description !== 'Processing fee' &&
-                !item.description.includes('Pick up:')
+                !item.description?.includes('Pick up:')
             ),
           metadata: {
             ...session.payment_intent.latest_charge.metadata,
