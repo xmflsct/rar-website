@@ -283,6 +283,20 @@ const verifyContentful = async ({
   }
 }
 
+export const getPairs = (
+  sessionData: any,
+  keys: string[] = []
+): [string[], any][] =>
+  Object.entries(sessionData).reduce<[string[], any][]>(
+    (pairs, [key, value]) => {
+      if (value !== null && typeof value === 'object')
+        pairs.push(...getPairs(value, [...keys, key]))
+      else pairs.push([[...keys, key], value])
+      return pairs
+    },
+    []
+  )
+
 const checkout = async ({
   context,
   content
@@ -403,32 +417,10 @@ const checkout = async ({
     expires_at: Math.floor(Date.now() / 1000) + 31 * 60
   }
 
-  // @ts-ignore
-  const getPairs = sessionData => {
-    const acc: any[] = []
-    // @ts-ignore
-    const recurse = (data, keys) => {
-      Object.entries(data).forEach(([key, value]) => {
-        if (value && typeof value === 'object') {
-          keys.push(key)
-          recurse(value, keys)
-          keys.pop()
-        } else {
-          // @ts-ignore
-          acc.push([[...keys, key], value])
-        }
-      })
-    }
-    recurse(sessionData, [])
-    return acc
-  }
   const sessionDataPairs = getPairs(sessionData)
     .map(
-      ([keys, value]) =>
-        `${keys[0]}${keys
-          .slice(1)
-          .map(a => `[${a}]`)
-          .join('')}=${value}`
+      ([[key0, ...keysRest], value]) =>
+        `${key0}${keysRest.map(a => `[${a}]`).join('')}=${value}`
     )
     .join('&')
 
