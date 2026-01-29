@@ -6,6 +6,7 @@ import type { ActionFunction, AppLoadContext } from 'react-router'
 import { data } from 'react-router'
 import Stripe from 'stripe'
 import { getMyparcelAuthHeader } from '~/utils/myparcelAuthHeader'
+import { updateStockOptimized } from '~/utils/stock-update'
 import { getStripeHeaders } from '~/utils/stripeHeaders'
 
 export const createShipment = async ({
@@ -147,58 +148,7 @@ export const action: ActionFunction = async ({ context, request }) => {
         }>()
       ).data.map(item => ({ quantity: item.quantity, metadata: item.price.product.metadata }))
 
-      for (const lineItem of sessionLineItems) {
-        if (lineItem.metadata.contentful_id) {
-          if (!lineItem.metadata.type) {
-            console.warn('No type provided')
-          } else {
-            const entry = await (
-              await fetch(
-                `https://api.contentful.com/spaces/${env.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`,
-                {
-                  headers: { Authorization: `Bearer ${env.CONTENTFUL_PAT}` }
-                }
-              )
-            ).json<{
-              sys: { id: string; version: number }
-              fields: {
-                typeAStock?: { 'en-GB': number }
-                typeBStock?: { 'en-GB': number }
-                typeCStock?: { 'en-GB': number }
-              }
-            }>()
-
-            const contentfulType = lineItem.metadata.type as 'A' | 'B' | 'C'
-            const stock = entry.fields[`type${contentfulType}Stock`]?.['en-GB']
-
-            if (!stock || typeof stock !== 'number') {
-              continue
-            }
-            if (stock === 0) {
-              throw data({ error: `Stock of ${entry.sys.id} is 0!` }, { status: 500 })
-            }
-
-            await fetch(
-              `https://api.contentful.com/spaces/${env.CONTENTFUL_SPACE}/environments/master/entries/${lineItem.metadata.contentful_id}`,
-              {
-                method: 'PATCH',
-                headers: {
-                  Authorization: `Bearer ${env.CONTENTFUL_PAT}`,
-                  'Content-Type': 'application/json-patch+json',
-                  'X-Contentful-Version': entry.sys.version.toString()
-                },
-                body: JSON.stringify([
-                  {
-                    op: 'replace',
-                    path: `/fields/type${lineItem.metadata.type}Stock/en-GB`,
-                    value: stock - (lineItem.quantity || 0)
-                  }
-                ])
-              }
-            )
-          }
-        }
-      }
+      await updateStockOptimized(sessionLineItems, env)
 
       const shipping_rate = payload.data.object.shipping_cost?.shipping_rate
         ? (
