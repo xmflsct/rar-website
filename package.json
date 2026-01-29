@@ -4,7 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite dev --host",
     "build": "vite build",
     "cf-typegen": "wrangler types",
     "typecheck": "npm run cf-typegen && react-router typegen && tsc",
