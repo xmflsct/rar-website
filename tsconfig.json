@@ -53,6 +53,7 @@
     ],
     // Type Definitions
     "types": [
+      "@cloudflare/workers-types/experimental",
       "vite/client"
     ]
   }
