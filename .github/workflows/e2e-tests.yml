@@ -25,6 +25,22 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Create .dev.vars
+        run: |
+          echo "CONTENTFUL_KEY=$CONTENTFUL_KEY" >> .dev.vars
+          echo "CONTENTFUL_PAT=$CONTENTFUL_PAT" >> .dev.vars
+          echo "STRIPE_KEY_ADMIN=$STRIPE_KEY_ADMIN" >> .dev.vars
+          echo "STRIPE_KEY_PRIVATE=$STRIPE_KEY_PRIVATE" >> .dev.vars
+          echo "WEBHOOK_STRIPE_MYPARCEL_KEY=$WEBHOOK_STRIPE_MYPARCEL_KEY" >> .dev.vars
+          echo "WEBHOOK_STRIPE_SIGNING_SECRET=$WEBHOOK_STRIPE_SIGNING_SECRET" >> .dev.vars
+        env:
+          CONTENTFUL_KEY: ${{ secrets.CONTENTFUL_KEY }}
+          CONTENTFUL_PAT: ${{ secrets.CONTENTFUL_PAT }}
+          STRIPE_KEY_ADMIN: ${{ secrets.STRIPE_KEY_ADMIN }}
+          STRIPE_KEY_PRIVATE: ${{ secrets.STRIPE_KEY_PRIVATE }}
+          WEBHOOK_STRIPE_MYPARCEL_KEY: ${{ secrets.WEBHOOK_STRIPE_MYPARCEL_KEY }}
+          WEBHOOK_STRIPE_SIGNING_SECRET: ${{ secrets.WEBHOOK_STRIPE_SIGNING_SECRET }}
+
       - name: Run E2E tests
         run: npm run test:e2e
         env:

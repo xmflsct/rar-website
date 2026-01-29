@@ -1,5 +1,4 @@
 import { CarrierId, PackageTypeId } from '@myparcel/constants'
-// @ts-ignore
 import { NETHERLANDS } from '@myparcel/constants/countries'
 import { FetchClient, PostShipments, createPrivateSdk } from '@myparcel/sdk'
 import type { ActionFunction, AppLoadContext } from 'react-router'
