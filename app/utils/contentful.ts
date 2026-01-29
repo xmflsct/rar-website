@@ -3,6 +3,12 @@ import type { LoaderFunctionArgs } from 'react-router'
 import { data } from 'react-router'
 import { gql, GraphQLClient, RequestDocument, Variables } from 'graphql-request'
 
+declare global {
+  interface CacheStorage {
+    default: Cache
+  }
+}
+
 type GraphQLRequest = {
   context: LoaderFunctionArgs['context']
   query: RequestDocument
@@ -46,7 +52,6 @@ export const cacheQuery = async <T = unknown>({
     return await queryData()
   }
 
-  // @ts-ignore
   const cache = caches.default
 
   const cacheUrl = new URL(rest.request.url)

@@ -3,7 +3,8 @@
     ".react-router/types/**/*",
     "app/**/*.ts",
     "app/**/*.tsx",
-    "workers/**/*.ts"
+    "workers/**/*.ts",
+    "worker-configuration.d.ts"
   ],
   "exclude": [
     "node_modules",
@@ -52,7 +53,6 @@
     ],
     // Type Definitions
     "types": [
-      "@cloudflare/workers-types/experimental",
       "vite/client"
     ]
   }
