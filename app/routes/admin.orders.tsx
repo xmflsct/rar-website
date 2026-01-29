@@ -84,7 +84,7 @@ type Order = {
 const getTrackings = async (myparcelAuthHeader: { Authorization: string }, ids: string[]) =>
   (
     await (
-      await fetch(`	https://api.myparcel.nl/tracktraces/${ids.join(';')}`, {
+      await fetch(`https://api.myparcel.nl/tracktraces/${ids.join(';')}`, {
         headers: myparcelAuthHeader
       })
     ).json<{ data: { tracktraces: TrackTrace[] } }>()
@@ -303,16 +303,18 @@ const PageAdminOrders: React.FC = () => {
         }>()
       ).data
     }
-    const fetchedItems = await Promise.all(
-      sessionIDs.map(async id => ({
-        id,
-        lineItems: await fetchLineItems(id)
-      }))
-    )
+    const [fetchedItems, shippingStatuses] = await Promise.all([
+      Promise.all(
+        sessionIDs.map(async id => ({
+          id,
+          lineItems: await fetchLineItems(id)
+        }))
+      ),
+      shippingIds.length
+        ? getTrackings(myparcelAuthHeader, shippingIds)
+        : Promise.resolve([])
+    ])
     lineItems.push(...fetchedItems)
-    const shippingStatuses = shippingIds.length
-      ? await getTrackings(myparcelAuthHeader, shippingIds)
-      : []
 
     setOrders([
       ...orders,
