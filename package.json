@@ -10,7 +10,7 @@
     "typecheck": "npm run cf-typegen && react-router typegen && tsc",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test",
+    "test:e2e": "node scripts/generate-dev-vars.cjs && playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug"
   },
