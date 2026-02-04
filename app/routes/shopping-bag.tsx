@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Dialog, Transition } from '@headlessui/react'
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router'
 import { Form, Link, useActionData, useLoaderData, useNavigation, data, redirect } from 'react-router'
-import { addDays, getMonth, getYear, parseISO, startOfToday } from 'date-fns'
+import { addDays, getMonth, getYear, parseISO } from 'date-fns'
 import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
 import { Fragment, useContext, useEffect, useRef, useState } from 'react'
@@ -31,7 +31,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
     context,
     request,
     ttlMinutes: 15,
-    variables: { end_gte: startOfToday().toISOString() },
+    variables: { end_gte: new Date(new Date().setHours(0, 0, 0, 0)).toISOString() },
     query: gql`
       query Shipping($preview: Boolean, $end_gte: DateTime!) {
         shippingCollection(preview: $preview, limit: 1, where: { year: 2023 }) {
