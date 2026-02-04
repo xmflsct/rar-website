@@ -18,74 +18,62 @@ async function completeStripePayment(
 
   // Fill email - Stripe checkout uses input#email
   const emailInput = page.locator('input#email')
-  await emailInput.fill(TEST_EMAIL)
+  if (await emailInput.isVisible({ timeout: 10000 }).catch(() => false)) {
+    await emailInput.fill(TEST_EMAIL)
+  }
 
-  // Fill phone number if visible
-  const phoneInput = page.locator('input[type="tel"]').first()
+  // Fill phone if requested
+  const phoneInput = page.locator('input#phoneNumber')
   if (await phoneInput.isVisible({ timeout: 10000 }).catch(() => false)) {
     await phoneInput.fill(TEST_PHONE)
   }
 
-  // Fill shipping address if required
+  // Fill shipping address if needed
   if (options.withShipping) {
-    // Allow time for shipping section to render
-    await page.waitForTimeout(1000)
+    // Look for shipping address fields
+    // Often Stripe hides them under an accordion or they appear after email
     
-    // Click "Enter address manually" button if it exists to expand the form
-    const manualAddressButton = page.locator('button:has-text("Enter address manually")')
+    // Address button/accordion
+    const manualAddressButton = page.locator('button#shipping-address-accordion-item-button, button[data-testid="shipping-address-accordion-item-button"]')
     if (await manualAddressButton.isVisible({ timeout: 3000 }).catch(() => false)) {
       await manualAddressButton.click()
-      await page.waitForTimeout(1000)
     }
-    
-    // Fill shipping name (use exact Stripe selector)
+
+    // Name
     const nameInput = page.locator('input#shippingName')
-    await nameInput.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {})
     if (await nameInput.isVisible({ timeout: 1000 }).catch(() => false)) {
       await nameInput.fill(TEST_SHIPPING_ADDRESS.name)
     }
-    
-    // Fill shipping address line 1 (use exact Stripe selector)
+
+    // Address Line 1
     const addressInput = page.locator('input#shippingAddressLine1')
-    await addressInput.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {})
     if (await addressInput.isVisible({ timeout: 1000 }).catch(() => false)) {
-      await addressInput.fill(TEST_SHIPPING_ADDRESS.addressLine1)
-      await page.waitForTimeout(300) // Allow address autocomplete to dismiss
+      await addressInput.fill(TEST_SHIPPING_ADDRESS.line1)
     }
-    
-    // Fill city (use exact Stripe selector)
-    const cityInput = page.locator('input#shippingLocality')
+
+    // City
+    const cityInput = page.locator('input#shippingAddressCity')
     if (await cityInput.isVisible({ timeout: 10000 }).catch(() => false)) {
       await cityInput.fill(TEST_SHIPPING_ADDRESS.city)
     }
-    
-    // Fill postal code (use exact Stripe selector)
-    const postalInput = page.locator('input#shippingPostalCode')
+
+    // Postal Code
+    const postalInput = page.locator('input#shippingAddressPostalCode')
     if (await postalInput.isVisible({ timeout: 10000 }).catch(() => false)) {
       await postalInput.fill(TEST_SHIPPING_ADDRESS.postalCode)
     }
-    
-    await page.waitForTimeout(500)
+
+    // Country should be pre-selected as Netherlands based on earlier selection,
+    // but we might need to verify or select it if Stripe defaults to US
   }
 
-  // Select Card payment method - try multiple approaches
-  // First scroll down to make the payment methods visible
-  await page.evaluate(() => window.scrollBy(0, 300))
-  await page.waitForTimeout(500)
+  // Select card payment method if needed
+  // Sometimes it's selected by default, sometimes not
   
-  // Try to click the Card payment option using different methods
-  // Method 1: Click the Card radio input via JavaScript (most reliable)
-  await page.evaluate(() => {
-    const cardRadio = document.querySelector('input#payment-method-accordion-item-title-card') as HTMLInputElement
-    if (cardRadio) {
-      cardRadio.checked = true
-      cardRadio.dispatchEvent(new Event('change', { bubbles: true }))
-      cardRadio.click()
-    }
-  })
-  await page.waitForTimeout(500)
-  
-  // Method 2: Also click the visible Card label/button area
+  // Wait for the payment element to be ready
+  await page.waitForTimeout(1000)
+
+  // Also click the visible Card label/button area
   const cardLabel = page.locator('#payment-method-label-card, [data-testid="card-accordion-item-button"]').first()
   if (await cardLabel.isVisible({ timeout: 1000 }).catch(() => false)) {
     await cardLabel.click({ force: true })
@@ -133,19 +121,19 @@ async function addCakeToBag(page: Page, options: {
 
   await page.goto('/')
   
-  // Click the appropriate navigation link
-  if (cakeType === 'normal') {
-    // Click on "Cakes & Sweets" link
-    await page.getByRole('link', { name: /cakes.*sweets/i }).click()
-  } else if (cakeType === 'birthday') {
-    // Click on "Birthday Cakes" link
-    await page.getByRole('link', { name: /birthday/i }).click()
-  } else if (cakeType === 'giftcard') {
-    // Click on "Gift card" link  
-    await page.getByRole('link', { name: /gift.*card/i }).click()
+  // Helper to go to the correct category page
+  const gotoCategory = async () => {
+    if (cakeType === 'normal') {
+      await page.getByRole('link', { name: /cakes.*sweets/i }).click()
+    } else if (cakeType === 'birthday') {
+      await page.getByRole('link', { name: /birthday/i }).click()
+    } else if (cakeType === 'giftcard') {
+      await page.getByRole('link', { name: /gift.*card/i }).click()
+    }
+    await page.waitForLoadState('domcontentloaded')
   }
 
-  await page.waitForLoadState('networkidle')
+  await gotoCategory()
 
   // Get all cake links on the page
   const cakeLinks = page.locator('a[href^="/cake/"]')
@@ -158,7 +146,7 @@ async function addCakeToBag(page: Page, options: {
     // Click the cake
     await cakeLinks.nth(i).click()
     await page.waitForURL(/\/cake\//)
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // Check if the amount selector is visible (indicating item is in stock)
     const amountSelect = page.locator('select[name="amount"]')
@@ -210,9 +198,8 @@ async function addCakeToBag(page: Page, options: {
       addedToBag = true
       break // Exit loop as we successfully added a cake
     } else {
-      // If not available, go back to the listing page
-      await page.goBack()
-      await page.waitForLoadState('networkidle')
+      // If not available, navigate back to listing page explicitely to avoid history issues
+      await gotoCategory()
       // Continue to next cake
     }
   }
