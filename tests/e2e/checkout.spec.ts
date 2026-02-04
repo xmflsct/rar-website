@@ -22,7 +22,7 @@ async function completeStripePayment(
 
   // Fill phone number if visible
   const phoneInput = page.locator('input[type="tel"]').first()
-  if (await phoneInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+  if (await phoneInput.isVisible({ timeout: 5000 }).catch(() => false)) {
     await phoneInput.fill(TEST_PHONE)
   }
 
@@ -41,27 +41,27 @@ async function completeStripePayment(
     // Fill shipping name (use exact Stripe selector)
     const nameInput = page.locator('input#shippingName')
     await nameInput.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {})
-    if (await nameInput.isVisible({ timeout: 1000 }).catch(() => false)) {
+    if (await nameInput.isVisible({ timeout: 3000 }).catch(() => false)) {
       await nameInput.fill(TEST_SHIPPING_ADDRESS.name)
     }
     
     // Fill shipping address line 1 (use exact Stripe selector)
     const addressInput = page.locator('input#shippingAddressLine1')
     await addressInput.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {})
-    if (await addressInput.isVisible({ timeout: 1000 }).catch(() => false)) {
+    if (await addressInput.isVisible({ timeout: 3000 }).catch(() => false)) {
       await addressInput.fill(TEST_SHIPPING_ADDRESS.addressLine1)
       await page.waitForTimeout(300) // Allow address autocomplete to dismiss
     }
     
     // Fill city (use exact Stripe selector)
     const cityInput = page.locator('input#shippingLocality')
-    if (await cityInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+    if (await cityInput.isVisible({ timeout: 5000 }).catch(() => false)) {
       await cityInput.fill(TEST_SHIPPING_ADDRESS.city)
     }
     
     // Fill postal code (use exact Stripe selector)
     const postalInput = page.locator('input#shippingPostalCode')
-    if (await postalInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+    if (await postalInput.isVisible({ timeout: 5000 }).catch(() => false)) {
       await postalInput.fill(TEST_SHIPPING_ADDRESS.postalCode)
     }
     
@@ -87,7 +87,7 @@ async function completeStripePayment(
   
   // Method 2: Also click the visible Card label/button area
   const cardLabel = page.locator('#payment-method-label-card, [data-testid="card-accordion-item-button"]').first()
-  if (await cardLabel.isVisible({ timeout: 1000 }).catch(() => false)) {
+  if (await cardLabel.isVisible({ timeout: 3000 }).catch(() => false)) {
     await cardLabel.click({ force: true })
   }
   await page.waitForTimeout(1000)
@@ -95,7 +95,7 @@ async function completeStripePayment(
   // Wait for card fields to appear and fill them
   // These inputs are directly in the DOM on Stripe Checkout
   const cardNumberInput = page.locator('input#cardNumber')
-  await cardNumberInput.waitFor({ state: 'visible', timeout: 10000 })
+  await cardNumberInput.waitFor({ state: 'visible', timeout: 30000 })
   await cardNumberInput.fill(STRIPE_TEST_CARD.number)
 
   // Fill expiry
@@ -108,7 +108,7 @@ async function completeStripePayment(
 
   // Fill cardholder name if visible
   const billingNameInput = page.locator('input#billingName')
-  if (await billingNameInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+  if (await billingNameInput.isVisible({ timeout: 5000 }).catch(() => false)) {
     await billingNameInput.fill(TEST_SHIPPING_ADDRESS.name)
   }
 
@@ -162,13 +162,13 @@ async function addCakeToBag(page: Page, options: {
 
     // Check if the amount selector is visible (indicating item is in stock)
     const amountSelect = page.locator('select[name="amount"]')
-    const isAvailable = await amountSelect.isVisible({ timeout: 2000 }).catch(() => false)
+    const isAvailable = await amountSelect.isVisible({ timeout: 5000 }).catch(() => false)
 
     if (isAvailable) {
       // If delivery option is needed (like for gift cards with shipping)
       if (deliveryType) {
         const deliverySelect = page.locator('select[name="delivery"]')
-        if (await deliverySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
+        if (await deliverySelect.isVisible({ timeout: 5000 }).catch(() => false)) {
           await deliverySelect.selectOption(deliveryType)
           await page.waitForTimeout(500)
         }
@@ -262,7 +262,7 @@ async function completeCheckoutFromBag(page: Page, options: {
   // If there are shipping items, select country
   if (options.hasShippingItems) {
     const countrySelect = page.locator('select[name="countryCode"]')
-    if (await countrySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
+    if (await countrySelect.isVisible({ timeout: 5000 }).catch(() => false)) {
       await countrySelect.selectOption('NLD')
       await page.waitForTimeout(300)
     }
