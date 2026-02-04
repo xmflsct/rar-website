@@ -204,12 +204,12 @@ type Props = {
 }
 
 const RichText: React.FC<Props> = ({ content, className, assetWidth, daysClosedCollection }) => {
-  if (!content?.json) return null
-
   const options = useMemo(
-    () => richTextOptions({ links: content.links, assetWidth, daysClosedCollection }),
-    [content.links, assetWidth, daysClosedCollection]
+    () => richTextOptions({ links: content?.links, assetWidth, daysClosedCollection }),
+    [content?.links, assetWidth, daysClosedCollection]
   )
+
+  if (!content?.json) return null
 
   return (
     <article
