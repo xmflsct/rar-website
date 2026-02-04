@@ -147,7 +147,33 @@ async function addCakeToBag(page: Page, options: {
 
   await page.waitForLoadState('networkidle')
 
-  // Get all cake links on the page
+  // Gift card is displayed inline on the page, not as a link to /cake/...
+  if (cakeType === 'giftcard') {
+    // The gift card form is directly on the /gift-card page
+    const amountSelect = page.locator('select[name="amount"]')
+    await amountSelect.waitFor({ state: 'visible', timeout: 5000 })
+
+    // If delivery option is needed
+    if (deliveryType) {
+      const deliverySelect = page.locator('select[name="delivery"]')
+      if (await deliverySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await deliverySelect.selectOption(deliveryType)
+        await page.waitForTimeout(500)
+      }
+    }
+
+    // Select amount
+    await amountSelect.selectOption(selectAmount.toString())
+
+    // Click "Add to bag"
+    await page.getByRole('button', { name: 'Add to bag' }).click()
+
+    // Wait for the bag to update
+    await page.waitForTimeout(500)
+    return
+  }
+
+  // For normal cakes and birthday cakes, find links and navigate to individual cake pages
   const cakeLinks = page.locator('a[href^="/cake/"]')
   const cakeLinkCount = await cakeLinks.count()
   
@@ -177,26 +203,24 @@ async function addCakeToBag(page: Page, options: {
       // Select amount
       await amountSelect.selectOption(selectAmount.toString())
 
-      // For birthday cakes, select printed tag (cake customization)
-      if (cakeType === 'birthday') {
-        // Look for customization selects (they have type like "Printed tag")
-        const customSelects = page.locator('select').filter({ has: page.locator('option:has-text("...")') })
-        const count = await customSelects.count()
+      // Handle any customization selects (e.g., "Paper tag" on birthday cakes and some normal cakes)
+      // Look for selects that have a placeholder option with "..." indicating they need selection
+      const customSelects = page.locator('select').filter({ has: page.locator('option:has-text("...")') })
+      const count = await customSelects.count()
 
-        for (let j = 0; j < count; j++) {
-          const select = customSelects.nth(j)
-          const selectName = await select.getAttribute('name')
-          // Skip standard selects
-          if (selectName === 'amount' || selectName === 'unit' || selectName === 'delivery') continue
+      for (let j = 0; j < count; j++) {
+        const select = customSelects.nth(j)
+        const selectName = await select.getAttribute('name')
+        // Skip standard selects
+        if (selectName === 'amount' || selectName === 'unit' || selectName === 'delivery') continue
 
-          // Get all options except disabled ones
-          const options = select.locator('option:not([disabled])')
-          const optionCount = await options.count()
-          if (optionCount > 0) {
-            const firstValue = await options.first().getAttribute('value')
-            if (firstValue) {
-              await select.selectOption(firstValue)
-            }
+        // Get all options except disabled ones
+        const options = select.locator('option:not([disabled])')
+        const optionCount = await options.count()
+        if (optionCount > 0) {
+          const firstValue = await options.first().getAttribute('value')
+          if (firstValue) {
+            await select.selectOption(firstValue)
           }
         }
       }
