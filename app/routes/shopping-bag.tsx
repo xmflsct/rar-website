@@ -30,8 +30,8 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   }>({
     context,
     request,
-    ttlMinutes: 0,
-    variables: { end_gte: new Date().toISOString() },
+    ttlMinutes: 15,
+    variables: { end_gte: new Date(new Date().setHours(0, 0, 0, 0)).toISOString() },
     query: gql`
       query Shipping($preview: Boolean, $end_gte: DateTime!) {
         shippingCollection(preview: $preview, limit: 1, where: { year: 2023 }) {
