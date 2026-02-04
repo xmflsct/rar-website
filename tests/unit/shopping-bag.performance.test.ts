@@ -14,7 +14,7 @@ vi.mock('graphql-request', () => {
   };
 });
 
-vi.mock('../utils/kv', () => ({
+vi.mock('../../app/utils/kv', () => ({
   getAllPages: vi.fn().mockResolvedValue({
     navs: [],
     pages: [],
@@ -41,7 +41,7 @@ const mockCache = {
 vi.stubGlobal('caches', { default: mockCache });
 
 // Import loader after mocks
-import { loader } from './shopping-bag';
+import { loader } from '../../app/routes/shopping-bag';
 
 describe('Shopping Bag Performance', () => {
   beforeEach(() => {

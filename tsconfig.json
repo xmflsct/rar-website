@@ -3,7 +3,7 @@
     ".react-router/types/**/*",
     "app/**/*.ts",
     "app/**/*.tsx",
-    "workers/**/*.ts"
+    "workers/**/*.ts", "tests/**/*.ts"
   ],
   "exclude": [
     "node_modules",
