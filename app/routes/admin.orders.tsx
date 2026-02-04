@@ -166,9 +166,7 @@ const Shipping: React.FC<{
         </div>
       ) : null}
       {
-        // @ts-ignore
-        (shipping?.shipping_rate?.metadata.label == true ||
-          shipping?.shipping_rate?.metadata.label == 'true') &&
+        (shipping?.shipping_rate?.metadata.label === 'true') &&
           !(shipping.payment_intent.metadata?.shipping_id || createId.length) ? (
           <fetcher.Form method='post' action='/admin/orders' className='flex gap-1 items-middle'>
             <strong className='text-red-600'>Label creation failed!</strong>
