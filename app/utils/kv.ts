@@ -7,12 +7,6 @@ export let kved: boolean | undefined = undefined
 
 const getEnv = (context: LoaderFunctionArgs['context']) => (context as any)?.cloudflare?.env
 
-const getKV = (context: LoaderFunctionArgs['context']) => {
-  const env = getEnv(context)
-  const preview = env?.ENVIRONMENT !== 'PRODUCTION'
-  return preview ? env?.RAR_WEBSITE_PREVIEW : env?.RAR_WEBSITE as KVNamespace | undefined
-}
-
 export const getNavigation = async (
   context: LoaderFunctionArgs['context']
 ): Promise<{
@@ -20,7 +14,9 @@ export const getNavigation = async (
   pages: Page[]
   daysClosedCollection: DaysClosed[]
 }> => {
-  const KV = getKV(context)
+  const env = getEnv(context)
+  const preview = env?.ENVIRONMENT !== 'PRODUCTION'
+  const KV = preview ? env?.RAR_WEBSITE_PREVIEW : env?.RAR_WEBSITE as KVNamespace | undefined
 
   const request = async () =>
     await graphqlRequest<{
@@ -86,7 +82,9 @@ export const getPage = async (
   context: LoaderFunctionArgs['context'],
   slug: string
 ): Promise<Page | null> => {
-  const KV = getKV(context)
+  const env = getEnv(context)
+  const preview = env?.ENVIRONMENT !== 'PRODUCTION'
+  const KV = preview ? env?.RAR_WEBSITE_PREVIEW : env?.RAR_WEBSITE as KVNamespace | undefined
 
   const request = async () =>
     await graphqlRequest<{
@@ -97,7 +95,7 @@ export const getPage = async (
       query: gql`
         ${PAGE_CONTENT_LINKS}
         query Page($preview: Boolean, $slug: String!) {
-          pages: pageCollection(preview: $preview, where: { slug: $slug }, limit: 1) {
+          pages: pageCollection(preview: $preview, where: { slug: $slug }) {
             items {
               sys {
                 publishedAt
