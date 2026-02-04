@@ -29,6 +29,8 @@ jobs:
         run: npm run test:e2e
         env:
           CI: true
+          # CONTENTFUL_SPACE is likely not a secret, but if it is in secrets use it.
+          # Otherwise the generate-dev-vars script will fallback to the hardcoded ID.
           CONTENTFUL_SPACE: ${{ secrets.CONTENTFUL_SPACE }}
           CONTENTFUL_KEY: ${{ secrets.CONTENTFUL_KEY }}
           CONTENTFUL_PAT: ${{ secrets.CONTENTFUL_PAT }}

@@ -3,6 +3,10 @@ const path = require('path');
 
 if (process.env.CI) {
   const vars = [
+    // CONTENTFUL_SPACE is provided by wrangler.jsonc or can be overridden here
+    // But since it's a public var, we might not need to force it unless the secret is provided.
+    // However, the test runner seems to need it in process.env or .dev.vars if we are mocking the environment.
+    // If it's empty in secrets, let's provide the default from wrangler.jsonc or a fallback.
     'CONTENTFUL_SPACE',
     'CONTENTFUL_KEY',
     'CONTENTFUL_PAT',
@@ -13,8 +17,17 @@ if (process.env.CI) {
   ];
 
   const content = vars
-    .filter(key => process.env[key])
-    .map(key => `${key}=${process.env[key]}`)
+    .map(key => {
+        if (process.env[key]) {
+            return `${key}=${process.env[key]}`;
+        }
+        // Fallback for CONTENTFUL_SPACE if not in secrets (it is not a secret, usually)
+        if (key === 'CONTENTFUL_SPACE') {
+             return `${key}=u0x1afixkalo`;
+        }
+        return null;
+    })
+    .filter(Boolean)
     .join('\n');
 
   fs.writeFileSync(path.resolve(process.cwd(), '.dev.vars'), content);
