@@ -147,62 +147,79 @@ async function addCakeToBag(page: Page, options: {
 
   await page.waitForLoadState('networkidle')
 
-  // If we're on a category page, we need to click on a specific cake
-  // Category pages have links like /cake/slug
+  // Get all cake links on the page
   const cakeLinks = page.locator('a[href^="/cake/"]')
   const cakeLinkCount = await cakeLinks.count()
   
-  if (cakeLinkCount > 0) {
-    // Click the first available cake
-    await cakeLinks.first().click()
+  // Iterate through cakes to find one that is in stock
+  let addedToBag = false
+
+  for (let i = 0; i < cakeLinkCount; i++) {
+    // Click the cake
+    await cakeLinks.nth(i).click()
     await page.waitForURL(/\/cake\//)
     await page.waitForLoadState('networkidle')
-  }
 
-  // Now we should be on a cake detail page
-  // If delivery option is needed (like for gift cards with shipping)
-  if (deliveryType) {
-    const deliverySelect = page.locator('select[name="delivery"]')
-    if (await deliverySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await deliverySelect.selectOption(deliveryType)
-      await page.waitForTimeout(500)
-    }
-  }
+    // Check if the amount selector is visible (indicating item is in stock)
+    const amountSelect = page.locator('select[name="amount"]')
+    const isAvailable = await amountSelect.isVisible({ timeout: 2000 }).catch(() => false)
 
-  // Select amount
-  const amountSelect = page.locator('select[name="amount"]')
-  await amountSelect.waitFor({ state: 'visible' })
-  await amountSelect.selectOption(selectAmount.toString())
-
-  // For birthday cakes, select printed tag (cake customization)
-  if (cakeType === 'birthday') {
-    // Look for customization selects (they have type like "Printed tag")
-    const customSelects = page.locator('select').filter({ has: page.locator('option:has-text("...")') })
-    const count = await customSelects.count()
-    
-    for (let i = 0; i < count; i++) {
-      const select = customSelects.nth(i)
-      const selectName = await select.getAttribute('name')
-      // Skip standard selects
-      if (selectName === 'amount' || selectName === 'unit' || selectName === 'delivery') continue
-      
-      // Get all options except disabled ones
-      const options = select.locator('option:not([disabled])')
-      const optionCount = await options.count()
-      if (optionCount > 0) {
-        const firstValue = await options.first().getAttribute('value')
-        if (firstValue) {
-          await select.selectOption(firstValue)
+    if (isAvailable) {
+      // If delivery option is needed (like for gift cards with shipping)
+      if (deliveryType) {
+        const deliverySelect = page.locator('select[name="delivery"]')
+        if (await deliverySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await deliverySelect.selectOption(deliveryType)
+          await page.waitForTimeout(500)
         }
       }
+
+      // Select amount
+      await amountSelect.selectOption(selectAmount.toString())
+
+      // For birthday cakes, select printed tag (cake customization)
+      if (cakeType === 'birthday') {
+        // Look for customization selects (they have type like "Printed tag")
+        const customSelects = page.locator('select').filter({ has: page.locator('option:has-text("...")') })
+        const count = await customSelects.count()
+
+        for (let j = 0; j < count; j++) {
+          const select = customSelects.nth(j)
+          const selectName = await select.getAttribute('name')
+          // Skip standard selects
+          if (selectName === 'amount' || selectName === 'unit' || selectName === 'delivery') continue
+
+          // Get all options except disabled ones
+          const options = select.locator('option:not([disabled])')
+          const optionCount = await options.count()
+          if (optionCount > 0) {
+            const firstValue = await options.first().getAttribute('value')
+            if (firstValue) {
+              await select.selectOption(firstValue)
+            }
+          }
+        }
+      }
+
+      // Click "Add to bag"
+      await page.getByRole('button', { name: 'Add to bag' }).click()
+
+      // Wait for the bag to update
+      await page.waitForTimeout(500)
+
+      addedToBag = true
+      break // Exit loop as we successfully added a cake
+    } else {
+      // If not available, go back to the listing page
+      await page.goBack()
+      await page.waitForLoadState('networkidle')
+      // Continue to next cake
     }
   }
-
-  // Click "Add to bag"
-  await page.getByRole('button', { name: 'Add to bag' }).click()
   
-  // Wait for the bag to update
-  await page.waitForTimeout(500)
+  if (!addedToBag) {
+    throw new Error(`No available ${cakeType} cakes found to add to bag.`)
+  }
 }
 
 /**
