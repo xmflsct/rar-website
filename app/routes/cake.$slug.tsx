@@ -7,7 +7,7 @@ import type { Product, WithContext } from 'schema-dts'
 import CakeView from '~/components/cakeView'
 import Layout from '~/layout'
 import { cacheQuery, Cake, CAKE_DETAILS, DaysClosed } from '~/utils/contentful'
-import { getAllPages } from '~/utils/kv'
+import { getNavigation } from '~/utils/kv'
 import { trackViewProduct } from '~/utils/umami'
 
 export const loader = async ({ context, params, request }: LoaderFunctionArgs) => {
@@ -41,7 +41,7 @@ export const loader = async ({ context, params, request }: LoaderFunctionArgs) =
     throw data('Not Found', { status: 404 })
   }
 
-  const { navs } = await getAllPages(context)
+  const { navs } = await getNavigation(context)
   return data({
     navs,
     cake: cakeData.cakeCollection.items[0],

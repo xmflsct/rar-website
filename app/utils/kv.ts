@@ -7,7 +7,7 @@ export let kved: boolean | undefined = undefined
 
 const getEnv = (context: LoaderFunctionArgs['context']) => (context as any)?.cloudflare?.env
 
-const getAllPages = async (
+export const getNavigation = async (
   context: LoaderFunctionArgs['context']
 ): Promise<{
   navs: Navigation[]
@@ -16,6 +16,7 @@ const getAllPages = async (
 }> => {
   const env = getEnv(context)
   const preview = env?.ENVIRONMENT !== 'PRODUCTION'
+  const KV = preview ? env?.RAR_WEBSITE_PREVIEW : env?.RAR_WEBSITE as KVNamespace | undefined
 
   const request = async () =>
     await graphqlRequest<{
@@ -25,9 +26,76 @@ const getAllPages = async (
       context,
       variables: { end_gte: new Date().toISOString() },
       query: gql`
-        ${PAGE_CONTENT_LINKS}
-        query Pages($preview: Boolean, $end_gte: DateTime!) {
+        query Navigation($preview: Boolean, $end_gte: DateTime!) {
           pages: pageCollection(preview: $preview, limit: 6, order: priority_ASC) {
+            items {
+              sys {
+                publishedAt
+              }
+              priority
+              name
+              slug
+            }
+          }
+          daysClosedCollection(preview: $preview, where: { end_gte: $end_gte }) {
+            items {
+              start
+              end
+            }
+          }
+        }
+      `
+    })
+
+  let data:
+    | {
+        pages: {
+          items: Page[]
+        }
+        daysClosedCollection: {
+          items: DaysClosed[]
+        }
+      }
+    | null
+    | undefined
+
+  if (KV === undefined) {
+    kved = false
+    data = await request()
+  } else {
+    data = await KV.get('navigation', { type: 'json' })
+    if (!data) {
+      kved = false
+      data = await request()
+      await KV.put('navigation', JSON.stringify(data), { expirationTtl: 60 * 60 })
+    } else {
+      kved = true
+    }
+  }
+
+  const navs = data.pages.items.map(page => ({ name: page.name, slug: page.slug }))
+
+  return { navs, pages: data.pages.items, daysClosedCollection: data.daysClosedCollection.items }
+}
+
+export const getPage = async (
+  context: LoaderFunctionArgs['context'],
+  slug: string
+): Promise<Page | null> => {
+  const env = getEnv(context)
+  const preview = env?.ENVIRONMENT !== 'PRODUCTION'
+  const KV = preview ? env?.RAR_WEBSITE_PREVIEW : env?.RAR_WEBSITE as KVNamespace | undefined
+
+  const request = async () =>
+    await graphqlRequest<{
+      pages: { items: Page[] }
+    }>({
+      context,
+      variables: { slug },
+      query: gql`
+        ${PAGE_CONTENT_LINKS}
+        query Page($preview: Boolean, $slug: String!) {
+          pages: pageCollection(preview: $preview, where: { slug: $slug }) {
             items {
               sys {
                 publishedAt
@@ -41,47 +109,25 @@ const getAllPages = async (
               }
             }
           }
-          daysClosedCollection(preview: $preview, where: { end_gte: $end_gte }) {
-            items {
-              start
-              end
-            }
-          }
         }
       `
     })
 
-  const KV = preview ? env?.RAR_WEBSITE_PREVIEW : env?.RAR_WEBSITE as KVNamespace | undefined
-  let data:
-    | {
-      pages: {
-        items: Page[]
-      }
-      daysClosedCollection: {
-        items: DaysClosed[]
-      }
-    }
-    | null
-    | undefined
+  let page: Page | null | undefined
 
   if (KV === undefined) {
-    kved = false
-    data = await request()
+    const data = await request()
+    page = data.pages.items[0] || null
   } else {
-    data = await KV.get(`data`, { type: 'json' })
-    if (!data) {
-      kved = false
-      data = await request()
-
-      await KV.put(`data`, JSON.stringify(data), { expirationTtl: 60 * 60 })
-    } else {
-      kved = true
+    page = await KV.get(`page_${slug}`, { type: 'json' })
+    if (!page) {
+      const data = await request()
+      page = data.pages.items[0] || null
+      if (page) {
+        await KV.put(`page_${slug}`, JSON.stringify(page), { expirationTtl: 60 * 60 })
+      }
     }
   }
 
-  const navs = data.pages.items.map(page => ({ name: page.name, slug: page.slug }))
-
-  return { navs, pages: data.pages.items, daysClosedCollection: data.daysClosedCollection.items }
+  return page || null
 }
-
-export { getAllPages }

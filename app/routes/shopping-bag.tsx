@@ -18,7 +18,7 @@ import calShipping from '~/utils/calShipping'
 import checkout from '~/utils/checkout'
 import { DaysClosed, MaxCalendarMonth, Shipping, cacheQuery } from '~/utils/contentful'
 import { full } from '~/utils/currency'
-import { getAllPages } from '~/utils/kv'
+import { getNavigation } from '~/utils/kv'
 import { correctPickup } from '~/utils/pickup'
 import { trackViewCart, trackBeginCheckout } from '~/utils/umami'
 
@@ -54,7 +54,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
     `
   })
 
-  const { navs } = await getAllPages(context)
+  const { navs } = await getNavigation(context)
   return data({
     navs,
     shippingRates: loaderData.shippingCollection.items[0]!.rates,
