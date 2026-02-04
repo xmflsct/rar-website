@@ -47,7 +47,11 @@ export const cacheQuery = async <T = unknown>({
   }
 
   // @ts-ignore
-  const cache = caches.default
+  const cache = typeof caches !== 'undefined' ? caches.default : undefined
+
+  if (!cache) {
+    return await queryData()
+  }
 
   const cacheUrl = new URL(rest.request.url)
   const cacheKey = new Request(cacheUrl.toString())
