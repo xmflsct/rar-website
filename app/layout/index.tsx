@@ -9,8 +9,14 @@ type Props = {
   navs?: Navigation[]
 }
 const Layout: React.FC<PropsWithChildren & Props> = ({ children, navs }) => {
-  const matches = useMatches()
-  const isAdmin = matches[matches.length - 1]?.pathname?.startsWith('/admin') ?? false
+  // useMatches() requires Router context - may not be available during ErrorBoundary or initial hydration
+  let isAdmin = false
+  try {
+    const matches = useMatches()
+    isAdmin = matches[matches.length - 1]?.pathname?.startsWith('/admin') ?? false
+  } catch {
+    // Router context not available (e.g., during ErrorBoundary rendering)
+  }
 
   const [toggleNav, setToggleNav] = useState(false)
 
