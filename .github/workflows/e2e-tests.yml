@@ -29,6 +29,7 @@ jobs:
         run: npm run test:e2e
         env:
           CI: true
+          CONTENTFUL_SPACE: ${{ secrets.CONTENTFUL_SPACE }}
           CONTENTFUL_KEY: ${{ secrets.CONTENTFUL_KEY }}
           CONTENTFUL_PAT: ${{ secrets.CONTENTFUL_PAT }}
           STRIPE_KEY_ADMIN: ${{ secrets.STRIPE_KEY_ADMIN }}
