@@ -84,7 +84,7 @@ export type Page = {
   priority: number
   name: string
   slug: string
-  content: CommonRichText
+  content?: CommonRichText
 }
 
 export type InternalAssetsGrid = {

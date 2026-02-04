@@ -4,10 +4,10 @@ import { gql } from 'graphql-request'
 import Image from '~/components/image'
 import Layout from '~/layout'
 import { cacheQuery, CommonImage } from '~/utils/contentful'
-import { getAllPages } from '~/utils/kv'
+import { getNavigation } from '~/utils/kv'
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
-  const { navs } = await getAllPages(context)
+  const { navs } = await getNavigation(context)
 
   const images = await cacheQuery<{
     mooncake: CommonImage
