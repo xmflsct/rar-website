@@ -223,7 +223,7 @@ export const CAKE_DETAILS = gql`
     additionalInformation {
       json
     }
-    cakeCustomizationsCollection(limit: 10) {
+    cakeCustomizationsCollection(limit: 5) {
       items {
         type
         options
@@ -266,7 +266,7 @@ export const PAGE_CONTENT_LINKS = gql`
             columnsLarge
             columnsMedium
             columnsSmall
-            assetsCollection(limit: 12) {
+            assetsCollection(limit: 6) {
               items {
                 url
               }
@@ -288,7 +288,7 @@ export const PAGE_CONTENT_LINKS = gql`
             description {
               json
             }
-            cakesCollection(limit: 12) {
+            cakesCollection(limit: 6) {
               items {
                 ...CakeDetails
               }
