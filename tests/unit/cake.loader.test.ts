@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { loader } from './cake.$slug'
-import { getAllPages } from '~/utils/kv'
+import { loader } from '../../app/routes/cake.$slug'
+import { getAllPages } from '../../app/utils/kv'
 
 // Mock getAllPages to avoid unrelated fetches
-vi.mock('~/utils/kv', () => ({
+vi.mock('../../app/utils/kv', () => ({
   getAllPages: vi.fn()
 }))
 
