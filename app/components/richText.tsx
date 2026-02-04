@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { documentToReactComponents, Options } from '@contentful/rich-text-react-renderer'
 import { BLOCKS, INLINES, Text } from '@contentful/rich-text-types'
 import { Link } from 'react-router'
@@ -205,6 +206,11 @@ type Props = {
 const RichText: React.FC<Props> = ({ content, className, assetWidth, daysClosedCollection }) => {
   if (!content?.json) return null
 
+  const options = useMemo(
+    () => richTextOptions({ links: content.links, assetWidth, daysClosedCollection }),
+    [content.links, assetWidth, daysClosedCollection]
+  )
+
   return (
     <article
       className={`
@@ -227,7 +233,7 @@ const RichText: React.FC<Props> = ({ content, className, assetWidth, daysClosedC
       `}
       children={documentToReactComponents(
         content.json,
-        richTextOptions({ links: content.links, assetWidth, daysClosedCollection })
+        options
       )}
     />
   )
