@@ -266,7 +266,7 @@ export const PAGE_CONTENT_LINKS = gql`
             columnsLarge
             columnsMedium
             columnsSmall
-            assetsCollection(limit: 20) {
+            assetsCollection(limit: 12) {
               items {
                 url
               }
@@ -288,7 +288,7 @@ export const PAGE_CONTENT_LINKS = gql`
             description {
               json
             }
-            cakesCollection(limit: 20) {
+            cakesCollection(limit: 12) {
               items {
                 ...CakeDetails
               }
