@@ -14,50 +14,15 @@ type SessionsData = {
   has_more: boolean
   data: (Stripe.Checkout.Session & {
     payment_intent: Stripe.PaymentIntent & { latest_charge: Stripe.Charge }
-    line_items: { data: Stripe.LineItem[] }
+    line_items: { data: Stripe.LineItem[]; has_more: boolean }
     shipping_cost?: { shipping_rate?: Stripe.ShippingRate }
   })[]
 }
-export const loader = async ({ context }: LoaderFunctionArgs) => {
-  const env = (context as any)?.cloudflare?.env
-  if (!env?.STRIPE_KEY_ADMIN) {
-    throw data(null, { status: 500 })
-  } else {
-    return data({
-      stripeHeaders: getStripeHeaders(env.STRIPE_KEY_ADMIN),
-      myparcelAuthHeader: getMyparcelAuthHeader(context)
-    })
-  }
-}
-
-export const action = async ({ context, request }: ActionFunctionArgs) => {
-  const formData = await request.formData()
-  const action = formData.get('action')?.toString()
-  const formDataJson = JSON.parse(formData.get('data')?.toString() || '{}')
-
-  switch (action) {
-    case 'createShipment':
-      const resShipment = await createShipment({ context, ...formDataJson })
-      if (resShipment.ok) {
-        return data({ ok: true, id: resShipment.id })
-      } else {
-        return data({ ok: false, error: resShipment.error })
-      }
-    default:
-      return data({ ok: false, error: 'How did you get here?' }, { status: 400 })
-  }
-}
-
-export const meta: MetaFunction = () => [
-  {
-    title: 'Orders | Round&Round Rotterdam'
-  }
-]
 
 type TrackTrace = {
   shipment_id: number
   code: string
-  description: string // Zending bezorgd
+  description: string
   time: string
   link_consumer_portal: string
   link_tracktrace: string
@@ -81,6 +46,18 @@ type Order = {
   metadata: Stripe.Metadata
 }
 
+type LoadOrdersResponse = {
+  ok: true
+  orders: Order[]
+  hasMore: boolean
+  nextCursor?: string
+} | {
+  ok: false
+  error: string
+}
+
+const DAYS = 60 * 60 * 24 * 7
+
 const getTrackings = async (myparcelAuthHeader: { Authorization: string }, ids: string[]) =>
   (
     await (
@@ -89,6 +66,152 @@ const getTrackings = async (myparcelAuthHeader: { Authorization: string }, ids: 
       })
     ).json<{ data: { tracktraces: TrackTrace[] } }>()
   ).data.tracktraces
+
+export const loader = async ({ context }: LoaderFunctionArgs) => {
+  const env = (context as any)?.cloudflare?.env
+  if (!env?.STRIPE_KEY_ADMIN) {
+    throw data(null, { status: 500 })
+  } else {
+    return data({
+      myparcelAuthHeader: getMyparcelAuthHeader(context)
+    })
+  }
+}
+
+export const action = async ({ context, request }: ActionFunctionArgs) => {
+  const env = (context as any)?.cloudflare?.env
+  if (!env?.STRIPE_KEY_ADMIN) {
+    return data({ ok: false, error: 'Missing Stripe key' } as LoadOrdersResponse, { status: 500 })
+  }
+
+  const stripeHeaders = getStripeHeaders(env.STRIPE_KEY_ADMIN)
+  const myparcelAuthHeader = getMyparcelAuthHeader(context)
+  const formData = await request.formData()
+  const action = formData.get('action')?.toString()
+
+  switch (action) {
+    case 'loadOrders': {
+      const cursor = formData.get('cursor')?.toString()
+
+      // Fetch sessions from Stripe with server-side status filter
+      const url = new URL('https://api.stripe.com/v1/checkout/sessions')
+      const params = new URLSearchParams()
+      params.append('limit', '5')
+      params.append('status', 'complete')
+      params.append('expand[]', 'data.payment_intent')
+      params.append('expand[]', 'data.payment_intent.latest_charge')
+      params.append('expand[]', 'data.line_items')
+      params.append('expand[]', 'data.shipping_cost.shipping_rate')
+      if (cursor) params.append('starting_after', cursor)
+      url.search = params.toString()
+
+      const { data: sessionsData, has_more }: SessionsData = await (
+        await fetch(url, { headers: stripeHeaders })
+      ).json()
+
+      // Filter for succeeded payments within time window
+      const sessions = sessionsData
+        .filter(
+          session =>
+            session.payment_intent.status === 'succeeded' &&
+            session.payment_intent.created >= Date.now() / 1000 - DAYS
+        )
+        .sort((a, b) => b.payment_intent.latest_charge.created - a.payment_intent.latest_charge.created)
+
+      // Collect shipping IDs and sessions needing full line items
+      const shippingIds: string[] = []
+      const sessionsNeedingLineItems: string[] = []
+      sessions.forEach(session => {
+        if (session.payment_intent.metadata?.shipping_id) {
+          shippingIds.push(session.payment_intent.metadata.shipping_id)
+        }
+        // Only fetch full line items if has_more is true
+        if (session.line_items.has_more) {
+          sessionsNeedingLineItems.push(session.id)
+        }
+      })
+
+      // Fetch additional line items only for sessions with >10 items
+      const fetchLineItems = async (id: string) => {
+        return (
+          await (
+            await fetch(`https://api.stripe.com/v1/checkout/sessions/${id}/line_items?limit=50`, {
+              headers: stripeHeaders
+            })
+          ).json<{ data: Stripe.LineItem[] }>()
+        ).data
+      }
+
+      const [additionalLineItems, shippingStatuses] = await Promise.all([
+        Promise.all(sessionsNeedingLineItems.map(async id => ({ id, lineItems: await fetchLineItems(id) }))),
+        shippingIds.length ? getTrackings(myparcelAuthHeader, shippingIds) : Promise.resolve([])
+      ])
+
+      const additionalLineItemsMap = new Map(additionalLineItems.map(item => [item.id, item.lineItems]))
+
+      // Build orders
+      const orders: Order[] = sessions.map(session => {
+        // Use additional line items if fetched, otherwise use expanded line items
+        const lineItems = additionalLineItemsMap.get(session.id) || session.line_items.data
+
+        return {
+          receipt: session.payment_intent.latest_charge.receipt_number || null,
+          name: session.payment_intent.latest_charge.billing_details.name || null,
+          phone: session.customer_details?.phone || 'NOT EXIST',
+          email: session.customer_details?.email,
+          pickup:
+            session.payment_intent.latest_charge.description ||
+            session.payment_intent.latest_charge.metadata['Pick-up date'],
+          shipping: {
+            shipping: session.payment_intent.latest_charge.shipping,
+            payment_intent: session.payment_intent,
+            shipping_rate: session.shipping_cost?.shipping_rate,
+            trackTrace: shippingStatuses.find(
+              shipping => shipping.shipment_id.toString() === session.payment_intent.metadata?.shipping_id
+            ),
+            internal: {
+              customer_details: session.customer_details!,
+              payment_intent: session.payment_intent.id
+            }
+          },
+          items: lineItems.filter(
+            item =>
+              item.description !== 'Gift Card Shipping | Shipment' &&
+              item.description !== 'Transaction fee' &&
+              item.description !== 'Processing fee' &&
+              !item.description?.includes('Pick up:')
+          ),
+          metadata: {
+            ...session.payment_intent.latest_charge.metadata,
+            ...session.metadata
+          }
+        }
+      })
+
+      const nextCursor = sessionsData[sessionsData.length - 1]?.id
+
+      return data({
+        ok: true,
+        orders,
+        hasMore: has_more,
+        nextCursor
+      } as LoadOrdersResponse)
+    }
+
+    case 'createShipment': {
+      const formDataJson = JSON.parse(formData.get('data')?.toString() || '{}')
+      const resShipment = await createShipment({ context, ...formDataJson })
+      if (resShipment.ok) {
+        return data({ ok: true, id: resShipment.id })
+      } else {
+        return data({ ok: false, error: resShipment.error })
+      }
+    }
+
+    default:
+      return data({ ok: false, error: 'How did you get here?' }, { status: 400 })
+  }
+}
 
 const Shipping: React.FC<{
   myparcelAuthHeader: { Authorization: string }
@@ -165,11 +288,8 @@ const Shipping: React.FC<{
             .join(', ')}
         </div>
       ) : null}
-      {
-        // @ts-ignore
-        (shipping?.shipping_rate?.metadata.label == true ||
-          shipping?.shipping_rate?.metadata.label == 'true') &&
-          !(shipping.payment_intent.metadata?.shipping_id || createId.length) ? (
+      {shipping?.shipping_rate?.metadata.label === 'true' &&
+        !(shipping.payment_intent.metadata?.shipping_id || createId.length) ? (
           <fetcher.Form method='post' action='/admin/orders' className='flex gap-1 items-middle'>
             <strong className='text-red-600'>Label creation failed!</strong>
             <input name='action' value='createShipment' readOnly hidden />
@@ -241,126 +361,47 @@ const Shipping: React.FC<{
   )
 }
 
-const PageAdminOrders: React.FC = () => {
-  const { stripeHeaders, myparcelAuthHeader } = useLoaderData<typeof loader>()
+export const meta: MetaFunction = () => [
+  {
+    title: 'Orders | Round&Round Rotterdam'
+  }
+]
 
-  const DAYS = 60 * 60 * 24 * 7
+const PageAdminOrders: React.FC = () => {
+  const { myparcelAuthHeader } = useLoaderData<typeof loader>()
+  const fetcher = useFetcher<LoadOrdersResponse>()
+
   const [orders, setOrders] = useState<Order[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
-  const [hasMore, setHasMore] = useState<boolean>(false)
+  const [hasMore, setHasMore] = useState<boolean>(true)
   const cursor = useRef<string>()
 
-  const loadData = async () => {
-    setLoading(true)
+  const loading = fetcher.state !== 'idle'
 
-    const fetchSessions = async () => {
-      const url = new URL('https://api.stripe.com/v1/checkout/sessions')
-
-      const params = new URLSearchParams()
-      params.append('limit', '5')
-      params.append('expand[]', 'data.payment_intent')
-      params.append('expand[]', 'data.payment_intent.latest_charge')
-      params.append('expand[]', 'data.line_items')
-      params.append('expand[]', 'data.shipping_cost.shipping_rate')
-      cursor.current && params.append('starting_after', cursor.current)
-      url.search = params.toString()
-
-      return await (await fetch(url, { headers: stripeHeaders })).json<SessionsData>()
-    }
-
-    const { data, has_more }: SessionsData = await fetchSessions()
-
-    setHasMore(has_more)
-    cursor.current = data[data.length - 1]?.id
-
-    const sessions = data
-      .filter(
-        session =>
-          session.status === 'complete' &&
-          session.payment_intent.status === 'succeeded' &&
-          session.payment_intent.created >= Date.now() / 1000 - DAYS
-      )
-      .sort((a, b) => {
-        return b.payment_intent.latest_charge.created - a.payment_intent.latest_charge.created
-      })
-
-    const lineItems: { id: Stripe.Checkout.Session['id']; lineItems: Stripe.LineItem[] }[] = []
-    const shippingIds: string[] = []
-    const sessionIDs = sessions.map(item => {
-      if (item.payment_intent.metadata?.shipping_id) {
-        shippingIds.push(item.payment_intent.metadata?.shipping_id)
-      }
-      return item.id
-    })
-    const fetchLineItems = async (id: string) => {
-      return (
-        await (
-          await fetch(`https://api.stripe.com/v1/checkout/sessions/${id}/line_items?limit=50`, {
-            headers: stripeHeaders
-          })
-        ).json<{
-          data: Stripe.LineItem[]
-        }>()
-      ).data
-    }
-    const fetchedItems = await Promise.all(
-      sessionIDs.map(async id => ({
-        id,
-        lineItems: await fetchLineItems(id)
-      }))
-    )
-    lineItems.push(...fetchedItems)
-    const shippingStatuses = shippingIds.length
-      ? await getTrackings(myparcelAuthHeader, shippingIds)
-      : []
-
-    setOrders([
-      ...orders,
-      ...sessions.map(session => {
-        return {
-          receipt: session.payment_intent.latest_charge.receipt_number || null,
-          name: session.payment_intent.latest_charge.billing_details.name || null,
-          phone: session.customer_details?.phone || 'NOT EXIST',
-          email: session.customer_details?.email,
-          pickup:
-            session.payment_intent.latest_charge.description ||
-            session.payment_intent.latest_charge.metadata['Pick-up date'],
-          shipping: {
-            shipping: session.payment_intent.latest_charge.shipping,
-            payment_intent: session.payment_intent,
-            shipping_rate: session.shipping_cost?.shipping_rate,
-            trackTrace: shippingStatuses.find(
-              shipping =>
-                shipping.shipment_id.toString() === session.payment_intent.metadata?.shipping_id
-            ),
-            internal: {
-              customer_details: session.customer_details!,
-              payment_intent: session.payment_intent.id
-            }
-          },
-          items: lineItems
-            .find(i => i.id === session.id)
-            ?.lineItems.filter(
-              item =>
-                item.description !== 'Gift Card Shipping | Shipment' &&
-                item.description !== 'Transaction fee' &&
-                item.description !== 'Processing fee' &&
-                !item.description?.includes('Pick up:')
-            ),
-          metadata: {
-            ...session.payment_intent.latest_charge.metadata,
-            ...session.metadata
-          }
-        }
-      })
-    ])
-
-    setLoading(false)
-  }
-
+  // Trigger initial load
   useEffect(() => {
-    loadData()
+    fetcher.submit({ action: 'loadOrders' }, { method: 'post' })
   }, [])
+
+  // Handle fetcher response
+  useEffect(() => {
+    const result = fetcher.data
+    if (fetcher.state === 'idle' && result?.ok) {
+      setOrders(prev => [...prev, ...result.orders])
+      setHasMore(result.hasMore)
+      cursor.current = result.nextCursor
+    }
+  }, [fetcher.state, fetcher.data])
+
+  const loadMore = () => {
+    if (!loading && hasMore) {
+      const formData = new FormData()
+      formData.append('action', 'loadOrders')
+      if (cursor.current) {
+        formData.append('cursor', cursor.current)
+      }
+      fetcher.submit(formData, { method: 'post' })
+    }
+  }
 
   const buttonContent = () => {
     if (loading) {
@@ -454,13 +495,9 @@ const PageAdminOrders: React.FC = () => {
           <tr>
             <td colSpan={7} className='py-2'>
               <Button
-                disabled={loading}
+                disabled={loading || !hasMore}
                 className='mx-auto'
-                onClick={() => {
-                  if (!loading) {
-                    loadData()
-                  }
-                }}
+                onClick={loadMore}
               >
                 {buttonContent()}
               </Button>
@@ -473,3 +510,4 @@ const PageAdminOrders: React.FC = () => {
 }
 
 export default PageAdminOrders
+
