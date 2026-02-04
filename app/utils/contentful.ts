@@ -46,32 +46,47 @@ export const cacheQuery = async <T = unknown>({
     return await queryData()
   }
 
-  // @ts-ignore
-  const cache = typeof caches !== 'undefined' ? caches.default : undefined
+  try {
+    // @ts-ignore
+    const cache = typeof caches !== 'undefined' ? caches.default : undefined
 
-  if (!cache) {
-    return await queryData()
-  }
-
-  const cacheUrl = new URL(rest.request.url)
-  const cacheKey = new Request(cacheUrl.toString())
-
-  const cacheMatch = (await cache.match(cacheKey)) as Response
-
-  if (!cacheMatch) {
-    cached = false
-    const queryResponse = await queryData()
-    if (!queryResponse) {
-      throw data('Not Found', { status: 500 })
+    if (!cache) {
+      return await queryData()
     }
-    const cacheResponse = new Response(JSON.stringify(queryResponse), {
-      headers: { 'Cache-Control': `s-maxage=${ttlMinutes * 60}` }
-    })
-    cache.put(cacheKey, cacheResponse)
-    return queryResponse
-  } else {
-    cached = true
-    return await cacheMatch.json()
+
+    const cacheUrl = new URL(rest.request.url)
+    const cacheKey = new Request(cacheUrl.toString())
+
+    const cacheMatch = (await cache.match(cacheKey)) as Response
+
+    if (!cacheMatch) {
+      cached = false
+      const queryResponse = await queryData()
+      if (!queryResponse) {
+        throw data('Not Found', { status: 500 })
+      }
+      const cacheResponse = new Response(JSON.stringify(queryResponse), {
+        headers: { 'Cache-Control': `s-maxage=${ttlMinutes * 60}` }
+      })
+      // Use waitUntil if available to prevent blocking response or premature termination
+      // But context.waitUntil is not strictly typed here, so we just fire and forget but catch errors
+      try {
+        await cache.put(cacheKey, cacheResponse)
+      } catch (e) {
+        console.error('Failed to put to cache', e)
+      }
+      return queryResponse
+    } else {
+      cached = true
+      return await cacheMatch.json()
+    }
+  } catch (error) {
+    // If anything in the caching layer fails (e.g. caches undefined, match throws, json parse fails),
+    // fallback to fresh data.
+    if (error instanceof Response) throw error; // Re-throw Remix data() responses (like 500/404)
+    console.error('CacheQuery failed, falling back to fresh data', error)
+    cached = false
+    return await queryData()
   }
 }
 
