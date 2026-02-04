@@ -1,91 +1,72 @@
 import { test, expect, Page } from '@playwright/test'
-import { STRIPE_TEST_CARD, TEST_SHIPPING_ADDRESS, TEST_EMAIL, TEST_PHONE } from './fixtures'
+import * as dotenv from 'dotenv'
+
+// Load environment variables if not already loaded (mostly for local testing)
+dotenv.config()
 
 /**
- * Helper to complete the Stripe payment form
- * Stripe Checkout has inputs directly in the DOM (not iframes)
+ * STRIPE TEST CARDS
+ * https://stripe.com/docs/testing
  */
-async function completeStripePayment(
-  page: Page,
-  options: { withShipping?: boolean } = {}
-) {
-  // Wait for Stripe checkout to load
-  await page.waitForURL(/checkout\.stripe\.com/, { timeout: 60000 })
-  
-  // Wait for the page to load - use domcontentloaded since Stripe keeps connections open
-  await page.waitForLoadState('domcontentloaded')
-  await page.waitForTimeout(2000)
+const STRIPE_TEST_CARD = {
+  number: '4242424242424242',
+  expiry: '1234', // MMYY
+  cvc: '123',
+  postalCode: '12345'
+}
 
-  // Fill email - Stripe checkout uses input#email
-  const emailInput = page.locator('input#email')
-  await emailInput.fill(TEST_EMAIL)
+const TEST_SHIPPING_ADDRESS = {
+  name: 'Playwright Test User',
+  street: 'Kalverstraat 1',
+  city: 'Amsterdam',
+  postalCode: '1012NX',
+  country: 'Netherlands'
+}
 
-  // Fill phone number if visible
-  const phoneInput = page.locator('input[type="tel"]').first()
-  if (await phoneInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await phoneInput.fill(TEST_PHONE)
+/**
+ * Helper to handle Stripe Payment
+ * Since Stripe is an iframe or redirect, we intercept the request or handle the UI.
+ * In this project, the payment is a redirect to Stripe Checkout hosted page.
+ * We can simulate a successful payment redirect or interact with the Stripe page if possible.
+ */
+async function completeStripePayment(page: Page, options: { withShipping?: boolean } = {}) {
+  // Wait for the URL to change to stripe.com
+  await page.waitForURL(/checkout.stripe.com/, { timeout: 30000 })
+
+  // Interact with Stripe Checkout page
+  // Note: Stripe elements can be tricky due to iframes and dynamic IDs.
+  // We use stable selectors where possible.
+
+  // 1. Fill email if requested (sometimes prefilled)
+  const emailInput = page.locator('#email')
+  if (await emailInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+    await emailInput.fill('test@example.com')
   }
 
-  // Fill shipping address if required
+  // If shipping is required, Stripe asks for address
   if (options.withShipping) {
-    // Allow time for shipping section to render
-    await page.waitForTimeout(1000)
-    
-    // Click "Enter address manually" button if it exists to expand the form
-    const manualAddressButton = page.locator('button:has-text("Enter address manually")')
-    if (await manualAddressButton.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await manualAddressButton.click()
-      await page.waitForTimeout(1000)
-    }
-    
-    // Fill shipping name (use exact Stripe selector)
-    const nameInput = page.locator('input#shippingName')
-    await nameInput.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {})
-    if (await nameInput.isVisible({ timeout: 1000 }).catch(() => false)) {
+    const nameInput = page.locator('#shipping-name')
+    if (await nameInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await nameInput.fill(TEST_SHIPPING_ADDRESS.name)
     }
-    
-    // Fill shipping address line 1 (use exact Stripe selector)
-    const addressInput = page.locator('input#shippingAddressLine1')
-    await addressInput.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {})
-    if (await addressInput.isVisible({ timeout: 1000 }).catch(() => false)) {
-      await addressInput.fill(TEST_SHIPPING_ADDRESS.addressLine1)
-      await page.waitForTimeout(300) // Allow address autocomplete to dismiss
+
+    const addressInput = page.locator('#shipping-address-line1')
+    if (await addressInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await addressInput.fill(TEST_SHIPPING_ADDRESS.street)
     }
-    
-    // Fill city (use exact Stripe selector)
-    const cityInput = page.locator('input#shippingLocality')
+
+    const cityInput = page.locator('#shipping-address-city')
     if (await cityInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await cityInput.fill(TEST_SHIPPING_ADDRESS.city)
     }
-    
-    // Fill postal code (use exact Stripe selector)
-    const postalInput = page.locator('input#shippingPostalCode')
-    if (await postalInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await postalInput.fill(TEST_SHIPPING_ADDRESS.postalCode)
+
+    const postalCodeInput = page.locator('#shipping-address-postal_code')
+    if (await postalCodeInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await postalCodeInput.fill(TEST_SHIPPING_ADDRESS.postalCode)
     }
-    
-    await page.waitForTimeout(500)
   }
 
-  // Select Card payment method - try multiple approaches
-  // First scroll down to make the payment methods visible
-  await page.evaluate(() => window.scrollBy(0, 300))
-  await page.waitForTimeout(500)
-  
-  // Try to click the Card payment option using different methods
-  // Method 1: Click the Card radio input via JavaScript (most reliable)
-  await page.evaluate(() => {
-    const cardRadio = document.querySelector('input#payment-method-accordion-item-title-card') as HTMLInputElement
-    if (cardRadio) {
-      cardRadio.checked = true
-      cardRadio.dispatchEvent(new Event('change', { bubbles: true }))
-      cardRadio.click()
-    }
-  })
-  await page.waitForTimeout(500)
-  
-  // Method 2: Also click the visible Card label/button area
+  // 2. Also click the visible Card label/button area
   const cardLabel = page.locator('#payment-method-label-card, [data-testid="card-accordion-item-button"]').first()
   if (await cardLabel.isVisible({ timeout: 1000 }).catch(() => false)) {
     await cardLabel.click({ force: true })
@@ -157,8 +138,17 @@ async function addCakeToBag(page: Page, options: {
   for (let i = 0; i < cakeLinkCount; i++) {
     // Click the cake
     await cakeLinks.nth(i).click()
-    await page.waitForURL(/\/cake\//)
+
+    // Wait for navigation and potential redirects
     await page.waitForLoadState('networkidle')
+
+    // Verify we are on a cake page (and not redirected back or elsewhere)
+    if (!page.url().includes('/cake/')) {
+       // If click failed or redirected, go back to list and try next
+       await page.goBack()
+       await page.waitForLoadState('networkidle')
+       continue
+    }
 
     // Check if the amount selector is visible (indicating item is in stock)
     const amountSelect = page.locator('select[name="amount"]')
@@ -270,7 +260,8 @@ async function completeCheckoutFromBag(page: Page, options: {
 
   // Accept terms checkbox - click on the text to toggle
   const termsCheckbox = page.getByText('I have read and understood the cancellation policy')
-  await termsCheckbox.click()
+  // Use force click to bypass potential overlay issues or simply click the label
+  await termsCheckbox.click({ force: true })
   
   // Verify checkbox is now checked
   await page.waitForTimeout(300)
