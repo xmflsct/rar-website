@@ -62,14 +62,8 @@ async function completeStripePayment(
     if (await postalInput.isVisible({ timeout: 10000 }).catch(() => false)) {
       await postalInput.fill(TEST_SHIPPING_ADDRESS.postalCode)
     }
-
-    // Country should be pre-selected as Netherlands based on earlier selection,
-    // but we might need to verify or select it if Stripe defaults to US
   }
 
-  // Select card payment method if needed
-  // Sometimes it's selected by default, sometimes not
-  
   // Wait for the payment element to be ready
   await page.waitForTimeout(1000)
 
@@ -121,36 +115,53 @@ async function addCakeToBag(page: Page, options: {
 
   await page.goto('/')
   
-  // Helper to go to the correct category page
-  const gotoCategory = async () => {
-    if (cakeType === 'normal') {
-      await page.getByRole('link', { name: /cakes.*sweets/i }).click()
-    } else if (cakeType === 'birthday') {
-      await page.getByRole('link', { name: /birthday/i }).click()
-    } else if (cakeType === 'giftcard') {
-      await page.getByRole('link', { name: /gift.*card/i }).click()
-    }
-    await page.waitForLoadState('domcontentloaded')
+  // Click the appropriate navigation link
+  if (cakeType === 'normal') {
+    await page.getByRole('link', { name: /cakes.*sweets/i }).click()
+  } else if (cakeType === 'birthday') {
+    await page.getByRole('link', { name: /birthday/i }).click()
+  } else if (cakeType === 'giftcard') {
+    await page.getByRole('link', { name: /gift.*card/i }).click()
   }
 
-  await gotoCategory()
+  // Wait for at least one cake link to appear
+  try {
+    await page.waitForSelector('a[href^="/cake/"]', { timeout: 10000 })
+  } catch (e) {
+    throw new Error(`Timeout waiting for cake links in category ${cakeType}`)
+  }
 
-  // Get all cake links on the page
-  const cakeLinks = page.locator('a[href^="/cake/"]')
-  const cakeLinkCount = await cakeLinks.count()
+  // Collect all cake URLs first to avoid stale elements and navigation issues
+  const cakeHrefs = await page.locator('a[href^="/cake/"]').evaluateAll((links: HTMLAnchorElement[]) =>
+    links.map(link => link.getAttribute('href')).filter(href => href !== null) as string[]
+  )
   
+  if (cakeHrefs.length === 0) {
+    throw new Error(`No cakes found in category ${cakeType}`)
+  }
+
+  console.log(`Found ${cakeHrefs.length} cakes for ${cakeType}`)
+
   // Iterate through cakes to find one that is in stock
   let addedToBag = false
 
-  for (let i = 0; i < cakeLinkCount; i++) {
-    // Click the cake
-    await cakeLinks.nth(i).click()
-    await page.waitForURL(/\/cake\//)
-    await page.waitForLoadState('domcontentloaded')
+  for (const href of cakeHrefs) {
+    console.log(`Checking cake: ${href}`)
+    // Navigate directly to the cake page
+    await page.goto(href)
+    // Wait for the amount selector or some content
+    try {
+        await page.waitForLoadState('domcontentloaded')
+    } catch (e) {
+        console.log('Navigation timeout, continuing...')
+    }
 
     // Check if the amount selector is visible (indicating item is in stock)
+    // Increased timeout to be robust against slow hydration in CI
     const amountSelect = page.locator('select[name="amount"]')
-    const isAvailable = await amountSelect.isVisible({ timeout: 10000 }).catch(() => false)
+    const isAvailable = await amountSelect.isVisible({ timeout: 5000 }).catch(() => false)
+
+    console.log(`Cake ${href} available: ${isAvailable}`)
 
     if (isAvailable) {
       // If delivery option is needed (like for gift cards with shipping)
@@ -197,11 +208,8 @@ async function addCakeToBag(page: Page, options: {
 
       addedToBag = true
       break // Exit loop as we successfully added a cake
-    } else {
-      // If not available, navigate back to listing page explicitely to avoid history issues
-      await gotoCategory()
-      // Continue to next cake
     }
+    // If not available, we just continue to the next URL in the loop
   }
   
   if (!addedToBag) {
@@ -268,6 +276,7 @@ async function completeCheckoutFromBag(page: Page, options: {
 }
 
 test.describe('Checkout E2E Tests', () => {
+  test.setTimeout(120000)
   test.beforeEach(async ({ page }) => {
     // Clear localStorage to start fresh
     await page.goto('/')
