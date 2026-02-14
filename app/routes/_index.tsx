@@ -77,14 +77,14 @@ export default () => {
             <Image width={440} image={images.left} />
           </div>
           <div>
-            <h3 className='font-bold text-xl'>Matcha Next Door</h3>
+            <h3 className='font-bold text-xl'><a href="https://matchanextdoor.nl" target="_blank" className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'>Matcha Next Door</a></h3>
             <p className='text-lg mb-2'>Japanese tea room</p>
             <Image width={440} image={images.right} />
           </div>
 
           <div>
             <h4 className='font-bold'>Opening hours</h4>
-            <p>Wed - Sun</p>
+            <p>Tue - Sun</p>
             <p>12:00 - 18:00</p>
             <p>[Digital Pay Only]</p>
           </div>
