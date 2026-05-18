@@ -112,11 +112,19 @@ async function completeStripePayment(
     await billingNameInput.fill(TEST_SHIPPING_ADDRESS.name)
   }
 
+  // Keep Stripe's card validation deterministic across runner locales.
+  const billingCountrySelect = page
+    .locator('select#billingCountry, select[name="billingCountry"], select[name="billingAddressCountry"]')
+    .first()
+  if (await billingCountrySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await billingCountrySelect.selectOption('US')
+  }
+
   // Fill billing postal code (ZIP) if visible - Stripe may require this for card validation
   // The input may have various names depending on the Stripe checkout version
   const billingPostalInput = page.locator('input[name="billingPostalCode"], input[placeholder*="ZIP"], input[placeholder*="Postal"]').first()
   if (await billingPostalInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await billingPostalInput.fill(TEST_SHIPPING_ADDRESS.postalCode)
+    await billingPostalInput.fill('12345')
   }
 
   // Click pay button
