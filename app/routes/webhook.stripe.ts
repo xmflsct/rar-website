@@ -97,12 +97,25 @@ export const action: ActionFunction = async ({ context, request }) => {
     throw data('Missing environment variables', { status: 500 })
   }
 
-  const signature = request.headers
-    .get('Stripe-Signature')
-    ?.split(',')
-    .map(string => string.split('='))
-  const signatureTimestamp = signature?.find(array => array[0] === 't')?.[1]
-  const signatureV1 = signature?.find(array => array[0] === 'v1')?.[1]
+  const stripeSignature = request.headers.get('Stripe-Signature')
+  let signatureTimestamp: string | undefined
+  let signatureV1: string | undefined
+
+  if (stripeSignature) {
+    const parts = stripeSignature.split(',')
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i]
+      const split = part.split('=')
+      const key = split[0]
+      const value = split[1]
+      if (key === 't') {
+        signatureTimestamp = value
+      } else if (key === 'v1') {
+        signatureV1 = value
+      }
+      if (signatureTimestamp && signatureV1) break
+    }
+  }
 
   if (!signatureTimestamp || !signatureV1) {
     return data('No signature provided', { status: 403 })
