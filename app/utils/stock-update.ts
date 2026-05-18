@@ -45,10 +45,14 @@ export const updateStockOptimized = async (items: StockItem[], env: Env) => {
       }>()
 
       const runningStock: Record<string, number> = {}
+      const initialStock: Record<string, number> = {}
       const types = ['A', 'B', 'C'] as const
       for (const t of types) {
           const s = entry.fields[`type${t}Stock` as keyof typeof entry.fields]?.['en-GB']
-          if (typeof s === 'number') runningStock[t] = s
+          if (typeof s === 'number') {
+            runningStock[t] = s
+            initialStock[t] = s
+          }
       }
 
       const patches: { op: 'replace'; path: string; value: number }[] = []
@@ -71,8 +75,7 @@ export const updateStockOptimized = async (items: StockItem[], env: Env) => {
       }
 
       for (const t of types) {
-          const initial = entry.fields[`type${t}Stock` as keyof typeof entry.fields]?.['en-GB']
-          if (initial !== undefined && typeof initial === 'number' && runningStock[t] !== undefined && runningStock[t] !== initial) {
+          if (initialStock[t] !== undefined && runningStock[t] !== initialStock[t]) {
               patches.push({
                   op: 'replace',
                   path: `/fields/type${t}Stock/en-GB`,
