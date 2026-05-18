@@ -16,3 +16,9 @@ export const TEST_SHIPPING_ADDRESS = {
 
 export const TEST_EMAIL = 'test@example.com'
 export const TEST_PHONE = '+31612345678'
+
+export const TEST_PRODUCT_PATHS = {
+  normal: '/cake/may-roll',
+  birthday: '/cake/birthday-cake-no-6',
+  shipping: '/cake/japanese-hojicha-powder-50g'
+}
