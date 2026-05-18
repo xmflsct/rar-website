@@ -138,110 +138,74 @@ async function addCakeToBag(page: Page, options: {
 }) {
   const { cakeType, selectAmount = 1, deliveryType } = options
 
-  await page.goto('/')
-  
-  // Click the appropriate navigation link
   if (cakeType === 'normal') {
-    // Click on "Cakes & Sweets" link
-    await page.getByRole('link', { name: /cakes.*sweets/i }).click()
+    await page.goto('/cake/may-roll')
   } else if (cakeType === 'birthday') {
-    // Click on "Birthday Cakes" link
-    await page.getByRole('link', { name: /birthday/i }).click()
+    await page.goto('/cake/birthday-cake-no-6')
   } else if (cakeType === 'shipping') {
     await page.goto('/cake/japanese-hojicha-powder-50g')
   }
 
   await page.waitForLoadState('networkidle')
 
-  // For listing pages, find links and navigate to individual cake pages.
-  const cakeLinks = cakeType === 'shipping'
-    ? page.locator('body')
-    : page.locator('a[href^="/cake/"]')
-  const cakeLinkCount = await cakeLinks.count()
-  
-  // Iterate through cakes to find one that is in stock
-  let addedToBag = false
+  const amountSelect = page.locator('select[name="amount"]')
+  const isAvailable = await amountSelect.isVisible({ timeout: 5000 }).catch(() => false)
 
-  for (let i = 0; i < cakeLinkCount; i++) {
-    // Click the cake
-    if (cakeType !== 'shipping') {
-      await cakeLinks.nth(i).click()
-      await page.waitForURL(/\/cake\//)
-      await page.waitForLoadState('networkidle')
-    }
-
-    // Check if the amount selector is visible (indicating item is in stock)
-    const amountSelect = page.locator('select[name="amount"]')
-    const isAvailable = await amountSelect.isVisible({ timeout: 2000 }).catch(() => false)
-
-    if (isAvailable) {
-      // If a delivery option is needed, select the delivery type and any required date.
-      if (deliveryType) {
-        const deliverySelect = page.locator('select[name="delivery"]')
-        if (await deliverySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
-          await deliverySelect.selectOption(deliveryType)
-          await page.waitForTimeout(500)
-
-          const dateInput = page.locator('input[placeholder="Select date ..."]')
-          if (await dateInput.isVisible({ timeout: 3000 }).catch(() => false)) {
-            await dateInput.click()
-            await page.waitForTimeout(500)
-
-            const availableDay = page.locator('button.rdp-day_button:not([disabled])').first()
-            if (await availableDay.isVisible({ timeout: 3000 }).catch(() => false)) {
-              await availableDay.click()
-              await page.waitForTimeout(500)
-            }
-          }
-        }
-      }
-
-      // Select amount
-      await amountSelect.selectOption(selectAmount.toString())
-
-      // Handle any customization selects (e.g., "Paper tag" on birthday cakes and some normal cakes)
-      // Look for selects that have a placeholder option with "..." indicating they need selection
-      const customSelects = page.locator('select').filter({ has: page.locator('option:has-text("...")') })
-      const count = await customSelects.count()
-
-      for (let j = 0; j < count; j++) {
-        const select = customSelects.nth(j)
-        const selectName = await select.getAttribute('name')
-        // Skip standard selects
-        if (selectName === 'amount' || selectName === 'unit' || selectName === 'delivery') continue
-
-        // Get all options except disabled ones
-        const options = select.locator('option:not([disabled])')
-        const optionCount = await options.count()
-        if (optionCount > 0) {
-          const firstValue = await options.first().getAttribute('value')
-          if (firstValue) {
-            await select.selectOption(firstValue)
-          }
-        }
-      }
-
-      // Click "Add to bag"
-      await page.getByRole('button', { name: 'Add to bag' }).click()
-
-      // Wait for the bag to update
-      await page.waitForTimeout(500)
-
-      addedToBag = true
-      break // Exit loop as we successfully added a cake
-    } else {
-      if (cakeType === 'shipping') break
-
-      // If not available, go back to the listing page
-      await page.goBack()
-      await page.waitForLoadState('networkidle')
-      // Continue to next cake
-    }
-  }
-  
-  if (!addedToBag) {
+  if (!isAvailable) {
     throw new Error(`No available ${cakeType} product found to add to bag.`)
   }
+
+  // If a delivery option is needed, select the delivery type and any required date.
+  if (deliveryType) {
+    const deliverySelect = page.locator('select[name="delivery"]')
+    if (await deliverySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await deliverySelect.selectOption(deliveryType)
+      await page.waitForTimeout(500)
+
+      const dateInput = page.locator('input[placeholder="Select date ..."]')
+      if (await dateInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await dateInput.click()
+        await page.waitForTimeout(500)
+
+        const availableDay = page.locator('button.rdp-day_button:not([disabled])').first()
+        if (await availableDay.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await availableDay.click()
+          await page.waitForTimeout(500)
+        }
+      }
+    }
+  }
+
+  // Select amount
+  await amountSelect.selectOption(selectAmount.toString())
+
+  // Handle any customization selects (e.g., "Paper tag" on birthday cakes and some normal cakes)
+  // Look for selects that have a placeholder option with "..." indicating they need selection
+  const customSelects = page.locator('select').filter({ has: page.locator('option:has-text("...")') })
+  const count = await customSelects.count()
+
+  for (let j = 0; j < count; j++) {
+    const select = customSelects.nth(j)
+    const selectName = await select.getAttribute('name')
+    // Skip standard selects
+    if (selectName === 'amount' || selectName === 'unit' || selectName === 'delivery') continue
+
+    // Get all options except disabled ones
+    const options = select.locator('option:not([disabled])')
+    const optionCount = await options.count()
+    if (optionCount > 0) {
+      const firstValue = await options.first().getAttribute('value')
+      if (firstValue) {
+        await select.selectOption(firstValue)
+      }
+    }
+  }
+
+  // Click "Add to bag"
+  await page.getByRole('button', { name: 'Add to bag' }).click()
+
+  // Wait for the bag to update
+  await page.waitForTimeout(500)
 }
 
 /**
@@ -303,6 +267,8 @@ async function completeCheckoutFromBag(page: Page, options: {
 }
 
 test.describe('Checkout E2E Tests', () => {
+  test.describe.configure({ mode: 'serial' })
+
   test.beforeEach(async ({ page }) => {
     // Clear localStorage to start fresh
     await page.goto('/')
