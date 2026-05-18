@@ -91,7 +91,7 @@ const richTextOptions = ({
                 />
                 <div className='grid grid-cols-2 lg:grid-cols-3 gap-4'>
                   {cakesGroup.cakesCollection?.items?.map(cake => {
-                    if (!cake) return null
+                    if (!cake?.sys?.id) return null
 
                     const typePrice = (type: 'A' | 'B' | 'C') => {
                       const price = cake[`type${type}Price`]

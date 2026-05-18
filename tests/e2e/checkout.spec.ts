@@ -1,5 +1,11 @@
 import { test, expect, Page } from '@playwright/test'
-import { STRIPE_TEST_CARD, TEST_SHIPPING_ADDRESS, TEST_EMAIL, TEST_PHONE } from './fixtures'
+import {
+  STRIPE_TEST_CARD,
+  TEST_PRODUCT_PATHS,
+  TEST_SHIPPING_ADDRESS,
+  TEST_EMAIL,
+  TEST_PHONE
+} from './fixtures'
 
 /**
  * Helper to complete the Stripe payment form
@@ -146,13 +152,7 @@ async function addCakeToBag(page: Page, options: {
 }) {
   const { cakeType, selectAmount = 1, deliveryType } = options
 
-  if (cakeType === 'normal') {
-    await page.goto('/cake/may-roll')
-  } else if (cakeType === 'birthday') {
-    await page.goto('/cake/birthday-cake-no-6')
-  } else if (cakeType === 'shipping') {
-    await page.goto('/cake/japanese-hojicha-powder-50g')
-  }
+  await page.goto(TEST_PRODUCT_PATHS[cakeType])
 
   await page.waitForLoadState('networkidle')
 
