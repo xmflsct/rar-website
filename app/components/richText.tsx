@@ -26,11 +26,13 @@ const richTextOptions = ({
   const assetMap = new Map()
   if (links?.assets?.block) {
     for (const asset of links.assets.block) {
+      if (!asset?.sys?.id) continue
       assetMap.set(asset.sys?.id, asset)
     }
   }
   if (links?.assets?.hyperlink) {
     for (const asset of links.assets.hyperlink) {
+      if (!asset?.sys?.id) continue
       assetMap.set(asset.sys?.id, asset)
     }
   }
@@ -38,6 +40,7 @@ const richTextOptions = ({
   const entryMap = new Map()
   if (links?.entries?.block) {
     for (const entry of links.entries?.block) {
+      if (!entry?.sys?.id) continue
       entryMap.set(entry.sys?.id, entry)
     }
   }
@@ -45,7 +48,8 @@ const richTextOptions = ({
   return {
     renderNode: {
       [BLOCKS.EMBEDDED_ASSET]: node => {
-        const asset = assetMap.get(node.data.target.sys.id) as CommonImage
+        const targetId = node.data.target?.sys?.id
+        const asset = targetId ? (assetMap.get(targetId) as CommonImage) : undefined
         if (!asset) return
 
         return (
@@ -62,7 +66,8 @@ const richTextOptions = ({
         )
       },
       [BLOCKS.EMBEDDED_ENTRY]: node => {
-        const entry = entryMap.get(node.data.target.sys.id)
+        const targetId = node.data.target?.sys?.id
+        const entry = targetId ? entryMap.get(targetId) : undefined
         if (!entry) return null
 
         switch (entry.__typename) {
@@ -86,6 +91,8 @@ const richTextOptions = ({
                 />
                 <div className='grid grid-cols-2 lg:grid-cols-3 gap-4'>
                   {cakesGroup.cakesCollection?.items?.map(cake => {
+                    if (!cake?.sys?.id) return null
+
                     const typePrice = (type: 'A' | 'B' | 'C') => {
                       const price = cake[`type${type}Price`]
                       const unit = cake[`type${type}Unit`]
@@ -154,20 +161,22 @@ const richTextOptions = ({
                   `lg:${columns(grid.columnsLarge)}`
                 )}
               >
-                {grid.assetsCollection?.items.map((asset, index) => (
-                  <figure key={index} className='my-0 lg:my-auto'>
-                    <Image
-                      alt={asset.title}
-                      image={asset}
-                      width={assetWidth || 432}
-                      quality={85}
-                      className={classNames(asset.description ? 'mb-0' : '', 'mx-auto')}
-                    />
-                    {asset.description && (
-                      <figcaption className='mt-1'>{asset.description}</figcaption>
-                    )}
-                  </figure>
-                ))}
+                {grid.assetsCollection?.items.map((asset, index) =>
+                  asset ? (
+                    <figure key={index} className='my-0 lg:my-auto'>
+                      <Image
+                        alt={asset.title}
+                        image={asset}
+                        width={assetWidth || 432}
+                        quality={85}
+                        className={classNames(asset.description ? 'mb-0' : '', 'mx-auto')}
+                      />
+                      {asset.description && (
+                        <figcaption className='mt-1'>{asset.description}</figcaption>
+                      )}
+                    </figure>
+                  ) : null
+                )}
               </div>
             )
           default:
@@ -182,7 +191,8 @@ const richTextOptions = ({
         )
       },
       [INLINES.ASSET_HYPERLINK]: node => {
-        const asset = assetMap.get(node.data.target.sys.id)
+        const targetId = node.data.target?.sys?.id
+        const asset = targetId ? assetMap.get(targetId) : undefined
         if (!asset) return
 
         return (

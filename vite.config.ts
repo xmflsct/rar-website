@@ -6,7 +6,10 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
     plugins: [
-        cloudflare({ viteEnvironment: { name: "ssr" } }),
+        cloudflare({
+            inspectorPort: false,
+            viteEnvironment: { name: "ssr" }
+        }),
         reactRouter(),
         tailwindcss(),
         tsconfigPaths()
@@ -14,7 +17,20 @@ export default defineConfig({
     server: {
         port: 5173,
         strictPort: true,
-        open: false
+        open: false,
+        watch: {
+            ignored: [
+                "**/.git/**",
+                "**/.react-router/**",
+                "**/.wrangler/**",
+                "**/build/**",
+                "**/node_modules/**",
+                "**/playwright-report/**",
+                "**/public/build/**",
+                "**/test-results/**",
+                "**/tmp/**"
+            ]
+        }
     },
     build: {
         sourcemap: false

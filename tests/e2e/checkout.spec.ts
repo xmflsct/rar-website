@@ -1,5 +1,11 @@
 import { test, expect, Page } from '@playwright/test'
-import { STRIPE_TEST_CARD, TEST_SHIPPING_ADDRESS, TEST_EMAIL, TEST_PHONE } from './fixtures'
+import {
+  STRIPE_TEST_CARD,
+  TEST_PRODUCT_PATHS,
+  TEST_SHIPPING_ADDRESS,
+  TEST_EMAIL,
+  TEST_PHONE
+} from './fixtures'
 
 /**
  * Helper to complete the Stripe payment form
@@ -112,11 +118,19 @@ async function completeStripePayment(
     await billingNameInput.fill(TEST_SHIPPING_ADDRESS.name)
   }
 
+  // Keep Stripe's card validation deterministic across runner locales.
+  const billingCountrySelect = page
+    .locator('select#billingCountry, select[name="billingCountry"], select[name="billingAddressCountry"]')
+    .first()
+  if (await billingCountrySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await billingCountrySelect.selectOption('US')
+  }
+
   // Fill billing postal code (ZIP) if visible - Stripe may require this for card validation
   // The input may have various names depending on the Stripe checkout version
   const billingPostalInput = page.locator('input[name="billingPostalCode"], input[placeholder*="ZIP"], input[placeholder*="Postal"]').first()
   if (await billingPostalInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await billingPostalInput.fill(TEST_SHIPPING_ADDRESS.postalCode)
+    await billingPostalInput.fill('12345')
   }
 
   // Click pay button
@@ -132,125 +146,74 @@ async function completeStripePayment(
  * Helper to navigate to a specific cake page and add to bag
  */
 async function addCakeToBag(page: Page, options: {
-  cakeType: 'normal' | 'birthday' | 'giftcard'
+  cakeType: 'normal' | 'birthday' | 'shipping'
   selectAmount?: number
   deliveryType?: 'pickup' | 'shipping'
 }) {
   const { cakeType, selectAmount = 1, deliveryType } = options
 
-  await page.goto('/')
-  
-  // Click the appropriate navigation link
-  if (cakeType === 'normal') {
-    // Click on "Cakes & Sweets" link
-    await page.getByRole('link', { name: /cakes.*sweets/i }).click()
-  } else if (cakeType === 'birthday') {
-    // Click on "Birthday Cakes" link
-    await page.getByRole('link', { name: /birthday/i }).click()
-  } else if (cakeType === 'giftcard') {
-    // Click on "Gift card" link  
-    await page.getByRole('link', { name: /gift.*card/i }).click()
-  }
+  await page.goto(TEST_PRODUCT_PATHS[cakeType])
 
   await page.waitForLoadState('networkidle')
 
-  // Gift card is displayed inline on the page, not as a link to /cake/...
-  if (cakeType === 'giftcard') {
-    // The gift card form is directly on the /gift-card page
-    const amountSelect = page.locator('select[name="amount"]')
-    await amountSelect.waitFor({ state: 'visible', timeout: 5000 })
+  const amountSelect = page.locator('select[name="amount"]')
+  const isAvailable = await amountSelect.isVisible({ timeout: 5000 }).catch(() => false)
 
-    // If delivery option is needed
-    if (deliveryType) {
-      const deliverySelect = page.locator('select[name="delivery"]')
-      if (await deliverySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await deliverySelect.selectOption(deliveryType)
-        await page.waitForTimeout(500)
-      }
-    }
-
-    // Select amount
-    await amountSelect.selectOption(selectAmount.toString())
-
-    // Click "Add to bag"
-    await page.getByRole('button', { name: 'Add to bag' }).click()
-
-    // Wait for the bag to update
-    await page.waitForTimeout(500)
-    return
+  if (!isAvailable) {
+    throw new Error(`No available ${cakeType} product found to add to bag.`)
   }
 
-  // For normal cakes and birthday cakes, find links and navigate to individual cake pages
-  const cakeLinks = page.locator('a[href^="/cake/"]')
-  const cakeLinkCount = await cakeLinks.count()
-  
-  // Iterate through cakes to find one that is in stock
-  let addedToBag = false
+  // If a delivery option is needed, select the delivery type and any required date.
+  if (deliveryType) {
+    const deliverySelect = page.locator('select[name="delivery"]')
+    if (await deliverySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await deliverySelect.selectOption(deliveryType)
+      await page.waitForTimeout(500)
 
-  for (let i = 0; i < cakeLinkCount; i++) {
-    // Click the cake
-    await cakeLinks.nth(i).click()
-    await page.waitForURL(/\/cake\//)
-    await page.waitForLoadState('networkidle')
+      const dateInput = page.locator('input[placeholder="Select date ..."]')
+      if (await dateInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await dateInput.click()
+        await page.waitForTimeout(500)
 
-    // Check if the amount selector is visible (indicating item is in stock)
-    const amountSelect = page.locator('select[name="amount"]')
-    const isAvailable = await amountSelect.isVisible({ timeout: 2000 }).catch(() => false)
-
-    if (isAvailable) {
-      // If delivery option is needed (like for gift cards with shipping)
-      if (deliveryType) {
-        const deliverySelect = page.locator('select[name="delivery"]')
-        if (await deliverySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
-          await deliverySelect.selectOption(deliveryType)
+        const availableDay = page.locator('button.rdp-day_button:not([disabled])').first()
+        if (await availableDay.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await availableDay.click()
           await page.waitForTimeout(500)
         }
       }
-
-      // Select amount
-      await amountSelect.selectOption(selectAmount.toString())
-
-      // Handle any customization selects (e.g., "Paper tag" on birthday cakes and some normal cakes)
-      // Look for selects that have a placeholder option with "..." indicating they need selection
-      const customSelects = page.locator('select').filter({ has: page.locator('option:has-text("...")') })
-      const count = await customSelects.count()
-
-      for (let j = 0; j < count; j++) {
-        const select = customSelects.nth(j)
-        const selectName = await select.getAttribute('name')
-        // Skip standard selects
-        if (selectName === 'amount' || selectName === 'unit' || selectName === 'delivery') continue
-
-        // Get all options except disabled ones
-        const options = select.locator('option:not([disabled])')
-        const optionCount = await options.count()
-        if (optionCount > 0) {
-          const firstValue = await options.first().getAttribute('value')
-          if (firstValue) {
-            await select.selectOption(firstValue)
-          }
-        }
-      }
-
-      // Click "Add to bag"
-      await page.getByRole('button', { name: 'Add to bag' }).click()
-
-      // Wait for the bag to update
-      await page.waitForTimeout(500)
-
-      addedToBag = true
-      break // Exit loop as we successfully added a cake
-    } else {
-      // If not available, go back to the listing page
-      await page.goBack()
-      await page.waitForLoadState('networkidle')
-      // Continue to next cake
     }
   }
-  
-  if (!addedToBag) {
-    throw new Error(`No available ${cakeType} cakes found to add to bag.`)
+
+  // Select amount
+  await amountSelect.selectOption(selectAmount.toString())
+
+  // Handle any customization selects (e.g., "Paper tag" on birthday cakes and some normal cakes)
+  // Look for selects that have a placeholder option with "..." indicating they need selection
+  const customSelects = page.locator('select').filter({ has: page.locator('option:has-text("...")') })
+  const count = await customSelects.count()
+
+  for (let j = 0; j < count; j++) {
+    const select = customSelects.nth(j)
+    const selectName = await select.getAttribute('name')
+    // Skip standard selects
+    if (selectName === 'amount' || selectName === 'unit' || selectName === 'delivery') continue
+
+    // Get all options except disabled ones
+    const options = select.locator('option:not([disabled])')
+    const optionCount = await options.count()
+    if (optionCount > 0) {
+      const firstValue = await options.first().getAttribute('value')
+      if (firstValue) {
+        await select.selectOption(firstValue)
+      }
+    }
   }
+
+  // Click "Add to bag"
+  await page.getByRole('button', { name: 'Add to bag' }).click()
+
+  // Wait for the bag to update
+  await page.waitForTimeout(500)
 }
 
 /**
@@ -312,6 +275,8 @@ async function completeCheckoutFromBag(page: Page, options: {
 }
 
 test.describe('Checkout E2E Tests', () => {
+  test.describe.configure({ mode: 'serial' })
+
   test.beforeEach(async ({ page }) => {
     // Clear localStorage to start fresh
     await page.goto('/')
@@ -346,10 +311,10 @@ test.describe('Checkout E2E Tests', () => {
     await expect(page.getByText(/thank you for your order/i)).toBeVisible()
   })
 
-  test('3. Purchase a giftcard with pickup in store', async ({ page }) => {
-    // Add gift card with pickup to bag
+  test('3. Purchase a shippable product with pickup in store', async ({ page }) => {
+    // Add shippable product with pickup to bag
     await addCakeToBag(page, { 
-      cakeType: 'giftcard', 
+      cakeType: 'shipping',
       selectAmount: 1,
       deliveryType: 'pickup'
     })
@@ -364,10 +329,56 @@ test.describe('Checkout E2E Tests', () => {
     await expect(page.getByText(/thank you for your order/i)).toBeVisible()
   })
 
-  test('4. Purchase a giftcard with delivery to Netherlands', async ({ page }) => {
-    // Add gift card with shipping to bag
+  /*
+   * Gift card purchase flows are temporarily disabled because the current CMS
+   * gift-card page no longer exposes a purchasable order form. Re-enable these
+   * when gift cards are introduced back as an orderable item.
+   *
+   * test('3. Purchase a giftcard with pickup in store', async ({ page }) => {
+   *   await addCakeToBag(page, {
+   *     cakeType: 'giftcard',
+   *     selectAmount: 1,
+   *     deliveryType: 'pickup'
+   *   })
+   *
+   *   await completeCheckoutFromBag(page, { hasPickupItems: true })
+   *   await completeStripePayment(page)
+   *   await expect(page.getByText(/thank you for your order/i)).toBeVisible()
+   * })
+   *
+   * test('4. Purchase a giftcard with delivery to Netherlands', async ({ page }) => {
+   *   await addCakeToBag(page, {
+   *     cakeType: 'giftcard',
+   *     selectAmount: 1,
+   *     deliveryType: 'shipping'
+   *   })
+   *
+   *   await completeCheckoutFromBag(page, { hasShippingItems: true })
+   *   await completeStripePayment(page, { withShipping: true })
+   *   await expect(page.getByText(/thank you for your order/i)).toBeVisible()
+   * })
+   *
+   * test('5. Purchase a birthday cake AND a giftcard with delivery', async ({ page }) => {
+   *   await addCakeToBag(page, { cakeType: 'birthday', selectAmount: 1 })
+   *   await addCakeToBag(page, {
+   *     cakeType: 'giftcard',
+   *     selectAmount: 1,
+   *     deliveryType: 'shipping'
+   *   })
+   *
+   *   await completeCheckoutFromBag(page, {
+   *     hasPickupItems: true,
+   *     hasShippingItems: true
+   *   })
+   *   await completeStripePayment(page, { withShipping: true })
+   *   await expect(page.getByText(/thank you for your order/i)).toBeVisible()
+   * })
+   */
+
+  test('4. Purchase a shippable product with delivery to Netherlands', async ({ page }) => {
+    // Add shippable product with shipping to bag
     await addCakeToBag(page, { 
-      cakeType: 'giftcard', 
+      cakeType: 'shipping',
       selectAmount: 1,
       deliveryType: 'shipping'
     })
@@ -382,13 +393,13 @@ test.describe('Checkout E2E Tests', () => {
     await expect(page.getByText(/thank you for your order/i)).toBeVisible()
   })
 
-  test('5. Purchase a birthday cake AND a giftcard with delivery', async ({ page }) => {
+  test('5. Purchase a birthday cake AND a shippable product with delivery', async ({ page }) => {
     // First: Add birthday cake (pickup)
     await addCakeToBag(page, { cakeType: 'birthday', selectAmount: 1 })
 
-    // Second: Add gift card with shipping
+    // Second: Add shippable product with shipping
     await addCakeToBag(page, { 
-      cakeType: 'giftcard', 
+      cakeType: 'shipping',
       selectAmount: 1,
       deliveryType: 'shipping'
     })

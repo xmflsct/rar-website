@@ -11,8 +11,10 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
 
   const images = await cacheQuery<{
     mooncake: CommonImage
-    left: CommonImage
-    right: CommonImage
+    topLeft: CommonImage
+    topRight: CommonImage
+    bottomLeft: CommonImage
+    bottomRight: CommonImage
   }>({
     context,
     request,
@@ -24,13 +26,25 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
           contentType
           url
         }
-        left: asset(preview: $preview, id: "61lqEfYQpWFMG7JHYZr8qP") {
+        topLeft: asset(preview: $preview, id: "61lqEfYQpWFMG7JHYZr8qP") {
           title
           description
           contentType
           url
         }
-        right: asset(preview: $preview, id: "6xqZvlKCpGsv0HLVcFLRuC") {
+        topRight: asset(preview: $preview, id: "6xqZvlKCpGsv0HLVcFLRuC") {
+          title
+          description
+          contentType
+          url
+        }
+        bottomLeft: asset(preview: $preview, id: "1ssLWnWdlNc7ybEWVSvfb9") {
+          title
+          description
+          contentType
+          url
+        }
+        bottomRight: asset(preview: $preview, id: "Q5214vQqv85Cdlp4QHDVE") {
           title
           description
           contentType
@@ -70,45 +84,54 @@ export default () => {
 
         <h2 className='text-2xl my-8'>[Our story starts from 2016]</h2>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-          <div>
+        <div className='grid gap-8'>
+          <section>
             <h3 className='font-bold text-xl'>Round & Round</h3>
             <p className='text-lg mb-2'>Cross cultural cakes and sweets</p>
-            <Image width={440} image={images.left} />
-          </div>
-          <div>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+              <Image width={440} image={images.topLeft} />
+              <Image width={440} image={images.topRight} />
+            </div>
+          </section>
+
+          <section>
             <h3 className='font-bold text-xl'><a href="https://matchanextdoor.nl" target="_blank" className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'>Matcha Next Door</a></h3>
             <p className='text-lg mb-2'>Japanese tea room</p>
-            <Image width={440} image={images.right} />
-          </div>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+              <Image width={440} image={images.bottomLeft} />
+              <Image width={440} image={images.bottomRight} />
+            </div>
+          </section>
 
-          <div>
-            <h4 className='font-bold'>Opening hours</h4>
-            <p>Tue - Sun</p>
-            <p>12:00 - 18:00</p>
-            <p>[Digital Pay Only]</p>
-          </div>
-          <div>
-            <h4 className='font-bold'>Contact</h4>
-            <p>info@roundandround.nl</p>
-            <p>010 7856545</p>
-          </div>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+            <div>
+              <h4 className='font-bold'>Opening hours</h4>
+              <p>Tue - Sun</p>
+              <p>12:00 - 18:00</p>
+              <p>[Digital Pay Only]</p>
+            </div>
+            <div>
+              <h4 className='font-bold'>Contact</h4>
+              <p>info@roundandround.nl</p>
+              <p>010 7856545</p>
+            </div>
 
-          <div>
-            <h4 className='font-bold'>Round & Round</h4>
-            <p>
-              Hoogstraat 55A
-              <br />
-              3011 PG Rotterdam
-            </p>
-          </div>
-          <div>
-            <h4 className='font-bold'>Matcha Next Door</h4>
-            <p>
-              Hoogstraat 57A
-              <br />
-              3011 PG Rotterdam
-            </p>
+            <div>
+              <h4 className='font-bold'>Round & Round</h4>
+              <p>
+                Hoogstraat 55A
+                <br />
+                3011 PG Rotterdam
+              </p>
+            </div>
+            <div>
+              <h4 className='font-bold'>Matcha Next Door</h4>
+              <p>
+                Hoogstraat 57A
+                <br />
+                3011 PG Rotterdam
+              </p>
+            </div>
           </div>
         </div>
       </div>
