@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.57.0-noble
-      options: --user 1001 --ipc=host
+      options: --ipc=host
     timeout-minutes: 15
 
     steps:
