@@ -1,7 +1,7 @@
-// test
 import { defineConfig, devices } from '@playwright/test'
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173'
+const useSystemChrome = !!process.env.CI
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -22,7 +22,7 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'chromium',
+      name: useSystemChrome ? 'chrome' : 'chromium',
       use: { ...devices['Desktop Chrome'] }
     }
   ],
