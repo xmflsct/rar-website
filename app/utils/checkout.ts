@@ -392,6 +392,7 @@ const checkout = async ({
     })
 
   const sessionData = {
+    adaptive_pricing: { enabled: false },
     payment_method_types: ['ideal', 'card', 'bancontact', 'giropay', 'eps'],
     mode: 'payment',
     line_items: line_items.filter(l => l),

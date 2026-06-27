@@ -50,4 +50,12 @@ describe('getPairs', () => {
       [['b', 'c'], null],
     ])
   })
+
+  it('should preserve false values', () => {
+    const data = { adaptive_pricing: { enabled: false } }
+    const result = getPairs(data)
+    expect(result).toEqual([
+      [['adaptive_pricing', 'enabled'], false],
+    ])
+  })
 })
