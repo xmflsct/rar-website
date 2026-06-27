@@ -7,29 +7,59 @@ type GraphQLRequest = {
   context: LoaderFunctionArgs['context']
   query: RequestDocument
   variables?: Variables
+  request?: Request
 }
 
 const getEnv = (context: LoaderFunctionArgs['context']) => (context as any)?.cloudflare?.env
 
 export let cached: boolean | undefined = undefined
 
+type Env = Record<string, string | undefined>
+
+export const isPreviewRequest = (request?: Request) => {
+  if (!request) return false
+
+  const hostname = new URL(request.url).hostname
+  return (
+    hostname === 'preview.roundandround.nl' ||
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname === '::1' ||
+    hostname === '[::1]' ||
+    hostname.startsWith('preview-')
+  )
+}
+
+export const envValue = (env: Env | undefined, key: string, preview: boolean) =>
+  preview ? env?.[`${key}_PREVIEW`] : env?.[key]
+
+export const requiredEnvValue = (env: Env | undefined, key: string, preview: boolean) => {
+  const value = envValue(env, key, preview)
+  if (!value) {
+    throw data(`Missing ${preview ? `${key}_PREVIEW` : key}`, { status: 500 })
+  }
+  return value
+}
+
 export const graphqlRequest = async <T = unknown>({
   context,
   query,
-  variables
+  variables,
+  request
 }: GraphQLRequest) => {
   const env = getEnv(context)
-  if (!env?.CONTENTFUL_SPACE || !env.CONTENTFUL_KEY) {
+  const preview = isPreviewRequest(request)
+  const contentfulKey = requiredEnvValue(env, 'CONTENTFUL_KEY', preview)
+
+  if (!env?.CONTENTFUL_SPACE) {
     throw data('Missing Contentful config', { status: 500 })
   }
-
-  const preview = env.ENVIRONMENT !== 'PRODUCTION'
 
   return new GraphQLClient(
     `https://graphql.contentful.com/content/v1/spaces/${env.CONTENTFUL_SPACE}/environments/master`,
     {
       fetch,
-      headers: { Authorization: `Bearer ${env.CONTENTFUL_KEY}` },
+      headers: { Authorization: `Bearer ${contentfulKey}` },
       errorPolicy: 'ignore'
     }
   ).request<T>(query, { ...variables, preview })
@@ -40,8 +70,7 @@ export const cacheQuery = async <T = unknown>({
 }: GraphQLRequest & { request: Request; ttlMinutes?: number }): Promise<T> => {
   const queryData = async () => await graphqlRequest<T>(rest)
 
-  const env = getEnv(rest.context)
-  const preview = env?.ENVIRONMENT !== 'PRODUCTION'
+  const preview = isPreviewRequest(rest.request)
   if (!ttlMinutes || preview) {
     return await queryData()
   }

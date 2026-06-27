@@ -4,9 +4,9 @@ import RichText from '~/components/richText'
 import Layout from '~/layout'
 import { getAllPages } from '~/utils/kv'
 
-export const loader = async ({ context, params }: LoaderFunctionArgs) => {
+export const loader = async ({ context, params, request }: LoaderFunctionArgs) => {
   const path = params['*']
-  const { navs, pages, daysClosedCollection } = await getAllPages(context)
+  const { navs, pages, daysClosedCollection } = await getAllPages(context, request)
 
   const matchedPages = pages.filter(page => page.slug === path)
   if (!matchedPages.length) {

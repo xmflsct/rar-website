@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import Stripe from 'stripe'
 import Layout from '~/layout'
 import { full } from '~/utils/currency'
+import { isPreviewRequest, requiredEnvValue } from '~/utils/contentful'
 import { getStripeHeaders } from '~/utils/stripeHeaders'
 import { trackPurchase } from '~/utils/umami'
 
@@ -13,10 +14,11 @@ export const loader = async (props: LoaderFunctionArgs) => {
   }
 
   const env = (props.context as any)?.cloudflare?.env
+  const stripeKey = requiredEnvValue(env, 'STRIPE_KEY_ADMIN', isPreviewRequest(props.request))
   const session = await (
     await fetch(
       `https://api.stripe.com/v1/checkout/sessions/${props.params.session}?expand[]=payment_intent`,
-      { headers: getStripeHeaders(env?.STRIPE_KEY_ADMIN) }
+      { headers: getStripeHeaders(stripeKey) }
     )
   ).json<Stripe.Checkout.Session & { payment_intent: Stripe.PaymentIntent }>()
 
@@ -27,7 +29,7 @@ export const loader = async (props: LoaderFunctionArgs) => {
   const line_items = await (
     await fetch(
       `https://api.stripe.com/v1/checkout/sessions/${props.params.session}/line_items?limit=100`,
-      { headers: getStripeHeaders(env?.STRIPE_KEY_ADMIN) }
+      { headers: getStripeHeaders(stripeKey) }
     )
   ).json<{
     data: {

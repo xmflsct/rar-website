@@ -25,7 +25,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
     `
   })
 
-  const { pages } = await getAllPages(context)
+  const { pages } = await getAllPages(context, request)
 
   const content = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

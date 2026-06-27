@@ -1,28 +1,31 @@
 import type { LoaderFunctionArgs } from 'react-router'
+import { data as routeData } from 'react-router'
 import { gql } from 'graphql-request'
 import { Navigation } from '~/layout/navigation'
-import { DaysClosed, graphqlRequest, Page, PAGE_CONTENT_LINKS } from './contentful'
+import { DaysClosed, graphqlRequest, isPreviewRequest, Page, PAGE_CONTENT_LINKS } from './contentful'
 
 export let kved: boolean | undefined = undefined
 
 const getEnv = (context: LoaderFunctionArgs['context']) => (context as any)?.cloudflare?.env
 
 const getAllPages = async (
-  context: LoaderFunctionArgs['context']
+  context: LoaderFunctionArgs['context'],
+  request?: Request
 ): Promise<{
   navs: Navigation[]
   pages: Page[]
   daysClosedCollection: DaysClosed[]
 }> => {
   const env = getEnv(context)
-  const preview = env?.ENVIRONMENT !== 'PRODUCTION'
+  const preview = isPreviewRequest(request)
 
-  const request = async () =>
+  const fetchPages = async () =>
     await graphqlRequest<{
       pages: { items: Page[] }
       daysClosedCollection: { items: DaysClosed[] }
     }>({
       context,
+      request,
       variables: { end_gte: new Date().toISOString() },
       query: gql`
         ${PAGE_CONTENT_LINKS}
@@ -51,7 +54,10 @@ const getAllPages = async (
       `
     })
 
-  const KV = preview ? env?.RAR_WEBSITE_PREVIEW : env?.RAR_WEBSITE as KVNamespace | undefined
+  const KV = (preview ? env?.RAR_WEBSITE_PREVIEW : env?.RAR_WEBSITE) as KVNamespace | undefined
+  if (preview && !KV) {
+    throw routeData('Missing RAR_WEBSITE_PREVIEW', { status: 500 })
+  }
   let data:
     | {
       pages: {
@@ -66,12 +72,12 @@ const getAllPages = async (
 
   if (KV === undefined) {
     kved = false
-    data = await request()
+    data = await fetchPages()
   } else {
     data = await KV.get(`data`, { type: 'json' })
     if (!data) {
       kved = false
-      data = await request()
+      data = await fetchPages()
 
       await KV.put(`data`, JSON.stringify(data), { expirationTtl: 60 * 60 })
     } else {

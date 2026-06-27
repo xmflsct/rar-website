@@ -5,7 +5,7 @@ import { gql } from 'graphql-request'
 import { sumBy } from 'lodash'
 import { CakeOrder } from '~/states/bag'
 import calShipping from './calShipping'
-import { Cake, graphqlRequest, Shipping } from './contentful'
+import { Cake, graphqlRequest, isPreviewRequest, requiredEnvValue, Shipping } from './contentful'
 import { formatDateForDisplay } from './dateHelpers'
 import { correctPickup } from './pickup'
 import { getReadableDeliveryDate } from './readableDeliveryDate'
@@ -60,9 +60,11 @@ type ShippingOptions = {
 
 const verifyContentful = async ({
   context,
+  request,
   content: { orders, subtotal_amount, shipping_amount, countryCode, pickup_date }
 }: {
   context: LoaderFunctionArgs['context']
+  request?: Request
   content: CheckoutContent
 }): Promise<ShippingOptions | null> => {
   if ((!orders.pickup?.length && !orders.shipping?.length) || !subtotal_amount) {
@@ -101,6 +103,7 @@ const verifyContentful = async ({
         }
       }>({
         context,
+        request,
         variables: { ids: flatOrders.map(b => b.sys.id) },
         query: gql`
           query Cakes($preview: Boolean, $ids: [String]) {
@@ -234,6 +237,7 @@ const verifyContentful = async ({
         shippingCollection: { items: Shipping[] }
       }>({
         context,
+        request,
         query: gql`
           query Delivery($preview: Boolean) {
             shippingCollection(preview: $preview, limit: 1, where: { year: 2023 }) {
@@ -298,19 +302,20 @@ export const getPairs = (
 
 const checkout = async ({
   context,
+  request,
   content
 }: {
   context: LoaderFunctionArgs['context']
+  request?: Request
   content: CheckoutContent
 }) => {
   const env = getEnv(context)
-  if (!env?.STRIPE_KEY_PRIVATE) {
-    throw new Error('Missing stripe private key')
-  }
+  const preview = isPreviewRequest(request)
+  const stripeKey = requiredEnvValue(env, 'STRIPE_KEY_PRIVATE', preview)
 
   let shipping: ShippingOptions | null
   try {
-    shipping = await verifyContentful({ context, content })
+    shipping = await verifyContentful({ context, request, content })
   } catch (error) {
     console.log('error', error)
     return data({ error })
@@ -427,7 +432,7 @@ const checkout = async ({
   const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
     headers: {
-      ...getStripeHeaders(env.STRIPE_KEY_PRIVATE),
+      ...getStripeHeaders(stripeKey),
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     body

@@ -1,12 +1,12 @@
 import type { AppLoadContext } from 'react-router'
-import { data } from 'react-router'
+import { isPreviewRequest, requiredEnvValue } from './contentful'
 
-export const getMyparcelAuthHeader = (context?: AppLoadContext): { Authorization: string } => {
+export const getMyparcelAuthHeader = (
+  context?: AppLoadContext,
+  request?: Request
+): { Authorization: string } => {
   const env = (context as any)?.cloudflare?.env
-  const myparcelKey = env?.WEBHOOK_STRIPE_MYPARCEL_KEY
-  if (!myparcelKey) {
-    throw data('Missing MyParcel key', { status: 500 })
-  }
+  const myparcelKey = requiredEnvValue(env, 'WEBHOOK_STRIPE_MYPARCEL_KEY', isPreviewRequest(request))
   return {
     Authorization: `bearer ${btoa(myparcelKey as string)}`
   }

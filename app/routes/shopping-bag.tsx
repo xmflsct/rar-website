@@ -54,7 +54,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
     `
   })
 
-  const { navs } = await getAllPages(context)
+  const { navs } = await getAllPages(context, request)
   return data({
     navs,
     shippingRates: loaderData.shippingCollection.items[0]!.rates,
@@ -84,6 +84,7 @@ export const action = async ({ context, request }: ActionFunctionArgs) => {
 
   const res = (await checkout({
     context,
+    request,
     content: { ...formDataObject, orders: parsedOrders }
   })) as any
   if (res?.url) {

@@ -7,7 +7,7 @@ import { cacheQuery, CommonImage } from '~/utils/contentful'
 import { getAllPages } from '~/utils/kv'
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
-  const { navs } = await getAllPages(context)
+  const { navs } = await getAllPages(context, request)
 
   const images = await cacheQuery<{
     mooncake: CommonImage

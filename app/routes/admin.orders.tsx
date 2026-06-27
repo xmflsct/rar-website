@@ -199,7 +199,7 @@ export const action = async ({ context, request }: ActionFunctionArgs) => {
 
     case 'createShipment': {
       const formDataJson = JSON.parse(formData.get('data')?.toString() || '{}')
-      const resShipment = await createShipment({ context, ...formDataJson })
+      const resShipment = await createShipment({ context, request, ...formDataJson })
       if (resShipment.ok) {
         return data({ ok: true, id: resShipment.id })
       } else {
@@ -509,4 +509,3 @@ const PageAdminOrders: React.FC = () => {
 }
 
 export default PageAdminOrders
-

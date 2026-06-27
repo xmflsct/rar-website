@@ -5,26 +5,30 @@ import { FetchClient, PostShipments, createPrivateSdk } from '@myparcel/sdk'
 import type { ActionFunction, AppLoadContext } from 'react-router'
 import { data } from 'react-router'
 import Stripe from 'stripe'
+import { isPreviewRequest, requiredEnvValue } from '~/utils/contentful'
 import { getMyparcelAuthHeader } from '~/utils/myparcelAuthHeader'
 import { updateStockOptimized } from '~/utils/stock-update'
 import { getStripeHeaders } from '~/utils/stripeHeaders'
 
 export const createShipment = async ({
   context,
+  request,
   customer_details,
   payment_intent
 }: {
   context: AppLoadContext
+  request: Request
   customer_details: Stripe.Checkout.Session.CustomerDetails
   payment_intent: string
 }): Promise<{ ok: true; id: string } | { ok: false; error: string }> => {
   let error: string = ''
 
   const env = (context as any)?.cloudflare?.env
-  const stripeHeaders = getStripeHeaders(env?.STRIPE_KEY_ADMIN)
+  const preview = isPreviewRequest(request)
+  const stripeHeaders = getStripeHeaders(requiredEnvValue(env, 'STRIPE_KEY_ADMIN', preview))
 
   const result = await createPrivateSdk(
-    new FetchClient({ headers: getMyparcelAuthHeader(context) }),
+    new FetchClient({ headers: getMyparcelAuthHeader(context, request) }),
     [new PostShipments()]
   )
     .postShipments({
@@ -36,7 +40,7 @@ export const createShipment = async ({
             delivery_type: null
           },
           recipient:
-            env?.ENVIRONMENT === 'DEVELOPMENT'
+            preview
               ? {
                 cc: NETHERLANDS,
                 city: 'Rotterdam',
@@ -93,9 +97,10 @@ export const action: ActionFunction = async ({ context, request }) => {
   }
 
   const env = (context as any)?.cloudflare?.env
-  if (!env?.STRIPE_KEY_ADMIN || !env.WEBHOOK_STRIPE_SIGNING_SECRET) {
-    throw data('Missing environment variables', { status: 500 })
-  }
+  const preview = isPreviewRequest(request)
+  const stripeKey = requiredEnvValue(env, 'STRIPE_KEY_ADMIN', preview)
+  const signingSecret = requiredEnvValue(env, 'WEBHOOK_STRIPE_SIGNING_SECRET', preview)
+  const contentfulPat = requiredEnvValue(env, 'CONTENTFUL_PAT', preview)
 
   const signature = request.headers
     .get('Stripe-Signature')
@@ -115,7 +120,7 @@ export const action: ActionFunction = async ({ context, request }) => {
     'HMAC',
     await crypto.subtle.importKey(
       'raw',
-      encoder.encode(env.WEBHOOK_STRIPE_SIGNING_SECRET as string),
+      encoder.encode(signingSecret),
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['verify']
@@ -133,7 +138,7 @@ export const action: ActionFunction = async ({ context, request }) => {
     type: Stripe.Event['type']
   }
 
-  const stripeHeaders = getStripeHeaders(env.STRIPE_KEY_ADMIN)
+  const stripeHeaders = getStripeHeaders(stripeKey)
 
   switch (payload.type) {
     case 'checkout.session.completed':
@@ -148,7 +153,10 @@ export const action: ActionFunction = async ({ context, request }) => {
         }>()
       ).data.map(item => ({ quantity: item.quantity, metadata: item.price.product.metadata }))
 
-      await updateStockOptimized(sessionLineItems, env)
+      await updateStockOptimized(sessionLineItems, {
+        ...env,
+        CONTENTFUL_PAT: contentfulPat
+      })
 
       const shipping_rate = payload.data.object.shipping_cost?.shipping_rate
         ? (
@@ -166,6 +174,7 @@ export const action: ActionFunction = async ({ context, request }) => {
       if (shipping_rate?.label === 'true') {
         const resShipment = await createShipment({
           context,
+          request,
           customer_details: payload.data.object.customer_details!,
           payment_intent: payload.data.object.payment_intent as string
         })
@@ -176,9 +185,7 @@ export const action: ActionFunction = async ({ context, request }) => {
           return data('Shipping creation failed', { status: 500 })
         }
       } else {
-        return data(
-          'Shipping not required' + ' ' + env?.ENVIRONMENT + ' ' + shipping_rate?.label
-        )
+        return data('Shipping not required' + ' ' + shipping_rate?.label)
       }
   }
 

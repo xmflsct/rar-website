@@ -13,14 +13,18 @@
 			"head_sampling_rate": 0.1
 		}
 	},
+	"preview_urls": true,
 	"kv_namespaces": [
 		{
 			"binding": "RAR_WEBSITE",
 			"id": "a1bdf7e4c5e84dd4b629a9471413efc0"
+		},
+		{
+			"binding": "RAR_WEBSITE_PREVIEW",
+			"id": "cfa272a398da4c4b94125539b93e9fcd"
 		}
 	],
 	"vars": {
-		"ENVIRONMENT": "PRODUCTION",
 		"CONTENTFUL_SPACE": "u0x1afixkalo",
 		"SENTRY_DSN": "https://79b2ce77fbfc4511af541c7a4cf125d3@o389581.ingest.us.sentry.io/6617177"
 	},
@@ -33,29 +37,5 @@
 			"pattern": "www.roundandround.nl",
 			"custom_domain": true
 		}
-	],
-	"env": {
-		"preview": {
-			"name": "rar-website-preview",
-			"kv_namespaces": [
-				{
-					"binding": "RAR_WEBSITE_PREVIEW",
-					"id": "cfa272a398da4c4b94125539b93e9fcd"
-				}
-			],
-			"vars": {
-				"ENVIRONMENT": "PREVIEW",
-				"CONTENTFUL_SPACE": "u0x1afixkalo",
-				"SENTRY_DSN": "https://79b2ce77fbfc4511af541c7a4cf125d3@o389581.ingest.us.sentry.io/6617177"
-			},
-			"workers_dev": false,
-			"preview_urls": true,
-			"routes": [
-				{
-					"pattern": "preview.roundandround.nl",
-					"custom_domain": true
-				}
-			]
-		}
-	}
+	]
 }

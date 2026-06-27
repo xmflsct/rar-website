@@ -41,7 +41,7 @@ export const loader = async ({ context, params, request }: LoaderFunctionArgs) =
     throw data('Not Found', { status: 404 })
   }
 
-  const { navs } = await getAllPages(context)
+  const { navs } = await getAllPages(context, request)
   return data({
     navs,
     cake: cakeData.cakeCollection.items[0],
