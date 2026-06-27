@@ -32,13 +32,13 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
           contentType
           url
         }
-        topRight: asset(preview: $preview, id: "6xqZvlKCpGsv0HLVcFLRuC") {
+        topRight: asset(preview: $preview, id: "1ssLWnWdlNc7ybEWVSvfb9") {
           title
           description
           contentType
           url
         }
-        bottomLeft: asset(preview: $preview, id: "1ssLWnWdlNc7ybEWVSvfb9") {
+        bottomLeft: asset(preview: $preview, id: "6xqZvlKCpGsv0HLVcFLRuC") {
           title
           description
           contentType
