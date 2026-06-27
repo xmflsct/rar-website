@@ -60,16 +60,17 @@ jobs:
 
       - name: Promote Worker version
         if: github.event_name == 'check_run'
-        run: >-
-          VERSION_ID="$(npx wrangler versions list --json | node -e
-          'let input = "";
-          process.stdin.on("data", chunk => input += chunk);
-          process.stdin.on("end", () => {
+        run: |
+          VERSION_ID="$(
+            npx wrangler versions list --json | node -e 'const fs = require("node:fs");
             const tag = process.env.VERSION_TAG;
-            const version = JSON.parse(input).find(version => version.annotations?.["workers/tag"] === tag);
-            if (!version) throw new Error(`No Worker version found with tag ${tag}`);
-            console.log(version.version_id);
-          })')" &&
+            const version = JSON.parse(fs.readFileSync(0, "utf8")).find(version => version.annotations?.["workers/tag"] === tag);
+            if (!version) {
+              console.error(`No Worker version found with tag ${tag}`);
+              process.exit(1);
+            }
+            process.stdout.write(version.version_id);'
+          )"
           npx wrangler versions deploy
           --version-id "$VERSION_ID"
           --percentage 100
