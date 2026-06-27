@@ -25,16 +25,16 @@ jobs:
     steps:
       - name: Checkout repository for automatic run
         if: github.event_name == 'check_run'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.check_run.head_sha }}
 
       - name: Checkout repository for manual run
         if: github.event_name == 'workflow_dispatch'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
           cache: "npm"
@@ -61,16 +61,26 @@ jobs:
       - name: Promote Worker version
         if: github.event_name == 'check_run'
         run: >-
+          VERSION_ID="$(npx wrangler versions list --json | node -e
+          'let input = "";
+          process.stdin.on("data", chunk => input += chunk);
+          process.stdin.on("end", () => {
+            const tag = process.env.VERSION_TAG;
+            const version = JSON.parse(input).find(version => version.annotations?.["workers/tag"] === tag);
+            if (!version) throw new Error(`No Worker version found with tag ${tag}`);
+            console.log(version.version_id);
+          })')" &&
           npx wrangler versions deploy
-          --version-tag "${{ github.event.check_run.head_sha }}"
+          --version-id "$VERSION_ID"
           --percentage 100
           --message "Promoted after E2E run ${{ github.run_id }}"
           --yes
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          VERSION_TAG: ${{ github.event.check_run.head_sha }}
 
       - name: Upload Playwright report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: playwright-report
@@ -78,7 +88,7 @@ jobs:
           retention-days: 7
 
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: test-results
