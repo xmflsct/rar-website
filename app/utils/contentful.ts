@@ -2,6 +2,7 @@ import { Document } from '@contentful/rich-text-types'
 import type { LoaderFunctionArgs } from 'react-router'
 import { data } from 'react-router'
 import { gql, GraphQLClient, RequestDocument, Variables } from 'graphql-request'
+import { getCloudflareContext } from './cloudflare'
 
 type GraphQLRequest = {
   context: LoaderFunctionArgs['context']
@@ -10,7 +11,7 @@ type GraphQLRequest = {
   request?: Request
 }
 
-const getEnv = (context: LoaderFunctionArgs['context']) => (context as any)?.cloudflare?.env
+const getEnv = (context: LoaderFunctionArgs['context']) => getCloudflareContext(context)?.env
 
 export let cached: boolean | undefined = undefined
 

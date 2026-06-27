@@ -2,11 +2,12 @@ import type { LoaderFunctionArgs } from 'react-router'
 import { data as routeData } from 'react-router'
 import { gql } from 'graphql-request'
 import { Navigation } from '~/layout/navigation'
+import { getCloudflareContext } from './cloudflare'
 import { DaysClosed, graphqlRequest, isPreviewRequest, Page, PAGE_CONTENT_LINKS } from './contentful'
 
 export let kved: boolean | undefined = undefined
 
-const getEnv = (context: LoaderFunctionArgs['context']) => (context as any)?.cloudflare?.env
+const getEnv = (context: LoaderFunctionArgs['context']) => getCloudflareContext(context)?.env
 
 const getAllPages = async (
   context: LoaderFunctionArgs['context'],

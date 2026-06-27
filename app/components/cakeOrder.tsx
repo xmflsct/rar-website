@@ -105,8 +105,8 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
           if (!getStillAvailable) {
             return {
               defaultMonth: endingDate,
-              fromMonth: endingDate,
-              toMonth: endingDate,
+              startMonth: endingDate,
+              endMonth: endingDate,
               disabled: { after: new Date(2000, 1, 1) }
             }
           }
@@ -123,8 +123,8 @@ const CakeOrder: React.FC<Props> = ({ cake, daysClosedCollection }) => {
 
         return {
           defaultMonth: startingDate,
-          fromMonth: startingDate,
-          toMonth: endingDate,
+          startMonth: startingDate,
+          endMonth: endingDate,
           numberOfMonths,
           disabled: [
             ...(!Array.isArray(availability) || !availability.map(a => a.date).length

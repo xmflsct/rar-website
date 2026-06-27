@@ -49,7 +49,7 @@ export const loader = async ({ context, params, request }: LoaderFunctionArgs) =
   })
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) =>
+export const meta: MetaFunction<typeof loader> = ({ loaderData }) =>
   loaderData?.cake
     ? [
       {

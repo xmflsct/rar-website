@@ -6,12 +6,13 @@ import { sumBy } from 'lodash'
 import { CakeOrder } from '~/states/bag'
 import calShipping from './calShipping'
 import { Cake, graphqlRequest, isPreviewRequest, requiredEnvValue, Shipping } from './contentful'
+import { getCloudflareContext } from './cloudflare'
 import { formatDateForDisplay } from './dateHelpers'
 import { correctPickup } from './pickup'
 import { getReadableDeliveryDate } from './readableDeliveryDate'
 import { getStripeHeaders } from './stripeHeaders'
 
-const getEnv = (context: LoaderFunctionArgs['context']) => (context as any)?.cloudflare?.env
+const getEnv = (context: LoaderFunctionArgs['context']) => getCloudflareContext(context)?.env
 
 // Mapping from 3-letter (ISO 3166-1 alpha-3) to 2-letter (ISO 3166-1 alpha-2) country codes
 // Stripe requires 2-letter codes, but the frontend uses 3-letter codes

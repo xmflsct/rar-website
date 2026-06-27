@@ -3,6 +3,7 @@ import { useLoaderData, data, useParams } from 'react-router'
 import { useEffect, useRef } from 'react'
 import Stripe from 'stripe'
 import Layout from '~/layout'
+import { getCloudflareContext } from '~/utils/cloudflare'
 import { full } from '~/utils/currency'
 import { isPreviewRequest, requiredEnvValue } from '~/utils/contentful'
 import { getStripeHeaders } from '~/utils/stripeHeaders'
@@ -13,7 +14,7 @@ export const loader = async (props: LoaderFunctionArgs) => {
     throw data('Not Found', { status: 404 })
   }
 
-  const env = (props.context as any)?.cloudflare?.env
+  const env = getCloudflareContext(props.context)?.env
   const stripeKey = requiredEnvValue(env, 'STRIPE_KEY_ADMIN', isPreviewRequest(props.request))
   const session = await (
     await fetch(

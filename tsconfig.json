@@ -1,5 +1,6 @@
 {
   "include": [
+    "worker-configuration.d.ts",
     ".react-router/types/**/*",
     "app/**/*.ts",
     "app/**/*.tsx",
@@ -40,7 +41,6 @@
     "skipLibCheck": true,
     "allowJs": true,
     // Path Aliases
-    "baseUrl": ".",
     "paths": {
       "~/*": [
         "./app/*"
@@ -52,7 +52,6 @@
     ],
     // Type Definitions
     "types": [
-      "@cloudflare/workers-types/experimental",
       "vite/client"
     ]
   }

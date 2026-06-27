@@ -16,11 +16,11 @@ export const loader = async ({ context, params, request }: LoaderFunctionArgs) =
   return data({ navs, page: matchedPages[0], daysClosedCollection })
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) =>
-  data?.page
+export const meta: MetaFunction<typeof loader> = ({ loaderData }) =>
+  loaderData?.page
     ? [
       {
-        title: `${data.page.name} | Round&Round Rotterdam`
+        title: `${loaderData.page.name} | Round&Round Rotterdam`
       }
     ]
     : []

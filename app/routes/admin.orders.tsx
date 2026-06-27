@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import Stripe from 'stripe'
 import Button from '~/components/button'
 import Layout from '~/layout'
+import { getCloudflareContext } from '~/utils/cloudflare'
 import { getMyparcelAuthHeader } from '~/utils/myparcelAuthHeader'
 import { getStripeHeaders } from '~/utils/stripeHeaders'
 import { adminNavs } from './admin._index'
@@ -68,7 +69,7 @@ const getTrackings = async (myparcelAuthHeader: { Authorization: string }, ids: 
   ).data.tracktraces
 
 export const loader = async ({ context }: LoaderFunctionArgs) => {
-  const env = (context as any)?.cloudflare?.env
+  const env = getCloudflareContext(context)?.env
   if (!env?.STRIPE_KEY_ADMIN) {
     throw data(null, { status: 500 })
   } else {
@@ -79,7 +80,7 @@ export const loader = async ({ context }: LoaderFunctionArgs) => {
 }
 
 export const action = async ({ context, request }: ActionFunctionArgs) => {
-  const env = (context as any)?.cloudflare?.env
+  const env = getCloudflareContext(context)?.env
   if (!env?.STRIPE_KEY_ADMIN) {
     return data({ ok: false, error: 'Missing Stripe key' } as LoadOrdersResponse, { status: 500 })
   }
@@ -372,7 +373,7 @@ const PageAdminOrders: React.FC = () => {
 
   const [orders, setOrders] = useState<Order[]>([])
   const [hasMore, setHasMore] = useState<boolean>(true)
-  const cursor = useRef<string>()
+  const cursor = useRef<string | undefined>(undefined)
 
   const loading = fetcher.state !== 'idle'
 

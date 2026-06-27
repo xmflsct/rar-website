@@ -260,8 +260,8 @@ const ShoppingBag = () => {
                           date={pickup}
                           setDate={setPickup}
                           defaultMonth={addDays(new Date(), 2)}
-                          fromMonth={addDays(new Date(), 2)}
-                          toMonth={
+                          startMonth={addDays(new Date(), 2)}
+                          endMonth={
                             new Date(
                               getYear(new Date()) +
                               (maxCalendarMonth >= getMonth(new Date()) ? 0 : 1),

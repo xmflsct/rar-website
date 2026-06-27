@@ -1,6 +1,6 @@
 import { Popover, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
-import { DayPicker, DayPickerProps, Matcher, isDateRange, isMatch } from 'react-day-picker'
+import { DayPicker, DayPickerProps, Matcher, dateMatchModifiers } from 'react-day-picker'
 import { DaysClosed } from '~/utils/contentful'
 import {
   getValidDayAfterMatcher,
@@ -39,21 +39,21 @@ export const isDayValid = ({
   daysClosed?: DaysClosed[]
 }): boolean => {
   // Use validDayAfter to check minimum lead time
-  if (!isMatch(date, [validDayAfter()])) return false
+  if (!dateMatchModifiers(date, [validDayAfter()])) return false
 
   // Check exceptional open days first
-  if (EXCEPTIONAL_OPEN_DAYS.length && isMatch(date, EXCEPTIONAL_OPEN_DAYS)) return true
+  if (EXCEPTIONAL_OPEN_DAYS.length && dateMatchModifiers(date, EXCEPTIONAL_OPEN_DAYS)) return true
 
   // Check if shop is normally open
-  if (!isMatch(date, [openDaysOfWeek])) return false
+  if (!dateMatchModifiers(date, [openDaysOfWeek])) return false
 
   // Check closed date ranges
   if (daysClosed?.length) {
     for (const daysClosedRange of daysClosed) {
       if (
-        isDateRange({
-          after: new Date(daysClosedRange.start),
-          before: new Date(daysClosedRange.end)
+        dateMatchModifiers(date, {
+          from: new Date(daysClosedRange.start),
+          to: new Date(daysClosedRange.end)
         })
       ) {
         return false
@@ -125,7 +125,7 @@ const PickDay: React.FC<Props> = ({ name, date, setDate, ...props }) => {
                 selected={date}
                 onSelect={handleDaySelect}
                 onDayClick={() => close()}
-                fromMonth={new Date()}
+                startMonth={new Date()}
                 weekStartsOn={1}
                 numberOfMonths={2}
                 {...props}

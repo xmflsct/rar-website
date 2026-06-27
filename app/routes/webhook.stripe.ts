@@ -2,9 +2,10 @@ import { CarrierId, PackageTypeId } from '@myparcel/constants'
 // @ts-ignore
 import { NETHERLANDS } from '@myparcel/constants/countries'
 import { FetchClient, PostShipments, createPrivateSdk } from '@myparcel/sdk'
-import type { ActionFunction, AppLoadContext } from 'react-router'
+import type { ActionFunction, LoaderFunctionArgs } from 'react-router'
 import { data } from 'react-router'
 import Stripe from 'stripe'
+import { getCloudflareContext } from '~/utils/cloudflare'
 import { isPreviewRequest, requiredEnvValue } from '~/utils/contentful'
 import { getMyparcelAuthHeader } from '~/utils/myparcelAuthHeader'
 import { updateStockOptimized } from '~/utils/stock-update'
@@ -16,14 +17,14 @@ export const createShipment = async ({
   customer_details,
   payment_intent
 }: {
-  context: AppLoadContext
+  context: LoaderFunctionArgs['context']
   request: Request
   customer_details: Stripe.Checkout.Session.CustomerDetails
   payment_intent: string
 }): Promise<{ ok: true; id: string } | { ok: false; error: string }> => {
   let error: string = ''
 
-  const env = (context as any)?.cloudflare?.env
+  const env = getCloudflareContext(context)?.env
   const preview = isPreviewRequest(request)
   const stripeHeaders = getStripeHeaders(requiredEnvValue(env, 'STRIPE_KEY_ADMIN', preview))
 
@@ -96,10 +97,11 @@ export const action: ActionFunction = async ({ context, request }) => {
     return data('Request method error', { status: 405 })
   }
 
-  const env = (context as any)?.cloudflare?.env
+  const env = getCloudflareContext(context)?.env
   const preview = isPreviewRequest(request)
   const stripeKey = requiredEnvValue(env, 'STRIPE_KEY_ADMIN', preview)
   const signingSecret = requiredEnvValue(env, 'WEBHOOK_STRIPE_SIGNING_SECRET', preview)
+  const contentfulSpace = requiredEnvValue(env, 'CONTENTFUL_SPACE', preview)
   const contentfulPat = requiredEnvValue(env, 'CONTENTFUL_PAT', preview)
 
   const signature = request.headers
@@ -154,7 +156,7 @@ export const action: ActionFunction = async ({ context, request }) => {
       ).data.map(item => ({ quantity: item.quantity, metadata: item.price.product.metadata }))
 
       await updateStockOptimized(sessionLineItems, {
-        ...env,
+        CONTENTFUL_SPACE: contentfulSpace,
         CONTENTFUL_PAT: contentfulPat
       })
 
