@@ -232,14 +232,16 @@ const ShoppingBag = () => {
           <input
             type='hidden'
             name='success_url'
+            readOnly
             value={`${typeof window !== 'undefined' && window.location.origin}/thank-you`}
           />
           <input
             type='hidden'
             name='cancel_url'
+            readOnly
             value={`${typeof window !== 'undefined' && window.location.origin}/shopping-bag`}
           />
-          <input type='hidden' name='orders' value={JSON.stringify(orders)} />
+          <input type='hidden' name='orders' readOnly value={JSON.stringify(orders)} />
 
           <div className='lg:col-span-3 flex flex-col gap-4'>
             <h2 className='text-2xl'>Overview</h2>
@@ -356,7 +358,7 @@ const ShoppingBag = () => {
                   <th className='text-left pr-4'>Subtotal</th>
                   <td className='text-right'>
                     {full(subtotal)}
-                    <input name='subtotal_amount' type='hidden' value={subtotal} />
+                    <input name='subtotal_amount' type='hidden' readOnly value={subtotal} />
                   </td>
                 </tr>
                 {orders.shipping.length ? (
@@ -364,7 +366,7 @@ const ShoppingBag = () => {
                     <th className='text-left pr-4'>Shipping fee</th>
                     <td className='text-right'>
                       {shippingFee === 0 ? 'Free' : shippingFee ? full(shippingFee) : '-'}
-                      <input name='shipping_amount' type='hidden' value={shippingFee} />
+                      <input name='shipping_amount' type='hidden' readOnly value={shippingFee ?? ''} />
                     </td>
                   </tr>
                 ) : null}

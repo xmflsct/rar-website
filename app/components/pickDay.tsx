@@ -98,6 +98,7 @@ const PickDay: React.FC<Props> = ({ name, date, setDate, ...props }) => {
             name={name}
             required={props.required}
             placeholder='Select date ...'
+            readOnly
             value={
               date
                 ? date.toLocaleString('en-GB', {
