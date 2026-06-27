@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /thank-you
+
+Sitemap: https://roundandround.nl/sitemap.xml

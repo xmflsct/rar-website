@@ -1,10 +1,12 @@
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router'
 import { useLoaderData, data } from 'react-router'
 import { gql } from 'graphql-request'
+import type { LocalBusiness, WithContext } from 'schema-dts'
 import Image from '~/components/image'
 import Layout from '~/layout'
 import { cacheQuery, CommonImage } from '~/utils/contentful'
 import { getAllPages } from '~/utils/kv'
+import { DEFAULT_DESCRIPTION, SITE_NAME, SITE_URL, seoMeta } from '~/utils/seo'
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const { navs } = await getAllPages(context, request)
@@ -58,8 +60,30 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
 }
 
 export const meta: MetaFunction = () => [
+  ...seoMeta({
+    title: `${SITE_NAME} | Cross Cultural Cakes and Sweets`,
+    description: DEFAULT_DESCRIPTION,
+    pathname: '/'
+  }),
   {
-    title: `Round&Round Rotterdam`
+    'script:ld+json': {
+      '@context': 'https://schema.org',
+      '@type': 'Bakery',
+      name: SITE_NAME,
+      url: SITE_URL,
+      email: 'info@roundandround.nl',
+      telephone: '+31 10 785 6545',
+      image: `${SITE_URL}/favicon.ico`,
+      priceRange: 'EUR',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Hoogstraat 55A',
+        postalCode: '3011 PG',
+        addressLocality: 'Rotterdam',
+        addressCountry: 'NL'
+      },
+      openingHours: 'Tu-Su 12:00-18:00'
+    } as WithContext<LocalBusiness>
   }
 ]
 

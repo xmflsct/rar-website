@@ -3,6 +3,8 @@ import { useLoaderData, data } from 'react-router'
 import RichText from '~/components/richText'
 import Layout from '~/layout'
 import { getAllPages } from '~/utils/kv'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
+import { SITE_NAME, seoMeta } from '~/utils/seo'
 
 export const loader = async ({ context, params, request }: LoaderFunctionArgs) => {
   const path = params['*']
@@ -16,12 +18,14 @@ export const loader = async ({ context, params, request }: LoaderFunctionArgs) =
   return data({ navs, page: matchedPages[0], daysClosedCollection })
 }
 
-export const meta: MetaFunction<typeof loader> = ({ loaderData }) =>
+export const meta: MetaFunction<typeof loader> = ({ loaderData, location }) =>
   loaderData?.page
     ? [
-      {
-        title: `${loaderData.page.name} | Round&Round Rotterdam`
-      }
+      ...seoMeta({
+        title: `${loaderData.page.name} | ${SITE_NAME}`,
+        description: documentToPlainTextString(loaderData.page.content.json),
+        pathname: location.pathname
+      })
     ]
     : []
 

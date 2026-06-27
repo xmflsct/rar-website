@@ -2,6 +2,15 @@ import type { LoaderFunctionArgs } from 'react-router'
 import { gql } from 'graphql-request'
 import { cacheQuery, Cake } from '~/utils/contentful'
 import { getAllPages } from '~/utils/kv'
+import { SITE_URL } from '~/utils/seo'
+
+const xml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;')
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const {
@@ -27,21 +36,20 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
 
   const { pages } = await getAllPages(context, request)
 
+  const pageUrls = pages.filter(page => page.slug)
+
   const content = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-      ${pages.map(
-    (page, index) => `
-          ${index === 0
-        ? `<url>
-                  <loc>https://roundandround.nl</loc>
-                  <lastmod>${page.sys.publishedAt}</lastmod>
-                  <priority>0.8</priority>
-                </url>`
-        : ''
-      }
+      <url>
+        <loc>${SITE_URL}</loc>
+        <lastmod>${xml(pages[0]?.sys.publishedAt || new Date().toISOString())}</lastmod>
+        <priority>0.8</priority>
+      </url>
+      ${pageUrls.map(
+    page => `
           <url>
-            <loc>https://roundandround.nl/${page.slug}</loc>
-            <lastmod>${page.sys.publishedAt}</lastmod>
+            <loc>${SITE_URL}/${xml(page.slug)}</loc>
+            <lastmod>${xml(page.sys.publishedAt)}</lastmod>
             <priority>0.6</priority>
           </url>
         `
@@ -49,8 +57,8 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
       ${cakes.map(
     cake => `
       <url>
-        <loc>https://roundandround.nl/cake/${cake.slug}</loc>
-        <lastmod>${cake.sys.publishedAt}</lastmod>
+        <loc>${SITE_URL}/cake/${xml(cake.slug)}</loc>
+        <lastmod>${xml(cake.sys.publishedAt)}</lastmod>
         <priority>0.8</priority>
       </url>
       `

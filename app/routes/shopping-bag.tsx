@@ -20,6 +20,7 @@ import { DaysClosed, MaxCalendarMonth, Shipping, cacheQuery } from '~/utils/cont
 import { full } from '~/utils/currency'
 import { getAllPages } from '~/utils/kv'
 import { correctPickup } from '~/utils/pickup'
+import { SITE_NAME, seoMeta } from '~/utils/seo'
 import { trackViewCart, trackBeginCheckout } from '~/utils/umami'
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
@@ -95,9 +96,12 @@ export const action = async ({ context, request }: ActionFunctionArgs) => {
 }
 
 export const meta: MetaFunction = () => [
-  {
-    title: `Shopping Bag | Round&Round Rotterdam`
-  }
+  ...seoMeta({
+    title: `Shopping Bag | ${SITE_NAME}`,
+    description: 'Review your Round & Round order before checkout.',
+    pathname: '/shopping-bag',
+    noIndex: true
+  })
 ]
 
 const ShoppingBag = () => {

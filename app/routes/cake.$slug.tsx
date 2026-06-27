@@ -8,6 +8,7 @@ import CakeView from '~/components/cakeView'
 import Layout from '~/layout'
 import { cacheQuery, Cake, CAKE_DETAILS, DaysClosed } from '~/utils/contentful'
 import { getAllPages } from '~/utils/kv'
+import { SITE_NAME, absoluteUrl, cleanDescription, seoMeta } from '~/utils/seo'
 import { trackViewProduct } from '~/utils/umami'
 
 export const loader = async ({ context, params, request }: LoaderFunctionArgs) => {
@@ -49,40 +50,49 @@ export const loader = async ({ context, params, request }: LoaderFunctionArgs) =
   })
 }
 
-export const meta: MetaFunction<typeof loader> = ({ loaderData }) =>
-  loaderData?.cake
-    ? [
-      {
-        title: `${loaderData.cake.name} | Round&Round Rotterdam`
-      },
-      {
-        property: 'og:title',
-        content: loaderData.cake.name
-      },
-      loaderData.cake.description
-        ? {
-          name: 'description',
-          content: documentToPlainTextString(loaderData.cake.description.json).substring(0, 199)
-        }
-        : {},
-      {
-        'script:ld+json': {
-          '@context': 'https://schema.org',
-          '@type': 'Product',
-          name: loaderData.cake.name,
-          image: loaderData.cake.image?.url || loaderData.cake.imagesCollection?.items[0]?.url,
-          offers: {
+export const meta: MetaFunction<typeof loader> = ({ loaderData, location }) => {
+  if (!loaderData?.cake) return []
+
+  const cake = loaderData.cake
+  const description = cleanDescription(
+    cake.description ? documentToPlainTextString(cake.description.json) : undefined
+  )
+  const image = cake.image?.url || cake.imagesCollection?.items[0]?.url
+  const price =
+    (cake.typeCAvailable ? cake.typeCPrice : undefined) ||
+    (cake.typeBAvailable ? cake.typeBPrice : undefined) ||
+    (cake.typeAAvailable ? cake.typeAPrice : undefined)
+
+  return [
+    ...seoMeta({
+      title: `${cake.name} | ${SITE_NAME}`,
+      description,
+      pathname: location.pathname,
+      image
+    }),
+    {
+      'script:ld+json': {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: cake.name,
+        description,
+        image: absoluteUrl(image),
+        url: `https://roundandround.nl${location.pathname}`,
+        offers: price
+          ? {
             '@type': 'Offer',
-            price:
-              (loaderData.cake.typeCAvailable ? loaderData.cake.typeCPrice : 0) ||
-              (loaderData.cake.typeBAvailable ? loaderData.cake.typeBPrice : 0) ||
-              (loaderData.cake.typeAAvailable ? loaderData.cake.typeAPrice : 0),
-            priceCurrency: 'EUR'
+            price,
+            priceCurrency: 'EUR',
+            availability: cake.available
+              ? 'https://schema.org/InStock'
+              : 'https://schema.org/OutOfStock',
+            url: `https://roundandround.nl${location.pathname}`
           }
-        } as WithContext<Product>
-      }
-    ]
-    : []
+          : undefined
+      } as WithContext<Product>
+    }
+  ]
+}
 
 const PageCake: React.FC = () => {
   const loaderData = useLoaderData<typeof loader>()

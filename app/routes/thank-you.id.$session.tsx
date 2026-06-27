@@ -6,6 +6,7 @@ import Layout from '~/layout'
 import { getCloudflareContext } from '~/utils/cloudflare'
 import { full } from '~/utils/currency'
 import { isPreviewRequest, requiredEnvValue } from '~/utils/contentful'
+import { seoMeta } from '~/utils/seo'
 import { getStripeHeaders } from '~/utils/stripeHeaders'
 import { trackPurchase } from '~/utils/umami'
 
@@ -45,9 +46,12 @@ export const loader = async (props: LoaderFunctionArgs) => {
 }
 
 export const meta: MetaFunction = () => [
-  {
-    title: `Thank you for your order!`
-  }
+  ...seoMeta({
+    title: 'Thank you for your order!',
+    description: 'Round & Round order confirmation.',
+    pathname: '/thank-you',
+    noIndex: true
+  })
 ]
 
 const PageThankYou: React.FC = () => {
