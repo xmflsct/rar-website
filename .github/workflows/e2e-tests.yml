@@ -71,11 +71,11 @@ jobs:
             }
             process.stdout.write(version.version_id);'
           )"
-          npx wrangler versions deploy
-          --version-id "$VERSION_ID"
-          --percentage 100
-          --message "Promoted after E2E run ${{ github.run_id }}"
-          --yes
+          npx wrangler versions deploy \
+            --version-id "$VERSION_ID" \
+            --percentage 100 \
+            --message "Promoted after E2E run ${{ github.run_id }}" \
+            --yes
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           VERSION_TAG: ${{ github.event.check_run.head_sha }}
