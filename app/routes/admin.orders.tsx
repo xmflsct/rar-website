@@ -148,6 +148,7 @@ export const action = async ({ context, request }: ActionFunctionArgs) => {
       ])
 
       const additionalLineItemsMap = new Map(additionalLineItems.map(item => [item.id, item.lineItems]))
+      const shippingStatusMap = new Map(shippingStatuses.map(s => [s.shipment_id.toString(), s]))
 
       // Build orders
       const orders: Order[] = sessions.map(session => {
@@ -166,9 +167,7 @@ export const action = async ({ context, request }: ActionFunctionArgs) => {
             shipping: session.payment_intent.latest_charge.shipping,
             payment_intent: session.payment_intent,
             shipping_rate: session.shipping_cost?.shipping_rate,
-            trackTrace: shippingStatuses.find(
-              shipping => shipping.shipment_id.toString() === session.payment_intent.metadata?.shipping_id
-            ),
+            trackTrace: shippingStatusMap.get(session.payment_intent.metadata?.shipping_id!),
             internal: {
               customer_details: session.customer_details!,
               payment_intent: session.payment_intent.id

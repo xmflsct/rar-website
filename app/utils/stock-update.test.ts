@@ -13,7 +13,7 @@ describe('Stock Update', () => {
 
   it('updates stocks efficiently', async () => {
     const LATENCY = 20
-    const fetchMock = vi.spyOn(global, 'fetch').mockImplementation(async (url, options) => {
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(async (url: RequestInfo | URL, options?: RequestInit) => {
       await new Promise(resolve => setTimeout(resolve, LATENCY))
 
       if (url.toString().includes('entries')) {
@@ -51,7 +51,7 @@ describe('Stock Update', () => {
     expect(fetchMock).toHaveBeenCalledTimes(6)
 
     // Verify patch for ID 1
-    const patchCallForID1 = fetchMock.mock.calls.find(call =>
+    const patchCallForID1 = fetchMock.mock.calls.find((call: Parameters<typeof fetch>) =>
         call[0].toString().endsWith('/entries/1') && call[1]?.method === 'PATCH'
     )
     expect(patchCallForID1).toBeDefined()

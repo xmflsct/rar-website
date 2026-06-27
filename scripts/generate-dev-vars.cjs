@@ -3,6 +3,7 @@ const path = require('path');
 
 if (process.env.CI) {
   const vars = [
+    'CONTENTFUL_SPACE',
     'CONTENTFUL_KEY',
     'CONTENTFUL_PAT',
     'STRIPE_KEY_ADMIN',
