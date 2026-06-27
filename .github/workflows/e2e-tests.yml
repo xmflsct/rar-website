@@ -57,14 +57,25 @@ jobs:
 
       - name: Promote Worker version
         if: github.event_name == 'check_run'
-        run: >-
-          npx wrangler versions deploy
-          --version-tag "${{ github.event.check_run.head_sha }}"
-          --percentage 100
-          --message "Promoted after E2E run ${{ github.run_id }}"
-          --yes
+        run: |
+          VERSION_ID="$(
+            npx wrangler versions list --json | node -e 'const fs = require("node:fs");
+            const tag = process.env.VERSION_TAG;
+            const version = JSON.parse(fs.readFileSync(0, "utf8")).find(version => version.annotations?.["workers/tag"] === tag);
+            if (!version) {
+              console.error(`No Worker version found with tag ${tag}`);
+              process.exit(1);
+            }
+            process.stdout.write(version.version_id);'
+          )"
+          npx wrangler versions deploy \
+            --version-id "$VERSION_ID" \
+            --percentage 100 \
+            --message "Promoted after E2E run ${{ github.run_id }}" \
+            --yes
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          VERSION_TAG: ${{ github.event.check_run.head_sha }}
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v7
