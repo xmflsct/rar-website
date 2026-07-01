@@ -86,7 +86,12 @@ export const action = async ({ context, request }: ActionFunctionArgs) => {
   const res = (await checkout({
     context,
     request,
-    content: { ...formDataObject, orders: parsedOrders }
+    content: {
+      ...formDataObject,
+      orders: parsedOrders,
+      success_url: `${new URL(request.url).origin}/thank-you`,
+      cancel_url: `${new URL(request.url).origin}/shopping-bag`
+    }
   })) as any
   if (res?.url) {
     return redirect(res.url)
@@ -233,18 +238,6 @@ const ShoppingBag = () => {
       <h1 className='text-3xl mb-4'>Shopping bag</h1>
       {orders.pickup.length || orders.shipping.length ? (
         <Form method='post' className='grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8'>
-          <input
-            type='hidden'
-            name='success_url'
-            readOnly
-            value={`${typeof window !== 'undefined' && window.location.origin}/thank-you`}
-          />
-          <input
-            type='hidden'
-            name='cancel_url'
-            readOnly
-            value={`${typeof window !== 'undefined' && window.location.origin}/shopping-bag`}
-          />
           <input type='hidden' name='orders' readOnly value={JSON.stringify(orders)} />
 
           <div className='lg:col-span-3 flex flex-col gap-4'>

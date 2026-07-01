@@ -26,7 +26,7 @@ const Header: React.FC<Props> = ({ toggleNav, setToggleNav }) => {
         aria-label='Mobile hamburger menu'
         className='block lg:hidden p-4 bg-white/90 lg:bg-transparent'
         onClick={() => {
-          toggleNav === false && typeof window !== undefined && window.scrollTo(0, 0)
+          toggleNav === false && typeof window !== 'undefined' && window.scrollTo(0, 0)
           setToggleNav(!toggleNav)
         }}
       >
