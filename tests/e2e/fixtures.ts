@@ -1,3 +1,5 @@
+import type { Page } from '@playwright/test'
+
 // Test fixtures and constants for e2e checkout tests
 
 export const STRIPE_TEST_CARD = {
@@ -21,4 +23,26 @@ export const TEST_PRODUCT_PATHS = {
   normal: '/cake/may-roll',
   birthday: '/cake/birthday-cake-no-6',
   shipping: '/cake/japanese-hojicha-powder-50g'
+}
+
+export const openAdminOrders = async (
+  page: Page,
+  baseURL: string | undefined,
+  searchParams: URLSearchParams
+) => {
+  const clientId = process.env.CF_ACCESS_CLIENT_ID
+  const clientSecret = process.env.CF_ACCESS_CLIENT_SECRET
+  if (baseURL && clientId && clientSecret) {
+    await page.route(`${new URL(baseURL).origin}/admin/**`, async (route) => {
+      await route.continue({
+        headers: {
+          ...route.request().headers(),
+          'CF-Access-Client-Id': clientId,
+          'CF-Access-Client-Secret': clientSecret
+        }
+      })
+    })
+  }
+
+  await page.goto(`/admin/orders?${searchParams}`)
 }

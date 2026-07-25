@@ -1,10 +1,12 @@
 import { test, expect, Page } from '@playwright/test'
+import { appendFileSync } from 'node:fs'
 import {
   STRIPE_TEST_CARD,
   TEST_PRODUCT_PATHS,
   TEST_SHIPPING_ADDRESS,
   TEST_EMAIL,
-  TEST_PHONE
+  TEST_PHONE,
+  openAdminOrders
 } from './fixtures'
 
 /**
@@ -140,6 +142,12 @@ async function completeStripePayment(
 
   // Wait for redirect back to thank-you page
   await page.waitForURL(/thank-you\/id\//, { timeout: 90000 })
+  const sessionId = new URL(page.url()).pathname.split('/').at(-1)
+  if (!sessionId?.startsWith('cs_')) throw new Error('Checkout did not return a session ID')
+  if (process.env.ADMIN_ORDERS_SESSION_FILE) {
+    appendFileSync(process.env.ADMIN_ORDERS_SESSION_FILE, `${sessionId}\n`)
+  }
+  return sessionId
 }
 
 /**
@@ -276,6 +284,13 @@ async function completeCheckoutFromBag(page: Page, options: {
 
 test.describe('Checkout E2E Tests', () => {
   test.describe.configure({ mode: 'serial' })
+  let ordersSince = 0
+  let adminOrderIds: string[] = []
+
+  test.beforeAll(() => {
+    ordersSince = Math.floor(Date.now() / 1000) - 2
+    adminOrderIds = []
+  })
 
   test.beforeEach(async ({ page }) => {
     // Clear localStorage to start fresh
@@ -291,7 +306,7 @@ test.describe('Checkout E2E Tests', () => {
     await completeCheckoutFromBag(page, { hasPickupItems: true })
 
     // Complete Stripe payment
-    await completeStripePayment(page)
+    adminOrderIds.push(await completeStripePayment(page))
 
     // Verify thank you page
     await expect(page.getByText(/thank you for your order/i)).toBeVisible()
@@ -305,7 +320,7 @@ test.describe('Checkout E2E Tests', () => {
     await completeCheckoutFromBag(page, { hasPickupItems: true })
 
     // Complete Stripe payment
-    await completeStripePayment(page)
+    adminOrderIds.push(await completeStripePayment(page))
 
     // Verify thank you page
     await expect(page.getByText(/thank you for your order/i)).toBeVisible()
@@ -323,10 +338,39 @@ test.describe('Checkout E2E Tests', () => {
     await completeCheckoutFromBag(page, { hasPickupItems: true })
 
     // Complete Stripe payment
-    await completeStripePayment(page)
+    adminOrderIds.push(await completeStripePayment(page))
 
     // Verify thank you page
     await expect(page.getByText(/thank you for your order/i)).toBeVisible()
+  })
+
+  test('Admin orders loads later pages without losing or duplicating rows', async ({
+    page,
+    baseURL
+  }) => {
+    const params = new URLSearchParams({
+      since: ordersSince.toString(),
+      until: Math.floor(Date.now() / 1000).toString(),
+      pageSize: '2'
+    })
+    await openAdminOrders(page, baseURL, params)
+
+    const rows = page.locator('tbody tr[data-order-id]')
+    await expect(rows).toHaveCount(2)
+    const initialIds = await rows.evaluateAll((elements) =>
+      elements.map((element) => element.getAttribute('data-order-id'))
+    )
+
+    await page.getByRole('button', { name: 'Load more', exact: true }).click()
+    await expect(rows).toHaveCount(3)
+    await expect(page.getByText('The end', { exact: true })).toBeVisible()
+
+    const loadedIds = await rows.evaluateAll((elements) =>
+      elements.map((element) => element.getAttribute('data-order-id'))
+    )
+    expect(new Set(loadedIds).size).toBe(loadedIds.length)
+    expect(initialIds.every((id) => loadedIds.includes(id))).toBe(true)
+    expect(adminOrderIds.every((id) => loadedIds.includes(id))).toBe(true)
   })
 
   /*

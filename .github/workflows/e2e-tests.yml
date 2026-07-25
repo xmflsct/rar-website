@@ -5,6 +5,12 @@ on:
     types:
       - completed
   workflow_dispatch:
+    inputs:
+      admin_orders_30:
+        description: Generate and verify 30 real Stripe test orders
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -20,7 +26,7 @@ jobs:
         github.event.check_run.name == 'Workers Builds: rar-website'
       )
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repository for automatic run
@@ -43,10 +49,13 @@ jobs:
         run: npm ci
 
       - name: Run E2E tests
+        if: github.event_name != 'workflow_dispatch' || !inputs.admin_orders_30
         run: npm run test:e2e
         env:
           CI: true
           PLAYWRIGHT_BASE_URL: ${{ vars.WORKERS_PREVIEW_URL }}
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
           CONTENTFUL_SPACE: ${{ vars.CONTENTFUL_SPACE || 'u0x1afixkalo' }}
           CONTENTFUL_KEY_PREVIEW: ${{ secrets.CONTENTFUL_KEY_PREVIEW }}
           CONTENTFUL_PAT_PREVIEW: ${{ secrets.CONTENTFUL_PAT_PREVIEW }}
@@ -54,6 +63,21 @@ jobs:
           STRIPE_KEY_PRIVATE_PREVIEW: ${{ secrets.STRIPE_KEY_PRIVATE_PREVIEW }}
           WEBHOOK_STRIPE_MYPARCEL_KEY_PREVIEW: ${{ secrets.WEBHOOK_STRIPE_MYPARCEL_KEY_PREVIEW }}
           WEBHOOK_STRIPE_SIGNING_SECRET_PREVIEW: ${{ secrets.WEBHOOK_STRIPE_SIGNING_SECRET_PREVIEW }}
+
+      - name: Generate and verify 30 admin orders
+        if: github.event_name == 'workflow_dispatch' && inputs.admin_orders_30
+        run: |
+          ADMIN_ORDERS_SMOKE_SINCE="$(date +%s)"
+          ADMIN_ORDERS_SESSION_FILE="$RUNNER_TEMP/admin-order-session-ids.txt"
+          : > "$ADMIN_ORDERS_SESSION_FILE"
+          export ADMIN_ORDERS_SMOKE_SINCE ADMIN_ORDERS_SESSION_FILE
+          npx playwright test tests/e2e/checkout.spec.ts --grep 'Purchase a' --repeat-each=6 --workers=1 --retries=0
+          npx playwright test tests/e2e/admin-orders.smoke.spec.ts --workers=1 --retries=0
+        env:
+          CI: true
+          PLAYWRIGHT_BASE_URL: ${{ vars.WORKERS_PREVIEW_URL }}
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
 
       - name: Promote Worker version
         if: github.event_name == 'check_run'
