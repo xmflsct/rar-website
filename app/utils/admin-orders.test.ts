@@ -14,7 +14,7 @@ import {
 import { loader as shippingLabelLoader } from '../routes/admin.shipping-label.$id'
 
 const NOW = 2_000_000_000
-const SINCE = NOW - 60 * 60 * 24 * 7
+const SINCE = NOW - 60 * 60 * 24 * 30
 const environment = {
   STRIPE_KEY_ADMIN: 'sk_live',
   STRIPE_KEY_ADMIN_PREVIEW: 'sk_preview',
@@ -46,7 +46,8 @@ const lineItem = (id: string, description = `Cake ${id}`, quantity = 1) => ({
 
 type SessionOptions = {
   id: string
-  paymentStatus?: string
+  paymentStatus?: 'paid' | 'unpaid'
+  paymentIntentStatus?: string
   created?: number
   lineItems?: ReturnType<typeof lineItem>[]
   hasMoreLineItems?: boolean
@@ -57,7 +58,8 @@ type SessionOptions = {
 
 const checkoutSession = ({
   id,
-  paymentStatus = 'succeeded',
+  paymentStatus = 'paid',
+  paymentIntentStatus = 'succeeded',
   created = NOW - 60,
   lineItems = [lineItem(`li_${id}`)],
   hasMoreLineItems = false,
@@ -67,6 +69,7 @@ const checkoutSession = ({
 }: SessionOptions) => ({
   id,
   status: 'complete',
+  payment_status: paymentStatus,
   customer_details: {
     name: `Customer ${id}`,
     phone: '0612345678',
@@ -81,7 +84,7 @@ const checkoutSession = ({
   },
   payment_intent: {
     id: `pi_${id}`,
-    status: paymentStatus,
+    status: paymentIntentStatus,
     created,
     metadata: shipmentId ? { shipping_id: shipmentId } : {},
     latest_charge: {
@@ -224,12 +227,21 @@ describe('admin order completeness', () => {
     })
   })
 
-  it('includes the exact lower time boundary and excludes older payments', async () => {
+  it('uses Checkout payment status as the sole paid-order filter', async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       json({
         data: [
-          checkoutSession({ id: 'cs_at_boundary', created: SINCE }),
-          checkoutSession({ id: 'cs_before_boundary', created: SINCE - 1 })
+          checkoutSession({
+            id: 'cs_paid',
+            paymentStatus: 'paid',
+            paymentIntentStatus: 'processing',
+            created: NOW + 1
+          }),
+          checkoutSession({
+            id: 'cs_unpaid',
+            paymentStatus: 'unpaid',
+            paymentIntentStatus: 'succeeded'
+          })
         ],
         has_more: false
       })
@@ -238,7 +250,7 @@ describe('admin order completeness', () => {
     const result = await load(fetchMock)
     if (!result.ok) throw new Error(result.error)
 
-    expect(result.orders.map((order) => order.id)).toEqual(['cs_at_boundary'])
+    expect(result.orders.map((order) => order.id)).toEqual(['cs_paid'])
   })
 
   it('skips fully filtered Stripe pages without skipping later paid orders', async () => {
@@ -247,8 +259,8 @@ describe('admin order completeness', () => {
         '',
         {
           data: [
-            checkoutSession({ id: 'cs_failed_1', paymentStatus: 'canceled' }),
-            checkoutSession({ id: 'cs_failed_2', paymentStatus: 'requires_payment_method' })
+            checkoutSession({ id: 'cs_failed_1', paymentStatus: 'unpaid' }),
+            checkoutSession({ id: 'cs_failed_2', paymentStatus: 'unpaid' })
           ],
           has_more: true
         }
@@ -297,7 +309,7 @@ describe('admin order completeness', () => {
     const sessions = Array.from({ length: 61 }, (_, index) =>
       checkoutSession({
         id: `cs_page_${String(index).padStart(2, '0')}`,
-        paymentStatus: index % 4 === 0 ? 'canceled' : 'succeeded',
+        paymentStatus: index % 4 === 0 ? 'unpaid' : 'paid',
         created: NOW - index
       })
     )
@@ -327,7 +339,7 @@ describe('admin order completeness', () => {
     }
 
     const expected = sessions
-      .filter((session) => session.payment_intent.status === 'succeeded')
+      .filter((session) => session.payment_status === 'paid')
       .map((session) => session.id)
     expect(received).toEqual(expected)
     expect(new Set(received).size).toBe(received.length)
@@ -420,12 +432,17 @@ describe('admin order completeness', () => {
     })
     expect(result.init?.status).toBe(502)
     expect(result.init?.headers).toEqual({ 'Cache-Control': 'private, no-store' })
+    expect(
+      requestedUrl(fetchMock.mock.calls[0]?.[0] as RequestInfo | URL).searchParams.get(
+        'created[gte]'
+      )
+    ).toBe(SINCE.toString())
   })
 
   it('rejects a Stripe cursor that does not advance', async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       json({
-        data: [checkoutSession({ id: 'same_cursor', paymentStatus: 'canceled' })],
+        data: [checkoutSession({ id: 'same_cursor', paymentStatus: 'unpaid' })],
         has_more: true
       })
     )

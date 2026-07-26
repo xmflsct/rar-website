@@ -88,7 +88,7 @@ type CreateShipmentResponse =
       error: string
     }
 
-const ORDER_WINDOW_SECONDS = 60 * 60 * 24 * 7
+const ORDER_WINDOW_SECONDS = 60 * 60 * 24 * 30
 const PAGE_SIZE = 25
 const PREVIEW_PAGE_SIZE = 2
 const noStoreHeaders = { 'Cache-Control': 'private, no-store' }
@@ -216,10 +216,7 @@ export const loadOrders = async (
 
     const page = await fetchJson<SessionsData>(url, { headers: stripeHeaders }, 'Stripe')
     sessionsData = page.data.filter(
-      (session) =>
-        session.payment_intent.status === 'succeeded' &&
-        session.payment_intent.created >= since &&
-        session.payment_intent.created <= until
+      (session) => session.payment_status === 'paid'
     )
     hasMore = page.has_more
 
@@ -398,7 +395,7 @@ export const action = async ({ context, request }: ActionFunctionArgs) => {
 
         if (
           session.status !== 'complete' ||
-          session.payment_intent.status !== 'succeeded' ||
+          session.payment_status !== 'paid' ||
           !session.customer_details?.address ||
           session.shipping_cost?.shipping_rate?.metadata.label !== 'true'
         ) {
