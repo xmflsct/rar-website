@@ -3,6 +3,9 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
+  "engines": {
+    "node": "24.18.0"
+  },
   "scripts": {
     "dev": "vite dev --host",
     "build": "vite build",
