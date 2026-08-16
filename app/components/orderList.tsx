@@ -57,6 +57,7 @@ const OrderList: React.FC<Props> = ({ order }) => {
           {order[`type${order.chosen.unit}Unit`]?.unit}
         </div>
         <Button
+          aria-label={`Remove ${order.name} from bag`}
           onClick={e => {
             e.preventDefault()
             cakeRemove(order)

@@ -12,7 +12,10 @@ const Button: React.FC<
         'flex flex-row justify-center items-center',
         'border border-neutral-500 rounded-md',
         'p-2',
-        'disabled:opacity-50'
+        'cursor-pointer transition-colors',
+        'enabled:hover:bg-neutral-100',
+        'focus-visible:outline-2 focus-visible:outline-offset-2',
+        'disabled:cursor-not-allowed disabled:opacity-50'
       )}
       {...rest}
     />

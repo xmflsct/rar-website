@@ -121,7 +121,7 @@ const PickDay: React.FC<Props> = ({ name, date, setDate, ...props }) => {
                 : ''
             }
             aria-label='Choose a date'
-            className='w-full h-full bg-inherit border-b border-neutral-500 pl-2 pr-4 text-left'
+            className='w-full h-full cursor-pointer bg-inherit border-b border-neutral-500 pl-2 pr-4 text-left hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2'
           />
           <Popover.Backdrop className='fixed inset-0 z-20 bg-black/30 lg:hidden' />
           <Transition
@@ -143,7 +143,7 @@ const PickDay: React.FC<Props> = ({ name, date, setDate, ...props }) => {
                   type='button'
                   aria-label='Close calendar'
                   onClick={() => close()}
-                  className='flex size-11 items-center justify-center rounded-full text-2xl hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2'
+                  className='flex size-11 cursor-pointer items-center justify-center rounded-full text-2xl hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2'
                 >
                   &times;
                 </button>

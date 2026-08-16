@@ -21,6 +21,7 @@ const Nav: React.FC<Props> = ({ navs, toggleNav }) => {
         </Link>
       </div>
       <nav
+        id='site-navigation'
         className={classNames(
           `${toggleNav ? 'flex' : 'hidden'} lg:flex`,
           'flex-col gap-4 lg:flex-row lg:gap-0 lg:justify-between'

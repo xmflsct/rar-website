@@ -23,8 +23,11 @@ const Header: React.FC<Props> = ({ toggleNav, setToggleNav }) => {
   return (
     <div className='fixed w-full'>
       <button
+        type='button'
         aria-label='Mobile hamburger menu'
-        className='block lg:hidden p-4 bg-white/90 lg:bg-transparent'
+        aria-expanded={toggleNav}
+        aria-controls='site-navigation'
+        className='block lg:hidden cursor-pointer p-4 bg-white/90 lg:bg-transparent hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2'
         onClick={() => {
           toggleNav === false && typeof window !== 'undefined' && window.scrollTo(0, 0)
           setToggleNav(!toggleNav)

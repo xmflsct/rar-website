@@ -499,7 +499,7 @@ const Shipping: React.FC<{
             type='submit'
             disabled={createFetcher.state !== 'idle'}
             className={classNames(
-              'border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid transition-opacity',
+              'cursor-pointer border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed',
               createFetcher.state !== 'idle' ? 'opacity-30' : ''
             )}
           >
@@ -536,7 +536,7 @@ const Shipping: React.FC<{
               <button
                 type='button'
                 className={classNames(
-                  'border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid',
+                  'cursor-pointer border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid focus-visible:outline-2 focus-visible:outline-offset-2',
                   trackingFailed ? 'text-red-600' : undefined
                 )}
                 onClick={() =>
