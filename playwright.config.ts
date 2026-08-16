@@ -19,7 +19,7 @@ export default defineConfig({
     baseURL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    video: 'on-first-retry'
+    video: process.env.CI ? 'off' : 'on-first-retry'
   },
   projects: [
     {
