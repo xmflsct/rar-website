@@ -1,5 +1,5 @@
 import { Popover, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { DayPicker, DayPickerProps, Matcher, dateMatchModifiers } from 'react-day-picker'
 import { DaysClosed } from '~/utils/contentful'
 import {
@@ -82,6 +82,17 @@ type Props = {
 } & Omit<DayPickerProps, 'mode' | 'selected' | 'onSelect' | 'onDayClick'>
 
 const PickDay: React.FC<Props> = ({ name, date, setDate, ...props }) => {
+  const [isCompact, setIsCompact] = useState(false)
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 1023px)')
+    const update = () => setIsCompact(media.matches)
+
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+
   const handleDaySelect = (date: Date | undefined) => {
     if (date) {
       setDate(date)
@@ -109,27 +120,45 @@ const PickDay: React.FC<Props> = ({ name, date, setDate, ...props }) => {
                   })
                 : ''
             }
+            aria-label='Choose a date'
             className='w-full h-full bg-inherit border-b border-neutral-500 pl-2 pr-4 text-left'
           />
+          <Popover.Backdrop className='fixed inset-0 z-20 bg-black/30 lg:hidden' />
           <Transition
             as={Fragment}
             enter='transition ease-out duration-200'
-            enterFrom='opacity-0 translate-y-1'
+            enterFrom='opacity-0 translate-y-4 lg:translate-y-1'
             enterTo='opacity-100 translate-y-0'
             leave='transition ease-in duration-150'
             leaveFrom='opacity-100 translate-y-0'
-            leaveTo='opacity-0 translate-y-1'
+            leaveTo='opacity-0 translate-y-4 lg:translate-y-1'
           >
-            <Popover.Panel className='absolute left-1/2 z-10 mt-3 -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-3xl bg-white drop-shadow-md'>
+            <Popover.Panel
+              modal={isCompact}
+              className='fixed inset-x-0 bottom-0 z-30 max-h-[calc(100dvh-1rem)] overflow-y-auto rounded-t-2xl border border-neutral-200 bg-white p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-2xl lg:absolute lg:inset-x-auto lg:bottom-auto lg:left-1/2 lg:mt-3 lg:w-max lg:max-w-[calc(100vw-2rem)] lg:-translate-x-1/2 lg:overflow-visible lg:rounded-xl lg:p-4'
+            >
+              <div className='mb-1 flex items-center justify-between lg:hidden'>
+                <div className='text-lg font-bold'>Choose a date</div>
+                <button
+                  type='button'
+                  aria-label='Close calendar'
+                  onClick={() => close()}
+                  className='flex size-11 items-center justify-center rounded-full text-2xl hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2'
+                >
+                  &times;
+                </button>
+              </div>
               <DayPicker
+                className='rar-date-picker'
                 mode='single'
                 selected={date}
                 onSelect={handleDaySelect}
                 onDayClick={() => close()}
                 startMonth={new Date()}
                 weekStartsOn={1}
-                numberOfMonths={2}
                 {...props}
+                numberOfMonths={isCompact ? 1 : (props.numberOfMonths ?? 2)}
+                autoFocus
               />
             </Popover.Panel>
           </Transition>
