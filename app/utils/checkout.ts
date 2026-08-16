@@ -59,7 +59,7 @@ type ShippingOptions = {
   }
 }
 
-const verifyContentful = async ({
+export const verifyContentful = async ({
   context,
   request,
   content: { orders, subtotal_amount, shipping_amount, countryCode, pickup_date }

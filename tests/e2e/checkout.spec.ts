@@ -6,6 +6,7 @@ import {
   TEST_SHIPPING_ADDRESS,
   TEST_EMAIL,
   TEST_PHONE,
+  hideMyParcelShipment,
   openAdminOrders
 } from './fixtures'
 
@@ -130,7 +131,9 @@ async function completeStripePayment(
 
   // Fill billing postal code (ZIP) if visible - Stripe may require this for card validation
   // The input may have various names depending on the Stripe checkout version
-  const billingPostalInput = page.locator('input[name="billingPostalCode"], input[placeholder*="ZIP"], input[placeholder*="Postal"]').first()
+  const billingPostalInput = page
+    .locator('input#billingPostalCode, input[name="billingPostalCode"], input[name="billingAddressPostalCode"]')
+    .first()
   if (await billingPostalInput.isVisible({ timeout: 2000 }).catch(() => false)) {
     await billingPostalInput.fill('12345')
   }
@@ -154,7 +157,7 @@ async function completeStripePayment(
  * Helper to navigate to a specific cake page and add to bag
  */
 async function addCakeToBag(page: Page, options: {
-  cakeType: 'normal' | 'birthday' | 'shipping'
+  cakeType: keyof typeof TEST_PRODUCT_PATHS
   selectAmount?: number
   deliveryType?: 'pickup' | 'shipping'
 }) {
@@ -460,4 +463,87 @@ test.describe('Checkout E2E Tests', () => {
     // Verify thank you page
     await expect(page.getByText(/thank you for your order/i)).toBeVisible()
   })
+
+  test('6. Full Moon Box can be collected without a shipping fee', async ({ page }) => {
+    await addCakeToBag(page, {
+      cakeType: 'fullMoon',
+      selectAmount: 1,
+      deliveryType: 'pickup'
+    })
+
+    await page.goto('/shopping-bag')
+    await expect(page.getByText('Happy Full Moon Box', { exact: true })).toBeVisible()
+    await expect(page.getByRole('row', { name: /Shipping fee/ })).toHaveCount(0)
+    await expect(page.getByRole('row', { name: /Total/ })).toContainText('€ 32,00')
+  })
+
+  for (const scenario of [
+    { amount: 1, shipping: '€ 7,00', total: '€ 39,00', name: 'paid shipping' },
+    { amount: 3, shipping: 'Free', total: '€ 96,00', name: 'free shipping' }
+  ]) {
+    test(`Full Moon Box with ${scenario.name} has a retrievable admin label`, async ({
+      page,
+      baseURL,
+      request
+    }) => {
+      await addCakeToBag(page, {
+        cakeType: 'fullMoon',
+        selectAmount: scenario.amount,
+        deliveryType: 'shipping'
+      })
+
+      await page.goto('/shopping-bag')
+      await page.locator('select[name="countryCode"]').selectOption('NLD')
+      await expect(page.getByText('Happy Full Moon Box', { exact: true })).toBeVisible()
+      await expect(page.getByRole('row', { name: /Shipping fee/ })).toContainText(scenario.shipping)
+      await expect(page.getByRole('row', { name: /Total/ })).toContainText(scenario.total)
+
+      await completeCheckoutFromBag(page, { hasShippingItems: true })
+      const sessionId = await completeStripePayment(page, { withShipping: true })
+      await expect(page.getByText(/thank you for your order/i)).toBeVisible()
+
+      await openAdminOrders(
+        page,
+        baseURL,
+        new URLSearchParams({ since: (Math.floor(Date.now() / 1000) - 600).toString() })
+      )
+
+      const row = page.locator(`tbody tr[data-order-id="${sessionId}"]`)
+      await expect(row).toBeVisible()
+      await expect(row).toContainText('Happy Full Moon Box')
+      await expect(row).toContainText('[E2E] Test User')
+      await expect(row).toContainText(/Hoogstraat 55A\s*, 3011 PG, Rotterdam/)
+
+      const labelLink = row.locator('a[href^="/admin/shipping-label/"]')
+      if (!(await labelLink.isVisible())) {
+        await row.getByRole('button', { name: 'Retry', exact: true }).click()
+      }
+      await expect(labelLink).toBeVisible({ timeout: 90000 })
+      const labelHref = await labelLink.getAttribute('href')
+      expect(labelHref).toMatch(/^\/admin\/shipping-label\/\d+$/)
+      const shipmentId = labelHref!.split('/').at(-1)!
+
+      try {
+        const label = await page.evaluate(async (href) => {
+          const response = await fetch(href)
+          const bytes = new Uint8Array(await response.arrayBuffer())
+          return {
+            status: response.status,
+            contentType: response.headers.get('content-type'),
+            magic: new TextDecoder().decode(bytes.slice(0, 5)),
+            size: bytes.length
+          }
+        }, labelHref!)
+
+        expect(label).toMatchObject({
+          status: 200,
+          contentType: 'application/pdf',
+          magic: '%PDF-'
+        })
+        expect(label.size).toBeGreaterThan(1000)
+      } finally {
+        await hideMyParcelShipment(request, shipmentId)
+      }
+    })
+  }
 })

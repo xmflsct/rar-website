@@ -28,6 +28,20 @@ export const createShipment = async ({
   const preview = isPreviewRequest(request)
   const stripeHeaders = getStripeHeaders(requiredEnvValue(env, 'STRIPE_KEY_ADMIN', preview))
 
+  const paymentIntentResponse = await fetch(
+    `https://api.stripe.com/v1/payment_intents/${payment_intent}`,
+    { headers: stripeHeaders }
+  )
+  if (!paymentIntentResponse.ok) {
+    return { ok: false, error: 'Unable to retrieve payment intent' }
+  }
+  const existingShipmentId = (
+    await paymentIntentResponse.json<{ metadata?: { shipping_id?: string } }>()
+  ).metadata?.shipping_id
+  if (existingShipmentId) return { ok: true, id: existingShipmentId }
+
+  // ponytail: serial retries are idempotent; concurrent webhook delivery needs a durable lock.
+
   const result = await createPrivateSdk(
     new FetchClient({ headers: getMyparcelAuthHeader(context, request) }),
     [new PostShipments()]
@@ -47,7 +61,7 @@ export const createShipment = async ({
                 city: 'Rotterdam',
                 postal_code: '3011PG',
                 street: 'Hoogstraat 55A',
-                person: '[TEST] Round',
+                person: '[E2E] Round',
                 email: 'no-reply@roundandround.nl',
                 phone: '0612345678'
               }
