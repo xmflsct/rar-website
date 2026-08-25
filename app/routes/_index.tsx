@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router'
-import { useLoaderData, data } from 'react-router'
+import { Link, useLoaderData, data } from 'react-router'
 import { gql } from 'graphql-request'
 import type { LocalBusiness, WithContext } from 'schema-dts'
 import Image from '~/components/image'
@@ -22,7 +22,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
     request,
     query: gql`
       query Images($preview: Boolean) {
-        mooncake: asset(preview: $preview, id: "5ZNSJ5McjyJeAYxDGWXAXm") {
+        mooncake: asset(preview: $preview, id: "1EqtoGaLuIJEtsCXea6thK") {
           title
           description
           contentType
@@ -105,6 +105,20 @@ export default () => {
           </div>
         </div>
         <hr className='mt-4' /> */}
+
+        <section className='my-8'>
+          <h2 className='text-2xl mb-2'>
+            <Link
+              to='/full-moon-box'
+              className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
+            >
+              Order Full Moon Box here 🥮
+            </Link>
+          </h2>
+          <div className='flex justify-center'>
+            <Image width={440} image={images.mooncake} className='w-full max-w-[440px]' />
+          </div>
+        </section>
 
         <h2 className='text-2xl my-8'>[Our story starts from 2016]</h2>
 
