@@ -464,6 +464,24 @@ test.describe('Checkout E2E Tests', () => {
     await expect(page.getByText(/thank you for your order/i)).toBeVisible()
   })
 
+  test('Full Moon Box requires a delivery date before adding to bag', async ({ page }) => {
+    await page.goto(TEST_PRODUCT_PATHS.fullMoon)
+    await page.locator('select[name="delivery"]').selectOption('shipping')
+    await page.locator('select[name="amount"]').selectOption('1')
+    const date = page.locator('input[placeholder="Select date ..."]')
+    await expect(date).toHaveValue('')
+    await page.getByRole('button', { name: 'Add to bag' }).click()
+    expect(await date.evaluate((input: HTMLInputElement) => input.validity.valueMissing)).toBe(true)
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('cakeOrders') || '[]'))).toEqual([])
+
+    await date.click()
+    await page.locator('button.rdp-day_button:not([disabled])').first().click()
+    await page.getByRole('button', { name: 'Add to bag' }).click()
+    await expect.poll(() => page.evaluate(() =>
+      JSON.parse(localStorage.getItem('cakeOrders') || '[]')[0]?.chosen.delivery.date
+    )).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+  })
+
   test('6. Full Moon Box can be collected without a shipping fee', async ({ page }) => {
     await addCakeToBag(page, {
       cakeType: 'fullMoon',

@@ -189,6 +189,11 @@ export const verifyContentful = async ({
         }
       }
 
+      const deliveryType = orders.shipping?.includes(order) ? 'shipping' : 'pickup'
+      if (item.deliveryCustomizations?.[deliveryType]?.availability && !order.chosen.delivery?.date) {
+        throw 'Delivery date is required'
+      }
+
       if (!!order.chosen.delivery?.date) {
         const chosenDate = order.chosen.delivery?.date
 

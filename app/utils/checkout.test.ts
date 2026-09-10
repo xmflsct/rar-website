@@ -110,6 +110,8 @@ describe('Full Moon Box checkout validation', () => {
   })
 
   it.each([
+    ['missing date', (value: CheckoutContent) => { delete value.orders.shipping![0]!.chosen.delivery!.date }, 'Delivery date is required'],
+    ['missing delivery', (value: CheckoutContent) => { delete value.orders.shipping![0]!.chosen.delivery }, 'Delivery date is required'],
     ['price', (value: CheckoutContent) => { value.orders.shipping![0]!.typeAPrice = 1 }, 'Cake pricing error'],
     ['quantity', (value: CheckoutContent) => { value.orders.shipping![0]!.chosen.amount = 4 }, 'Cake quantity exceeded'],
     ['date', (value: CheckoutContent) => { value.orders.shipping![0]!.chosen.delivery!.date = '2026-09-05' }, 'Chosen date not exist'],

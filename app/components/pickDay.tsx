@@ -109,7 +109,9 @@ const PickDay: React.FC<Props> = ({ name, date, setDate, ...props }) => {
             name={name}
             required={props.required}
             placeholder='Select date ...'
-            readOnly
+            // Keep native required validation active; only calendar selection changes the value.
+            inputMode='none'
+            onChange={() => {}}
             value={
               date
                 ? date.toLocaleString('en-GB', {
