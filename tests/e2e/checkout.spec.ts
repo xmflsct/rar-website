@@ -153,6 +153,17 @@ async function completeStripePayment(
   return sessionId
 }
 
+async function skipSoldOutFullMoonBox(page: Page) {
+  const soldOut = page.locator('select').filter({
+    has: page.getByRole('option', { name: 'Sold out', exact: true })
+  })
+  if (await soldOut.isVisible()) {
+    await expect(soldOut).toBeDisabled()
+    await expect(page.locator('select[name="amount"]')).toHaveCount(0)
+    test.skip(true, 'Full Moon Box is sold out online; purchase scenario is not applicable.')
+  }
+}
+
 /**
  * Helper to navigate to a specific cake page and add to bag
  */
@@ -166,6 +177,8 @@ async function addCakeToBag(page: Page, options: {
   await page.goto(TEST_PRODUCT_PATHS[cakeType])
 
   await page.waitForLoadState('networkidle')
+
+  if (cakeType === 'fullMoon') await skipSoldOutFullMoonBox(page)
 
   const amountSelect = page.locator('select[name="amount"]')
   const isAvailable = await amountSelect.isVisible({ timeout: 5000 }).catch(() => false)
@@ -466,6 +479,8 @@ test.describe('Checkout E2E Tests', () => {
 
   test('Full Moon Box requires a delivery date before adding to bag', async ({ page }) => {
     await page.goto(TEST_PRODUCT_PATHS.fullMoon)
+    await page.waitForLoadState('networkidle')
+    await skipSoldOutFullMoonBox(page)
     await page.locator('select[name="delivery"]').selectOption('shipping')
     await page.locator('select[name="amount"]').selectOption('1')
     const date = page.locator('input[placeholder="Select date ..."]')
