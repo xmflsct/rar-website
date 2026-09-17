@@ -112,7 +112,7 @@ export default () => {
               to='/full-moon-box'
               className='border-b-2 border-spacing-2 border-neutral-700 border-dotted hover:border-solid'
             >
-              Order Full Moon Box here 🥮
+              🥮 pre-order sold out! Limited stock in the shop.
             </Link>
           </h2>
           <div className='flex justify-center'>
