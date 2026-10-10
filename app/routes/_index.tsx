@@ -1,5 +1,6 @@
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router'
-import { Link, useLoaderData, data } from 'react-router'
+import { useLoaderData, data } from 'react-router'
+// import { Link } from 'react-router' // Restore with the Mid-Autumn promotion.
 import { gql } from 'graphql-request'
 import type { LocalBusiness, WithContext } from 'schema-dts'
 import Image from '~/components/image'
@@ -12,7 +13,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const { navs } = await getAllPages(context, request)
 
   const images = await cacheQuery<{
-    mooncake: CommonImage
+    // mooncake: CommonImage
     topLeft: CommonImage
     topRight: CommonImage
     bottomLeft: CommonImage
@@ -22,12 +23,13 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
     request,
     query: gql`
       query Images($preview: Boolean) {
-        mooncake: asset(preview: $preview, id: "1EqtoGaLuIJEtsCXea6thK") {
-          title
-          description
-          contentType
-          url
-        }
+        # Restore with the Mid-Autumn promotion.
+        # mooncake: asset(preview: $preview, id: "1EqtoGaLuIJEtsCXea6thK") {
+        #   title
+        #   description
+        #   contentType
+        #   url
+        # }
         topLeft: asset(preview: $preview, id: "61lqEfYQpWFMG7JHYZr8qP") {
           title
           description
@@ -106,6 +108,7 @@ export default () => {
         </div>
         <hr className='mt-4' /> */}
 
+        {/* Mid-Autumn promotion: restore next year.
         <section className='my-8'>
           <h2 className='text-2xl mb-2'>
             <Link
@@ -119,6 +122,7 @@ export default () => {
             <Image width={440} image={images.mooncake} className='w-full max-w-[440px]' />
           </div>
         </section>
+        */}
 
         <h2 className='text-2xl my-8'>[Our story starts from 2016]</h2>
 
