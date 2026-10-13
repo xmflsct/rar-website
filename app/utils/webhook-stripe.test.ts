@@ -8,7 +8,35 @@ vi.mock('@myparcel/sdk', () => ({
   createPrivateSdk: () => ({ postShipments })
 }))
 
-import { createShipment } from '../routes/webhook.stripe'
+import { action, createShipment } from '../routes/webhook.stripe'
+
+describe('webhook configuration', () => {
+  it('uses the shared Contentful space on preview requests', async () => {
+    const result = await action({
+      context: {
+        get: () => ({
+          env: {
+            CONTENTFUL_SPACE: 'shared-space',
+            CONTENTFUL_PAT_PREVIEW: 'preview-pat',
+            STRIPE_KEY_ADMIN_PREVIEW: 'sk_preview',
+            WEBHOOK_STRIPE_SIGNING_SECRET_PREVIEW: 'whsec_preview'
+          },
+          ctx: {}
+        })
+      } as unknown as LoaderFunctionArgs['context'],
+      request: new Request('https://preview-rar-website.xmflsct.workers.dev/webhook/stripe', {
+        method: 'POST',
+        body: '{}'
+      }),
+      params: {}
+    })
+
+    expect(result).toMatchObject({
+      data: 'No signature provided',
+      init: { status: 403 }
+    })
+  })
+})
 
 const context = {
   get: () => ({

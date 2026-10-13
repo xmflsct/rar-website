@@ -115,7 +115,7 @@ export const action: ActionFunction = async ({ context, request }) => {
   const preview = isPreviewRequest(request)
   const stripeKey = requiredEnvValue(env, 'STRIPE_KEY_ADMIN', preview)
   const signingSecret = requiredEnvValue(env, 'WEBHOOK_STRIPE_SIGNING_SECRET', preview)
-  const contentfulSpace = requiredEnvValue(env, 'CONTENTFUL_SPACE', preview)
+  const contentfulSpace = requiredEnvValue(env, 'CONTENTFUL_SPACE', false)
   const contentfulPat = requiredEnvValue(env, 'CONTENTFUL_PAT', preview)
 
   const signature = request.headers
